@@ -1004,9 +1004,33 @@ export default function GamePage() {
 
         {/* Stats */}
         <div className="flex items-center gap-4 flex-wrap">
-          <div className="bg-[#fffdf8] border-2 border-[#1f2937] px-3 py-1.5 rounded-lg shadow-[2px_2px_0px_#1f2937] text-center min-w-[70px]">
-            <span className="text-[10px] font-black text-[#5b6474] uppercase block">Cấp độ</span>
-            <span className="text-base font-black text-[#f59e0b]">{currentLevel}</span>
+          {/* Level HSK Selector */}
+          <div className="bg-[#fffdf8] border-2 border-[#1f2937] p-1.5 rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1">
+            <span className="text-[10px] font-black text-[#5b6474] uppercase px-1">HSK:</span>
+            {[
+              { val: 1, label: "1-2-3" },
+              { val: 2, label: "4" },
+              { val: 3, label: "5-6" }
+            ].map((lvl) => (
+              <button
+                key={lvl.val}
+                onClick={async () => {
+                  setCurrentLevel(lvl.val);
+                  const idx = orders.findIndex(o => o.level === lvl.val);
+                  if (idx !== -1) {
+                    setCurrentOrderIndex(idx);
+                  }
+                  setSelectedIngredients([]);
+                  await saveProgress(score, coins, lvl.val, null);
+                }}
+                className={`px-2 py-1 rounded text-xs font-black transition-all cursor-pointer border
+                  ${currentLevel === lvl.val 
+                    ? 'bg-[#f59e0b] text-[#111827] border-[#1f2937] shadow-[1px_1px_0px_#1f2937]' 
+                    : 'bg-white hover:bg-gray-100 text-[#5b6474] border-transparent'}`}
+              >
+                {lvl.label}
+              </button>
+            ))}
           </div>
 
           <div className="bg-[#fffdf8] border-2 border-[#1f2937] px-3 py-1.5 rounded-lg shadow-[2px_2px_0px_#1f2937] text-center min-w-[80px]">

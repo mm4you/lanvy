@@ -755,267 +755,260 @@ export default function GamePage() {
           </button>
         </div>
       ) : (
-        <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* LEFT & CENTER COLUMN: Character and Order board */}
-          <div className="md:col-span-2 space-y-6">
-            {/* Customer & Bubble area */}
-            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 flex flex-col items-center relative min-h-[300px] justify-between">
-              
-              {/* Top info badge */}
-              <div className="w-full flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-3 mb-4">
-                <span className="bg-[#f59e0b] text-[#111827] border-2 border-[#1f2937] shadow-[1px_1px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
-                  Order {currentOrderIndex + 1}/9
-                </span>
-                <span className="bg-[#0ea5e9] text-[#111827] border-2 border-[#1f2937] shadow-[1px_1px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
-                  Cấp độ từ vựng: {currentOrder.level === 1 ? 'Dễ (HSK3)' : currentOrder.level === 2 ? 'Trung (HSK4/5)' : 'Khó (HSK5/6 & Love)'}
-                </span>
-              </div>
+        <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* 1. Customer & Speech bubble (Top left on desktop, Top on mobile) */}
+          <div className="order-1 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 flex flex-col items-center relative min-h-[300px] justify-between">
+            {/* Top info badge */}
+            <div className="w-full flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-3 mb-4">
+              <span className="bg-[#f59e0b] text-[#111827] border-2 border-[#1f2937] shadow-[1px_1px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
+                Order {currentOrderIndex + 1}/9
+              </span>
+              <span className="bg-[#0ea5e9] text-[#111827] border-2 border-[#1f2937] shadow-[1px_1px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
+                Cấp độ: {currentOrder.level === 1 ? 'Dễ (HSK3)' : currentOrder.level === 2 ? 'Trung (HSK4/5)' : 'Khó (HSK5/6 & Love)'}
+              </span>
+            </div>
 
-              {/* Pixel character graphic with dynamic movement class */}
-              {(() => {
-                let customerMotionClass = "transition-all duration-700 transform flex flex-col items-center ";
-                if (customerState === 'entering') {
-                  customerMotionClass += "-translate-x-24 opacity-0 scale-95";
-                } else if (customerState === 'leaving') {
-                  customerMotionClass += "translate-x-24 opacity-0 scale-95";
-                } else if (customerState === 'disappointed') {
-                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-shake";
-                } else {
-                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-idle";
-                }
+            {/* Pixel character graphic with dynamic movement class */}
+            {(() => {
+              let customerMotionClass = "transition-all duration-700 transform flex flex-col items-center ";
+              if (customerState === 'entering') {
+                customerMotionClass += "-translate-x-24 opacity-0 scale-95";
+              } else if (customerState === 'leaving') {
+                customerMotionClass += "translate-x-24 opacity-0 scale-95";
+              } else if (customerState === 'disappointed') {
+                customerMotionClass += "translate-x-0 opacity-100 animate-pixel-shake";
+              } else {
+                customerMotionClass += "translate-x-0 opacity-100 animate-pixel-idle";
+              }
 
-                const isKhang = currentOrder.customerSprite === 'khang';
+              const isKhang = currentOrder.customerSprite === 'khang';
 
-                return (
-                  <div className={`${customerMotionClass} mb-4 relative min-h-[170px] justify-end`}>
-                    {isKhang ? (
-                      <span className="bg-[#f43f5e] text-white border-2 border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#1f2937] animate-pulse mb-1 z-10">
-                        ❤️ BẠN TRAI BÀ CHỦ ❤️
-                      </span>
-                    ) : (
-                      <span className="bg-[#1f2937] text-white border border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1 z-10">
-                        Khách quý dễ thương
-                      </span>
-                    )}
-                    {renderCustomerSVG(currentOrder.customerSprite)}
-                    <span className="block text-center font-black text-xs mt-1.5 uppercase text-[#111827] tracking-wider">
-                      {currentOrder.customerName}
+              return (
+                <div className={`${customerMotionClass} mb-4 relative min-h-[170px] justify-end`}>
+                  {isKhang ? (
+                    <span className="bg-[#f43f5e] text-white border-2 border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#1f2937] animate-pulse mb-1 z-10">
+                      ❤️ BẠN TRAI BÀ CHỦ ❤️
                     </span>
-                  </div>
-                );
-              })()}
+                  ) : (
+                    <span className="bg-[#1f2937] text-white border border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1 z-10">
+                      Khách quý dễ thương
+                    </span>
+                  )}
+                  {renderCustomerSVG(currentOrder.customerSprite)}
+                  <span className="block text-center font-black text-xs mt-1.5 uppercase text-[#111827] tracking-wider">
+                    {currentOrder.customerName}
+                  </span>
+                </div>
+              );
+            })()}
 
-              {/* Order Bubble */}
-              <div className="w-full bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] relative text-center">
-                {/* Speech arrow */}
-                <div className="absolute left-1/2 -top-[10px] -translate-x-1/2 w-4 h-4 bg-white border-t-2 border-l-2 border-[#1f2937] rotate-45"></div>
-                
-                <h3 className="text-xl md:text-2xl font-black text-[#111827] leading-relaxed select-all">
-                  {currentOrder.orderChinese}
-                </h3>
-
-                {/* Optional Pinyin */}
-                {showPinyin && (
-                  <p className="text-sm font-bold text-[#0ea5e9] mt-2 font-mono select-all">
-                    {currentOrder.orderPinyin}
-                  </p>
-                )}
-
-                {/* Optional translation */}
-                {showTranslation && (
-                  <p className="text-xs font-bold text-[#5b6474] mt-2 italic select-all">
-                    {currentOrder.orderVietnamese}
-                  </p>
-                )}
-              </div>
-
-              {/* Audio and help buttons */}
-              <div className="flex gap-2 mt-4 flex-wrap justify-center">
-                <button
-                  onClick={playAudio}
-                  className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1
-                    ${isPlayingAudio ? 'bg-[#16a34a] text-white' : 'bg-white text-[#111827]'}`}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                  </svg>
-                  <span>Nghe đọc</span>
-                </button>
-
-                <button
-                  onClick={() => setShowPinyin(prev => !prev)}
-                  className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer
-                    ${showPinyin ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
-                >
-                  Phiên âm
-                </button>
-
-                <button
-                  onClick={() => setShowTranslation(prev => !prev)}
-                  className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer
-                    ${showTranslation ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
-                >
-                  Dịch nghĩa
-                </button>
-
-                <button
-                  onClick={handleNextCustomer}
-                  className="p-2 rounded-lg border-2 border-[#1f2937] bg-white text-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                  </svg>
-                  <span>Khách tiếp</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Speaking voice evaluation */}
-            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-4 flex items-center justify-between gap-4">
-              <div>
-                <h4 className="text-xs font-black text-[#111827] uppercase tracking-wide">Luyện phát âm câu nói của khách</h4>
-                <p className="text-xs text-[#5b6474] font-medium mt-0.5">Nhấp nút bên phải để ghi âm giọng nói tiếng Trung của bạn nhé.</p>
-              </div>
-
-              <div className="flex gap-2">
-                {isRecording ? (
-                  <button
-                    onClick={stopRecording}
-                    className="p-3 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-full animate-pulse shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none cursor-pointer"
-                    title="Dừng ghi âm"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                    </svg>
-                  </button>
-                ) : (
-                  <button
-                    disabled={isTranscribing}
-                    onClick={startRecording}
-                    className="p-3 bg-[#0ea5e9] text-white border-2 border-[#1f2937] rounded-full shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-50"
-                    title="Bấm để luyện nói"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Kitchen counter / Ingredients list */}
-            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6">
-              <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-4 pb-2 border-b-2 border-dashed border-[#1f2937]">
-                Quầy nguyên liệu pha chế (Chữ Hán)
-              </h3>
+            {/* Order Bubble */}
+            <div className="w-full bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] relative text-center">
+              {/* Speech arrow */}
+              <div className="absolute left-1/2 -top-[10px] -translate-x-1/2 w-4 h-4 bg-white border-t-2 border-l-2 border-[#1f2937] rotate-45"></div>
               
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {INGREDIENTS.map((ingredient) => {
-                  const isSelected = selectedIngredients.includes(ingredient.nameChinese);
-                  let categoryColor = 'bg-[#fffdf8]';
-                  if (ingredient.category === 'base') categoryColor = 'hover:bg-[#f5e1c8]';
-                  else if (ingredient.category === 'topping') categoryColor = 'hover:bg-[#fed7aa]';
-                  else if (ingredient.category === 'sugar') categoryColor = 'hover:bg-[#fef08a]';
-                  else if (ingredient.category === 'ice') categoryColor = 'hover:bg-[#bfdbfe]';
+              <h3 className="text-xl md:text-2xl font-black text-[#111827] leading-relaxed select-all">
+                {currentOrder.orderChinese}
+              </h3>
 
-                  return (
-                    <button
-                      key={ingredient.id}
-                      onClick={() => toggleIngredient(ingredient.nameChinese)}
-                      className={`p-3.5 border-2 border-[#1f2937] rounded-lg font-black text-center flex flex-col justify-center items-center transition-all select-none cursor-pointer shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
-                        ${isSelected 
-                          ? 'bg-[#f59e0b] text-[#111827] -translate-y-0.5 shadow-[3px_3px_0px_#1f2937]' 
-                          : `${categoryColor} text-[#111827] hover:-translate-y-0.5`
-                        }`}
-                    >
-                      <span className="text-lg font-serif">{ingredient.nameChinese}</span>
-                      <span className="text-[10px] font-bold text-[#5b6474] mt-0.5 uppercase tracking-wide">
-                        {ingredient.nameVietnamese}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              {/* Optional Pinyin */}
+              {showPinyin && (
+                <p className="text-sm font-bold text-[#0ea5e9] mt-2 font-mono select-all">
+                  {currentOrder.orderPinyin}
+                </p>
+              )}
+
+              {/* Optional translation */}
+              {showTranslation && (
+                <p className="text-xs font-bold text-[#5b6474] mt-2 italic select-all">
+                  {currentOrder.orderVietnamese}
+                </p>
+              )}
+            </div>
+
+            {/* Audio and help buttons */}
+            <div className="flex gap-2 mt-4 flex-wrap justify-center">
+              <button
+                onClick={playAudio}
+                className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1
+                  ${isPlayingAudio ? 'bg-[#16a34a] text-white' : 'bg-white text-[#111827]'}`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
+                <span>Nghe đọc</span>
+              </button>
+
+              <button
+                onClick={() => setShowPinyin(prev => !prev)}
+                className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer
+                  ${showPinyin ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
+              >
+                Phiên âm
+              </button>
+
+              <button
+                onClick={() => setShowTranslation(prev => !prev)}
+                className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer
+                  ${showTranslation ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
+              >
+                Dịch nghĩa
+              </button>
+
+              <button
+                onClick={handleNextCustomer}
+                className="p-2 rounded-lg border-2 border-[#1f2937] bg-white text-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+                <span>Khách tiếp</span>
+              </button>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Shaker Cup & Control dashboard */}
-          <div className="space-y-6">
-            {/* Shaker / Cup visualizer */}
-            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 text-center flex flex-col justify-between min-h-[300px]">
-              <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-2">
-                Ly pha chế của bạn
-              </h3>
-
-              <div className="my-4">
-                {renderBobaCup()}
-              </div>
-
-              {/* Selected ingredients raw chips list */}
-              <div className="min-h-[60px] flex flex-wrap gap-1 justify-center items-center bg-[#fffdf8] border-2 border-[#1f2937] p-2 rounded-lg">
-                {selectedIngredients.length === 0 ? (
-                  <span className="text-[10px] font-bold text-[#9ca3af] italic">Trống</span>
-                ) : (
-                  selectedIngredients.map((ing, idx) => (
-                    <span 
-                      key={idx}
-                      className="bg-white text-[#111827] border border-[#1f2937] font-black text-[10px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937]"
-                    >
-                      {ing}
-                    </span>
-                  ))
-                )}
-              </div>
-
-              {/* Controls */}
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <button
-                  onClick={clearCup}
-                  className="p-2.5 bg-[#fffdf8] hover:bg-gray-100 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-                >
-                  Xóa ly
-                </button>
-
-                <button
-                  onClick={handleServe}
-                  className="p-2.5 bg-[#16a34a] hover:bg-green-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-                >
-                  Phục vụ
-                </button>
-              </div>
+          {/* 2. Speaking voice evaluation (Second on mobile, stays under Customer on desktop) */}
+          <div className="order-2 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-4 flex items-center justify-between gap-4">
+            <div>
+              <h4 className="text-xs font-black text-[#111827] uppercase tracking-wide">Luyện phát âm câu nói của khách</h4>
+              <p className="text-xs text-[#5b6474] font-medium mt-0.5">Nhấp nút bên phải để ghi âm giọng nói tiếng Trung của bạn nhé.</p>
             </div>
 
-            {/* Notification / Feedback dialog */}
-            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 min-h-[145px] flex flex-col justify-between">
-              <div>
-                <h4 className="text-xs font-black text-[#111827] uppercase tracking-wide mb-1.5">Phản hồi của tiệm</h4>
-                <p className={`text-sm font-bold leading-relaxed
-                  ${messageType === 'success' ? 'text-[#16a34a]' : messageType === 'error' ? 'text-[#dc2626]' : 'text-[#111827]'}`}>
-                  {gameMessage}
-                </p>
-              </div>
-
-              {/* Active mistakes list explanation */}
-              {activeMistakes.length > 0 && (
-                <div className="mt-4 border-t-2 border-dashed border-[#1f2937] pt-3">
-                  <h5 className="text-[10px] font-black text-[#dc2626] uppercase tracking-wider mb-2 flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    Lỗi pha chế:
-                  </h5>
-                  <ul className="space-y-1 text-[11px] font-bold text-[#5b6474]">
-                    {activeMistakes.map((mistake, i) => (
-                      <li key={i} className="flex items-start gap-1">
-                        <span className="text-[#dc2626] font-black">▪</span>
-                        <span>{mistake}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <div className="flex gap-2">
+              {isRecording ? (
+                <button
+                  onClick={stopRecording}
+                  className="p-3 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-full animate-pulse shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none cursor-pointer"
+                  title="Dừng ghi âm"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  disabled={isTranscribing}
+                  onClick={startRecording}
+                  className="p-3 bg-[#0ea5e9] text-white border-2 border-[#1f2937] rounded-full shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-50"
+                  title="Bấm để luyện nói"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                  </svg>
+                </button>
               )}
             </div>
+          </div>
+
+          {/* 3. Shaker Cup & Control dashboard (Third on mobile, Right column on desktop - row-span-2) */}
+          <div className="order-3 lg:col-span-1 lg:row-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 text-center flex flex-col justify-between min-h-[300px] lg:h-full">
+            <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-2">
+              Ly pha chế của bà chủ
+            </h3>
+
+            <div className="my-2">
+              {renderBobaCup()}
+            </div>
+
+            {/* Selected ingredients raw chips list */}
+            <div className="min-h-[50px] flex flex-wrap gap-1 justify-center items-center bg-[#fffdf8] border-2 border-[#1f2937] p-2 rounded-lg my-2">
+              {selectedIngredients.length === 0 ? (
+                <span className="text-[10px] font-bold text-[#9ca3af] italic">Ly rỗng</span>
+              ) : (
+                selectedIngredients.map((ing, idx) => (
+                  <span 
+                    key={idx}
+                    className="bg-white text-[#111827] border border-[#1f2937] font-black text-[10px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937]"
+                  >
+                    {ing}
+                  </span>
+                ))
+              )}
+            </div>
+
+            {/* Controls */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={clearCup}
+                className="p-2.5 bg-[#fffdf8] hover:bg-gray-100 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+              >
+                Xóa ly
+              </button>
+
+              <button
+                onClick={handleServe}
+                className="p-2.5 bg-[#16a34a] hover:bg-green-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+              >
+                Phục vụ
+              </button>
+            </div>
+          </div>
+
+          {/* 4. Kitchen counter / Ingredients list (Fourth on mobile, Center-left on desktop) */}
+          <div className="order-4 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6">
+            <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-4 pb-2 border-b-2 border-dashed border-[#1f2937]">
+              Quầy nguyên liệu pha chế (Chữ Hán)
+            </h3>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {INGREDIENTS.map((ingredient) => {
+                const isSelected = selectedIngredients.includes(ingredient.nameChinese);
+                let categoryColor = 'bg-[#fffdf8]';
+                if (ingredient.category === 'base') categoryColor = 'hover:bg-[#f5e1c8]';
+                else if (ingredient.category === 'topping') categoryColor = 'hover:bg-[#fed7aa]';
+                else if (ingredient.category === 'sugar') categoryColor = 'hover:bg-[#fef08a]';
+                else if (ingredient.category === 'ice') categoryColor = 'hover:bg-[#bfdbfe]';
+
+                return (
+                  <button
+                    key={ingredient.id}
+                    onClick={() => toggleIngredient(ingredient.nameChinese)}
+                    className={`p-3.5 border-2 border-[#1f2937] rounded-lg font-black text-center flex flex-col justify-center items-center transition-all select-none cursor-pointer shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
+                      ${isSelected 
+                        ? 'bg-[#f59e0b] text-[#111827] -translate-y-0.5 shadow-[3px_3px_0px_#1f2937]' 
+                        : `${categoryColor} text-[#111827] hover:-translate-y-0.5`
+                      }`}
+                  >
+                    <span className="text-lg font-serif">{ingredient.nameChinese}</span>
+                    <span className="text-[10px] font-bold text-[#5b6474] mt-0.5 uppercase tracking-wide">
+                      {ingredient.nameVietnamese}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 5. Notification / Feedback dialog & Mistakes details (Bottom on both mobile and desktop) */}
+          <div className="order-5 lg:col-span-1 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 min-h-[145px] flex flex-col justify-between">
+            <div>
+              <h4 className="text-xs font-black text-[#111827] uppercase tracking-wide mb-1.5">Phản hồi của tiệm</h4>
+              <p className={`text-sm font-bold leading-relaxed
+                ${messageType === 'success' ? 'text-[#16a34a]' : messageType === 'error' ? 'text-[#dc2626]' : 'text-[#111827]'}`}>
+                {gameMessage}
+              </p>
+            </div>
+
+            {/* Active mistakes list explanation */}
+            {activeMistakes.length > 0 && (
+              <div className="mt-4 border-t-2 border-dashed border-[#1f2937] pt-3">
+                <h5 className="text-[10px] font-black text-[#dc2626] uppercase tracking-wider mb-2 flex items-center gap-1">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Lỗi pha chế:
+                </h5>
+                <ul className="space-y-1 text-[11px] font-bold text-[#5b6474]">
+                  {activeMistakes.map((mistake, i) => (
+                    <li key={i} className="flex items-start gap-1">
+                      <span className="text-[#dc2626] font-black">▪</span>
+                      <span>{mistake}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       )}

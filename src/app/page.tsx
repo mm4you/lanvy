@@ -217,6 +217,14 @@ export default function GamePage() {
         const userData = { id: data.userId, username: data.username, email: data.email || '' };
         setUser(userData);
         await fetchProgress(data.userId);
+        // Welcome message based on email
+        if ((data.email || '').toLowerCase() === LOVE_EMAIL) {
+          setGameMessage('Chào mừng Bà chủ Lan Vy! Tiệm Trà Sữa Tình Yêu đã sẵn sàng tiếp đón vị khách đặc biệt Nhựt Khang rồi nè 💕');
+          setMessageType('success');
+        } else {
+          setGameMessage(`Chào mừng ${data.username}! Hãy bắt đầu pha trà sữa và học tiếng Trung nào!`);
+          setMessageType('info');
+        }
       } else {
         setAuthError(data.error || 'Có lỗi xảy ra.');
       }
@@ -1042,7 +1050,7 @@ export default function GamePage() {
 
           <div className="text-center mb-6">
             <p className="text-sm font-bold text-[#5b6474]">
-              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý Tiệm Trà Sữa Tiên Ngọc Vy của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
+              Chào mừng bạn! Hãy đăng nhập hoặc đăng ký để bắt đầu học tiếng Trung qua trò chơi pha trà sữa nhé.
             </p>
           </div>
 

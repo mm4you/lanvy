@@ -20,7 +20,7 @@ export default function GamePage() {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [unlockedVouchers, setUnlockedVouchers] = useState<any[]>([]);
-  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với tiệm trà sữa của mình!');
+  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với Tiệm Trà Sữa Vy Vy!');
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [customerState, setCustomerState] = useState<'entering' | 'idle' | 'leaving' | 'disappointed'>('entering');
   const [activeMistakes, setActiveMistakes] = useState<string[]>([]);
@@ -428,13 +428,18 @@ export default function GamePage() {
       case 'cat':
         return (
           <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
-            {/* Ears */}
+            {/* Ears (with 3D shading) */}
             <rect x="6" y="4" width="4" height="4" fill="#f59e0b" stroke="#1f2937" strokeWidth="2" />
+            <rect x="9" y="4" width="1" height="4" fill="#d97706" />
             <rect x="22" y="4" width="4" height="4" fill="#f59e0b" stroke="#1f2937" strokeWidth="2" />
-            {/* Head */}
+            <rect x="25" y="4" width="1" height="4" fill="#d97706" />
+            {/* Head Voxel */}
             <rect x="6" y="8" width="20" height="16" fill="#f59e0b" stroke="#1f2937" strokeWidth="2" />
+            {/* Head 3D shade edge (right side) */}
+            <rect x="24" y="9" width="2" height="14" fill="#d97706" />
             {/* White face panel */}
             <rect x="10" y="14" width="12" height="10" fill="#fffaf0" />
+            <rect x="20" y="14" width="2" height="10" fill="#e5e5e0" /> {/* Face 3D shade */}
             {/* Eyes */}
             <rect x="10" y="12" width="2" height="4" fill="#1f2937" />
             <rect x="20" y="12" width="2" height="4" fill="#1f2937" />
@@ -443,8 +448,9 @@ export default function GamePage() {
             {/* Blush */}
             <rect x="8" y="16" width="2" height="2" fill="#fca5a5" />
             <rect x="22" y="16" width="2" height="2" fill="#fca5a5" />
-            {/* Body */}
+            {/* Body Voxel */}
             <rect x="10" y="24" width="12" height="6" fill="#d97706" stroke="#1f2937" strokeWidth="2" />
+            <rect x="20" y="25" width="2" height="4" fill="#b45309" />
           </svg>
         );
       case 'panda':
@@ -453,8 +459,10 @@ export default function GamePage() {
             {/* Ears */}
             <rect x="6" y="4" width="6" height="6" fill="#1f2937" stroke="#1f2937" strokeWidth="2" />
             <rect x="20" y="4" width="6" height="6" fill="#1f2937" stroke="#1f2937" strokeWidth="2" />
-            {/* Head */}
+            {/* Head Voxel */}
             <rect x="6" y="8" width="20" height="16" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            {/* Head 3D shade edge */}
+            <rect x="24" y="9" width="2" height="14" fill="#e4e4e7" />
             {/* Eyes patches */}
             <rect x="8" y="12" width="4" height="4" fill="#1f2937" />
             <rect x="20" y="12" width="4" height="4" fill="#1f2937" />
@@ -463,53 +471,67 @@ export default function GamePage() {
             <rect x="21" y="13" width="2" height="2" fill="#ffffff" />
             {/* Nose */}
             <rect x="15" y="17" width="2" height="2" fill="#1f2937" />
-            {/* Body */}
+            {/* Body Voxel */}
             <rect x="8" y="24" width="16" height="6" fill="#1f2937" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="25" width="2" height="4" fill="#09090b" />
           </svg>
         );
       case 'khang':
         return (
           <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
-            {/* Voluminous wavy black hair */}
+            {/* Hair Voxel (with 3D highlights) */}
             <rect x="8" y="1" width="16" height="3" fill="#1f2937" />
             <rect x="6" y="3" width="20" height="6" fill="#1f2937" />
             <rect x="5" y="6" width="22" height="3" fill="#1f2937" />
+            {/* Hair shade right */}
+            <rect x="24" y="3" width="2" height="6" fill="#111827" />
+            {/* Hair highlight top */}
+            <rect x="10" y="2" width="6" height="1" fill="#4b5563" />
             {/* Sideburns */}
             <rect x="6" y="9" width="2" height="5" fill="#1f2937" />
             <rect x="24" y="9" width="2" height="5" fill="#1f2937" />
-            {/* Face (Warm skin tone) */}
+            {/* Face Voxel */}
             <rect x="8" y="8" width="16" height="16" fill="#fcd34d" stroke="#1f2937" strokeWidth="2" />
+            {/* Face 3D shade edge */}
+            <rect x="22" y="9" width="2" height="14" fill="#f59e0b" />
             {/* Eyes */}
             <rect x="10" y="13" width="2" height="2" fill="#1f2937" />
             <rect x="20" y="13" width="2" height="2" fill="#1f2937" />
-            {/* Round glasses frames */}
+            {/* Round glasses frames (3D shaded) */}
             <rect x="9" y="11" width="5" height="4" fill="none" stroke="#1f2937" strokeWidth="1.5" />
             <rect x="18" y="11" width="5" height="4" fill="none" stroke="#1f2937" strokeWidth="1.5" />
             <rect x="14" y="12" width="4" height="1.5" fill="#1f2937" />
-            {/* Mouth (Friendly smile) */}
+            {/* Mouth */}
             <rect x="13" y="18" width="6" height="2" fill="#ef4444" />
             {/* Body (Dark blue crewneck t-shirt) */}
             <rect x="8" y="24" width="16" height="6" fill="#1e3b8b" stroke="#1f2937" strokeWidth="2" />
+            {/* Shirt 3D shade */}
+            <rect x="22" y="25" width="2" height="4" fill="#172554" />
           </svg>
         );
-      default: // Lan Vy sprite based on photo (Long layered black hair, wispy bangs, floral top)
+      default: // Lan Vy sprite (Long layered black hair, wispy bangs, white puff floral top)
         return (
           <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
-            {/* Long black hair base */}
+            {/* Hair Voxel */}
             <rect x="6" y="2" width="20" height="9" fill="#18181b" />
-            {/* Shaggy long hair side panels down to chest */}
+            {/* Shaggy long hair side panels */}
             <rect x="4" y="10" width="4" height="14" fill="#18181b" />
             <rect x="24" y="10" width="4" height="14" fill="#18181b" />
             <rect x="3" y="13" width="2" height="8" fill="#18181b" />
             <rect x="27" y="13" width="2" height="8" fill="#18181b" />
-            {/* Face (Fair peach skin tone) */}
+            {/* Hair 3D shade right edge */}
+            <rect x="25" y="3" width="1" height="8" fill="#09090b" />
+            <rect x="26" y="10" width="2" height="14" fill="#09090b" />
+            {/* Face Voxel */}
             <rect x="8" y="8" width="16" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
-            {/* Wispy/airy bangs on forehead */}
+            {/* Face 3D shade edge */}
+            <rect x="22" y="9" width="2" height="13" fill="#fed7aa" />
+            {/* Wispy/airy bangs */}
             <rect x="9" y="8" width="1" height="4" fill="#18181b" />
             <rect x="12" y="8" width="2" height="3" fill="#18181b" />
             <rect x="16" y="8" width="1" height="4" fill="#18181b" />
             <rect x="20" y="8" width="2" height="3" fill="#18181b" />
-            {/* Eyes (Big dark eyes with double eyelids) */}
+            {/* Eyes */}
             <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
             <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
             <rect x="9" y="12" width="4" height="1" fill="#78350f" />
@@ -517,15 +539,17 @@ export default function GamePage() {
             {/* Pink blush cheeks */}
             <rect x="7" y="16" width="3" height="2" fill="#fca5a5" />
             <rect x="22" y="16" width="3" height="2" fill="#fca5a5" />
-            {/* Rosy lips */}
+            {/* Lips */}
             <rect x="13" y="18" width="6" height="2" fill="#db2777" />
             {/* Neckline */}
             <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
-            {/* Body (White puff-sleeved top with small pink floral dots) */}
+            {/* Body (White puff top) */}
             <rect x="8" y="24" width="16" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="25" width="2" height="4" fill="#e4e4e7" /> {/* Body 3D shade */}
             {/* Puff sleeves */}
             <rect x="6" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
             <rect x="23" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="24" y="25" width="1" height="2" fill="#e4e4e7" />
             {/* Floral dots */}
             <rect x="10" y="26" width="1" height="1" fill="#f43f5e" />
             <rect x="19" y="25" width="1" height="1" fill="#f43f5e" />
@@ -535,7 +559,7 @@ export default function GamePage() {
     }
   };
 
-  // Visual Boba Cup rendering based on selected ingredients
+  // Visual 3D Isometric Voxel Boba Cup rendering
   const renderBobaCup = () => {
     const hasMilkTea = selectedIngredients.includes('奶茶');
     const hasGreenTea = selectedIngredients.includes('绿茶');
@@ -549,70 +573,134 @@ export default function GamePage() {
     const hasRedBean = selectedIngredients.includes('红豆');
     const hasIce = selectedIngredients.includes('少冰') || selectedIngredients.includes('多冰');
 
-    // Liquid fill color
+    // Liquid fill colors (Body & Top isometric face shading)
     let liquidColor = 'transparent';
-    if (hasMilkTea) liquidColor = '#f5e1c8'; // Milktea cream color
-    else if (hasGreenTea) liquidColor = '#d9f99d'; // Green tea light green
-    else if (hasBlackTea) liquidColor = '#fca5a5'; // Red/black tea amber red
-    else if (hasOolong) liquidColor = '#fed7aa'; // Oolong golden color
+    let liquidTopColor = 'transparent';
+    if (hasMilkTea) {
+      liquidColor = '#e3c6a1';
+      liquidTopColor = '#f3ddc2';
+    } else if (hasGreenTea) {
+      liquidColor = '#a3e635';
+      liquidTopColor = '#bef264';
+    } else if (hasBlackTea) {
+      liquidColor = '#f87171';
+      liquidTopColor = '#fca5a5';
+    } else if (hasOolong) {
+      liquidColor = '#fb923c';
+      liquidTopColor = '#fed7aa';
+    }
 
     return (
       <svg viewBox="0 0 64 100" className="w-28 h-44 mx-auto">
-        {/* Cup outline */}
-        <path d="M12 10 L52 10 L44 85 L20 85 Z" fill="#ffffff" stroke="#1f2937" strokeWidth="3" opacity="0.3" />
+        {/* 3D Glass Cup back rim ellipse */}
+        <ellipse cx="32" cy="15" rx="20" ry="6" fill="transparent" stroke="#1f2937" strokeWidth="2.5" opacity="0.3" />
         
-        {/* Liquid Fill */}
+        {/* 3D Liquid Volume */}
         {hasTea && (
-          <path d="M14 25 L50 25 L43 83 L21 83 Z" fill={liquidColor} />
+          <>
+            {/* Liquid main cylinder body */}
+            <path d="M13.7 35 L19 83 A13.5 4.2 0 0 0 45 83 L50.3 35 A18.3 5.5 0 0 1 13.7 35 Z" fill={liquidColor} />
+            {/* Liquid top isometric ellipse */}
+            <ellipse cx="32" cy="35" rx="18.3" ry="5.5" fill={liquidTopColor} stroke="#1f2937" strokeWidth="1.5" />
+          </>
         )}
 
-        {/* Ice Cubes */}
+        {/* 3D Voxel Ice Cubes */}
         {hasIce && (
           <>
-            <rect x="22" y="30" width="8" height="8" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" transform="rotate(15 26 34)" opacity="0.7" />
-            <rect x="35" y="42" width="8" height="8" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" transform="rotate(-10 39 46)" opacity="0.7" />
+            {/* Ice 1 */}
+            <g transform="translate(24, 42)">
+              <polygon points="0,-3 6,0 0,3 -6,0" fill="#ffffff" stroke="#1f2937" strokeWidth="1.2" />
+              <polygon points="-6,0 0,3 0,8 -6,5" fill="#e0f2fe" stroke="#1f2937" strokeWidth="1.2" />
+              <polygon points="0,3 6,0 6,5 0,8" fill="#bae6fd" stroke="#1f2937" strokeWidth="1.2" />
+            </g>
+            {/* Ice 2 */}
+            <g transform="translate(38, 54)">
+              <polygon points="0,-3 6,0 0,3 -6,0" fill="#ffffff" stroke="#1f2937" strokeWidth="1.2" />
+              <polygon points="-6,0 0,3 0,8 -6,5" fill="#e0f2fe" stroke="#1f2937" strokeWidth="1.2" />
+              <polygon points="0,3 6,0 6,5 0,8" fill="#bae6fd" stroke="#1f2937" strokeWidth="1.2" />
+            </g>
           </>
         )}
 
-        {/* Toppings (Pudding, Red Bean, Boba, Jelly) */}
+        {/* 3D Voxel Pudding */}
         {hasPudding && (
-          <path d="M22 65 C22 55, 42 55, 42 65 L40 82 L24 82 Z" fill="#fbbf24" stroke="#1f2937" strokeWidth="1.5" />
+          <g transform="translate(32, 68)">
+            <polygon points="0,-4 10,0 0,4 -10,0" fill="#fbbf24" stroke="#1f2937" strokeWidth="1.5" />
+            <polygon points="-10,0 0,4 0,14 -10,10" fill="#d97706" stroke="#1f2937" strokeWidth="1.5" />
+            <polygon points="0,4 10,0 10,10 0,14" fill="#b45309" stroke="#1f2937" strokeWidth="1.5" />
+          </g>
         )}
         
+        {/* 3D Red Beans */}
         {hasRedBean && (
-          <>
-            <circle cx="23" cy="74" r="3" fill="#7f1d1d" />
-            <circle cx="28" cy="78" r="3" fill="#7f1d1d" />
-            <circle cx="34" cy="73" r="3" fill="#7f1d1d" />
-            <circle cx="39" cy="76" r="3" fill="#7f1d1d" />
-          </>
+          <g fill="#7f1d1d" stroke="#450a0a" strokeWidth="0.8">
+            <circle cx="21" cy="78" r="3.2" />
+            <circle cx="27" cy="80" r="3.2" />
+            <circle cx="37" cy="78" r="3.2" />
+            <circle cx="43" cy="77" r="3.2" />
+            <circle cx="32" cy="74" r="3.2" />
+          </g>
         )}
 
+        {/* 3D Jellies (Stacked blocks) */}
         {hasJelly && (
-          <>
-            <rect x="22" y="70" width="5" height="5" fill="#f3f4f6" stroke="#9ca3af" strokeWidth="1" />
-            <rect x="34" y="76" width="5" height="5" fill="#f3f4f6" stroke="#9ca3af" strokeWidth="1" />
-            <rect x="28" y="72" width="5" height="5" fill="#f3f4f6" stroke="#9ca3af" strokeWidth="1" />
-          </>
+          <g stroke="#9ca3af" strokeWidth="0.8">
+            {/* Jelly 1 */}
+            <g transform="translate(23, 72)">
+              <polygon points="0,-2 4,0 0,2 -4,0" fill="#ffffff" />
+              <polygon points="-4,0 0,2 0,5 -4,3" fill="#f3f4f6" />
+              <polygon points="0,2 4,0 4,3 0,5" fill="#e5e7eb" />
+            </g>
+            {/* Jelly 2 */}
+            <g transform="translate(36, 75)">
+              <polygon points="0,-2 4,0 0,2 -4,0" fill="#ffffff" />
+              <polygon points="-4,0 0,2 0,5 -4,3" fill="#f3f4f6" />
+              <polygon points="0,2 4,0 4,3 0,5" fill="#e5e7eb" />
+            </g>
+          </g>
         )}
 
+        {/* 3D Boba Pearls (Shaded Spheres) */}
         {hasBoba && (
-          <>
-            <circle cx="22" cy="78" r="4" fill="#1f2937" />
-            <circle cx="30" cy="80" r="4" fill="#1f2937" />
-            <circle cx="38" cy="78" r="4" fill="#1f2937" />
-            <circle cx="26" cy="72" r="4" fill="#1f2937" />
-            <circle cx="34" cy="72" r="4" fill="#1f2937" />
-            <circle cx="30" cy="65" r="4" fill="#1f2937" />
-          </>
+          <g fill="#1f2937">
+            {/* Pearl 1 */}
+            <circle cx="20" cy="80" r="4" stroke="#111827" strokeWidth="1.2" />
+            <circle cx="18.5" cy="78.5" r="1" fill="#9ca3af" />
+            {/* Pearl 2 */}
+            <circle cx="28" cy="82" r="4" stroke="#111827" strokeWidth="1.2" />
+            <circle cx="26.5" cy="80.5" r="1" fill="#9ca3af" />
+            {/* Pearl 3 */}
+            <circle cx="36" cy="81" r="4" stroke="#111827" strokeWidth="1.2" />
+            <circle cx="34.5" cy="79.5" r="1" fill="#9ca3af" />
+            {/* Pearl 4 */}
+            <circle cx="44" cy="79" r="4" stroke="#111827" strokeWidth="1.2" />
+            <circle cx="42.5" cy="77.5" r="1" fill="#9ca3af" />
+            {/* Pearl 5 */}
+            <circle cx="25" cy="74" r="4" stroke="#111827" strokeWidth="1.2" />
+            <circle cx="23.5" cy="72.5" r="1" fill="#9ca3af" />
+            {/* Pearl 6 */}
+            <circle cx="34" cy="74" r="4" stroke="#111827" strokeWidth="1.2" />
+            <circle cx="32.5" cy="72.5" r="1" fill="#9ca3af" />
+            {/* Pearl 7 */}
+            <circle cx="30" cy="67" r="4" stroke="#111827" strokeWidth="1.2" />
+            <circle cx="28.5" cy="65.5" r="1" fill="#9ca3af" />
+          </g>
         )}
 
-        {/* Cup outline front rim */}
-        <path d="M12 10 L52 10 L44 85 L20 85 Z" fill="transparent" stroke="#1f2937" strokeWidth="3" />
+        {/* 3D Glass Cup walls & front rim */}
+        <path d="M12 15 L19 83 A13.5 4.2 0 0 0 45 83 L52 15 A20 6 0 0 1 12 15 Z" fill="transparent" stroke="#1f2937" strokeWidth="3" />
+        <ellipse cx="32" cy="15" rx="20" ry="6" fill="transparent" stroke="#1f2937" strokeWidth="3" />
 
-        {/* Straw */}
-        <line x1="32" y1="2" x2="32" y2="90" stroke="#f43f5e" strokeWidth="6" strokeLinecap="round" opacity="0.8" />
-        <line x1="32" y1="2" x2="32" y2="90" stroke="#1f2937" strokeWidth="6" strokeLinecap="round" strokeDasharray="3,3" opacity="0.3" />
+        {/* 3D Straw */}
+        <g>
+          {/* Main straw shaft */}
+          <path d="M28.5 2 L28.5 90 L34.5 90 L34.5 2 Z" fill="#f43f5e" stroke="#1f2937" strokeWidth="1.5" opacity="0.9" />
+          {/* 3D shadow stripe */}
+          <path d="M31.5 2 L31.5 90 L34.5 90 L34.5 2 Z" fill="#e11d48" opacity="0.4" />
+          {/* Straw hollow opening ellipse */}
+          <ellipse cx="31.5" cy="2" rx="3" ry="1" fill="#be123c" stroke="#1f2937" strokeWidth="1.5" />
+        </g>
       </svg>
     );
   };
@@ -625,13 +713,13 @@ export default function GamePage() {
           {/* Accent header */}
           <div className="bg-[#f59e0b] border-b-[3px] border-[#1f2937] -mx-6 -mt-6 p-4 mb-6">
             <h1 className="text-xl font-black text-[#111827] text-center tracking-wider font-serif">
-              TRÀ SỮA BÀ CHỦ LAN VY
+              TIỆM TRÀ SỮA VY VY
             </h1>
           </div>
 
           <div className="text-center mb-6">
             <p className="text-sm font-bold text-[#5b6474]">
-              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý tiệm trà sữa của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
+              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý Tiệm Trà Sữa Vy Vy của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
             </p>
           </div>
 
@@ -698,7 +786,7 @@ export default function GamePage() {
             T
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg text-[#111827]">Trà Sữa Bà Chủ Lan Vy</h1>
+            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Vy Vy</h1>
             <p className="text-xs text-[#5b6474] font-medium">Chào bà chủ: <span className="font-bold text-[#1e3b8b]">{user.username}</span></p>
           </div>
         </div>
@@ -760,47 +848,88 @@ export default function GamePage() {
           <div className="order-1 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 flex flex-col items-center relative min-h-[300px] justify-between">
             {/* Top info badge */}
             <div className="w-full flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-3 mb-4">
-              <span className="bg-[#f59e0b] text-[#111827] border-2 border-[#1f2937] shadow-[1px_1px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
+              <span className="bg-[#f59e0b] text-[#111827] border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
                 Order {currentOrderIndex + 1}/9
               </span>
-              <span className="bg-[#0ea5e9] text-[#111827] border-2 border-[#1f2937] shadow-[1px_1px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
+              <span className="bg-[#0ea5e9] text-[#111827] border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
                 Cấp độ: {currentOrder.level === 1 ? 'Dễ (HSK3)' : currentOrder.level === 2 ? 'Trung (HSK4/5)' : 'Khó (HSK5/6 & Love)'}
               </span>
             </div>
 
-            {/* Pixel character graphic with dynamic movement class */}
-            {(() => {
-              let customerMotionClass = "transition-all duration-700 transform flex flex-col items-center ";
-              if (customerState === 'entering') {
-                customerMotionClass += "-translate-x-24 opacity-0 scale-95";
-              } else if (customerState === 'leaving') {
-                customerMotionClass += "translate-x-24 opacity-0 scale-95";
-              } else if (customerState === 'disappointed') {
-                customerMotionClass += "translate-x-0 opacity-100 animate-pixel-shake";
-              } else {
-                customerMotionClass += "translate-x-0 opacity-100 animate-pixel-idle";
-              }
-
-              const isKhang = currentOrder.customerSprite === 'khang';
-
-              return (
-                <div className={`${customerMotionClass} mb-4 relative min-h-[170px] justify-end`}>
-                  {isKhang ? (
-                    <span className="bg-[#f43f5e] text-white border-2 border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#1f2937] animate-pulse mb-1 z-10">
-                      ❤️ BẠN TRAI BÀ CHỦ ❤️
-                    </span>
-                  ) : (
-                    <span className="bg-[#1f2937] text-white border border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1 z-10">
-                      Khách quý dễ thương
-                    </span>
-                  )}
-                  {renderCustomerSVG(currentOrder.customerSprite)}
-                  <span className="block text-center font-black text-xs mt-1.5 uppercase text-[#111827] tracking-wider">
-                    {currentOrder.customerName}
-                  </span>
+            {/* Boba Shop Counter Stage (2D Pixel Animated) */}
+            <div className="w-full bg-[#fef3c7] border-2 border-[#1f2937] rounded-xl p-4 min-h-[220px] relative overflow-hidden flex items-end justify-between shadow-[inset_0_-20px_0_#78350f] mb-6">
+              
+              {/* Counter wooden bar bottom overlay */}
+              <div className="absolute bottom-0 left-0 right-0 h-5 bg-[#78350f] border-t-2 border-[#1f2937]"></div>
+              
+              {/* Left Side: Boss Lan Vy */}
+              <div className="flex flex-col items-center z-10 relative pb-1">
+                {/* Boss Label */}
+                <span className="bg-[#16a34a] text-white border border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1">
+                  Bà chủ Vy Vy
+                </span>
+                
+                {/* Boss Sprite Container */}
+                <div className={`transform transition-all duration-300
+                  ${messageType === 'success' ? 'animate-bounce-short' : ''}`}>
+                  {renderCustomerSVG('girl')}
                 </div>
-              );
-            })()}
+
+                {/* Sweat Drop SVG if mistake */}
+                {messageType === 'error' && (
+                  <svg className="absolute -top-1 -right-2 w-5 h-5 text-[#3b82f6] animate-bounce" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                  </svg>
+                )}
+              </div>
+
+              {/* Center: Heart decorations if success */}
+              {messageType === 'success' && (
+                <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-20">
+                  {/* Floating hearts */}
+                  <svg className="w-8 h-8 text-[#f43f5e] animate-bounce mx-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  <svg className="w-6 h-6 text-[#f43f5e] animate-ping mx-1" fill="currentColor" viewBox="0 0 24 24" style={{ animationDuration: '1.5s' }}>
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </div>
+              )}
+
+              {/* Right Side: Customer (Nhựt Khang / Cat / Panda) */}
+              {(() => {
+                let customerMotionClass = "transition-all duration-700 transform flex flex-col items-center pb-1 ";
+                if (customerState === 'entering') {
+                  customerMotionClass += "translate-x-24 opacity-0 scale-95";
+                } else if (customerState === 'leaving') {
+                  customerMotionClass += "translate-x-28 opacity-0 scale-95";
+                } else if (customerState === 'disappointed') {
+                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-shake";
+                } else {
+                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-idle";
+                }
+
+                const isKhang = currentOrder.customerSprite === 'khang';
+
+                return (
+                  <div className={`${customerMotionClass} z-10 relative`}>
+                    {isKhang ? (
+                      <span className="bg-[#f43f5e] text-white border-2 border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1.5px_1.5px_0px_#1f2937] animate-pulse mb-1">
+                        ❤️ VIP Bạn trai ❤️
+                      </span>
+                    ) : (
+                      <span className="bg-[#1f2937] text-white border border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1">
+                        Khách quý
+                      </span>
+                    )}
+                    {renderCustomerSVG(currentOrder.customerSprite)}
+                    <span className="block text-center font-black text-[10px] mt-1.5 uppercase text-[#111827] tracking-wider">
+                      {currentOrder.customerName}
+                    </span>
+                  </div>
+                );
+              })()}
+            </div>
 
             {/* Order Bubble */}
             <div className="w-full bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] relative text-center">

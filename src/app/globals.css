@@ -52,3 +52,22 @@ body {
 .animate-bounce-short {
   animation: bounce-short 1s ease-in-out infinite;
 }
+
+@keyframes pixel-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.animate-pixel-idle {
+  animation: pixel-idle 1.2s ease-in-out infinite;
+}
+
+@keyframes pixel-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-pixel-shake {
+  animation: pixel-shake 0.2s ease-in-out 3;
+}

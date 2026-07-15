@@ -20,8 +20,10 @@ export default function GamePage() {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [unlockedVouchers, setUnlockedVouchers] = useState<any[]>([]);
-  const [gameMessage, setGameMessage] = useState<string>('Chào mừng bạn đến với Tiệm Trà Sữa Tình Yêu!');
+  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với tiệm trà sữa của mình!');
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
+  const [customerState, setCustomerState] = useState<'entering' | 'idle' | 'leaving' | 'disappointed'>('entering');
+  const [activeMistakes, setActiveMistakes] = useState<string[]>([]);
 
   // Interactive states
   const [showPinyin, setShowPinyin] = useState(false);
@@ -266,11 +268,22 @@ export default function GamePage() {
     setSelectedIngredients([]);
   };
 
+  // Effect to handle customer entering animation on index changes
+  useEffect(() => {
+    if (currentOrder) {
+      setCustomerState('entering');
+      const timer = setTimeout(() => {
+        setCustomerState('idle');
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentOrderIndex]);
+
   // Serve drink check
   const handleServe = () => {
     if (!currentOrder) return;
 
-    // Check if sorted elements match
+    // Check if ingredients match
     const isCorrect = 
       selectedIngredients.length === currentOrder.targetIngredients.length &&
       currentOrder.targetIngredients.every(item => selectedIngredients.includes(item));
@@ -285,6 +298,10 @@ export default function GamePage() {
       setCoins(nextCoins);
       setGameMessage(currentOrder.successMessage);
       setMessageType('success');
+      setActiveMistakes([]);
+
+      // Customer walks out happily
+      setCustomerState('leaving');
 
       // Check level up (every 3 orders increases level)
       let nextLevel = currentLevel;
@@ -293,7 +310,7 @@ export default function GamePage() {
       if (nextOrderIndex > 0 && nextOrderIndex % 3 === 0) {
         nextLevel = Math.min(3, currentLevel + 1);
         setCurrentLevel(nextLevel);
-        setGameMessage(prev => prev + ` Chúc mừng bạn đã LÊN CẤP ${nextLevel}!`);
+        setGameMessage(prev => prev + ` Chúc mừng Bà chủ đã đạt Cấp độ ${nextLevel}!`);
       }
 
       // Check if this order has a voucher reward
@@ -302,21 +319,77 @@ export default function GamePage() {
       // Sync stats and vouchers
       saveProgress(nextScore, nextCoins, nextLevel, voucherToUnlock);
 
-      // Go to next order
-      if (nextOrderIndex < orders.length) {
-        setTimeout(() => {
+      // Go to next order after customer walks out
+      setTimeout(() => {
+        if (nextOrderIndex < orders.length) {
           setCurrentOrderIndex(nextOrderIndex);
           setSelectedIngredients([]);
           setShowPinyin(false);
           setShowTranslation(false);
-        }, 3000);
-      } else {
-        setGameMessage('Tuyệt vời! Bạn đã hoàn thành toàn bộ các cấp độ trà sữa!');
-      }
+        } else {
+          setGameMessage('Tuyệt vời! Bà chủ Vy đã hoàn thành toàn bộ các cấp độ trà sữa xuất sắc!');
+        }
+      }, 1200);
     } else {
+      // Customer is disappointed
+      setCustomerState('disappointed');
+      setTimeout(() => {
+        setCustomerState('idle');
+      }, 800);
+
+      // Analyze mistake details
+      const targetSet = new Set(currentOrder.targetIngredients);
+      const selectedSet = new Set(selectedIngredients);
+
+      const missing = currentOrder.targetIngredients.filter(x => !selectedSet.has(x));
+      const extra = selectedIngredients.filter(x => !targetSet.has(x));
+
+      const mistakes: string[] = [];
+
+      missing.forEach(item => {
+        const ing = INGREDIENTS.find(i => i.nameChinese === item);
+        if (ing) {
+          if (ing.category === 'base') mistakes.push(`Thiếu trà nền: ${ing.nameChinese} (${ing.nameVietnamese})`);
+          else if (ing.category === 'topping') mistakes.push(`Quên topping: ${ing.nameChinese} (${ing.nameVietnamese})`);
+          else if (ing.category === 'sugar') mistakes.push(`Chưa chọn mức đường: ${ing.nameChinese} (${ing.nameVietnamese})`);
+          else if (ing.category === 'ice') mistakes.push(`Chưa chọn mức đá: ${ing.nameChinese} (${ing.nameVietnamese})`);
+        }
+      });
+
+      extra.forEach(item => {
+        const ing = INGREDIENTS.find(i => i.nameChinese === item);
+        if (ing) {
+          if (ing.category === 'base') mistakes.push(`Nhầm lẫn trà nền: Bạn cho dư ${ing.nameChinese} (${ing.nameVietnamese})`);
+          else if (ing.category === 'topping') mistakes.push(`Thừa topping không yêu cầu: ${ing.nameChinese} (${ing.nameVietnamese})`);
+          else if (ing.category === 'sugar') mistakes.push(`Chọn sai mức đường: ${ing.nameChinese} (${ing.nameVietnamese})`);
+          else if (ing.category === 'ice') mistakes.push(`Chọn sai mức đá: ${ing.nameChinese} (${ing.nameVietnamese})`);
+        }
+      });
+
+      setActiveMistakes(mistakes);
       setGameMessage(currentOrder.failureMessage);
       setMessageType('error');
     }
+  };
+
+  // Skip / Next Customer handler
+  const handleNextCustomer = () => {
+    if (customerState === 'leaving' || customerState === 'entering') return;
+    
+    setCustomerState('leaving');
+    setActiveMistakes([]);
+    
+    setTimeout(() => {
+      const nextIndex = currentOrderIndex + 1;
+      if (nextIndex < orders.length) {
+        setCurrentOrderIndex(nextIndex);
+        setSelectedIngredients([]);
+        setShowPinyin(false);
+        setShowTranslation(false);
+      } else {
+        setGameMessage('Bà chủ Vy đã gặp hết tất cả khách hàng rồi!');
+      }
+    }, 1000);
   };
 
   // Redeem voucher
@@ -552,13 +625,13 @@ export default function GamePage() {
           {/* Accent header */}
           <div className="bg-[#f59e0b] border-b-[3px] border-[#1f2937] -mx-6 -mt-6 p-4 mb-6">
             <h1 className="text-xl font-black text-[#111827] text-center tracking-wider font-serif">
-              TIỆM TRÀ SỮA TÌNH YÊU
+              TRÀ SỮA BÀ CHỦ LAN VY
             </h1>
           </div>
 
           <div className="text-center mb-6">
             <p className="text-sm font-bold text-[#5b6474]">
-              Chào mừng bạn nhỏ của anh! Hãy đăng nhập để bắt đầu vừa chơi game pha trà sữa vừa ôn tập tiếng Trung nhé.
+              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý tiệm trà sữa của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
             </p>
           </div>
 
@@ -625,8 +698,8 @@ export default function GamePage() {
             T
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Tình Yêu</h1>
-            <p className="text-xs text-[#5b6474] font-medium">Tài khoản: <span className="font-bold text-[#111827]">{user.username}</span></p>
+            <h1 className="font-serif font-black text-lg text-[#111827]">Trà Sữa Bà Chủ Lan Vy</h1>
+            <p className="text-xs text-[#5b6474] font-medium">Chào bà chủ: <span className="font-bold text-[#1e3b8b]">{user.username}</span></p>
           </div>
         </div>
 
@@ -698,13 +771,39 @@ export default function GamePage() {
                 </span>
               </div>
 
-              {/* Pixel character graphic */}
-              <div className="mb-4">
-                {renderCustomerSVG(currentOrder.customerSprite)}
-                <span className="block text-center font-black text-xs mt-1.5 uppercase text-[#111827] tracking-wider">
-                  {currentOrder.customerName}
-                </span>
-              </div>
+              {/* Pixel character graphic with dynamic movement class */}
+              {(() => {
+                let customerMotionClass = "transition-all duration-700 transform flex flex-col items-center ";
+                if (customerState === 'entering') {
+                  customerMotionClass += "-translate-x-24 opacity-0 scale-95";
+                } else if (customerState === 'leaving') {
+                  customerMotionClass += "translate-x-24 opacity-0 scale-95";
+                } else if (customerState === 'disappointed') {
+                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-shake";
+                } else {
+                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-idle";
+                }
+
+                const isKhang = currentOrder.customerSprite === 'khang';
+
+                return (
+                  <div className={`${customerMotionClass} mb-4 relative min-h-[170px] justify-end`}>
+                    {isKhang ? (
+                      <span className="bg-[#f43f5e] text-white border-2 border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#1f2937] animate-pulse mb-1 z-10">
+                        ❤️ BẠN TRAI BÀ CHỦ ❤️
+                      </span>
+                    ) : (
+                      <span className="bg-[#1f2937] text-white border border-[#1f2937] font-black text-[9px] px-2 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1 z-10">
+                        Khách quý dễ thương
+                      </span>
+                    )}
+                    {renderCustomerSVG(currentOrder.customerSprite)}
+                    <span className="block text-center font-black text-xs mt-1.5 uppercase text-[#111827] tracking-wider">
+                      {currentOrder.customerName}
+                    </span>
+                  </div>
+                );
+              })()}
 
               {/* Order Bubble */}
               <div className="w-full bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] relative text-center">
@@ -731,7 +830,7 @@ export default function GamePage() {
               </div>
 
               {/* Audio and help buttons */}
-              <div className="flex gap-2.5 mt-4 flex-wrap justify-center">
+              <div className="flex gap-2 mt-4 flex-wrap justify-center">
                 <button
                   onClick={playAudio}
                   className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1
@@ -748,7 +847,7 @@ export default function GamePage() {
                   className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer
                     ${showPinyin ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
                 >
-                  Phiên âm (Pinyin)
+                  Phiên âm
                 </button>
 
                 <button
@@ -757,6 +856,16 @@ export default function GamePage() {
                     ${showTranslation ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
                 >
                   Dịch nghĩa
+                </button>
+
+                <button
+                  onClick={handleNextCustomer}
+                  className="p-2 rounded-lg border-2 border-[#1f2937] bg-white text-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                  </svg>
+                  <span>Khách tiếp</span>
                 </button>
               </div>
             </div>
@@ -886,6 +995,26 @@ export default function GamePage() {
                   {gameMessage}
                 </p>
               </div>
+
+              {/* Active mistakes list explanation */}
+              {activeMistakes.length > 0 && (
+                <div className="mt-4 border-t-2 border-dashed border-[#1f2937] pt-3">
+                  <h5 className="text-[10px] font-black text-[#dc2626] uppercase tracking-wider mb-2 flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Lỗi pha chế:
+                  </h5>
+                  <ul className="space-y-1 text-[11px] font-bold text-[#5b6474]">
+                    {activeMistakes.map((mistake, i) => (
+                      <li key={i} className="flex items-start gap-1">
+                        <span className="text-[#dc2626] font-black">▪</span>
+                        <span>{mistake}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -65,7 +65,7 @@ export const ORDERS: Order[] = [
   {
     id: 2,
     level: 1,
-    customerName: 'Tiên Ngọc',
+    customerName: 'Tiên',
     customerSprite: 'girl',
     orderChinese: '我想喝椰果绿茶。',
     orderPinyin: 'Wǒ xiǎng hē yēguǒ lùchá.',
@@ -103,7 +103,7 @@ export const ORDERS: Order[] = [
   {
     id: 5,
     level: 2,
-    customerName: 'Tiên Vy',
+    customerName: 'Ngọc',
     customerSprite: 'girl',
     orderChinese: '请给我一杯少糖、少冰的椰果绿茶。',
     orderPinyin: 'Qǐng gěi wǒ yì bēi shǎo táng, shǎo bīng de yēguǒ lùchá.',
@@ -165,8 +165,8 @@ export const ORDERS: Order[] = [
   {
     id: 9,
     level: 3,
-    customerName: 'Cún Shiba Đi Lạc',
-    customerSprite: 'shiba',
+    customerName: 'Vy',
+    customerSprite: 'girl',
     orderChinese: '听说学好汉语可以得到杯奶茶，是真的吗？',
     orderPinyin: 'Tīng shuō xué hǎo Hànyǔ kěyǐ dé dào bēi nǎichá, shì zhēn de ma?',
     orderVietnamese: 'Nghe nói học giỏi tiếng Trung có thể nhận được trà sữa, là thật hả?',

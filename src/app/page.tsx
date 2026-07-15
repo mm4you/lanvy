@@ -443,7 +443,6 @@ export default function GamePage() {
       if (nextIndex < orders.length) {
         setCurrentOrderIndex(nextIndex);
         setSelectedIngredients([]);
-        setShowPinyin(false);
         setShowTranslation(false);
       } else {
         setGameMessage('Bà chủ Vy đã gặp hết tất cả khách hàng rồi!');

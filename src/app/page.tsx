@@ -24,7 +24,7 @@ export default function GamePage() {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [unlockedVouchers, setUnlockedVouchers] = useState<any[]>([]);
-  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với Tiệm Trà Sữa Tiên Ngọc Vy!');
+  const [gameMessage, setGameMessage] = useState<string>('Chào mừng bạn đến với Tiệm Trà Sữa Của Lan Vy!');
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [customerState, setCustomerState] = useState<'entering' | 'idle' | 'leaving' | 'disappointed'>('entering');
   const [activeMistakes, setActiveMistakes] = useState<string[]>([]);
@@ -1044,7 +1044,7 @@ export default function GamePage() {
           {/* Accent header */}
           <div className="bg-[#f59e0b] border-b-[3px] border-[#1f2937] -mx-6 -mt-6 p-4 mb-6">
             <h1 className="text-xl font-black text-[#111827] text-center tracking-wider font-serif">
-              TIỆM TRÀ SỮA TIÊN NGỌC VY
+              TIỆM TRÀ SỮA CỦA LAN VY
             </h1>
           </div>
 
@@ -1130,7 +1130,7 @@ export default function GamePage() {
             T
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Tiên Ngọc Vy</h1>
+            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Của Lan Vy</h1>
             <p className="text-xs text-[#5b6474] font-medium">Chào bà chủ: <span className="font-bold text-[#1e3b8b]">{user.username}</span></p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { INGREDIENTS, ORDERS, Ingredient, Order } from '../data/vocabulary';
+import { INGREDIENTS, ORDERS, VOCAB_LIST, Ingredient, Order, VocabWord } from '../data/vocabulary';
 
 export default function GamePage() {
   // Auth & Session state
@@ -40,6 +40,13 @@ export default function GamePage() {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [showVoucherWallet, setShowVoucherWallet] = useState(false);
   const [showCoinShop, setShowCoinShop] = useState(false);
+  const [gameCompleted, setGameCompleted] = useState(false);
+  const [showVocabModal, setShowVocabModal] = useState(false);
+  const [vocabTab, setVocabTab] = useState<'list' | 'flashcard'>('list');
+  const [currentFlashcardIdx, setCurrentFlashcardIdx] = useState(0);
+  const [flashcardFlipped, setFlashcardFlipped] = useState(false);
+  const [hearts, setHearts] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [comboCount, setComboCount] = useState(0);
   const [newlyUnlockedVoucher, setNewlyUnlockedVoucher] = useState<any | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(false);
 
@@ -49,6 +56,75 @@ export default function GamePage() {
   const audioChunksRef = useRef<Blob[]>([]);
 
   const currentOrder = orders[currentOrderIndex];
+
+  // Synthesizer for 8-bit sound effects (no external files needed!)
+  const playSfx = (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => {
+    if (typeof window === 'undefined') return;
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      
+      const playTone = (freq: number, start: number, duration: number, vol = 0.08, wave: OscillatorType = 'sine') => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = wave;
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(vol, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + duration);
+      };
+
+      const now = ctx.currentTime;
+      if (type === 'click') {
+        playTone(500, now, 0.05, 0.04, 'triangle');
+      } else if (type === 'flip') {
+        playTone(300, now, 0.04, 0.06, 'sine');
+        playTone(600, now + 0.04, 0.08, 0.06, 'sine');
+      } else if (type === 'success') {
+        playTone(523.25, now, 0.1, 0.08, 'square'); // C5
+        playTone(659.25, now + 0.08, 0.1, 0.08, 'square'); // E5
+        playTone(783.99, now + 0.16, 0.2, 0.08, 'square'); // G5
+      } else if (type === 'error') {
+        playTone(150, now, 0.15, 0.12, 'sawtooth');
+        playTone(100, now + 0.08, 0.25, 0.12, 'sawtooth');
+      } else if (type === 'perfect') {
+        playTone(523.25, now, 0.06, 0.08, 'sine');
+        playTone(659.25, now + 0.04, 0.06, 0.08, 'sine');
+        playTone(783.99, now + 0.08, 0.06, 0.08, 'sine');
+        playTone(1046.50, now + 0.12, 0.25, 0.08, 'sine'); // C6
+      } else if (type === 'levelUp') {
+        playTone(440, now, 0.1, 0.08, 'triangle'); // A4
+        playTone(554.37, now + 0.1, 0.1, 0.08, 'triangle'); // C#5
+        playTone(659.25, now + 0.2, 0.1, 0.08, 'triangle'); // E5
+        playTone(880, now + 0.3, 0.35, 0.08, 'triangle'); // A5
+      }
+    } catch (e) {
+      console.error("Audio error", e);
+    }
+  };
+
+  const handleScreenClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only trigger hearts on non-form elements to avoid focus issues
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.tagName === 'BUTTON' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') {
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const id = Date.now() + Math.random();
+    setHearts(prev => [...prev, { id, x, y }]);
+    
+    playSfx('click');
+
+    setTimeout(() => {
+      setHearts(prev => prev.filter(h => h.id !== id));
+    }, 800);
+  };
 
   // Shaking mini-game slider loop hook
   useEffect(() => {
@@ -362,6 +438,8 @@ export default function GamePage() {
       setActiveMistakes(mistakes);
       setGameMessage(currentOrder.failureMessage);
       setMessageType('error');
+      setComboCount(0);
+      playSfx('error');
     }
   };
 
@@ -379,16 +457,22 @@ export default function GamePage() {
       bonusCoins = 75;
       resultType = 'perfect';
       resultMessage = '✨ PERFECT! Lắc sữa siêu đều tay! +150 Điểm, +75 Xu. ';
+      setComboCount(prev => prev + 1);
+      playSfx('perfect');
     } else if ((sliderValue >= 20 && sliderValue < 40) || (sliderValue > 60 && sliderValue <= 80)) {
       bonusScore = 100;
       bonusCoins = 50;
       resultType = 'good';
       resultMessage = '👍 GOOD! Hương vị vừa miệng! +100 Điểm, +50 Xu. ';
+      setComboCount(prev => prev + 1);
+      playSfx('success');
     } else {
       bonusScore = 50;
       bonusCoins = 25;
       resultType = 'miss';
       resultMessage = '💨 MISS! Lắc hơi lệch một chút rồi! +50 Điểm, +25 Xu. ';
+      setComboCount(0);
+      playSfx('error');
     }
 
     setShakingResult(resultType);
@@ -412,6 +496,7 @@ export default function GamePage() {
         nextLevel = Math.min(3, currentLevel + 1);
         setCurrentLevel(nextLevel);
         setGameMessage(prev => prev + ` Chúc mừng Bà chủ đã đạt Cấp độ ${nextLevel}!`);
+        playSfx('levelUp');
       }
 
       const voucherToUnlock = currentOrder.voucherReward || null;
@@ -425,6 +510,9 @@ export default function GamePage() {
           setCurrentOrderIndex(nextOrderIndex);
           setSelectedIngredients([]);
         } else {
+          setCurrentOrderIndex(nextOrderIndex);
+          setSelectedIngredients([]);
+          setGameCompleted(true);
           setGameMessage('Tuyệt vời! Bà chủ Vy đã hoàn thành toàn bộ các cấp độ trà sữa xuất sắc!');
         }
       }, 1200);
@@ -445,6 +533,9 @@ export default function GamePage() {
         setSelectedIngredients([]);
         setShowTranslation(false);
       } else {
+        setCurrentOrderIndex(nextIndex);
+        setSelectedIngredients([]);
+        setGameCompleted(true);
         setGameMessage('Bà chủ Vy đã gặp hết tất cả khách hàng rồi!');
       }
     }, 1000);
@@ -518,6 +609,18 @@ export default function GamePage() {
       alert("Đã mở khóa gợi ý nguyên liệu tiếng Việt! Giờ đây nghĩa tiếng Việt sẽ hiện trên quầy nguyên liệu.");
       setShowCoinShop(false);
     }
+  };
+
+  // Restart / Play again handler
+  const handleRestartGame = async () => {
+    setCurrentOrderIndex(0);
+    setSelectedIngredients([]);
+    setCurrentLevel(1);
+    setGameCompleted(false);
+    setCustomerState('entering');
+    await saveProgress(score, coins, 1, null);
+    setGameMessage('Chào mừng Bà chủ Vy chơi lại từ đầu! Hãy tiếp đón khách hàng nhé.');
+    setMessageType('info');
   };
 
   // Clean audio on unmount
@@ -989,7 +1092,7 @@ export default function GamePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#fffdf8] p-4 md:p-8 flex flex-col items-center">
+    <main onClick={handleScreenClick} className="min-h-screen bg-[#fffdf8] p-4 md:p-8 flex flex-col items-center relative overflow-hidden">
       {/* Header bar */}
       <div className="w-full max-w-4xl bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
@@ -1054,6 +1157,21 @@ export default function GamePage() {
           </button>
 
           <button
+            onClick={() => {
+              setShowVocabModal(true);
+              setVocabTab('list');
+              setCurrentFlashcardIdx(0);
+              setFlashcardFlipped(false);
+            }}
+            className="px-3 py-2 bg-[#0ea5e9] text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            Sổ tay HSK
+          </button>
+
+          <button
             onClick={() => setShowCoinShop(true)}
             className="px-3 py-2 bg-[#16a34a] text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5"
           >
@@ -1080,12 +1198,20 @@ export default function GamePage() {
         <div className="w-full max-w-4xl bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-12 text-center">
           <h2 className="text-3xl font-serif font-black text-[#16a34a] mb-4">Chúc mừng em đã hoàn thành xuất sắc!</h2>
           <p className="text-[#5b6474] font-bold mb-6">Em đã chinh phục toàn bộ 9 cấp độ học trà sữa tiếng Trung rồi nhé! Cùng mở ví quà tặng để xem phần thưởng của anh nha!</p>
-          <button
-            onClick={() => setShowVoucherWallet(true)}
-            className="px-6 py-3.5 bg-[#f59e0b] border-2 border-[#1f2937] rounded-xl font-black text-sm uppercase tracking-wider shadow-[4px_4px_0px_#1f2937] hover:-translate-y-0.5 transition-all cursor-pointer"
-          >
-            MỞ VÍ QUÀ TẶNG CỦA ANH
-          </button>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <button
+              onClick={() => setShowVoucherWallet(true)}
+              className="px-6 py-3.5 bg-[#f59e0b] border-2 border-[#1f2937] rounded-xl font-black text-sm uppercase tracking-wider shadow-[4px_4px_0px_#1f2937] hover:-translate-y-0.5 transition-all cursor-pointer"
+            >
+              MỞ VÍ QUÀ TẶNG CỦA ANH
+            </button>
+            <button
+              onClick={handleRestartGame}
+              className="px-6 py-3.5 bg-[#ca8a04] hover:bg-[#a16207] text-white border-2 border-[#1f2937] rounded-xl font-black text-sm uppercase tracking-wider shadow-[4px_4px_0px_#1f2937] hover:-translate-y-0.5 transition-all cursor-pointer"
+            >
+              CHƠI LẠI TỪ ĐẦU 🔄
+            </button>
+          </div>
         </div>
       ) : (
         <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -1667,6 +1793,199 @@ export default function GamePage() {
           </div>
         </div>
       )}
+
+      {/* Sổ tay HSK Modal */}
+      {showVocabModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+          <div className="max-w-2xl w-full bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[8px_8px_0px_#1f2937] rounded-xl p-6 relative max-h-[85vh] overflow-hidden flex flex-col">
+            <button
+              onClick={() => setShowVocabModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95 z-10"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-[#0ea5e9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              Sổ tay HSK của Vy
+            </h3>
+
+            {/* Modal Tabs */}
+            <div className="flex gap-2 border-b-2 border-[#1f2937] pb-3 mb-4">
+              <button
+                onClick={() => setVocabTab('list')}
+                className={`px-4 py-2 border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer
+                  ${vocabTab === 'list' ? 'bg-[#0ea5e9] text-white' : 'bg-white text-[#111827]'}`}
+              >
+                📖 Sách từ vựng HSK
+              </button>
+              <button
+                onClick={() => {
+                  setVocabTab('flashcard');
+                  setFlashcardFlipped(false);
+                }}
+                className={`px-4 py-2 border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer
+                  ${vocabTab === 'flashcard' ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
+              >
+                ⚡ Thẻ Ghi Nhớ (Flashcards)
+              </button>
+            </div>
+
+            {/* Tab contents */}
+            {vocabTab === 'list' ? (
+              <div className="flex-1 overflow-y-auto pr-1">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b-2 border-[#1f2937] text-xs font-black text-[#5b6474] uppercase bg-gray-50">
+                      <th className="py-2 px-3">Chữ Hán</th>
+                      <th className="py-2 px-3">Phiên âm</th>
+                      <th className="py-2 px-3">Nghĩa Việt</th>
+                      <th className="py-2 px-3 text-center">HSK</th>
+                      <th className="py-2 px-3 text-center">Nghe</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#1f2937]/10 text-sm font-bold text-[#111827]">
+                    {VOCAB_LIST.map((vocab, index) => (
+                      <tr key={index} className="hover:bg-amber-50/40">
+                        <td className="py-2 px-3 font-serif text-lg font-bold">{vocab.chinese}</td>
+                        <td className="py-2 px-3 text-xs text-[#0ea5e9] font-mono">{vocab.pinyin}</td>
+                        <td className="py-2 px-3 text-xs text-[#5b6474]">{vocab.vietnamese}</td>
+                        <td className="py-2 px-3 text-center">
+                          <span className="bg-amber-100 text-amber-800 border border-amber-300 text-[9px] px-1.5 py-0.5 rounded font-mono">
+                            {vocab.level}
+                          </span>
+                        </td>
+                        <td className="py-2 px-3 text-center">
+                          <button
+                            onClick={() => {
+                              playSfx('click');
+                              const audio = new Audio(`/api/tts?text=${encodeURIComponent(vocab.chinese)}&lang=zh`);
+                              audio.play();
+                            }}
+                            className="p-1 bg-white hover:bg-gray-100 border border-[#1f2937] rounded shadow-[1px_1px_0px_#1f2937] active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
+                          >
+                            🔊
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center py-4 select-none">
+                {/* Flashcard Wrapper (Interactive flip) */}
+                <div 
+                  onClick={() => {
+                    playSfx('flip');
+                    setFlashcardFlipped(prev => !prev);
+                  }}
+                  className="w-72 h-44 bg-white border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl flex flex-col items-center justify-center p-6 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all relative overflow-hidden"
+                >
+                  {/* Badge */}
+                  <div className="absolute top-2 left-3 bg-amber-100 border border-amber-300 text-[9px] px-1.5 py-0.5 rounded font-mono font-black text-amber-800">
+                    {VOCAB_LIST[currentFlashcardIdx].level}
+                  </div>
+                  <div className="absolute top-2 right-3 text-[9.5px] font-black text-gray-400">
+                    {currentFlashcardIdx + 1}/{VOCAB_LIST.length}
+                  </div>
+
+                  {!flashcardFlipped ? (
+                    <div className="text-center">
+                      <h4 className="text-5xl font-serif font-black text-[#111827] tracking-wide mb-2 select-none">
+                        {VOCAB_LIST[currentFlashcardIdx].chinese}
+                      </h4>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider select-none animate-pulse">Bấm để lật thẻ</p>
+                    </div>
+                  ) : (
+                    <div className="text-center animate-fade-in">
+                      <p className="text-lg font-mono font-black text-[#0ea5e9] select-none">
+                        {VOCAB_LIST[currentFlashcardIdx].pinyin}
+                      </p>
+                      <h4 className="text-base font-bold text-[#111827] mt-3 px-2 select-none">
+                        {VOCAB_LIST[currentFlashcardIdx].vietnamese}
+                      </h4>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playSfx('click');
+                          const audio = new Audio(`/api/tts?text=${encodeURIComponent(VOCAB_LIST[currentFlashcardIdx].chinese)}&lang=zh`);
+                          audio.play();
+                        }}
+                        className="mt-3 px-3 py-1 bg-[#fef08a] hover:bg-[#fde047] border border-[#1f2937] rounded text-xs font-black shadow-[1px_1px_0px_#1f2937] active:scale-95 cursor-pointer inline-flex items-center gap-1"
+                      >
+                        🔊 Nghe đọc
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Navigation Controls */}
+                <div className="flex gap-4 items-center mt-6">
+                  <button
+                    onClick={() => {
+                      playSfx('click');
+                      setFlashcardFlipped(false);
+                      setCurrentFlashcardIdx(prev => (prev === 0 ? VOCAB_LIST.length - 1 : prev - 1));
+                    }}
+                    className="px-3 py-1.5 bg-[#fffdf8] hover:bg-gray-100 border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none cursor-pointer"
+                  >
+                    ◀ Trước
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      playSfx('click');
+                      setFlashcardFlipped(false);
+                      setCurrentFlashcardIdx(prev => (prev === VOCAB_LIST.length - 1 ? 0 : prev + 1));
+                    }}
+                    className="px-3 py-1.5 bg-[#fffdf8] hover:bg-gray-100 border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none cursor-pointer"
+                  >
+                    Tiếp ▶
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Floating Click Hearts */}
+      {hearts.map((h) => (
+        <span
+          key={h.id}
+          className="absolute text-red-500 font-bold pointer-events-none select-none animate-heart-float z-50 text-xl"
+          style={{ left: h.x, top: h.y - 12 }}
+        >
+          ❤️
+        </span>
+      ))}
+
+      {/* Retro CSS animations style tag */}
+      <style>{`
+        @keyframes heartFloat {
+          0% {
+            transform: translateY(0) scale(0.8);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-40px) scale(1.3);
+            opacity: 0;
+          }
+        }
+        .animate-heart-float {
+          animation: heartFloat 0.8s ease-out forwards;
+        }
+        @keyframes bounceShort {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        .animate-bounce-short {
+          animation: bounceShort 1.5s ease-in-out infinite;
+        }
+      `}</style>
     </main>
   );
 }

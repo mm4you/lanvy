@@ -65,8 +65,8 @@ export const ORDERS: Order[] = [
   {
     id: 2,
     level: 1,
-    customerName: 'Thỏ Con Lanh Chanh',
-    customerSprite: 'rabbit',
+    customerName: 'Tiên Ngọc',
+    customerSprite: 'girl',
     orderChinese: '我想喝椰果绿茶。',
     orderPinyin: 'Wǒ xiǎng hē yēguǒ lùchá.',
     orderVietnamese: 'Tôi muốn uống trà xanh thạch dừa.',
@@ -103,8 +103,8 @@ export const ORDERS: Order[] = [
   {
     id: 5,
     level: 2,
-    customerName: 'Tiểu Thỏ Nhút Nhát',
-    customerSprite: 'rabbit',
+    customerName: 'Tiên Vy',
+    customerSprite: 'girl',
     orderChinese: '请给我一杯少糖、少冰的椰果绿茶。',
     orderPinyin: 'Qǐng gěi wǒ yì bēi shǎo táng, shǎo bīng de yēguǒ lùchá.',
     orderVietnamese: 'Làm ơn cho tôi một ly trà xanh thạch dừa ít đường, ít đá.',
@@ -180,4 +180,52 @@ export const ORDERS: Order[] = [
       code: 'HAIDILAO-FEAST-VY'
     }
   }
+];
+
+export interface VocabWord {
+  chinese: string;
+  pinyin: string;
+  vietnamese: string;
+  level: string;
+}
+
+export const VOCAB_LIST: VocabWord[] = [
+  // HSK 1-3 basic words
+  { chinese: "我", pinyin: "wǒ", vietnamese: "Tôi / Ta / Anh / Em", level: "HSK 1" },
+  { chinese: "想", pinyin: "xiǎng", vietnamese: "Muốn / Nghĩ / Nhớ", level: "HSK 1" },
+  { chinese: "喝", pinyin: "hē", vietnamese: "Uống", level: "HSK 1" },
+  { chinese: "要", pinyin: "yào", vietnamese: "Muốn / Cần", level: "HSK 1" },
+  { chinese: "一杯", pinyin: "yì bēi", vietnamese: "Một ly / Một cốc", level: "HSK 1" },
+  { chinese: "给", pinyin: "gěi", vietnamese: "Cho / Đưa cho", level: "HSK 1" },
+  { chinese: "绿茶", pinyin: "lùchá", vietnamese: "Trà xanh", level: "HSK 1" },
+  { chinese: "红茶", pinyin: "hóngchá", vietnamese: "Hồng trà", level: "HSK 1" },
+  { chinese: "奶茶", pinyin: "nǎichá", vietnamese: "Trà sữa", level: "HSK 1" },
+  { chinese: "珍珠", pinyin: "zhēnzhū", vietnamese: "Trân châu", level: "HSK 2" },
+  { chinese: "椰果", pinyin: "yēguǒ", vietnamese: "Thạch dừa", level: "HSK 2" },
+  { chinese: "少糖", pinyin: "shǎo táng", vietnamese: "Ít đường", level: "HSK 3" },
+  { chinese: "半糖", pinyin: "bàn táng", vietnamese: "Nửa đường (50%)", level: "HSK 3" },
+  { chinese: "无糖", pinyin: "wú táng", vietnamese: "Không đường (0%)", level: "HSK 3" },
+  { chinese: "去冰", pinyin: "qù bīng", vietnamese: "Không đá (0%)", level: "HSK 3" },
+  { chinese: "少冰", pinyin: "shǎo bīng", vietnamese: "Ít đá", level: "HSK 3" },
+  { chinese: "多冰", pinyin: "duō bīng", vietnamese: "Nhiều đá", level: "HSK 3" },
+  // HSK 4-5 words
+  { chinese: "请", pinyin: "qǐng", vietnamese: "Xin mời / Làm ơn", level: "HSK 1" },
+  { chinese: "布丁", pinyin: "bùdīng", vietnamese: "Pudding", level: "HSK 4" },
+  { chinese: "红豆", pinyin: "hóngdòu", vietnamese: "Đậu đỏ", level: "HSK 4" },
+  { chinese: "乌龙茶", pinyin: "wūlóngchá", vietnamese: "Trà ô long", level: "HSK 4" },
+  { chinese: "加", pinyin: "jiā", vietnamese: "Thêm / Cộng", level: "HSK 4" },
+  { chinese: "because", pinyin: "yīnwèi", vietnamese: "Bởi vì", level: "HSK 3" }, // standard HSK3 translation
+  { chinese: "因为", pinyin: "yīnwèi", vietnamese: "Bởi vì", level: "HSK 3" },
+  { chinese: "已经", pinyin: "yǐjīng", vietnamese: "Đã (xảy ra)", level: "HSK 3" },
+  { chinese: "足够", pinyin: "zúgòu", vietnamese: "Đầy đủ / Đủ", level: "HSK 4" },
+  { chinese: "甜", pinyin: "tián", vietnamese: "Ngọt / Ngọt ngào", level: "HSK 2" },
+  // HSK 5-6 words
+  { chinese: "今天", pinyin: "jīntiān", vietnamese: "Hôm nay", level: "HSK 1" },
+  { chinese: "汉语", pinyin: "Hànyǔ", vietnamese: "Tiếng Trung / Hán ngữ", level: "HSK 1" },
+  { chinese: "可以", pinyin: "kěyǐ", vietnamese: "Có thể / Được phép", level: "HSK 2" },
+  { chinese: "特别", pinyin: "tèbié", vietnamese: "Đặc biệt", level: "HSK 3" },
+  { chinese: "礼物", pinyin: "lǐwù", vietnamese: "Món quà", level: "HSK 3" },
+  { chinese: "听说", pinyin: "tīngshuō", vietnamese: "Nghe nói", level: "HSK 4" },
+  { chinese: "得到", pinyin: "dédào", vietnamese: "Nhận được / Đạt được", level: "HSK 4" },
+  { chinese: "是真的吗", pinyin: "shì zhēn de ma", vietnamese: "Có thật không?", level: "HSK 2" }
 ];

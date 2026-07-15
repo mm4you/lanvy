@@ -12,10 +12,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Thao tác quá nhanh. Vui lòng thử lại sau.' }, { status: 429 });
     }
 
-    const { username, password } = await request.json().catch(() => ({}));
+    const { username, password, email } = await request.json().catch(() => ({}));
 
-    if (!username || !password) {
-      return NextResponse.json({ error: 'Vui lòng nhập đầy đủ tên tài khoản và mật khẩu.' }, { status: 400 });
+    if (!username || !password || !email) {
+      return NextResponse.json({ error: 'Vui lòng nhập đầy đủ thông tin.' }, { status: 400 });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Email không hợp lệ.' }, { status: 400 });
     }
 
     if (username.length < 3 || username.length > 20) {
@@ -30,9 +35,15 @@ export async function POST(request: Request) {
     const existingUser = await prisma.user.findUnique({
       where: { username: username.toLowerCase() }
     });
-
     if (existingUser) {
       return NextResponse.json({ error: 'Tên tài khoản này đã được sử dụng.' }, { status: 400 });
+    }
+
+    const existingEmail = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() }
+    });
+    if (existingEmail) {
+      return NextResponse.json({ error: 'Email này đã được sử dụng.' }, { status: 400 });
     }
 
     // Hash password
@@ -43,6 +54,7 @@ export async function POST(request: Request) {
       const newUser = await tx.user.create({
         data: {
           username: username.toLowerCase(),
+          email: email.toLowerCase(),
           password: hashedPassword
         }
       });
@@ -62,7 +74,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       userId: user.id,
-      username: user.username
+      username: user.username,
+      email: user.email
     });
   } catch (error) {
     console.error('Registration error:', error);

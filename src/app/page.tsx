@@ -5,12 +5,16 @@ import { INGREDIENTS, ORDERS, VOCAB_LIST, Ingredient, Order, VocabWord } from '.
 
 export default function GamePage() {
   // Auth & Session state
-  const [user, setUser] = useState<{ id: string; username: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; username: string; email: string } | null>(null);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [usernameInput, setUsernameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
+
+  const LOVE_EMAIL = 'nguyenthilanvy12a2@gmail.com';
+  const isLoveUser = user?.email?.toLowerCase() === LOVE_EMAIL;
 
   // Game state
   const [orders, setOrders] = useState<Order[]>(ORDERS);
@@ -150,8 +154,9 @@ export default function GamePage() {
   useEffect(() => {
     const savedUserId = localStorage.getItem('boba_game_user_id');
     const savedUsername = localStorage.getItem('boba_game_username');
+    const savedEmail = localStorage.getItem('boba_game_email');
     if (savedUserId && savedUsername) {
-      const userData = { id: savedUserId, username: savedUsername };
+      const userData = { id: savedUserId, username: savedUsername, email: savedEmail || '' };
       setUser(userData);
       fetchProgress(userData.id);
     }
@@ -188,7 +193,7 @@ export default function GamePage() {
   // Auth actions
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!usernameInput || !passwordInput) {
+    if (!usernameInput || !passwordInput || (authMode === 'register' && !emailInput)) {
       setAuthError('Vui lòng nhập đầy đủ thông tin.');
       return;
     }
@@ -197,16 +202,19 @@ export default function GamePage() {
 
     const endpoint = authMode === 'login' ? '/api/login' : '/api/register';
     try {
+      const body: any = { username: usernameInput, password: passwordInput };
+      if (authMode === 'register') body.email = emailInput;
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: usernameInput, password: passwordInput })
+        body: JSON.stringify(body)
       });
       const data = await res.json();
       if (res.ok && data.success) {
         localStorage.setItem('boba_game_user_id', data.userId);
         localStorage.setItem('boba_game_username', data.username);
-        const userData = { id: data.userId, username: data.username };
+        localStorage.setItem('boba_game_email', data.email || '');
+        const userData = { id: data.userId, username: data.username, email: data.email || '' };
         setUser(userData);
         await fetchProgress(data.userId);
       } else {
@@ -222,6 +230,7 @@ export default function GamePage() {
   const handleLogout = () => {
     localStorage.removeItem('boba_game_user_id');
     localStorage.removeItem('boba_game_username');
+    localStorage.removeItem('boba_game_email');
     setUser(null);
     setSelectedIngredients([]);
     setUnlockedVouchers([]);
@@ -1049,6 +1058,19 @@ export default function GamePage() {
               />
             </div>
 
+            {authMode === 'register' && (
+              <div>
+                <label className="block text-xs font-black text-[#111827] uppercase tracking-wide mb-1">Email</label>
+                <input
+                  type="email"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  className="w-full p-3 border-2 border-[#1f2937] bg-white rounded-lg font-bold text-base focus:outline-none shadow-[2px_2px_0px_#1f2937]"
+                  placeholder="Nhập email..."
+                />
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-black text-[#111827] uppercase tracking-wide mb-1">Mật khẩu</label>
               <input
@@ -1724,11 +1746,11 @@ export default function GamePage() {
               <svg className="w-5 h-5 text-[#16a34a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Cửa hàng tình yêu của Vy
+              {isLoveUser ? 'Cửa hàng tình yêu của Vy' : 'Cửa hàng xu vàng'}
             </h3>
             
             <p className="text-xs text-[#5b6474] font-bold mb-4">
-              Bà chủ đang có: <span className="text-[#16a34a] font-black">{coins} xu vàng</span>. Hãy dùng xu tích lũy để mở khóa quà tặng ngọt ngào từ anh Khang!
+              Bà chủ đang có: <span className="text-[#16a34a] font-black">{coins} xu vàng</span>. {isLoveUser ? 'Hãy dùng xu tích lũy để mở khóa quà tặng ngọt ngào từ anh Khang!' : 'Hãy dùng xu tích lũy để mở khóa vật phẩm hỗ trợ!'}
             </p>
 
             <div className="space-y-4">
@@ -1748,6 +1770,8 @@ export default function GamePage() {
                 </button>
               </div>
 
+              {/* Love-only items - chỉ hiện cho nguyenthilanvy12a2@gmail.com */}
+              {isLoveUser && (<>
               {/* Item 2: Boba Real Voucher */}
               <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
                 <div>
@@ -1789,6 +1813,7 @@ export default function GamePage() {
                   200 Xu
                 </button>
               </div>
+              </>)}
             </div>
           </div>
         </div>

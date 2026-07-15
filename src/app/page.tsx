@@ -866,7 +866,7 @@ export default function GamePage() {
               <div className="flex flex-col items-center z-10 relative pb-1">
                 {/* Boss Label */}
                 <span className="bg-[#16a34a] text-white border border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1">
-                  Bà chủ Vy Vy
+                  Bà chủ Lan Vy
                 </span>
                 
                 {/* Boss Sprite Container */}

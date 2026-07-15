@@ -509,10 +509,10 @@ export default function GamePage() {
             <rect x="22" y="25" width="2" height="4" fill="#172554" />
           </svg>
         );
-      default: // Lan Vy sprite (Long layered black hair, wispy bangs, white puff floral top)
+      default: // Lan Vy sprite (Long layered black hair with highlights, red bow, anime eyes, floral top)
         return (
           <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
-            {/* Hair Voxel */}
+            {/* Hair Voxel base */}
             <rect x="6" y="2" width="20" height="9" fill="#18181b" />
             {/* Shaggy long hair side panels */}
             <rect x="4" y="10" width="4" height="14" fill="#18181b" />
@@ -522,7 +522,15 @@ export default function GamePage() {
             {/* Hair 3D shade right edge */}
             <rect x="25" y="3" width="1" height="8" fill="#09090b" />
             <rect x="26" y="10" width="2" height="14" fill="#09090b" />
-            {/* Face Voxel */}
+            {/* Hair silky highlights on top */}
+            <rect x="8" y="3" width="12" height="1" fill="#52525b" />
+            
+            {/* Cute red hair bow on the left side */}
+            <rect x="5" y="4" width="2" height="2" fill="#ef4444" />
+            <rect x="7" y="5" width="1" height="1" fill="#fecdd3" /> {/* knot */}
+            <rect x="8" y="4" width="2" height="2" fill="#ef4444" />
+
+            {/* Face Voxel (Soft peach skin) */}
             <rect x="8" y="8" width="16" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
             {/* Face 3D shade edge */}
             <rect x="22" y="9" width="2" height="13" fill="#fed7aa" />
@@ -531,18 +539,29 @@ export default function GamePage() {
             <rect x="12" y="8" width="2" height="3" fill="#18181b" />
             <rect x="16" y="8" width="1" height="4" fill="#18181b" />
             <rect x="20" y="8" width="2" height="3" fill="#18181b" />
-            {/* Eyes */}
+            
+            {/* Eyes (Anime double eyelids with eyelashes & shiny highlights) */}
             <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
             <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
             <rect x="9" y="12" width="4" height="1" fill="#78350f" />
             <rect x="19" y="12" width="4" height="1" fill="#78350f" />
+            <rect x="9" y="13" width="1" height="1" fill="#1f2937" /> {/* Lash wing */}
+            <rect x="21" y="13" width="1" height="1" fill="#1f2937" /> {/* Lash wing */}
+            <rect x="11" y="13" width="1" height="1" fill="#ffffff" /> {/* Eye glint */}
+            <rect x="21" y="13" width="1" height="1" fill="#ffffff" /> {/* Eye glint */}
+
             {/* Pink blush cheeks */}
-            <rect x="7" y="16" width="3" height="2" fill="#fca5a5" />
-            <rect x="22" y="16" width="3" height="2" fill="#fca5a5" />
-            {/* Lips */}
-            <rect x="13" y="18" width="6" height="2" fill="#db2777" />
-            {/* Neckline */}
+            <rect x="7" y="16" width="3" height="2" fill="#fda4af" />
+            <rect x="22" y="16" width="3" height="2" fill="#fda4af" />
+            
+            {/* Rosy lips (Tiny sweet smile) */}
+            <rect x="14" y="18" width="3" height="1" fill="#db2777" />
+            <rect x="15" y="19" width="1" height="1" fill="#db2777" />
+
+            {/* Neckline & Red Heart Pendant Necklace */}
             <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
+            <rect x="14.5" y="23.5" width="2" height="1" fill="#ef4444" /> {/* Heart pendant */}
+
             {/* Body (White puff top) */}
             <rect x="8" y="24" width="16" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
             <rect x="22" y="25" width="2" height="4" fill="#e4e4e7" /> {/* Body 3D shade */}

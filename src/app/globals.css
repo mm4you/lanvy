@@ -1,26 +1,54 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #fffdf8;
+  --paper: #fffaf0;
+  --ink: #111827;
+  --muted: #5b6474;
+  --line: #1f2937;
+  --blue: #0ea5e9;
+  --green: #16a34a;
+  --red: #dc2626;
+  --yellow: #f59e0b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-paper: var(--paper);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-brand-blue: var(--blue);
+  --color-brand-green: var(--green);
+  --color-brand-red: var(--red);
+  --color-brand-yellow: var(--yellow);
+  --font-sans: var(--font-space-grotesk), "Segoe UI", sans-serif;
+  --font-serif: var(--font-fraunces), "Times New Roman", serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  color: var(--ink);
+  background:
+    linear-gradient(90deg, rgba(17, 24, 39, 0.02) 1px, transparent 1px),
+    linear-gradient(rgba(17, 24, 39, 0.02) 1px, transparent 1px),
+    var(--bg);
+  background-size: 28px 28px;
+  font-family: var(--font-sans);
+}
+
+/* Pixel rendering rendering helpers */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+@keyframes bounce-short {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-bounce-short {
+  animation: bounce-short 1s ease-in-out infinite;
 }

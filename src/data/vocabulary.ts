@@ -142,7 +142,7 @@ export const ORDERS: Order[] = [
     voucherReward: {
       title: 'VOUCHER TRÀ SỮA ĐỜI THỰC',
       description: 'Phiếu đổi 1 ly trà sữa Gongcha/KoiThé bất kỳ do anh Khang mua tặng.',
-      code: 'BOBA-LOVE-100-HANG'
+      code: 'BOBA-LOVE-100-VY'
     }
   },
   {
@@ -153,14 +153,14 @@ export const ORDERS: Order[] = [
     orderChinese: '今天你学得很好，我想送你一份特别的礼物。',
     orderPinyin: 'Jīntiān nǐ xué de hěn hǎo, wǒ xiǎng sòng nǐ yí fèn tèbié de lǐwù.',
     orderVietnamese: 'Hôm nay em học rất tốt, anh muốn tặng em một phần quà đặc biệt.',
-    targetIngredients: ['奶茶', '布丁', '半糖', '去冰'], // Special mixed order
+    targetIngredients: ['奶茶', '布丁', '半糖', '去冰'],
     successMessage: 'Bất ngờ chưa! Mở phần quà đặc biệt bên dưới nhé!',
     failureMessage: 'Làm sai công thức quà tặng rồi em ơi!',
     isLoveOrder: true,
     voucherReward: {
       title: 'VOUCHER PHIM ẢNH HẸN HÒ',
       description: 'Phiếu đổi 1 buổi đi xem phim CGV cuối tuần kèm bắp nước do anh Khang tháp tùng.',
-      code: 'MOVIE-DATE-CGV-HANG'
+      code: 'MOVIE-DATE-CGV-VY'
     }
   },
   {
@@ -178,7 +178,7 @@ export const ORDERS: Order[] = [
     voucherReward: {
       title: 'VOUCHER ĂN ĐỒ TRUNG HOA',
       description: 'Phiếu đổi 1 bữa tiệc sủi cảo/lẩu Haidilao no nê do anh Khang bao trọn gói.',
-      code: 'HAIDILAO-FEAST-HANG'
+      code: 'HAIDILAO-FEAST-VY'
     }
   }
 ];

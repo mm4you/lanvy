@@ -397,44 +397,66 @@ export default function GamePage() {
       case 'khang':
         return (
           <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
-            {/* Hair */}
-            <rect x="6" y="2" width="20" height="8" fill="#1f2937" />
+            {/* Voluminous wavy black hair */}
+            <rect x="8" y="1" width="16" height="3" fill="#1f2937" />
+            <rect x="6" y="3" width="20" height="6" fill="#1f2937" />
+            <rect x="5" y="6" width="22" height="3" fill="#1f2937" />
             {/* Sideburns */}
-            <rect x="6" y="10" width="2" height="6" fill="#1f2937" />
-            <rect x="24" y="10" width="2" height="6" fill="#1f2937" />
-            {/* Face */}
+            <rect x="6" y="9" width="2" height="5" fill="#1f2937" />
+            <rect x="24" y="9" width="2" height="5" fill="#1f2937" />
+            {/* Face (Warm skin tone) */}
             <rect x="8" y="8" width="16" height="16" fill="#fcd34d" stroke="#1f2937" strokeWidth="2" />
             {/* Eyes */}
-            <rect x="10" y="12" width="2" height="2" fill="#1f2937" />
-            <rect x="20" y="12" width="2" height="2" fill="#1f2937" />
-            {/* Mouth */}
+            <rect x="10" y="13" width="2" height="2" fill="#1f2937" />
+            <rect x="20" y="13" width="2" height="2" fill="#1f2937" />
+            {/* Round glasses frames */}
+            <rect x="9" y="11" width="5" height="4" fill="none" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="18" y="11" width="5" height="4" fill="none" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="14" y="12" width="4" height="1.5" fill="#1f2937" />
+            {/* Mouth (Friendly smile) */}
             <rect x="13" y="18" width="6" height="2" fill="#ef4444" />
-            {/* Body (Blue jacket) */}
-            <rect x="8" y="24" width="16" height="6" fill="#0ea5e9" stroke="#1f2937" strokeWidth="2" />
-            {/* Yellow inner shirt */}
-            <rect x="14" y="24" width="4" height="4" fill="#f59e0b" />
+            {/* Body (Dark blue crewneck t-shirt) */}
+            <rect x="8" y="24" width="16" height="6" fill="#1e3b8b" stroke="#1f2937" strokeWidth="2" />
           </svg>
         );
-      default: // Cute girl sprite
+      default: // Lan Vy sprite based on photo (Long layered black hair, wispy bangs, floral top)
         return (
           <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
-            {/* Hair */}
-            <rect x="6" y="2" width="20" height="10" fill="#78350f" />
-            {/* Long Hair sides */}
-            <rect x="4" y="12" width="4" height="12" fill="#78350f" />
-            <rect x="24" y="12" width="4" height="12" fill="#78350f" />
-            {/* Face */}
-            <rect x="8" y="8" width="16" height="14" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
-            {/* Eyes */}
-            <rect x="10" y="12" width="2" height="2" fill="#1f2937" />
-            <rect x="20" y="12" width="2" height="2" fill="#1f2937" />
-            {/* Blush */}
-            <rect x="8" y="15" width="2" height="2" fill="#fca5a5" />
-            <rect x="22" y="15" width="2" height="2" fill="#fca5a5" />
-            {/* Mouth */}
-            <rect x="14" y="16" width="4" height="2" fill="#ef4444" />
-            {/* Body (Pink dress) */}
-            <rect x="8" y="22" width="16" height="8" fill="#f43f5e" stroke="#1f2937" strokeWidth="2" />
+            {/* Long black hair base */}
+            <rect x="6" y="2" width="20" height="9" fill="#18181b" />
+            {/* Shaggy long hair side panels down to chest */}
+            <rect x="4" y="10" width="4" height="14" fill="#18181b" />
+            <rect x="24" y="10" width="4" height="14" fill="#18181b" />
+            <rect x="3" y="13" width="2" height="8" fill="#18181b" />
+            <rect x="27" y="13" width="2" height="8" fill="#18181b" />
+            {/* Face (Fair peach skin tone) */}
+            <rect x="8" y="8" width="16" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
+            {/* Wispy/airy bangs on forehead */}
+            <rect x="9" y="8" width="1" height="4" fill="#18181b" />
+            <rect x="12" y="8" width="2" height="3" fill="#18181b" />
+            <rect x="16" y="8" width="1" height="4" fill="#18181b" />
+            <rect x="20" y="8" width="2" height="3" fill="#18181b" />
+            {/* Eyes (Big dark eyes with double eyelids) */}
+            <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="9" y="12" width="4" height="1" fill="#78350f" />
+            <rect x="19" y="12" width="4" height="1" fill="#78350f" />
+            {/* Pink blush cheeks */}
+            <rect x="7" y="16" width="3" height="2" fill="#fca5a5" />
+            <rect x="22" y="16" width="3" height="2" fill="#fca5a5" />
+            {/* Rosy lips */}
+            <rect x="13" y="18" width="6" height="2" fill="#db2777" />
+            {/* Neckline */}
+            <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
+            {/* Body (White puff-sleeved top with small pink floral dots) */}
+            <rect x="8" y="24" width="16" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            {/* Puff sleeves */}
+            <rect x="6" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="23" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+            {/* Floral dots */}
+            <rect x="10" y="26" width="1" height="1" fill="#f43f5e" />
+            <rect x="19" y="25" width="1" height="1" fill="#f43f5e" />
+            <rect x="15" y="27" width="1" height="1" fill="#f59e0b" />
           </svg>
         );
     }

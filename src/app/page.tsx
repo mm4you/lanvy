@@ -20,18 +20,26 @@ export default function GamePage() {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [unlockedVouchers, setUnlockedVouchers] = useState<any[]>([]);
-  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với Tiệm Trà Sữa Bé Vy Đáng Yêu!');
+  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với Tiệm Trà Sữa Tiên Ngọc Vy!');
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [customerState, setCustomerState] = useState<'entering' | 'idle' | 'leaving' | 'disappointed'>('entering');
   const [activeMistakes, setActiveMistakes] = useState<string[]>([]);
 
+  // Shaking mini-game states
+  const [isShakingGameActive, setIsShakingGameActive] = useState(false);
+  const [sliderValue, setSliderValue] = useState(0);
+  const [sliderDirection, setSliderDirection] = useState(1);
+  const [shakingResult, setShakingResult] = useState<'perfect' | 'good' | 'miss' | null>(null);
+
   // Interactive states
-  const [showPinyin, setShowPinyin] = useState(false);
+  const [showPinyin, setShowPinyin] = useState(true);
   const [showTranslation, setShowTranslation] = useState(false);
+  const [showIngredientHelp, setShowIngredientHelp] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [showVoucherWallet, setShowVoucherWallet] = useState(false);
+  const [showCoinShop, setShowCoinShop] = useState(false);
   const [newlyUnlockedVoucher, setNewlyUnlockedVoucher] = useState<any | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(false);
 
@@ -41,6 +49,26 @@ export default function GamePage() {
   const audioChunksRef = useRef<Blob[]>([]);
 
   const currentOrder = orders[currentOrderIndex];
+
+  // Shaking mini-game slider loop hook
+  useEffect(() => {
+    if (!isShakingGameActive) return;
+    const interval = setInterval(() => {
+      setSliderValue((prev) => {
+        let next = prev + 5 * sliderDirection;
+        if (next >= 100) {
+          setSliderDirection(-1);
+          return 100;
+        }
+        if (next <= 0) {
+          setSliderDirection(1);
+          return 0;
+        }
+        return next;
+      });
+    }, 30);
+    return () => clearInterval(interval);
+  }, [isShakingGameActive, sliderDirection]);
 
   // Try to load session from localStorage
   useEffect(() => {
@@ -289,47 +317,12 @@ export default function GamePage() {
       currentOrder.targetIngredients.every(item => selectedIngredients.includes(item));
 
     if (isCorrect) {
-      const bonusScore = 100;
-      const bonusCoins = 50;
-      const nextScore = score + bonusScore;
-      const nextCoins = coins + bonusCoins;
-      
-      setScore(nextScore);
-      setCoins(nextCoins);
-      setGameMessage(currentOrder.successMessage);
-      setMessageType('success');
+      setIsShakingGameActive(true);
+      setSliderValue(0);
+      setShakingResult(null);
+      setGameMessage('Đang lắc trà sữa! Hãy bấm DỪNG LẮC khi kim chỉ đúng vào vùng màu xanh lá để đạt vị ngon xuất sắc nhé!');
+      setMessageType('info');
       setActiveMistakes([]);
-
-      // Customer walks out happily
-      setCustomerState('leaving');
-
-      // Check level up (every 3 orders increases level)
-      let nextLevel = currentLevel;
-      const nextOrderIndex = currentOrderIndex + 1;
-      
-      if (nextOrderIndex > 0 && nextOrderIndex % 3 === 0) {
-        nextLevel = Math.min(3, currentLevel + 1);
-        setCurrentLevel(nextLevel);
-        setGameMessage(prev => prev + ` Chúc mừng Bà chủ đã đạt Cấp độ ${nextLevel}!`);
-      }
-
-      // Check if this order has a voucher reward
-      const voucherToUnlock = currentOrder.voucherReward || null;
-
-      // Sync stats and vouchers
-      saveProgress(nextScore, nextCoins, nextLevel, voucherToUnlock);
-
-      // Go to next order after customer walks out
-      setTimeout(() => {
-        if (nextOrderIndex < orders.length) {
-          setCurrentOrderIndex(nextOrderIndex);
-          setSelectedIngredients([]);
-          setShowPinyin(false);
-          setShowTranslation(false);
-        } else {
-          setGameMessage('Tuyệt vời! Bà chủ Vy đã hoàn thành toàn bộ các cấp độ trà sữa xuất sắc!');
-        }
-      }, 1200);
     } else {
       // Customer is disappointed
       setCustomerState('disappointed');
@@ -372,6 +365,72 @@ export default function GamePage() {
     }
   };
 
+  // Stop Shaking timing handler
+  const handleStopShaking = () => {
+    if (!isShakingGameActive || !currentOrder) return;
+
+    let bonusScore = 100;
+    let bonusCoins = 50;
+    let resultType: 'perfect' | 'good' | 'miss' = 'good';
+    let resultMessage = '';
+
+    if (sliderValue >= 40 && sliderValue <= 60) {
+      bonusScore = 150;
+      bonusCoins = 75;
+      resultType = 'perfect';
+      resultMessage = '✨ PERFECT! Lắc sữa siêu đều tay! +150 Điểm, +75 Xu. ';
+    } else if ((sliderValue >= 20 && sliderValue < 40) || (sliderValue > 60 && sliderValue <= 80)) {
+      bonusScore = 100;
+      bonusCoins = 50;
+      resultType = 'good';
+      resultMessage = '👍 GOOD! Hương vị vừa miệng! +100 Điểm, +50 Xu. ';
+    } else {
+      bonusScore = 50;
+      bonusCoins = 25;
+      resultType = 'miss';
+      resultMessage = '💨 MISS! Lắc hơi lệch một chút rồi! +50 Điểm, +25 Xu. ';
+    }
+
+    setShakingResult(resultType);
+    setGameMessage(resultMessage + currentOrder.successMessage);
+    setMessageType(resultType === 'miss' ? 'error' : 'success');
+
+    setTimeout(() => {
+      const nextScore = score + bonusScore;
+      const nextCoins = coins + bonusCoins;
+      
+      setScore(nextScore);
+      setCoins(nextCoins);
+      setActiveMistakes([]);
+
+      setCustomerState('leaving');
+
+      let nextLevel = currentLevel;
+      const nextOrderIndex = currentOrderIndex + 1;
+      
+      if (nextOrderIndex > 0 && nextOrderIndex % 3 === 0) {
+        nextLevel = Math.min(3, currentLevel + 1);
+        setCurrentLevel(nextLevel);
+        setGameMessage(prev => prev + ` Chúc mừng Bà chủ đã đạt Cấp độ ${nextLevel}!`);
+      }
+
+      const voucherToUnlock = currentOrder.voucherReward || null;
+      saveProgress(nextScore, nextCoins, nextLevel, voucherToUnlock);
+
+      setIsShakingGameActive(false);
+      setShakingResult(null);
+
+      setTimeout(() => {
+        if (nextOrderIndex < orders.length) {
+          setCurrentOrderIndex(nextOrderIndex);
+          setSelectedIngredients([]);
+        } else {
+          setGameMessage('Tuyệt vời! Bà chủ Vy đã hoàn thành toàn bộ các cấp độ trà sữa xuất sắc!');
+        }
+      }, 1200);
+    }, 1500);
+  };
+
   // Skip / Next Customer handler
   const handleNextCustomer = () => {
     if (customerState === 'leaving' || customerState === 'entering') return;
@@ -410,6 +469,55 @@ export default function GamePage() {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  // Buy item from coin shop
+  const handleBuyItem = async (type: 'hint' | 'voucher_milktea' | 'voucher_hug' | 'voucher_date') => {
+    let cost = 0;
+    let newVoucher = null;
+    
+    if (type === 'hint') {
+      cost = 20;
+      setShowIngredientHelp(true);
+    } else if (type === 'voucher_milktea') {
+      cost = 150;
+      newVoucher = {
+        title: "VOUCHER TRÀ SỮA MUA TẶNG",
+        description: "Phiếu đổi 1 ly trà sữa Gongcha/KoiThé bất kỳ do anh Khang trực tiếp mua tặng bé.",
+        code: `SHOP-BOBA-${Date.now()}`
+      };
+    } else if (type === 'voucher_hug') {
+      cost = 100;
+      newVoucher = {
+        title: "VOUCHER KHANG ÔM BÉ",
+        description: "Phiếu đổi 1 cái ôm siết chặt ấm áp từ bạn trai Nhựt Khang bất cứ lúc nào bé muốn.",
+        code: `SHOP-HUG-${Date.now()}`
+      };
+    } else if (type === 'voucher_date') {
+      cost = 200;
+      newVoucher = {
+        title: "VOUCHER BUỔI HẸN HÒ CÔNG CHÚA",
+        description: "Phiếu đổi 1 ngày hẹn hò trọn vẹn do anh Khang lên lịch, làm xế xe và chiêu đãi bé từ A đến Z.",
+        code: `SHOP-DATE-${Date.now()}`
+      };
+    }
+
+    if (coins < cost) {
+      alert("Bà chủ không đủ xu vàng rồi! Hãy pha thêm trà sữa để tích lũy thêm xu nhé!");
+      return;
+    }
+
+    const nextCoins = coins - cost;
+    setCoins(nextCoins);
+    
+    if (newVoucher) {
+      await saveProgress(score, nextCoins, currentLevel, newVoucher);
+      setShowCoinShop(false);
+    } else {
+      await saveProgress(score, nextCoins, currentLevel, null);
+      alert("Đã mở khóa gợi ý nguyên liệu tiếng Việt! Giờ đây nghĩa tiếng Việt sẽ hiện trên quầy nguyên liệu.");
+      setShowCoinShop(false);
     }
   };
 
@@ -507,6 +615,91 @@ export default function GamePage() {
             <rect x="8" y="24" width="16" height="6" fill="#1e3b8b" stroke="#1f2937" strokeWidth="2" />
             {/* Shirt 3D shade */}
             <rect x="22" y="25" width="2" height="4" fill="#172554" />
+          </svg>
+        );
+      case 'rabbit':
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Rabbit long floppy ears (with 3D depth) */}
+            <rect x="5" y="4" width="4" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="6" y="5" width="2" height="8" fill="#fda4af" /> {/* inner ear */}
+            <rect x="23" y="4" width="4" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="24" y="5" width="2" height="8" fill="#fda4af" /> {/* inner ear */}
+            {/* Head Voxel */}
+            <rect x="7" y="8" width="18" height="16" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            {/* Head 3D shade edge */}
+            <rect x="23" y="9" width="2" height="14" fill="#e4e4e7" />
+            {/* Eyes (Cute anime eyes) */}
+            <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="11" y="13" width="1" height="1" fill="#ffffff" />
+            <rect x="21" y="13" width="1" height="1" fill="#ffffff" />
+            {/* Pink cheeks */}
+            <rect x="8" y="16" width="3" height="2" fill="#fecdd3" />
+            <rect x="21" y="16" width="3" height="2" fill="#fecdd3" />
+            {/* Nose & Mouth */}
+            <rect x="15" y="17" width="2" height="1.5" fill="#f43f5e" />
+            <rect x="14" y="19" width="4" height="1" fill="#1f2937" />
+            {/* Body (Pink shirt) */}
+            <rect x="9" y="24" width="14" height="6" fill="#f472b6" stroke="#1f2937" strokeWidth="2" />
+            <rect x="21" y="25" width="2" height="4" fill="#db2777" />
+          </svg>
+        );
+      case 'shiba':
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Shiba pointy ears */}
+            <rect x="6" y="3" width="5" height="5" fill="#f59e0b" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="7" y="4" width="3" height="3" fill="#fffaf0" />
+            <rect x="21" y="3" width="5" height="5" fill="#f59e0b" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="22" y="4" width="3" height="3" fill="#fffaf0" />
+            {/* Head Voxel */}
+            <rect x="6" y="8" width="20" height="16" fill="#f59e0b" stroke="#1f2937" strokeWidth="2" />
+            {/* Head 3D shade edge */}
+            <rect x="24" y="9" width="2" height="14" fill="#d97706" />
+            {/* White face cheeks panel */}
+            <rect x="9" y="15" width="14" height="9" fill="#fffaf0" />
+            <rect x="21" y="15" width="2" height="9" fill="#e5e5e0" />
+            {/* Eyes with Shiba white dots eyebrows */}
+            <rect x="10" y="13" width="2" height="2" fill="#1f2937" />
+            <rect x="20" y="13" width="2" height="2" fill="#1f2937" />
+            <rect x="10" y="11" width="2" height="1" fill="#fffaf0" /> {/* eyebrow */}
+            <rect x="20" y="11" width="2" height="1" fill="#fffaf0" /> {/* eyebrow */}
+            {/* Nose/Muzzle */}
+            <rect x="14" y="16" width="4" height="3" fill="#1f2937" />
+            <rect x="15" y="17" width="2" height="1" fill="#ffffff" />
+            {/* Body with red scarf/collar */}
+            <rect x="8" y="24" width="16" height="6" fill="#d97706" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="25" width="2" height="4" fill="#b45309" />
+            {/* Red scarf collar */}
+            <rect x="8" y="24" width="16" height="2" fill="#dc2626" />
+            <circle cx="16" cy="27" r="1.5" fill="#f59e0b" /> {/* Bell */}
+          </svg>
+        );
+      case 'bear':
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Bear round ears */}
+            <rect x="6" y="4" width="6" height="5" fill="#78350f" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="20" y="4" width="6" height="5" fill="#78350f" stroke="#1f2937" strokeWidth="1.5" />
+            {/* Head Voxel */}
+            <rect x="6" y="8" width="20" height="16" fill="#78350f" stroke="#1f2937" strokeWidth="2" />
+            {/* Head 3D shade edge */}
+            <rect x="24" y="9" width="2" height="14" fill="#451a03" />
+            {/* Muzzle */}
+            <rect x="12" y="15" width="8" height="6" fill="#fef3c7" stroke="#1f2937" strokeWidth="1" />
+            <rect x="15" y="16" width="2" height="2" fill="#1f2937" /> {/* Nose */}
+            {/* Eyes */}
+            <rect x="10" y="12" width="2" height="2" fill="#1f2937" />
+            <rect x="20" y="12" width="2" height="2" fill="#1f2937" />
+            <rect x="11" y="12" width="1" height="1" fill="#ffffff" />
+            <rect x="21" y="12" width="1" height="1" fill="#ffffff" />
+            {/* Blush */}
+            <rect x="8" y="15" width="2" height="2" fill="#fca5a5" />
+            <rect x="22" y="15" width="2" height="2" fill="#fca5a5" />
+            {/* Body Voxel (Green shirt) */}
+            <rect x="8" y="24" width="16" height="6" fill="#15803d" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="25" width="2" height="4" fill="#166534" />
           </svg>
         );
       default: // Lan Vy sprite (Long layered black hair with highlights, red bow, anime eyes, floral top)
@@ -732,13 +925,13 @@ export default function GamePage() {
           {/* Accent header */}
           <div className="bg-[#f59e0b] border-b-[3px] border-[#1f2937] -mx-6 -mt-6 p-4 mb-6">
             <h1 className="text-xl font-black text-[#111827] text-center tracking-wider font-serif">
-              TIỆM TRÀ SỮA BÉ VY ĐÁNG YÊU
+              TIỆM TRÀ SỮA TIÊN NGỌC VY
             </h1>
           </div>
 
           <div className="text-center mb-6">
             <p className="text-sm font-bold text-[#5b6474]">
-              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý Tiệm Trà Sữa Bé Vy Đáng Yêu của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
+              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý Tiệm Trà Sữa Tiên Ngọc Vy của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
             </p>
           </div>
 
@@ -805,7 +998,7 @@ export default function GamePage() {
             T
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Bé Vy Đáng Yêu</h1>
+            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Tiên Ngọc Vy</h1>
             <p className="text-xs text-[#5b6474] font-medium">Chào bà chủ: <span className="font-bold text-[#1e3b8b]">{user.username}</span></p>
           </div>
         </div>
@@ -835,6 +1028,16 @@ export default function GamePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
             </svg>
             Quà tặng ({unlockedVouchers.length})
+          </button>
+
+          <button
+            onClick={() => setShowCoinShop(true)}
+            className="px-3 py-2 bg-[#16a34a] text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Cửa hàng ({coins} xu)
           </button>
 
           <button
@@ -1049,55 +1252,130 @@ export default function GamePage() {
             </div>
           </div>
 
-          {/* 3. Shaker Cup & Control dashboard (Third on mobile, Right column on desktop - row-span-2) */}
+          {/* 3. Shaker Cup & Control dashboard */}
           <div className="order-3 lg:col-span-1 lg:row-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 text-center flex flex-col justify-between min-h-[300px] lg:h-full">
-            <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-2">
-              Ly pha chế của bà chủ
-            </h3>
+            {isShakingGameActive ? (
+              <div className="flex flex-col justify-between h-full w-full">
+                <div>
+                  <h3 className="text-xs font-black text-[#dc2626] uppercase tracking-wider mb-2 animate-pulse">
+                    ⚡ LẮC ĐỀU BÌNH ⚡
+                  </h3>
+                  
+                  {/* Boba Cup with shaking motion class */}
+                  <div className="my-2 animate-bounce-short">
+                    {renderBobaCup()}
+                  </div>
+                  
+                  <p className="text-[10px] font-bold text-[#5b6474]">
+                    Canh kim chỉ đúng vùng màu xanh lá ở giữa để được điểm tối đa!
+                  </p>
+                </div>
 
-            <div className="my-2">
-              {renderBobaCup()}
-            </div>
+                {/* Shaking Force Timing Bar */}
+                <div>
+                  <div className="relative w-full h-6 bg-gray-200 border-2 border-[#1f2937] rounded-lg overflow-hidden my-3 shadow-[2px_2px_0px_#1f2937]">
+                    {/* Zones */}
+                    <div className="absolute inset-0 flex">
+                      <div className="w-[20%] bg-[#f87171] border-r-2 border-[#1f2937]"></div>
+                      <div className="w-[20%] bg-[#fde047] border-r-2 border-[#1f2937]"></div>
+                      <div className="w-[20%] bg-[#4ade80] border-r-2 border-[#1f2937] flex items-center justify-center">
+                        <span className="text-[8px] font-black text-[#111827] uppercase tracking-tighter">Perfect</span>
+                      </div>
+                      <div className="w-[20%] bg-[#fde047] border-r-2 border-[#1f2937]"></div>
+                      <div className="w-[20%] bg-[#f87171]"></div>
+                    </div>
+                    {/* Pointer Indicator */}
+                    <div 
+                      className="absolute top-0 bottom-0 w-2 bg-[#1f2937] border-x border-white" 
+                      style={{ left: `calc(${sliderValue}% - 4px)` }}
+                    ></div>
+                  </div>
 
-            {/* Selected ingredients raw chips list */}
-            <div className="min-h-[50px] flex flex-wrap gap-1 justify-center items-center bg-[#fffdf8] border-2 border-[#1f2937] p-2 rounded-lg my-2">
-              {selectedIngredients.length === 0 ? (
-                <span className="text-[10px] font-bold text-[#9ca3af] italic">Ly rỗng</span>
-              ) : (
-                selectedIngredients.map((ing, idx) => (
-                  <span 
-                    key={idx}
-                    className="bg-white text-[#111827] border border-[#1f2937] font-black text-[10px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937]"
+                  <div className="min-h-[24px]">
+                    {shakingResult ? (
+                      <span className={`text-xs font-black uppercase tracking-wider
+                        ${shakingResult === 'perfect' ? 'text-[#16a34a] animate-bounce-short' : shakingResult === 'good' ? 'text-[#eab308]' : 'text-[#dc2626]'}`}>
+                        {shakingResult === 'perfect' ? '✨ PERFECT! ✨' : shakingResult === 'good' ? '👍 GOOD! 👍' : '💨 MISS! 💨'}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold text-[#9ca3af] italic">
+                        Lực lắc: {sliderValue}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stop Action */}
+                <button
+                  disabled={shakingResult !== null}
+                  onClick={handleStopShaking}
+                  className="w-full p-3 bg-[#eab308] hover:bg-[#ca8a04] disabled:opacity-50 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                >
+                  {shakingResult !== null ? 'Đang rót nước...' : 'DỪNG LẮC & PHỤC VỤ'}
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col justify-between h-full w-full">
+                <div>
+                  <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-2">
+                    Ly pha chế của bà chủ
+                  </h3>
+
+                  <div className="my-2">
+                    {renderBobaCup()}
+                  </div>
+                </div>
+
+                {/* Selected ingredients raw chips list */}
+                <div className="min-h-[50px] flex flex-wrap gap-1 justify-center items-center bg-[#fffdf8] border-2 border-[#1f2937] p-2 rounded-lg my-2">
+                  {selectedIngredients.length === 0 ? (
+                    <span className="text-[10px] font-bold text-[#9ca3af] italic">Ly rỗng</span>
+                  ) : (
+                    selectedIngredients.map((ing, idx) => (
+                      <span 
+                        key={idx}
+                        className="bg-white text-[#111827] border border-[#1f2937] font-black text-[10px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937]"
+                      >
+                        {ing}
+                      </span>
+                    ))
+                  )}
+                </div>
+
+                {/* Controls */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={clearCup}
+                    className="p-2.5 bg-[#fffdf8] hover:bg-gray-100 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                   >
-                    {ing}
-                  </span>
-                ))
-              )}
-            </div>
+                    Xóa ly
+                  </button>
 
-            {/* Controls */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={clearCup}
-                className="p-2.5 bg-[#fffdf8] hover:bg-gray-100 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-              >
-                Xóa ly
-              </button>
-
-              <button
-                onClick={handleServe}
-                className="p-2.5 bg-[#16a34a] hover:bg-green-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-              >
-                Phục vụ
-              </button>
-            </div>
+                  <button
+                    onClick={handleServe}
+                    className="p-2.5 bg-[#16a34a] hover:bg-green-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  >
+                    Phục vụ
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 4. Kitchen counter / Ingredients list (Fourth on mobile, Center-left on desktop) */}
           <div className="order-4 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6">
-            <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-4 pb-2 border-b-2 border-dashed border-[#1f2937]">
-              Quầy nguyên liệu pha chế (Chữ Hán)
-            </h3>
+            <div className="flex justify-between items-center mb-4 pb-2 border-b-2 border-dashed border-[#1f2937] flex-wrap gap-2">
+              <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider">
+                Quầy nguyên liệu pha chế (Chữ Hán)
+              </h3>
+              <button
+                onClick={() => setShowIngredientHelp(prev => !prev)}
+                className={`px-2.5 py-1 rounded border-2 border-[#1f2937] font-black text-[9px] uppercase transition-all shadow-[1.5px_1.5px_0px_#1f2937] active:translate-y-0.5 active:shadow-none cursor-pointer
+                  ${showIngredientHelp ? 'bg-[#f59e0b] text-[#111827]' : 'bg-[#fffdf8] text-[#5b6474]'}`}
+              >
+                {showIngredientHelp ? 'Ẩn nghĩa tiếng Việt' : 'Hiện nghĩa tiếng Việt'}
+              </button>
+            </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {INGREDIENTS.map((ingredient) => {
@@ -1119,8 +1397,8 @@ export default function GamePage() {
                       }`}
                   >
                     <span className="text-lg font-serif">{ingredient.nameChinese}</span>
-                    <span className="text-[10px] font-bold text-[#5b6474] mt-0.5 uppercase tracking-wide">
-                      {ingredient.nameVietnamese}
+                    <span className="text-[10px] font-bold text-[#5b6474] mt-0.5 uppercase tracking-wide min-h-[15px]">
+                      {showIngredientHelp ? ingredient.nameVietnamese : '???'}
                     </span>
                   </button>
                 );
@@ -1278,6 +1556,91 @@ export default function GamePage() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Coin Shop Modal */}
+      {showCoinShop && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+          <div className="max-w-lg w-full bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[8px_8px_0px_#1f2937] rounded-xl p-6 relative max-h-[85vh] overflow-y-auto">
+            <button
+              onClick={() => setShowCoinShop(false)}
+              className="absolute top-4 right-4 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-[#16a34a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Cửa hàng tình yêu của Vy
+            </h3>
+            
+            <p className="text-xs text-[#5b6474] font-bold mb-4">
+              Bà chủ đang có: <span className="text-[#16a34a] font-black">{coins} xu vàng</span>. Hãy dùng xu tích lũy để mở khóa quà tặng ngọt ngào từ anh Khang!
+            </p>
+
+            <div className="space-y-4">
+              {/* Item 1: Hint */}
+              <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
+                <div>
+                  <h4 className="font-serif font-black text-sm text-[#111827]">Gợi ý tiếng Việt nguyên liệu</h4>
+                  <p className="text-[10px] font-bold text-[#5b6474] mt-0.5">Hiện vĩnh viễn tên tiếng Việt cho tất cả nguyên liệu trên quầy pha chế.</p>
+                </div>
+                <button
+                  disabled={showIngredientHelp}
+                  onClick={() => handleBuyItem('hint')}
+                  className={`px-3 py-2 border-2 border-[#1f2937] font-black text-xs rounded shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer whitespace-nowrap
+                    ${showIngredientHelp ? 'bg-gray-100 text-[#9ca3af] border-gray-300 shadow-none cursor-not-allowed' : 'bg-[#fef08a] hover:bg-[#fde047]'}`}
+                >
+                  {showIngredientHelp ? 'Đã có' : '20 Xu'}
+                </button>
+              </div>
+
+              {/* Item 2: Boba Real Voucher */}
+              <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
+                <div>
+                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Trà Sữa Đời Thực 🥤</h4>
+                  <p className="text-[10px] font-bold text-[#5b6474] mt-0.5">Đổi 1 ly Gongcha hoặc KoiThé bất kỳ ngoài đời thật do anh Khang bao trọn gói.</p>
+                </div>
+                <button
+                  onClick={() => handleBuyItem('voucher_milktea')}
+                  className="px-3 py-2 bg-[#16a34a] text-white border-2 border-[#1f2937] font-black text-xs rounded shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer whitespace-nowrap"
+                >
+                  150 Xu
+                </button>
+              </div>
+
+              {/* Item 3: Hug Voucher */}
+              <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
+                <div>
+                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Cái Ôm Siêu Ấm Áp 💖</h4>
+                  <p className="text-[10px] font-bold text-[#5b6474] mt-0.5">Đổi 1 cái ôm siết chặt từ bạn trai Nhựt Khang bất cứ lúc nào bé muốn.</p>
+                </div>
+                <button
+                  onClick={() => handleBuyItem('voucher_hug')}
+                  className="px-3 py-2 bg-[#f472b6] text-white border-2 border-[#1f2937] font-black text-xs rounded shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer whitespace-nowrap"
+                >
+                  100 Xu
+                </button>
+              </div>
+
+              {/* Item 4: Date Voucher */}
+              <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
+                <div>
+                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Hẹn Hò Công Chúa 👑</h4>
+                  <p className="text-[10px] font-bold text-[#5b6474] mt-0.5">Đổi 1 buổi đi chơi lãng mạn do anh Khang lên lịch đưa đón và chiêu đãi.</p>
+                </div>
+                <button
+                  onClick={() => handleBuyItem('voucher_date')}
+                  className="px-3 py-2 bg-[#0ea5e9] text-white border-2 border-[#1f2937] font-black text-xs rounded shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer whitespace-nowrap"
+                >
+                  200 Xu
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

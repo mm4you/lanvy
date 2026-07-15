@@ -20,7 +20,7 @@ export default function GamePage() {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [unlockedVouchers, setUnlockedVouchers] = useState<any[]>([]);
-  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với Tiệm Trà Sữa Vy Vy!');
+  const [gameMessage, setGameMessage] = useState<string>('Chào mừng Bà chủ Lan Vy đến với Tiệm Trà Sữa Bé Vy Đáng Yêu!');
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [customerState, setCustomerState] = useState<'entering' | 'idle' | 'leaving' | 'disappointed'>('entering');
   const [activeMistakes, setActiveMistakes] = useState<string[]>([]);
@@ -713,13 +713,13 @@ export default function GamePage() {
           {/* Accent header */}
           <div className="bg-[#f59e0b] border-b-[3px] border-[#1f2937] -mx-6 -mt-6 p-4 mb-6">
             <h1 className="text-xl font-black text-[#111827] text-center tracking-wider font-serif">
-              TIỆM TRÀ SỮA VY VY
+              TIỆM TRÀ SỮA BÉ VY ĐÁNG YÊU
             </h1>
           </div>
 
           <div className="text-center mb-6">
             <p className="text-sm font-bold text-[#5b6474]">
-              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý Tiệm Trà Sữa Vy Vy của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
+              Chào mừng Bà chủ Lan Vy! Hãy đăng nhập để quản lý Tiệm Trà Sữa Bé Vy Đáng Yêu của riêng mình, tiếp đón vị khách đặc biệt Nhựt Khang và nhận những phần quà ngọt ngào nhé.
             </p>
           </div>
 
@@ -786,7 +786,7 @@ export default function GamePage() {
             T
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Vy Vy</h1>
+            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Bé Vy Đáng Yêu</h1>
             <p className="text-xs text-[#5b6474] font-medium">Chào bà chủ: <span className="font-bold text-[#1e3b8b]">{user.username}</span></p>
           </div>
         </div>

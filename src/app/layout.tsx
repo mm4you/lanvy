@@ -13,7 +13,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Tiệm Trà Sữa Vy Vy - Chinese Review Game",
+  title: "Tiệm Trà Sữa Bé Vy Đáng Yêu - Chinese Review Game",
   description: "Game 2D Pixel ôn tập tiếng Trung ngọt ngào dành riêng cho Bà chủ Lan Vy.",
 };
 

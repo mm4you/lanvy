@@ -54,6 +54,12 @@ export default function GamePage() {
   const [newlyUnlockedVoucher, setNewlyUnlockedVoucher] = useState<any | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(false);
 
+  // Admin Logs state
+  const [showAdminLogsModal, setShowAdminLogsModal] = useState(false);
+  const [adminLogsData, setAdminLogsData] = useState<any[] | null>(null);
+  const [adminLogsLoading, setAdminLogsLoading] = useState(false);
+  const [adminLogsError, setAdminLogsError] = useState('');
+
   // Refs
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -246,6 +252,28 @@ export default function GamePage() {
     setCurrentOrderIndex(0);
   };
 
+  const handleOpenAdminLogs = async () => {
+    setShowAdminLogsModal(true);
+    setAdminLogsLoading(true);
+    setAdminLogsError('');
+    try {
+      const res = await fetch('/api/admin/logs', {
+        headers: { 'x-user-id': user?.id || '' }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAdminLogsData(data.users || []);
+      } else {
+        const data = await res.json();
+        setAdminLogsError(data.error || 'Lỗi khi tải dữ liệu logs.');
+      }
+    } catch (e) {
+      setAdminLogsError('Lỗi kết nối máy chủ.');
+    } finally {
+      setAdminLogsLoading(false);
+    }
+  };
+
   // Sync progress & unlocks to DB
   const saveProgress = async (newScore: number, newCoins: number, newLevel: number, voucherToUnlock: any = null) => {
     if (!user) return;
@@ -402,7 +430,7 @@ export default function GamePage() {
 
   // Serve drink check
   const handleServe = () => {
-    if (!currentOrder) return;
+    if (!currentOrder || customerState === 'leaving' || customerState === 'entering' || isShakingGameActive) return;
 
     // Check if ingredients match
     const isCorrect = 
@@ -519,10 +547,9 @@ export default function GamePage() {
       const voucherToUnlock = currentOrder.voucherReward || null;
       saveProgress(nextScore, nextCoins, nextLevel, voucherToUnlock);
 
-      setIsShakingGameActive(false);
-      setShakingResult(null);
-
       setTimeout(() => {
+        setIsShakingGameActive(false);
+        setShakingResult(null);
         if (nextOrderIndex < orders.length) {
           setCurrentOrderIndex(nextOrderIndex);
           setSelectedIngredients([]);
@@ -821,6 +848,87 @@ export default function GamePage() {
             <rect x="22" y="25" width="2" height="4" fill="#166534" />
           </svg>
         );
+      case 'tien': // Tiên sprite (Chestnut brown ponytail hair, emerald green hair bow, sky blue dress)
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Hair base */}
+            <rect x="7" y="2" width="18" height="9" fill="#a16207" />
+            {/* Ponytail extension */}
+            <rect x="4" y="6" width="4" height="12" fill="#a16207" />
+            <rect x="3" y="9" width="2" height="8" fill="#854d0e" />
+            {/* Hair highlight */}
+            <rect x="9" y="3" width="10" height="1" fill="#ca8a04" />
+            {/* Green bow */}
+            <rect x="5" y="4" width="2" height="3" fill="#10b981" />
+            <rect x="7" y="5" width="1" height="1" fill="#a7f3d0" />
+            <rect x="8" y="4" width="2" height="3" fill="#10b981" />
+            {/* Face */}
+            <rect x="8" y="8" width="16" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="9" width="2" height="13" fill="#fed7aa" />
+            {/* Bangs */}
+            <rect x="9" y="8" width="2" height="3" fill="#a16207" />
+            <rect x="15" y="8" width="2" height="3" fill="#a16207" />
+            <rect x="21" y="8" width="2" height="3" fill="#a16207" />
+            {/* Eyes */}
+            <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="9" y="12" width="4" height="1" fill="#78350f" />
+            <rect x="19" y="12" width="4" height="1" fill="#78350f" />
+            <rect x="11" y="13" width="1" height="1" fill="#ffffff" />
+            <rect x="21" y="13" width="1" height="1" fill="#ffffff" />
+            {/* Cheek blush */}
+            <rect x="7" y="16" width="3" height="2" fill="#fda4af" />
+            <rect x="22" y="16" width="3" height="2" fill="#fda4af" />
+            {/* Lips */}
+            <rect x="14" y="18" width="3" height="1" fill="#db2777" />
+            {/* Neck & Star necklace */}
+            <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
+            <rect x="15" y="23.5" width="2" height="1" fill="#fbbf24" />
+            {/* Outfit - Blue top */}
+            <rect x="8" y="24" width="16" height="6" fill="#38bdf8" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="25" width="2" height="4" fill="#0284c7" />
+            <rect x="6" y="24" width="3" height="3" fill="#38bdf8" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="23" y="24" width="3" height="3" fill="#38bdf8" stroke="#1f2937" strokeWidth="1.5" />
+          </svg>
+        );
+      case 'ngoc': // Ngọc sprite (Short purple bob hair, yellow star clip, yellow and orange floral top)
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Short purple hair */}
+            <rect x="7" y="3" width="18" height="9" fill="#a855f7" />
+            <rect x="6" y="9" width="2" height="8" fill="#a855f7" />
+            <rect x="24" y="9" width="2" height="8" fill="#a855f7" />
+            {/* Hair highlight */}
+            <rect x="10" y="4" width="12" height="1" fill="#c084fc" />
+            {/* Star clip */}
+            <rect x="22" y="5" width="2" height="2" fill="#facc15" />
+            {/* Face */}
+            <rect x="8" y="8" width="16" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="9" width="2" height="13" fill="#fed7aa" />
+            {/* Straight bangs */}
+            <rect x="8" y="8" width="16" height="3" fill="#a855f7" />
+            {/* Eyes */}
+            <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="11" y="13" width="1" height="1" fill="#ffffff" />
+            <rect x="21" y="13" width="1" height="1" fill="#ffffff" />
+            {/* Cheek blush */}
+            <rect x="7" y="16" width="3" height="2" fill="#fda4af" />
+            <rect x="22" y="16" width="3" height="2" fill="#fda4af" />
+            {/* Open smile mouth */}
+            <rect x="14" y="18" width="4" height="2" fill="#ef4444" stroke="#1f2937" strokeWidth="1" />
+            {/* Neck */}
+            <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
+            {/* Yellow Top */}
+            <rect x="8" y="24" width="16" height="6" fill="#fde047" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="25" width="2" height="4" fill="#eab308" />
+            {/* Orange flower dots */}
+            <rect x="11" y="26" width="1" height="1" fill="#f97316" />
+            <rect x="19" y="26" width="1" height="1" fill="#f97316" />
+          </svg>
+        );
+      case 'vy':
+        // falls through to default Lan Vy sprite
       default: // Lan Vy sprite (Long layered black hair with highlights, red bow, anime eyes, floral top)
         return (
           <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
@@ -1211,6 +1319,15 @@ export default function GamePage() {
             Cửa hàng ({coins} xu)
           </button>
 
+          {user?.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
+            <button
+              onClick={handleOpenAdminLogs}
+              className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+            >
+              📊 Logs Admin
+            </button>
+          )}
+
           <button
             onClick={handleLogout}
             className="px-2.5 py-2 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
@@ -1314,7 +1431,7 @@ export default function GamePage() {
 
                 return (
                   <div className={`${customerMotionClass} z-10 relative`}>
-                    {isKhang ? (
+                    {isKhang && isLoveUser ? (
                       <span className="bg-[#f43f5e] text-white border-2 border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1.5px_1.5px_0px_#1f2937] animate-pulse mb-1">
                         ❤️ VIP Bạn trai ❤️
                       </span>
@@ -1979,6 +2096,89 @@ export default function GamePage() {
                     Tiếp ▶
                   </button>
                 </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Admin Logs Modal */}
+      {showAdminLogsModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+          <div className="max-w-4xl w-full bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[8px_8px_0px_#1f2937] rounded-xl p-6 relative max-h-[85vh] overflow-hidden flex flex-col">
+            <button
+              onClick={() => setShowAdminLogsModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95 z-10"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center gap-2">
+              📊 Nhật ký & Logs Hệ Thống (Admin)
+            </h3>
+
+            {adminLogsLoading ? (
+              <div className="flex-1 flex items-center justify-center py-10 font-bold text-[#5b6474]">
+                Đang tải dữ liệu logs từ PostgreSQL...
+              </div>
+            ) : adminLogsError ? (
+              <div className="flex-1 flex items-center justify-center py-10 text-[#dc2626] font-bold">
+                Lỗi: {adminLogsError}
+              </div>
+            ) : adminLogsData && adminLogsData.length > 0 ? (
+              <div className="flex-1 overflow-y-auto pr-1">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-[#f59e0b] border-2 border-[#1f2937] text-[#111827] font-black uppercase">
+                      <th className="p-2 border-r-2 border-[#1f2937]">Tài khoản / Email</th>
+                      <th className="p-2 border-r-2 border-[#1f2937] text-center">Tiến độ</th>
+                      <th className="p-2 border-r-2 border-[#1f2937] text-center">Score / Xu</th>
+                      <th className="p-2">Voucher Đã Mở Khóa</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {adminLogsData.map((usr: any) => (
+                      <tr key={usr.id} className="border-b border-gray-200 hover:bg-gray-50">
+                        <td className="p-2 border-x-2 border-b-2 border-[#1f2937] font-bold text-[#111827]">
+                          <div>{usr.username}</div>
+                          <div className="text-[10px] text-gray-500 font-normal">{usr.email || 'Không có email'}</div>
+                          <div className="text-[9px] text-gray-400 font-mono mt-0.5">ID: {usr.id}</div>
+                        </td>
+                        <td className="p-2 border-r-2 border-b-2 border-[#1f2937] text-center font-black text-amber-600">
+                          Lvl {usr.progress?.level || 1}
+                        </td>
+                        <td className="p-2 border-r-2 border-b-2 border-[#1f2937] text-center">
+                          <div className="font-bold text-[#0ea5e9]">{usr.progress?.score || 0} pts</div>
+                          <div className="text-emerald-600 font-bold">${usr.progress?.coins || 0} xu</div>
+                        </td>
+                        <td className="p-2 border-r-2 border-b-2 border-[#1f2937]">
+                          {usr.vouchers && usr.vouchers.length > 0 ? (
+                            <div className="space-y-1">
+                              {usr.vouchers.map((v: any) => (
+                                <div key={v.id} className="bg-amber-50 border border-amber-200 rounded p-1 text-[10px]">
+                                  <div className="font-bold text-amber-800">{v.title}</div>
+                                  <div className="text-[9px] text-gray-600">{v.description}</div>
+                                  <div className="flex justify-between items-center mt-0.5">
+                                    <span className="font-mono bg-white px-1 border border-gray-300 rounded font-bold text-[#111827]">{v.code}</span>
+                                    <span className={`text-[8px] px-1 rounded font-bold ${v.isRedeemed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                      {v.isRedeemed ? 'Đã đổi' : 'Chưa đổi'}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 italic">Chưa mở khóa quà nào</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center py-10 text-gray-400 italic">
+                Không tìm thấy tài khoản nào trong hệ thống.
               </div>
             )}
           </div>

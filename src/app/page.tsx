@@ -156,6 +156,37 @@ export default function GamePage() {
     return () => clearInterval(interval);
   }, [isShakingGameActive, sliderDirection]);
 
+  // Randomize customers for non-love orders to make it super cute and diverse across levels
+  useEffect(() => {
+    const CUTE_CUSTOMERS = [
+      { name: 'Tiên', sprite: 'tien' },
+      { name: 'Ngọc', sprite: 'ngoc' },
+      { name: 'Vy', sprite: 'vy' },
+      { name: 'Mèo ú Pixel', sprite: 'cat' },
+      { name: 'Gấu trúc Panda', sprite: 'panda' },
+      { name: 'Thỏ bông dễ thương', sprite: 'rabbit' },
+      { name: 'Cún Shiba tinh nghịch', sprite: 'shiba' },
+      { name: 'Gấu nâu vui vẻ', sprite: 'bear' },
+      { name: 'Nhựt Khang', sprite: 'khang' },
+      { name: 'Cánh cụt lăng xăng', sprite: 'penguin' },
+      { name: 'Khủng long con đáng yêu', sprite: 'dino' },
+      { name: 'Cáo nhỏ tinh ranh', sprite: 'fox' }
+    ];
+
+    const randomizedOrders = ORDERS.map(order => {
+      if (order.isLoveOrder) return order;
+      // Pick a random customer
+      const randIdx = Math.floor(Math.random() * CUTE_CUSTOMERS.length);
+      const customer = CUTE_CUSTOMERS[randIdx];
+      return {
+        ...order,
+        customerName: customer.name,
+        customerSprite: customer.sprite
+      };
+    });
+    setOrders(randomizedOrders);
+  }, []);
+
   // Try to load session from localStorage
   useEffect(() => {
     const savedUserId = localStorage.getItem('boba_game_user_id');
@@ -846,6 +877,90 @@ export default function GamePage() {
             {/* Body Voxel (Green shirt) */}
             <rect x="8" y="24" width="16" height="6" fill="#15803d" stroke="#1f2937" strokeWidth="2" />
             <rect x="22" y="25" width="2" height="4" fill="#166534" />
+          </svg>
+        );
+      case 'penguin': // Cute Penguin sprite
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Body base (round black blob) */}
+            <rect x="7" y="6" width="18" height="18" fill="#1f2937" rx="6" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="9" y="24" width="14" height="2" fill="#1f2937" />
+            {/* White belly/face panel */}
+            <rect x="10" y="10" width="12" height="13" fill="#ffffff" rx="3" />
+            {/* Eyes */}
+            <rect x="12" y="12" width="2" height="3" fill="#1f2937" />
+            <rect x="18" y="12" width="2" height="3" fill="#1f2937" />
+            {/* Rosy cheeks */}
+            <rect x="10" y="15" width="2" height="2" fill="#fca5a5" />
+            <rect x="20" y="15" width="2" height="2" fill="#fca5a5" />
+            {/* Orange beak */}
+            <polygon points="14,15 18,15 16,18" fill="#f97316" stroke="#1f2937" strokeWidth="1" />
+            {/* Cute yellow/red striped scarf */}
+            <rect x="9" y="21" width="14" height="3" fill="#dc2626" stroke="#1f2937" strokeWidth="1" />
+            <rect x="11" y="21" width="2" height="3" fill="#fbbf24" />
+            <rect x="15" y="21" width="2" height="3" fill="#fbbf24" />
+            <rect x="19" y="21" width="2" height="3" fill="#fbbf24" />
+            <rect x="20" y="24" width="3" height="4" fill="#dc2626" stroke="#1f2937" strokeWidth="1" />
+            {/* Feet */}
+            <rect x="10" y="26" width="3" height="2" fill="#f97316" stroke="#1f2937" strokeWidth="1" />
+            <rect x="19" y="26" width="3" height="2" fill="#f97316" stroke="#1f2937" strokeWidth="1" />
+          </svg>
+        );
+      case 'dino': // Cute baby green dinosaur sprite
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Spikes on back */}
+            <rect x="6" y="6" width="2" height="2" fill="#facc15" />
+            <rect x="5" y="10" width="2" height="2" fill="#facc15" />
+            <rect x="5" y="14" width="2" height="2" fill="#facc15" />
+            <rect x="6" y="18" width="2" height="2" fill="#facc15" />
+            {/* Head & body voxel (Green dino) */}
+            <rect x="8" y="5" width="16" height="19" fill="#10b981" stroke="#1f2937" strokeWidth="2" rx="4" />
+            {/* Dino belly (light green) */}
+            <rect x="11" y="14" width="10" height="9" fill="#a7f3d0" rx="2" />
+            {/* Cute eyes */}
+            <rect x="12" y="9" width="2" height="3" fill="#1f2937" />
+            <rect x="18" y="9" width="2" height="3" fill="#1f2937" />
+            <rect x="13" y="9" width="1" height="1" fill="#ffffff" />
+            <rect x="19" y="9" width="1" height="1" fill="#ffffff" />
+            {/* Cheeks */}
+            <rect x="10" y="12" width="2" height="1.5" fill="#fca5a5" />
+            <rect x="20" y="12" width="2" height="1.5" fill="#fca5a5" />
+            {/* Tiny cute smile */}
+            <rect x="15" y="13" width="2" height="1" fill="#1f2937" />
+            {/* Dino tail */}
+            <rect x="6" y="20" width="3" height="3" fill="#10b981" stroke="#1f2937" strokeWidth="1" />
+            {/* Feet */}
+            <rect x="9" y="24" width="4" height="2" fill="#10b981" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="19" y="24" width="4" height="2" fill="#10b981" stroke="#1f2937" strokeWidth="1.5" />
+          </svg>
+        );
+      case 'fox': // Cute little fox sprite
+        return (
+          <svg viewBox="0 0 32 32" className="w-32 h-32 pixelated mx-auto">
+            {/* Large pointed fox ears */}
+            <rect x="6" y="3" width="6" height="6" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="8" y="5" width="3" height="3" fill="#fffaf0" />
+            <rect x="20" y="3" width="6" height="6" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="21" y="5" width="3" height="3" fill="#fffaf0" />
+            {/* Head voxel */}
+            <rect x="7" y="8" width="18" height="15" fill="#f97316" stroke="#1f2937" strokeWidth="2" />
+            {/* Muzzle cheeks (white side panels) */}
+            <rect x="8" y="15" width="5" height="7" fill="#fffaf0" />
+            <rect x="19" y="15" width="5" height="7" fill="#fffaf0" />
+            {/* Tiny black nose */}
+            <rect x="15" y="17" width="2" height="2" fill="#1f2937" />
+            {/* Eyes (Cute closed eyes '^' style) */}
+            <rect x="10" y="12" width="3" height="1" fill="#1f2937" />
+            <rect x="11" y="11" width="1" height="1" fill="#1f2937" />
+            <rect x="19" y="12" width="3" height="1" fill="#1f2937" />
+            <rect x="20" y="11" width="1" height="1" fill="#1f2937" />
+            {/* Pink cheeks */}
+            <rect x="8" y="14" width="2" height="1.5" fill="#fca5a5" />
+            <rect x="22" y="14" width="2" height="1.5" fill="#fca5a5" />
+            {/* Body */}
+            <rect x="9" y="23" width="14" height="6" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="11" y="23" width="10" height="6" fill="#fffaf0" />
           </svg>
         );
       case 'tien': // Tiên sprite (Chestnut brown ponytail hair, emerald green hair bow, sky blue dress)

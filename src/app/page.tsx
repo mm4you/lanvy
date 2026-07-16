@@ -54,6 +54,11 @@ export default function GamePage() {
   const [newlyUnlockedVoucher, setNewlyUnlockedVoucher] = useState<any | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(false);
 
+  // 2D Movement States
+  const [playerPos, setPlayerPos] = useState({ x: 5, y: 6 });
+  const [playerDir, setPlayerDir] = useState<'up' | 'down' | 'left' | 'right'>('down');
+  const [activeStation, setActiveStation] = useState<string | null>(null);
+
   // Admin Logs state
   const [showAdminLogsModal, setShowAdminLogsModal] = useState(false);
   const [adminLogsData, setAdminLogsData] = useState<any[] | null>(null);
@@ -187,7 +192,205 @@ export default function GamePage() {
     setOrders(randomizedOrders);
   }, []);
 
-  // Try to load session from localStorage
+  const COLS = 12;
+  const ROWS = 10;
+
+  const isWalkable = (x: number, y: number) => {
+    if (x <= 0 || x >= COLS - 1 || y <= 0 || y >= ROWS - 1) return false;
+    if (y === 2 && [2, 4, 6, 8, 10].includes(x)) return false;
+    if (y === 6 && x === 2) return false;
+    if (y === 6 && x === 9) return false;
+    if (y === 4 && x >= 2 && x <= 9) return false;
+    return true;
+  };
+
+  const getNearbyStation = () => {
+    const { x, y } = playerPos;
+    if (y === 3) {
+      if (x === 2) return { id: 'tea', label: 'Quầy Trà Nền' };
+      if (x === 4) return { id: 'topping', label: 'Quầy Topping' };
+      if (x === 6) return { id: 'fruit', label: 'Quầy Trái Cây' };
+      if (x === 8) return { id: 'sugar_ice', label: 'Quầy Đường / Đá' };
+      if (x === 10) return { id: 'bookshelf', label: 'Sổ tay HSK' };
+    }
+    if (x === 2 && (y === 5 || y === 7)) return { id: 'shaker', label: 'Quầy Lắc Bình' };
+    if (y === 6 && x === 3) return { id: 'shaker', label: 'Quầy Lắc Bình' };
+    if (x === 9 && (y === 5 || y === 7)) return { id: 'register', label: 'Cửa hàng Xu Vàng' };
+    if (y === 6 && x === 8) return { id: 'register', label: 'Cửa hàng Xu Vàng' };
+    if (y === 5 && x === 5) return { id: 'order', label: 'Gọi món & Phục vụ' };
+    return null;
+  };
+
+  const handleInteract = () => {
+    const station = getNearbyStation();
+    if (!station) return;
+    playSfx('click');
+    switch (station.id) {
+      case 'tea':
+        setActiveStation('tea');
+        break;
+      case 'topping':
+        setActiveStation('topping');
+        break;
+      case 'fruit':
+        setActiveStation('fruit');
+        break;
+      case 'sugar_ice':
+        setActiveStation('sugar_ice');
+        break;
+      case 'bookshelf':
+        setShowVocabModal(true);
+        setVocabTab('list');
+        break;
+      case 'register':
+        setShowCoinShop(true);
+        break;
+      case 'shaker':
+        if (selectedIngredients.length === 0) {
+          setGameMessage('Ly pha chế của bạn hiện đang trống. Hãy qua quầy trà nền, quầy topping và quầy trái cây để chọn món trước nhé!');
+          setMessageType('error');
+        } else {
+          handleServe();
+        }
+        break;
+      case 'order':
+        setActiveStation('order');
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCellClick = (x: number, y: number) => {
+    if (isWalkable(x, y)) {
+      setPlayerPos({ x, y });
+    } else {
+      const stations = [
+        { x: 2, y: 2, id: 'tea' },
+        { x: 4, y: 2, id: 'topping' },
+        { x: 6, y: 2, id: 'fruit' },
+        { x: 8, y: 2, id: 'sugar_ice' },
+        { x: 10, y: 2, id: 'bookshelf' },
+        { x: 2, y: 6, id: 'shaker' },
+        { x: 9, y: 6, id: 'register' },
+        { x: 5, y: 4, id: 'order' }
+      ];
+      const match = stations.find(s => s.x === x && s.y === y);
+      if (match) {
+        let targetX = playerPos.x;
+        let targetY = playerPos.y;
+        if (match.y === 2) {
+          targetX = match.x;
+          targetY = 3;
+        } else if (match.id === 'shaker') {
+          targetX = 3;
+          targetY = 6;
+        } else if (match.id === 'register') {
+          targetX = 8;
+          targetY = 6;
+        } else if (match.id === 'order') {
+          targetX = 5;
+          targetY = 5;
+        }
+        if (isWalkable(targetX, targetY)) {
+          setPlayerPos({ x: targetX, y: targetY });
+          setTimeout(() => {
+            switch (match.id) {
+              case 'tea': setActiveStation('tea'); break;
+              case 'topping': setActiveStation('topping'); break;
+              case 'fruit': setActiveStation('fruit'); break;
+              case 'sugar_ice': setActiveStation('sugar_ice'); break;
+              case 'bookshelf': setShowVocabModal(true); break;
+              case 'register': setShowCoinShop(true); break;
+              case 'shaker': 
+                if (selectedIngredients.length > 0) handleServe();
+                else {
+                  setGameMessage('Ly pha chế của bạn hiện đang trống. Hãy qua quầy trà nền, quầy topping và quầy trái cây để chọn món trước nhé!');
+                  setMessageType('error');
+                }
+                break;
+              case 'order': setActiveStation('order'); break;
+            }
+          }, 100);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!user) return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'BUTTON' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', ' ', 'w', 'a', 's', 'd'].includes(e.key)) {
+        e.preventDefault();
+      }
+      if (showCoinShop || showVocabModal || showVoucherWallet || showAdminLogsModal || gameCompleted) return;
+
+      let nextX = playerPos.x;
+      let nextY = playerPos.y;
+      let dir: 'up' | 'down' | 'left' | 'right' = playerDir;
+
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          nextY -= 1;
+          dir = 'up';
+          break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          nextY += 1;
+          dir = 'down';
+          break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          nextX -= 1;
+          dir = 'left';
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          nextX += 1;
+          dir = 'right';
+          break;
+        case ' ':
+        case 'Spacebar':
+          handleInteract();
+          return;
+        default:
+          return;
+      }
+
+      setPlayerDir(dir);
+      if (isWalkable(nextX, nextY)) {
+        setPlayerPos({ x: nextX, y: nextY });
+        // Footstep beep
+        if (typeof window !== 'undefined') {
+          try {
+            const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.setValueAtTime(100, ctx.currentTime);
+            gain.gain.setValueAtTime(0.005, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.04);
+          } catch(e){}
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [playerPos, playerDir, user, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted, selectedIngredients]);
+
   useEffect(() => {
     const savedUserId = localStorage.getItem('boba_game_user_id');
     const savedUsername = localStorage.getItem('boba_game_username');
@@ -581,6 +784,8 @@ export default function GamePage() {
       setTimeout(() => {
         setIsShakingGameActive(false);
         setShakingResult(null);
+        setActiveStation(null);
+        setPlayerPos({ x: 5, y: 6 });
         if (nextOrderIndex < orders.length) {
           setCurrentOrderIndex(nextOrderIndex);
           setSelectedIngredients([]);
@@ -603,6 +808,8 @@ export default function GamePage() {
     
     setTimeout(() => {
       const nextIndex = currentOrderIndex + 1;
+      setActiveStation(null);
+      setPlayerPos({ x: 5, y: 6 });
       if (nextIndex < orders.length) {
         setCurrentOrderIndex(nextIndex);
         setSelectedIngredients([]);
@@ -706,6 +913,96 @@ export default function GamePage() {
       }
     };
   }, []);
+
+  const renderPlayerAvatar = () => {
+    switch (playerDir) {
+      case 'up':
+        return (
+          <svg viewBox="0 0 32 32" className="w-full h-full pixelated">
+            <rect x="6" y="2" width="20" height="21" fill="#18181b" />
+            <rect x="8" y="3" width="12" height="1" fill="#52525b" />
+            <rect x="5" y="4" width="2" height="2" fill="#ef4444" />
+            <rect x="7" y="5" width="1" height="1" fill="#fecdd3" />
+            <rect x="8" y="4" width="2" height="2" fill="#ef4444" />
+            <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
+            <rect x="8" y="24" width="16" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            <rect x="6" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="23" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+          </svg>
+        );
+      case 'left':
+        return (
+          <svg viewBox="0 0 32 32" className="w-full h-full pixelated transform scale-x-[-1]">
+            <rect x="8" y="2" width="15" height="22" fill="#18181b" />
+            <rect x="6" y="10" width="5" height="13" fill="#18181b" />
+            <rect x="17" y="8" width="7" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
+            <rect x="15" y="8" width="3" height="15" fill="#18181b" />
+            <rect x="21" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="22" y="13" width="1" height="1" fill="#ffffff" />
+            <rect x="22" y="16" width="2" height="2" fill="#fda4af" />
+            <rect x="23" y="18" width="1" height="1" fill="#db2777" />
+            <rect x="13" y="23" width="4" height="1" fill="#ffedd5" />
+            <rect x="10" y="24" width="12" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            <rect x="8" y="24" width="4" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+          </svg>
+        );
+      case 'right':
+        return (
+          <svg viewBox="0 0 32 32" className="w-full h-full pixelated">
+            <rect x="8" y="2" width="15" height="22" fill="#18181b" />
+            <rect x="6" y="10" width="5" height="13" fill="#18181b" />
+            <rect x="17" y="8" width="7" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
+            <rect x="15" y="8" width="3" height="15" fill="#18181b" />
+            <rect x="21" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="22" y="13" width="1" height="1" fill="#ffffff" />
+            <rect x="22" y="16" width="2" height="2" fill="#fda4af" />
+            <rect x="23" y="18" width="1" height="1" fill="#db2777" />
+            <rect x="13" y="23" width="4" height="1" fill="#ffedd5" />
+            <rect x="10" y="24" width="12" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            <rect x="8" y="24" width="4" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+          </svg>
+        );
+      case 'down':
+      default:
+        return (
+          <svg viewBox="0 0 32 32" className="w-full h-full pixelated">
+            <rect x="6" y="2" width="20" height="9" fill="#18181b" />
+            <rect x="4" y="10" width="4" height="14" fill="#18181b" />
+            <rect x="24" y="10" width="4" height="14" fill="#18181b" />
+            <rect x="3" y="13" width="2" height="8" fill="#18181b" />
+            <rect x="27" y="13" width="2" height="8" fill="#18181b" />
+            <rect x="25" y="3" width="1" height="8" fill="#09090b" />
+            <rect x="26" y="10" width="2" height="14" fill="#09090b" />
+            <rect x="8" y="3" width="12" height="1" fill="#52525b" />
+            <rect x="5" y="4" width="2" height="2" fill="#ef4444" />
+            <rect x="7" y="5" width="1" height="1" fill="#fecdd3" />
+            <rect x="8" y="4" width="2" height="2" fill="#ef4444" />
+            <rect x="8" y="8" width="16" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="9" width="2" height="13" fill="#fed7aa" />
+            <rect x="9" y="8" width="1" height="4" fill="#18181b" />
+            <rect x="12" y="8" width="2" height="3" fill="#18181b" />
+            <rect x="16" y="8" width="1" height="4" fill="#18181b" />
+            <rect x="20" y="8" width="2" height="3" fill="#18181b" />
+            <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
+            <rect x="9" y="12" width="4" height="1" fill="#78350f" />
+            <rect x="19" y="12" width="4" height="1" fill="#78350f" />
+            <rect x="11" y="13" width="1" height="1" fill="#ffffff" />
+            <rect x="21" y="13" width="1" height="1" fill="#ffffff" />
+            <rect x="7" y="16" width="3" height="2" fill="#fda4af" />
+            <rect x="22" y="16" width="3" height="2" fill="#fda4af" />
+            <rect x="14" y="18" width="3" height="1" fill="#db2777" />
+            <rect x="15" y="19" width="1" height="1" fill="#db2777" />
+            <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
+            <rect x="14.5" y="23.5" width="2" height="1" fill="#ef4444" />
+            <rect x="8" y="24" width="16" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+            <rect x="22" y="25" width="2" height="4" fill="#e4e4e7" />
+            <rect x="6" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+            <rect x="23" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+          </svg>
+        );
+    }
+  };
 
   // Character SVGs (Pixel/Blocky Art styled via pure vector shapes)
   const renderCustomerSVG = (sprite: string) => {
@@ -1126,6 +1423,13 @@ export default function GamePage() {
     const hasPudding = selectedIngredients.includes('布丁');
     const hasRedBean = selectedIngredients.includes('红豆');
     const hasIce = selectedIngredients.includes('少冰') || selectedIngredients.includes('多冰');
+    
+    // New fruit & foam variables
+    const hasMilkFoam = selectedIngredients.includes('奶盖');
+    const hasMango = selectedIngredients.includes('芒果');
+    const hasPeach = selectedIngredients.includes('桃子');
+    const hasStrawberry = selectedIngredients.includes('草莓');
+    const hasLemon = selectedIngredients.includes('柠檬');
 
     // Liquid fill colors (Body & Top isometric face shading)
     let liquidColor = 'transparent';
@@ -1239,6 +1543,40 @@ export default function GamePage() {
             {/* Pearl 7 */}
             <circle cx="30" cy="67" r="4" stroke="#111827" strokeWidth="1.2" />
             <circle cx="28.5" cy="65.5" r="1" fill="#9ca3af" />
+          </g>
+        )}
+
+        {/* Milk Foam Layer */}
+        {hasMilkFoam && hasTea && (
+          <>
+            <path d="M13.7 35 L15.5 28 A19.2 5.8 0 0 1 48.5 28 L50.3 35 A18.3 5.5 0 0 1 13.7 35 Z" fill="#ffffff" />
+            <ellipse cx="32" cy="28" rx="19.2" ry="5.8" fill="#fffdfa" stroke="#1f2937" strokeWidth="1.2" />
+          </>
+        )}
+
+        {/* Floating Fruits */}
+        {hasMango && (
+          <g fill="#facc15" stroke="#1f2937" strokeWidth="0.8">
+            <rect x="22" y="52" width="5" height="5" rx="1" transform="rotate(15 22 52)" />
+            <rect x="36" y="60" width="4" height="4" rx="1" transform="rotate(-10 36 60)" />
+          </g>
+        )}
+        {hasPeach && (
+          <g fill="#fecdd3" stroke="#1f2937" strokeWidth="0.8">
+            <path d="M18 64 A4 4 0 0 1 24 68 Z" />
+            <path d="M38 48 A3 3 0 0 1 42 52 Z" transform="rotate(30 38 48)" />
+          </g>
+        )}
+        {hasStrawberry && (
+          <g fill="#ef4444" stroke="#7f1d1d" strokeWidth="0.8">
+            <path d="M26 48 L29 45 L32 48 L29 52 Z" />
+            <path d="M15 58 L17 55 L20 58 L17 62 Z" />
+          </g>
+        )}
+        {hasLemon && (
+          <g fill="#fbbf24" stroke="#1f2937" strokeWidth="0.8">
+            <circle cx="28" cy="58" r="4.5" fill="#fef08a" stroke="#1f2937" strokeWidth="0.8" />
+            <path d="M28 53.5 L28 62.5 M23.5 58 L32.5 58" stroke="#ca8a04" strokeWidth="0.5" />
           </g>
         )}
 
@@ -1477,375 +1815,522 @@ export default function GamePage() {
         </div>
       ) : (
         <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          {/* 1. Customer & Speech bubble (Top left on desktop, Top on mobile) */}
-          <div className="order-1 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 flex flex-col items-center relative min-h-[300px] justify-between">
-            {/* Top info badge */}
-            <div className="w-full flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-3 mb-4">
-              <span className="bg-[#f59e0b] text-[#111827] border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
+          {/* Left Columns: 2D Shop Map & Active Station Panel */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Top Order & Level Badge Info */}
+            <div className="w-full flex justify-between items-center bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[4px_4px_0px_#1f2937] rounded-xl p-3">
+              <span className="bg-[#f59e0b] text-[#111827] border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] font-black text-[9px] px-2.5 py-1 rounded uppercase tracking-wider">
                 Order {currentOrderIndex + 1}/9
               </span>
-              <span className="bg-[#0ea5e9] text-[#111827] border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
+              <span className="bg-[#0ea5e9] text-[#111827] border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] font-black text-[9px] px-2.5 py-1 rounded uppercase tracking-wider">
                 Cấp độ: {currentOrder.level === 1 ? 'Dễ (HSK3)' : currentOrder.level === 2 ? 'Trung (HSK4/5)' : 'Khó (HSK5/6 & Love)'}
               </span>
             </div>
 
-            {/* Boba Shop Counter Stage (2D Pixel Animated) */}
-            <div className="w-full bg-[#fef3c7] border-2 border-[#1f2937] rounded-xl p-4 min-h-[220px] relative overflow-hidden flex items-end justify-between shadow-[inset_0_-20px_0_#78350f] mb-6">
+            {/* Cozy 2D Shop Map Panel */}
+            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-4 flex flex-col items-center">
               
-              {/* Counter wooden bar bottom overlay */}
-              <div className="absolute bottom-0 left-0 right-0 h-5 bg-[#78350f] border-t-2 border-[#1f2937]"></div>
-              
-              {/* Left Side: Boss Lan Vy */}
-              <div className="flex flex-col items-center z-10 relative pb-1">
-                {/* Boss Label */}
-                <span className="bg-[#16a34a] text-white border border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1">
-                  Bà chủ Lan Vy
-                </span>
-                
-                {/* Boss Sprite Container */}
-                <div className={`transform transition-all duration-300
-                  ${messageType === 'success' ? 'animate-bounce-short' : ''}`}>
-                  {renderCustomerSVG('girl')}
+              {/* Cozy 2D Grid map render */}
+              <div className="w-full aspect-[12/10] bg-[#eed9b3] border-[3px] border-[#1f2937] shadow-[4px_4px_0px_#1f2937] rounded-xl relative overflow-hidden select-none">
+                <div className="grid grid-cols-12 grid-rows-10 w-full h-full">
+                  {Array.from({ length: 120 }).map((_, idx) => {
+                    const x = idx % 12;
+                    const y = Math.floor(idx / 12);
+                    
+                    let bgClass = "bg-[#eed9b3] border-[0.5px] border-dashed border-[#e6c99c]/40"; 
+                    let cellContent = null;
+
+                    if (y === 0) {
+                      bgClass = "bg-[#4b5563] border-b-4 border-[#1f2937]";
+                    } else if (y === 9) {
+                      bgClass = "bg-[#78350f] border-t-4 border-[#1f2937]";
+                    } else if (x === 0 || x === 11) {
+                      bgClass = "bg-[#4b5563]";
+                    } else if (y === 2) {
+                      if (x === 2) {
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
+                        cellContent = <span className="text-[14px]">🍵</span>;
+                      } else if (x === 4) {
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
+                        cellContent = <span className="text-[14px]">🧋</span>;
+                      } else if (x === 6) {
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
+                        cellContent = <span className="text-[14px]">🍓</span>;
+                      } else if (x === 8) {
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
+                        cellContent = <span className="text-[14px]">🧊</span>;
+                      } else if (x === 10) {
+                        bgClass = "bg-[#854d0e] border-2 border-[#1f2937] flex items-center justify-center";
+                        cellContent = <span className="text-[14px]">📚</span>;
+                      }
+                    } else if (y === 6 && x === 2) {
+                      bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
+                      cellContent = <span className="text-[14px]">🌪️</span>;
+                    } else if (y === 6 && x === 9) {
+                      bgClass = "bg-[#f59e0b] border-2 border-[#1f2937] flex items-center justify-center";
+                      cellContent = <span className="text-[14px]">🔔</span>;
+                    } else if (y === 4 && x >= 2 && x <= 9) {
+                      bgClass = "bg-[#78350f] border-t-2 border-b-2 border-x border-[#1f2937]";
+                    }
+
+                    const isCustomerCell = y === 3 && x === 5;
+
+                    return (
+                      <div 
+                        key={idx} 
+                        onClick={() => handleCellClick(x, y)}
+                        className={`${bgClass} relative cursor-pointer hover:brightness-105 flex items-center justify-center`}
+                      >
+                        {cellContent}
+                        {isCustomerCell && currentOrder && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 scale-125">
+                            {renderCustomerSVG(currentOrder.customerSprite)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
 
-                {/* Sweat Drop SVG if mistake */}
-                {messageType === 'error' && (
-                  <svg className="absolute -top-1 -right-2 w-5 h-5 text-[#3b82f6] animate-bounce" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                  </svg>
-                )}
+                {/* Player Character */}
+                <div 
+                  className="absolute transition-all duration-150 ease-out flex flex-col items-center z-20 pointer-events-none"
+                  style={{ 
+                    left: `${(playerPos.x / 12) * 100}%`, 
+                    top: `${(playerPos.y / 10) * 100}%`,
+                    width: `${100 / 12}%`,
+                    height: `${100 / 10}%`
+                  }}
+                >
+                  <div className="w-12 h-12 -mt-4">
+                    {renderPlayerAvatar()}
+                  </div>
+                </div>
               </div>
 
-              {/* Center: Heart decorations if success */}
-              {messageType === 'success' && (
-                <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-20">
-                  {/* Floating hearts */}
-                  <svg className="w-8 h-8 text-[#f43f5e] animate-bounce mx-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                  </svg>
-                  <svg className="w-6 h-6 text-[#f43f5e] animate-ping mx-1" fill="currentColor" viewBox="0 0 24 24" style={{ animationDuration: '1.5s' }}>
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                  </svg>
-                </div>
-              )}
-
-              {/* Right Side: Customer (Nhựt Khang / Cat / Panda) */}
+              {/* Interaction Guide Banner */}
               {(() => {
-                let customerMotionClass = "transition-all duration-700 transform flex flex-col items-center pb-1 ";
-                if (customerState === 'entering') {
-                  customerMotionClass += "translate-x-24 opacity-0 scale-95";
-                } else if (customerState === 'leaving') {
-                  customerMotionClass += "translate-x-28 opacity-0 scale-95";
-                } else if (customerState === 'disappointed') {
-                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-shake";
-                } else {
-                  customerMotionClass += "translate-x-0 opacity-100 animate-pixel-idle";
+                const station = getNearbyStation();
+                if (station) {
+                  return (
+                    <button
+                      onClick={handleInteract}
+                      className="w-full mt-3 p-2 bg-[#fde047] hover:bg-[#facc15] text-[#111827] font-black text-xs uppercase tracking-wider border-2 border-[#1f2937] rounded-lg shadow-[2px_2px_0px_#1f2937] active:scale-[0.98] transition-all animate-pulse cursor-pointer"
+                    >
+                      👉 Bấm vào đây hoặc nhấn SPACE để mở {station.label}!
+                    </button>
+                  );
                 }
-
-                const isKhang = currentOrder.customerSprite === 'khang';
-
                 return (
-                  <div className={`${customerMotionClass} z-10 relative`}>
-                    {isKhang && isLoveUser ? (
-                      <span className="bg-[#f43f5e] text-white border-2 border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1.5px_1.5px_0px_#1f2937] animate-pulse mb-1">
-                        ❤️ VIP Bạn trai ❤️
-                      </span>
-                    ) : (
-                      <span className="bg-[#1f2937] text-white border border-[#1f2937] font-black text-[8px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] mb-1">
-                        Khách quý
-                      </span>
-                    )}
-                    {renderCustomerSVG(currentOrder.customerSprite)}
-                    <span className="block text-center font-black text-[10px] mt-1.5 uppercase text-[#111827] tracking-wider">
-                      {currentOrder.customerName}
-                    </span>
-                  </div>
+                  <p className="text-[10px] font-bold text-[#5b6474] mt-3 bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-center w-full">
+                    💡 Dùng phím **WASD / Phím mũi tên** để di chuyển Lan Vy, hoặc **Click chuột trực tiếp lên quầy** để đi nhanh.
+                  </p>
                 );
               })()}
             </div>
 
-            {/* Order Bubble */}
-            <div className="w-full bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] relative text-center">
-              {/* Speech arrow */}
-              <div className="absolute left-1/2 -top-[10px] -translate-x-1/2 w-4 h-4 bg-white border-t-2 border-l-2 border-[#1f2937] rotate-45"></div>
-              
-              <h3 className="text-xl md:text-2xl font-black text-[#111827] leading-relaxed select-all">
-                {currentOrder.orderChinese}
-              </h3>
-
-              {/* Optional Pinyin */}
-              {showPinyin && (
-                <p className="text-sm font-bold text-[#0ea5e9] mt-2 font-mono select-all">
-                  {currentOrder.orderPinyin}
-                </p>
-              )}
-
-              {/* Optional translation */}
-              {showTranslation && (
-                <p className="text-xs font-bold text-[#5b6474] mt-2 italic select-all">
-                  {currentOrder.orderVietnamese}
-                </p>
-              )}
-            </div>
-
-            {/* Audio and help buttons */}
-            <div className="flex gap-2 mt-4 flex-wrap justify-center">
-              <button
-                onClick={playAudio}
-                className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1
-                  ${isPlayingAudio ? 'bg-[#16a34a] text-white' : 'bg-white text-[#111827]'}`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                </svg>
-                <span>Nghe đọc</span>
-              </button>
-
-              <button
-                onClick={() => setShowPinyin(prev => !prev)}
-                className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer
-                  ${showPinyin ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
-              >
-                Phiên âm
-              </button>
-
-              <button
-                onClick={() => setShowTranslation(prev => !prev)}
-                className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer
-                  ${showTranslation ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
-              >
-                Dịch nghĩa
-              </button>
-
-              <button
-                onClick={handleNextCustomer}
-                className="p-2 rounded-lg border-2 border-[#1f2937] bg-white text-[#1f2937] font-black text-xs uppercase transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1"
-              >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                </svg>
-                <span>Khách tiếp</span>
-              </button>
-            </div>
-          </div>
-
-          {/* 2. Speaking voice evaluation (Second on mobile, stays under Customer on desktop) */}
-          <div className="order-2 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-4 flex items-center justify-between gap-4">
-            <div>
-              <h4 className="text-xs font-black text-[#111827] uppercase tracking-wide">Luyện phát âm câu nói của khách</h4>
-              <p className="text-xs text-[#5b6474] font-medium mt-0.5">Nhấp nút bên phải để ghi âm giọng nói tiếng Trung của bạn nhé.</p>
-            </div>
-
-            <div className="flex gap-2">
-              {isRecording ? (
-                <button
-                  onClick={stopRecording}
-                  className="p-3 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-full animate-pulse shadow-[2px_2px_0px_#1f2937] hover:translate-y-0.5 hover:shadow-none cursor-pointer"
-                  title="Dừng ghi âm"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                  </svg>
-                </button>
-              ) : (
-                <button
-                  disabled={isTranscribing}
-                  onClick={startRecording}
-                  className="p-3 bg-[#0ea5e9] text-white border-2 border-[#1f2937] rounded-full shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-50"
-                  title="Bấm để luyện nói"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                  </svg>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 3. Shaker Cup & Control dashboard */}
-          <div className="order-3 lg:col-span-1 lg:row-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 text-center flex flex-col justify-between min-h-[300px] lg:h-full">
-            {isShakingGameActive ? (
-              <div className="flex flex-col justify-between h-full w-full">
-                <div>
-                  <h3 className="text-xs font-black text-[#dc2626] uppercase tracking-wider mb-2 animate-pulse">
-                    ⚡ LẮC ĐỀU BÌNH ⚡
-                  </h3>
-                  
-                  {/* Boba Cup with shaking motion class */}
-                  <div className="my-2 animate-bounce-short">
-                    {renderBobaCup()}
-                  </div>
-                  
-                  <p className="text-[10px] font-bold text-[#5b6474]">
-                    Canh kim chỉ đúng vùng màu xanh lá ở giữa để được điểm tối đa!
-                  </p>
-                </div>
-
-                {/* Shaking Force Timing Bar */}
-                <div>
-                  <div className="relative w-full h-6 bg-gray-200 border-2 border-[#1f2937] rounded-lg overflow-hidden my-3 shadow-[2px_2px_0px_#1f2937]">
-                    {/* Zones */}
-                    <div className="absolute inset-0 flex">
-                      <div className="w-[20%] bg-[#f87171] border-r-2 border-[#1f2937]"></div>
-                      <div className="w-[20%] bg-[#fde047] border-r-2 border-[#1f2937]"></div>
-                      <div className="w-[20%] bg-[#4ade80] border-r-2 border-[#1f2937] flex items-center justify-center">
-                        <span className="text-[8px] font-black text-[#111827] uppercase tracking-tighter">Perfect</span>
+            {/* Active Station Panel */}
+            <div className="w-full">
+              {(() => {
+                if (activeStation === 'tea') {
+                  const teaBases = INGREDIENTS.filter(i => i.category === 'base');
+                  return (
+                    <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full">
+                      <div className="flex justify-between items-center mb-3 border-b-2 border-dashed border-[#1f2937] pb-2">
+                        <h4 className="font-serif font-black text-sm text-[#111827]">🍵 Quầy Trà Nền (Bases)</h4>
+                        <button 
+                          onClick={() => setActiveStation(null)}
+                          className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
+                        >
+                          Quay lại đi bộ 🚶‍♀️
+                        </button>
                       </div>
-                      <div className="w-[20%] bg-[#fde047] border-r-2 border-[#1f2937]"></div>
-                      <div className="w-[20%] bg-[#f87171]"></div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {teaBases.map((ing) => {
+                          const isSelected = selectedIngredients.includes(ing.nameChinese);
+                          return (
+                            <button
+                              key={ing.id}
+                              onClick={() => toggleIngredient(ing.nameChinese)}
+                              className={`p-3 border-2 border-[#1f2937] rounded-lg font-black text-center flex flex-col justify-center items-center transition-all cursor-pointer shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
+                                ${isSelected ? 'bg-[#f59e0b] text-[#111827] -translate-y-0.5 shadow-[3px_3px_0px_#1f2937]' : 'bg-white text-[#111827] hover:-translate-y-0.5'}`}
+                            >
+                              <span className="text-lg font-serif">{ing.nameChinese}</span>
+                              <span className="text-[10px] text-[#5b6474] font-bold mt-0.5 uppercase">{ing.nameVietnamese}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                    {/* Pointer Indicator */}
-                    <div 
-                      className="absolute top-0 bottom-0 w-2 bg-[#1f2937] border-x border-white" 
-                      style={{ left: `calc(${sliderValue}% - 4px)` }}
-                    ></div>
+                  );
+                }
+
+                if (activeStation === 'topping') {
+                  const toppings = INGREDIENTS.filter(i => i.category === 'topping' || i.category === 'foam');
+                  return (
+                    <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full">
+                      <div className="flex justify-between items-center mb-3 border-b-2 border-dashed border-[#1f2937] pb-2">
+                        <h4 className="font-serif font-black text-sm text-[#111827]">🧋 Quầy Topping & Kem Sữa</h4>
+                        <button 
+                          onClick={() => setActiveStation(null)}
+                          className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
+                        >
+                          Quay lại đi bộ 🚶‍♀️
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        {toppings.map((ing) => {
+                          const isSelected = selectedIngredients.includes(ing.nameChinese);
+                          return (
+                            <button
+                              key={ing.id}
+                              onClick={() => toggleIngredient(ing.nameChinese)}
+                              className={`p-3 border-2 border-[#1f2937] rounded-lg font-black text-center flex flex-col justify-center items-center transition-all cursor-pointer shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
+                                ${isSelected ? 'bg-[#f59e0b] text-[#111827] -translate-y-0.5 shadow-[3px_3px_0px_#1f2937]' : 'bg-white text-[#111827] hover:-translate-y-0.5'}`}
+                            >
+                              <span className="text-lg font-serif">{ing.nameChinese}</span>
+                              <span className="text-[9px] text-[#5b6474] font-bold mt-0.5 uppercase tracking-tighter">{ing.nameVietnamese}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (activeStation === 'fruit') {
+                  const fruits = INGREDIENTS.filter(i => i.category === 'fruit');
+                  return (
+                    <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full">
+                      <div className="flex justify-between items-center mb-3 border-b-2 border-dashed border-[#1f2937] pb-2">
+                        <h4 className="font-serif font-black text-sm text-[#111827]">🍓 Quầy Trái Cây (Fruits)</h4>
+                        <button 
+                          onClick={() => setActiveStation(null)}
+                          className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
+                        >
+                          Quay lại đi bộ 🚶‍♀️
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {fruits.map((ing) => {
+                          const isSelected = selectedIngredients.includes(ing.nameChinese);
+                          return (
+                            <button
+                              key={ing.id}
+                              onClick={() => toggleIngredient(ing.nameChinese)}
+                              className={`p-3 border-2 border-[#1f2937] rounded-lg font-black text-center flex flex-col justify-center items-center transition-all cursor-pointer shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
+                                ${isSelected ? 'bg-[#f59e0b] text-[#111827] -translate-y-0.5 shadow-[3px_3px_0px_#1f2937]' : 'bg-white text-[#111827] hover:-translate-y-0.5'}`}
+                            >
+                              <span className="text-lg font-serif">{ing.nameChinese}</span>
+                              <span className="text-[10px] text-[#5b6474] font-bold mt-0.5 uppercase">{ing.nameVietnamese}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (activeStation === 'sugar_ice') {
+                  const sugars = INGREDIENTS.filter(i => i.category === 'sugar');
+                  const ices = INGREDIENTS.filter(i => i.category === 'ice');
+                  return (
+                    <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full space-y-4">
+                      <div className="flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-2">
+                        <h4 className="font-serif font-black text-sm text-[#111827]">🧊 Quầy Lượng Đường & Đá</h4>
+                        <button 
+                          onClick={() => setActiveStation(null)}
+                          className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
+                        >
+                          Quay lại đi bộ 🚶‍♀️
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <h5 className="text-[10px] font-black text-gray-400 uppercase mb-2">Chọn mức Đường (Sugar):</h5>
+                          <div className="grid grid-cols-3 gap-2">
+                            {sugars.map((ing) => {
+                              const isSelected = selectedIngredients.includes(ing.nameChinese);
+                              return (
+                                <button
+                                  key={ing.id}
+                                  onClick={() => toggleIngredient(ing.nameChinese)}
+                                  className={`p-2 border-2 border-[#1f2937] rounded-lg font-black text-xs text-center transition-all cursor-pointer shadow-[1.5px_1.5px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
+                                    ${isSelected ? 'bg-[#fef08a] text-[#111827]' : 'bg-white text-[#111827] hover:bg-yellow-50'}`}
+                                >
+                                  <div className="font-serif">{ing.nameChinese}</div>
+                                  <div className="text-[9px] text-gray-400 font-bold">{ing.nameVietnamese}</div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h5 className="text-[10px] font-black text-gray-400 uppercase mb-2">Chọn mức Đá (Ice):</h5>
+                          <div className="grid grid-cols-3 gap-2">
+                            {ices.map((ing) => {
+                              const isSelected = selectedIngredients.includes(ing.nameChinese);
+                              return (
+                                <button
+                                  key={ing.id}
+                                  onClick={() => toggleIngredient(ing.nameChinese)}
+                                  className={`p-2 border-2 border-[#1f2937] rounded-lg font-black text-xs text-center transition-all cursor-pointer shadow-[1.5px_1.5px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
+                                    ${isSelected ? 'bg-[#bfdbfe] text-[#111827]' : 'bg-white text-[#111827] hover:bg-blue-50'}`}
+                                >
+                                  <div className="font-serif">{ing.nameChinese}</div>
+                                  <div className="text-[9px] text-gray-400 font-bold">{ing.nameVietnamese}</div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (activeStation === 'order') {
+                  return (
+                    <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full space-y-4">
+                      <div className="flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-2">
+                        <h4 className="font-serif font-black text-sm text-[#111827]">💬 Gọi món & Phục vụ (Order)</h4>
+                        <button 
+                          onClick={() => setActiveStation(null)}
+                          className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
+                        >
+                          Quay lại đi bộ 🚶‍♀️
+                        </button>
+                      </div>
+
+                      <div className="w-full bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] relative text-center">
+                        <h3 className="text-xl md:text-2xl font-black text-[#111827] leading-relaxed select-all">
+                          {currentOrder.orderChinese}
+                        </h3>
+                        {showPinyin && (
+                          <p className="text-sm font-bold text-[#0ea5e9] mt-2 font-mono select-all">
+                            {currentOrder.orderPinyin}
+                          </p>
+                        )}
+                        {showTranslation && (
+                          <p className="text-xs font-bold text-[#5b6474] mt-2 italic select-all">
+                            {currentOrder.orderVietnamese}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2 justify-center flex-wrap">
+                        <button
+                          onClick={playAudio}
+                          className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1
+                            ${isPlayingAudio ? 'bg-[#16a34a] text-white' : 'bg-white text-[#111827]'}`}
+                        >
+                          🔊 Nghe đọc
+                        </button>
+                        <button
+                          onClick={() => setShowPinyin(prev => !prev)}
+                          className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer
+                            ${showPinyin ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
+                        >
+                          Phiên âm
+                        </button>
+                        <button
+                          onClick={() => setShowTranslation(prev => !prev)}
+                          className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer
+                            ${showTranslation ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
+                        >
+                          Dịch nghĩa
+                        </button>
+                        <button
+                          onClick={handleNextCustomer}
+                          className="p-2 rounded-lg border-2 border-[#1f2937] bg-white text-[#1f2937] font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1"
+                        >
+                          ⏭️ Khách tiếp
+                        </button>
+                      </div>
+
+                      {/* Luyện nói */}
+                      <div className="bg-[#fffdf8] border-2 border-[#1f2937] p-3.5 rounded-xl flex items-center justify-between gap-4">
+                        <div>
+                          <h5 className="text-xs font-black text-[#111827] uppercase">🎙️ Luyện nói phát âm</h5>
+                          <p className="text-[10px] text-[#5b6474] font-bold mt-0.5">Bấm nút micro để bắt đầu nói, hệ thống sẽ chấm điểm phát âm của bạn.</p>
+                        </div>
+                        <div>
+                          {isRecording ? (
+                            <button
+                              onClick={stopRecording}
+                              className="p-3 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-full animate-pulse shadow-[2px_2px_0px_#1f2937] cursor-pointer"
+                            >
+                              🛑 Dừng
+                            </button>
+                          ) : (
+                            <button
+                              disabled={isTranscribing}
+                              onClick={startRecording}
+                              className="p-3 bg-[#0ea5e9] text-white border-2 border-[#1f2937] rounded-full shadow-[2px_2px_0px_#1f2937] hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
+                            >
+                              🎙️ Nói
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Default null panel (Instructions)
+                return (
+                  <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full text-center space-y-3">
+                    <h4 className="font-serif font-black text-sm text-[#111827] uppercase tracking-wide">🚶‍♀️ Quầy Chế Biến Trà Sữa</h4>
+                    <p className="text-xs text-[#5b6474] font-bold leading-relaxed">
+                      Hãy di chuyển Lan Vy đến Máy trà, Quầy toppings, Quầy trái cây để chọn nguyên liệu. 
+                      Đến Máy lắc bình (🌪️) để lắc phục vụ nước, hoặc quay lại Quầy Order (💬) để xem lại yêu cầu khách hàng nhé!
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-black pt-1">
+                      <div className="bg-amber-50 border border-amber-300 rounded p-1.5 text-amber-800">🍵 Máy Trà Nền</div>
+                      <div className="bg-orange-50 border border-orange-300 rounded p-1.5 text-orange-800">🧋 Quầy Topping</div>
+                      <div className="bg-red-50 border border-red-300 rounded p-1.5 text-red-800">🍓 Quầy Trái Cây</div>
+                      <div className="bg-blue-50 border border-blue-300 rounded p-1.5 text-blue-800">🧊 Đường & Đá</div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+
+          {/* Right Column: Boba Cup preview & Serv/Clear controls + Feedback */}
+          <div className="space-y-6">
+            
+            {/* Shaker Cup Panel */}
+            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6 text-center flex flex-col justify-between min-h-[300px]">
+              {isShakingGameActive ? (
+                <div className="flex flex-col justify-between h-full w-full">
+                  <div>
+                    <h3 className="text-xs font-black text-[#dc2626] uppercase tracking-wider mb-2 animate-pulse">
+                      ⚡ LẮC ĐỀU BÌNH ⚡
+                    </h3>
+                    
+                    <div className="my-2 animate-bounce-short">
+                      {renderBobaCup()}
+                    </div>
+                    
+                    <p className="text-[10px] font-bold text-[#5b6474]">
+                      Canh kim chỉ đúng vùng màu xanh lá ở giữa để được điểm tối đa!
+                    </p>
                   </div>
 
-                  <div className="min-h-[24px]">
-                    {shakingResult ? (
-                      <span className={`text-xs font-black uppercase tracking-wider
-                        ${shakingResult === 'perfect' ? 'text-[#16a34a] animate-bounce-short' : shakingResult === 'good' ? 'text-[#eab308]' : 'text-[#dc2626]'}`}>
-                        {shakingResult === 'perfect' ? '✨ PERFECT! ✨' : shakingResult === 'good' ? '👍 GOOD! 👍' : '💨 MISS! 💨'}
-                      </span>
+                  <div>
+                    <div className="relative w-full h-6 bg-gray-200 border-2 border-[#1f2937] rounded-lg overflow-hidden my-3 shadow-[2px_2px_0px_#1f2937]">
+                      <div className="absolute inset-0 flex">
+                        <div className="w-[20%] bg-[#f87171] border-r-2 border-[#1f2937]"></div>
+                        <div className="w-[20%] bg-[#fde047] border-r-2 border-[#1f2937]"></div>
+                        <div className="w-[20%] bg-[#4ade80] border-r-2 border-[#1f2937] flex items-center justify-center">
+                          <span className="text-[8px] font-black text-[#111827] uppercase tracking-tighter">Perfect</span>
+                        </div>
+                        <div className="w-[20%] bg-[#fde047] border-r-2 border-[#1f2937]"></div>
+                        <div className="w-[20%] bg-[#f87171]"></div>
+                      </div>
+                      <div 
+                        className="absolute top-0 bottom-0 w-2 bg-[#1f2937] border-x border-white" 
+                        style={{ left: `calc(${sliderValue}% - 4px)` }}
+                      ></div>
+                    </div>
+
+                    <div className="min-h-[24px]">
+                      {shakingResult ? (
+                        <span className={`text-xs font-black uppercase tracking-wider
+                          ${shakingResult === 'perfect' ? 'text-[#16a34a] animate-bounce-short' : shakingResult === 'good' ? 'text-[#eab308]' : 'text-[#dc2626]'}`}>
+                          {shakingResult === 'perfect' ? '✨ PERFECT! ✨' : shakingResult === 'good' ? '👍 GOOD! 👍' : '💨 MISS! 💨'}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-[#9ca3af] italic">
+                          Lực lắc: {sliderValue}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <button
+                    disabled={shakingResult !== null}
+                    onClick={handleStopShaking}
+                    className="w-full p-3 bg-[#eab308] hover:bg-[#ca8a04] disabled:opacity-50 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  >
+                    {shakingResult !== null ? 'Đang rót nước...' : 'DỪNG LẮC & PHỤC VỤ'}
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col justify-between h-full w-full">
+                  <div>
+                    <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-2">
+                      Ly pha chế của bà chủ
+                    </h3>
+
+                    <div className="my-2">
+                      {renderBobaCup()}
+                    </div>
+                  </div>
+
+                  <div className="min-h-[50px] flex flex-wrap gap-1 justify-center items-center bg-[#fffdf8] border-2 border-[#1f2937] p-2 rounded-lg my-2">
+                    {selectedIngredients.length === 0 ? (
+                      <span className="text-[10px] font-bold text-[#9ca3af] italic">Ly rỗng</span>
                     ) : (
-                      <span className="text-[10px] font-bold text-[#9ca3af] italic">
-                        Lực lắc: {sliderValue}%
-                      </span>
+                      selectedIngredients.map((ing, idx) => (
+                        <span 
+                          key={idx}
+                          className="bg-white text-[#111827] border border-[#1f2937] font-black text-[10px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937]"
+                        >
+                          {ing}
+                        </span>
+                      ))
                     )}
                   </div>
-                </div>
 
-                {/* Stop Action */}
-                <button
-                  disabled={shakingResult !== null}
-                  onClick={handleStopShaking}
-                  className="w-full p-3 bg-[#eab308] hover:bg-[#ca8a04] disabled:opacity-50 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-                >
-                  {shakingResult !== null ? 'Đang rót nước...' : 'DỪNG LẮC & PHỤC VỤ'}
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col justify-between h-full w-full">
-                <div>
-                  <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider mb-2">
-                    Ly pha chế của bà chủ
-                  </h3>
-
-                  <div className="my-2">
-                    {renderBobaCup()}
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={clearCup}
+                      className="p-2.5 bg-[#fffdf8] hover:bg-gray-100 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                    >
+                      Xóa ly
+                    </button>
+                    <button
+                      onClick={handleServe}
+                      className="p-2.5 bg-[#16a34a] hover:bg-green-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                    >
+                      Phục vụ
+                    </button>
                   </div>
                 </div>
+              )}
+            </div>
 
-                {/* Selected ingredients raw chips list */}
-                <div className="min-h-[50px] flex flex-wrap gap-1 justify-center items-center bg-[#fffdf8] border-2 border-[#1f2937] p-2 rounded-lg my-2">
-                  {selectedIngredients.length === 0 ? (
-                    <span className="text-[10px] font-bold text-[#9ca3af] italic">Ly rỗng</span>
-                  ) : (
-                    selectedIngredients.map((ing, idx) => (
-                      <span 
-                        key={idx}
-                        className="bg-white text-[#111827] border border-[#1f2937] font-black text-[10px] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937]"
-                      >
-                        {ing}
-                      </span>
-                    ))
-                  )}
-                </div>
-
-                {/* Controls */}
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={clearCup}
-                    className="p-2.5 bg-[#fffdf8] hover:bg-gray-100 text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-                  >
-                    Xóa ly
-                  </button>
-
-                  <button
-                    onClick={handleServe}
-                    className="p-2.5 bg-[#16a34a] hover:bg-green-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
-                  >
-                    Phục vụ
-                  </button>
-                </div>
+            {/* Shop feedback & errors */}
+            <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 min-h-[145px] flex flex-col justify-between">
+              <div>
+                <h4 className="text-xs font-black text-[#111827] uppercase tracking-wide mb-1.5">Phản hồi của tiệm</h4>
+                <p className={`text-sm font-bold leading-relaxed
+                  ${messageType === 'success' ? 'text-[#16a34a]' : messageType === 'error' ? 'text-[#dc2626]' : 'text-[#111827]'}`}>
+                  {gameMessage}
+                </p>
               </div>
-            )}
-          </div>
 
-          {/* 4. Kitchen counter / Ingredients list (Fourth on mobile, Center-left on desktop) */}
-          <div className="order-4 lg:col-span-2 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-6">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b-2 border-dashed border-[#1f2937] flex-wrap gap-2">
-              <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider">
-                Quầy nguyên liệu pha chế (Chữ Hán)
-              </h3>
-              <button
-                onClick={() => setShowIngredientHelp(prev => !prev)}
-                className={`px-2.5 py-1 rounded border-2 border-[#1f2937] font-black text-[9px] uppercase transition-all shadow-[1.5px_1.5px_0px_#1f2937] active:translate-y-0.5 active:shadow-none cursor-pointer
-                  ${showIngredientHelp ? 'bg-[#f59e0b] text-[#111827]' : 'bg-[#fffdf8] text-[#5b6474]'}`}
-              >
-                {showIngredientHelp ? 'Ẩn nghĩa tiếng Việt' : 'Hiện nghĩa tiếng Việt'}
-              </button>
+              {activeMistakes.length > 0 && (
+                <div className="mt-4 border-t-2 border-dashed border-[#1f2937] pt-3">
+                  <h5 className="text-[10px] font-black text-[#dc2626] uppercase tracking-wider mb-2 flex items-center gap-1">
+                    Lỗi pha chế:
+                  </h5>
+                  <ul className="space-y-1 text-[11px] font-bold text-[#5b6474]">
+                    {activeMistakes.map((mistake, i) => (
+                      <li key={i} className="flex items-start gap-1">
+                        <span className="text-[#dc2626] font-black">▪</span>
+                        <span>{mistake}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {INGREDIENTS.map((ingredient) => {
-                const isSelected = selectedIngredients.includes(ingredient.nameChinese);
-                let categoryColor = 'bg-[#fffdf8]';
-                if (ingredient.category === 'base') categoryColor = 'hover:bg-[#f5e1c8]';
-                else if (ingredient.category === 'topping') categoryColor = 'hover:bg-[#fed7aa]';
-                else if (ingredient.category === 'sugar') categoryColor = 'hover:bg-[#fef08a]';
-                else if (ingredient.category === 'ice') categoryColor = 'hover:bg-[#bfdbfe]';
-
-                return (
-                  <button
-                    key={ingredient.id}
-                    onClick={() => toggleIngredient(ingredient.nameChinese)}
-                    className={`p-3.5 border-2 border-[#1f2937] rounded-lg font-black text-center flex flex-col justify-center items-center transition-all select-none cursor-pointer shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none
-                      ${isSelected 
-                        ? 'bg-[#f59e0b] text-[#111827] -translate-y-0.5 shadow-[3px_3px_0px_#1f2937]' 
-                        : `${categoryColor} text-[#111827] hover:-translate-y-0.5`
-                      }`}
-                  >
-                    <span className="text-lg font-serif">{ingredient.nameChinese}</span>
-                    <span className="text-[10px] font-bold text-[#5b6474] mt-0.5 uppercase tracking-wide min-h-[15px]">
-                      {showIngredientHelp ? ingredient.nameVietnamese : '???'}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 5. Notification / Feedback dialog & Mistakes details (Bottom on both mobile and desktop) */}
-          <div className="order-5 lg:col-span-1 bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 min-h-[145px] flex flex-col justify-between">
-            <div>
-              <h4 className="text-xs font-black text-[#111827] uppercase tracking-wide mb-1.5">Phản hồi của tiệm</h4>
-              <p className={`text-sm font-bold leading-relaxed
-                ${messageType === 'success' ? 'text-[#16a34a]' : messageType === 'error' ? 'text-[#dc2626]' : 'text-[#111827]'}`}>
-                {gameMessage}
-              </p>
-            </div>
-
-            {/* Active mistakes list explanation */}
-            {activeMistakes.length > 0 && (
-              <div className="mt-4 border-t-2 border-dashed border-[#1f2937] pt-3">
-                <h5 className="text-[10px] font-black text-[#dc2626] uppercase tracking-wider mb-2 flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                  Lỗi pha chế:
-                </h5>
-                <ul className="space-y-1 text-[11px] font-bold text-[#5b6474]">
-                  {activeMistakes.map((mistake, i) => (
-                    <li key={i} className="flex items-start gap-1">
-                      <span className="text-[#dc2626] font-black">▪</span>
-                      <span>{mistake}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         </div>
       )}

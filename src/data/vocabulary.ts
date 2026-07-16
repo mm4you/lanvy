@@ -21,7 +21,7 @@ export interface Ingredient {
   id: string;
   nameChinese: string;
   nameVietnamese: string;
-  category: 'base' | 'topping' | 'sugar' | 'ice';
+  category: 'base' | 'topping' | 'sugar' | 'ice' | 'fruit' | 'foam';
 }
 
 export const INGREDIENTS: Ingredient[] = [
@@ -36,6 +36,15 @@ export const INGREDIENTS: Ingredient[] = [
   { id: 'jelly', nameChinese: '椰果', nameVietnamese: 'Thạch dừa', category: 'topping' },
   { id: 'pudding', nameChinese: '布丁', nameVietnamese: 'Pudding', category: 'topping' },
   { id: 'redbean', nameChinese: '红豆', nameVietnamese: 'Đậu đỏ', category: 'topping' },
+
+  // Trái cây (Fruits)
+  { id: 'mango', nameChinese: '芒果', nameVietnamese: 'Xoài', category: 'fruit' },
+  { id: 'peach', nameChinese: '桃子', nameVietnamese: 'Đào', category: 'fruit' },
+  { id: 'strawberry', nameChinese: '草莓', nameVietnamese: 'Dâu tây', category: 'fruit' },
+  { id: 'lemon', nameChinese: '柠檬', nameVietnamese: 'Chanh', category: 'fruit' },
+
+  // Kem sữa (Foam)
+  { id: 'milkfoam', nameChinese: '奶盖', nameVietnamese: 'Kem sữa', category: 'foam' },
 
   // Đường (Sugar levels)
   { id: 'sugar_less', nameChinese: '少糖', nameVietnamese: 'Ít đường (70%)', category: 'sugar' },
@@ -227,5 +236,11 @@ export const VOCAB_LIST: VocabWord[] = [
   { chinese: "礼物", pinyin: "lǐwù", vietnamese: "Món quà", level: "HSK 3" },
   { chinese: "听说", pinyin: "tīngshuō", vietnamese: "Nghe nói", level: "HSK 4" },
   { chinese: "得到", pinyin: "dédào", vietnamese: "Nhận được / Đạt được", level: "HSK 4" },
-  { chinese: "是真的吗", pinyin: "shì zhēn de ma", vietnamese: "Có thật không?", level: "HSK 2" }
+  { chinese: "是真的吗", pinyin: "shì zhēn de ma", vietnamese: "Có thật không?", level: "HSK 2" },
+  // Trái cây & Kem sữa (New words!)
+  { chinese: "芒果", pinyin: "mángguǒ", vietnamese: "Xoài", level: "HSK 4" },
+  { chinese: "桃子", pinyin: "táozi", vietnamese: "Đào", level: "HSK 4" },
+  { chinese: "草莓", pinyin: "cǎoméi", vietnamese: "Dâu tây", level: "HSK 4" },
+  { chinese: "柠檬", pinyin: "níngméng", vietnamese: "Chanh", level: "HSK 4" },
+  { chinese: "奶盖", pinyin: "nǎigài", vietnamese: "Kem sữa (Lớp bọt sữa béo ngậy)", level: "HSK 4" }
 ];

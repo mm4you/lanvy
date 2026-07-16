@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import '../app/open-world.css';
+import '../app/town-fullscreen.css';
 import { LearningZone, WORLD_VOCAB, ZONE_LABELS } from '../data/open-world';
 import { AvatarConfig } from '../data/avatar';
 import AvatarWardrobe from './avatar-wardrobe';
@@ -167,35 +168,18 @@ export default function OpenWorldGame({ playerName, avatarConfig, score, coins, 
   const renderTown = () => (
     <>
       {renderHeader()}
-      <section className="town-intro">
-        <div>
-          <p className="world-eyebrow">Xin chào, {playerName}</p>
-          <h1>Hôm nay mình ghé đâu?</h1>
-          <p>Mỗi nơi là một chủ đề HSK khác nhau. Nhiệm vụ và tiến trình đều được lưu trên máy để bạn tiếp tục học khi không có mạng.</p>
+      <section className="town-game-stage" aria-label={'Thị trấn của ' + playerName}>
+        <PhaserTown
+          avatar={avatarConfig}
+          onEnter={(destination) => {
+            if (destination === 'boba') onEnterBoba();
+            else navigate(destination);
+          }}
+        />
+        <div className="town-player-status">
+          <span>Xin chào, {playerName}</span>
+          <strong>{progress.masteredIds.length}/{WORLD_VOCAB.length} từ đã gặp</strong>
         </div>
-        <div className="town-mastery">
-          <span><strong>{progress.masteredIds.length}</strong> / {WORLD_VOCAB.length} từ đã gặp</span>
-          <ProgressBar value={progress.masteredIds.length} total={WORLD_VOCAB.length} />
-          <small>Chuỗi tốt nhất: {progress.bestStreak} câu đúng</small>
-        </div>
-      </section>
-
-      <PhaserTown
-        avatar={avatarConfig}
-        onEnter={(destination) => {
-          if (destination === 'boba') onEnterBoba();
-          else navigate(destination);
-        }}
-      />
-
-      <section className="town-destinations" aria-label="Chọn nhanh địa điểm">
-        {(Object.keys(ZONE_META) as LearningZone[]).map((zone) => (
-          <button key={zone} type="button" onClick={() => navigate(zone)} style={{ '--zone-accent': ZONE_META[zone].accent } as React.CSSProperties}>
-            <span>{ZONE_META[zone].eyebrow}</span>
-            <strong>{ZONE_META[zone].title}</strong>
-            <small>{WORLD_VOCAB.filter((item) => item.zone === zone).length} từ đang chờ</small>
-          </button>
-        ))}
       </section>
     </>
   );
@@ -320,7 +304,7 @@ export default function OpenWorldGame({ playerName, avatarConfig, score, coins, 
   );
 
   return (
-    <main className="open-world-shell">
+    <main className={screen === 'town' ? 'open-world-shell is-town-screen' : 'open-world-shell'}>
       {screen === 'town' && renderTown()}
       {screen === 'wardrobe' && (
         <AvatarWardrobe

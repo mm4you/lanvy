@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import '../app/open-world.css';
 import { LearningZone, WORLD_VOCAB, WorldVocabWord, ZONE_LABELS } from '../data/open-world';
 import { AvatarConfig } from '../data/avatar';
-import PlayerAvatar from './pixel-avatar';
 import AvatarWardrobe from './avatar-wardrobe';
 import { ArrowLeftIcon, ArrowRightIcon, LogoutIcon, VolumeIcon, WardrobeIcon } from './ui-icons';
+import TownExplorer from './town-explorer';
 
 type WorldScreen = 'town' | LearningZone | 'notebook' | 'wardrobe';
 
@@ -142,19 +142,6 @@ export default function OpenWorldGame({ playerName, avatarConfig, score, coins, 
   const [zoneFilter, setZoneFilter] = useState<LearningZone | 'all'>('all');
   const [selectedNpc, setSelectedNpc] = useState(0);
   const [dialogueChoice, setDialogueChoice] = useState<number | null>(null);
-  const townMapViewportRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (screen !== 'town') return;
-    const frame = window.requestAnimationFrame(() => {
-      const viewport = townMapViewportRef.current;
-      if (viewport && viewport.scrollWidth > viewport.clientWidth) {
-        viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) / 2;
-      }
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [screen]);
-
   useEffect(() => {
     const loadTimer = window.setTimeout(() => {
       try {
@@ -271,32 +258,15 @@ export default function OpenWorldGame({ playerName, avatarConfig, score, coins, 
         </div>
       </section>
 
-      <div ref={townMapViewportRef} className="town-map-viewport">
-        <section className="town-map" aria-label="Bản đồ thị trấn HSK">
-        <div className="town-avatar"><PlayerAvatar config={avatarConfig} className="h-16 w-16" /><span>{playerName}</span></div>
-
-        <button type="button" className="town-building building-boba" onClick={onEnterBoba}>
-          <span className="building-sign">奶茶</span>
-          <strong>Tiệm trà sữa</strong>
-          <small>Đồ uống & gọi món</small>
-        </button>
-        <button type="button" className="town-building building-dimsum" onClick={() => navigate('dimsum')}>
-          <span className="building-sign">点心</span>
-          <strong>Nhà hàng Dim Sum</strong>
-          <small>{progress.zoneWins.dimsum} nhiệm vụ đúng</small>
-        </button>
-        <button type="button" className="town-building building-market" onClick={() => navigate('market')}>
-          <span className="building-sign">超市</span>
-          <strong>Siêu thị HSK</strong>
-          <small>{progress.zoneWins.market} món đã tìm</small>
-        </button>
-        <button type="button" className="town-building building-park" onClick={() => navigate('park')}>
-          <span className="building-sign">公园</span>
-          <strong>Công viên</strong>
-          <small>{progress.zoneWins.park} lượt hội thoại</small>
-        </button>
-        </section>
-      </div>
+      <TownExplorer
+        playerName={playerName}
+        avatar={avatarConfig}
+        zoneWins={progress.zoneWins}
+        onEnter={(destination) => {
+          if (destination === 'boba') onEnterBoba();
+          else navigate(destination);
+        }}
+      />
 
       <section className="town-destinations" aria-label="Chọn nhanh địa điểm">
         {(Object.keys(ZONE_META) as LearningZone[]).map((zone) => (

@@ -23,6 +23,41 @@
 .auth-segments button + button { border-left: 3px solid #172033; }
 .auth-segments button.is-active { background: #f59e0b; }
 
+.google-auth-button {
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 3px solid #172033;
+  background: white;
+  color: #172033;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 3px 3px 0 #172033;
+}
+
+.google-auth-button:hover { background: #f8fafc; transform: translate(-1px, -1px); }
+.google-auth-button svg { width: 20px; height: 20px; flex: 0 0 auto; }
+
+.auth-divider {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0 9px;
+  color: #657084;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.auth-divider::before, .auth-divider::after { content: ""; height: 1px; flex: 1; background: #aab2c0; }
+
 .auth-panel form { gap: 7px; }
 .auth-panel form label:not(:first-child) { margin-top: 7px; }
 

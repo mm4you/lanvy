@@ -86,6 +86,29 @@ export default function GamePage() {
             })
             .catch(() => undefined);
         }
+      } else {
+        void fetch('/api/session', { cache: 'no-store' })
+          .then(async (response) => {
+            if (!response.ok) return;
+            const data = await response.json() as { user?: GameUser };
+            if (!data.user) return;
+            const name = data.user.email.toLowerCase() === LOVE_EMAIL ? 'Lan Vy' : data.user.username;
+            localStorage.setItem('boba_game_user_id', data.user.id);
+            localStorage.setItem('boba_game_username', data.user.username);
+            localStorage.setItem('boba_game_email', data.user.email);
+            localStorage.setItem('boba_character_name', name);
+            setUser(data.user);
+            setCharacterName(name);
+            const progressResponse = await fetch('/api/progress', { cache: 'no-store' });
+            if (!progressResponse.ok) return;
+            const progressData = await progressResponse.json() as { progress?: SavedProgress };
+            if (progressData.progress) {
+              setScore(Number.isFinite(progressData.progress.score) ? Math.max(0, progressData.progress.score ?? 0) : 0);
+              setCoins(Number.isFinite(progressData.progress.coins) ? Math.max(0, progressData.progress.coins ?? 0) : 0);
+              setCurrentLevel(Number.isFinite(progressData.progress.level) ? Math.max(1, progressData.progress.level ?? 1) : 1);
+            }
+          })
+          .catch(() => undefined);
       }
     }, 0);
 

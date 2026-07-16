@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Tên tài khoản hoặc mật khẩu không chính xác.' }, { status: 400 });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = user.password ? await bcrypt.compare(password, user.password) : false;
     if (!passwordMatch) {
       return NextResponse.json({ error: 'Tên tài khoản hoặc mật khẩu không chính xác.' }, { status: 400 });
     }

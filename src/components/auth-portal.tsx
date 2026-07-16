@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import LocalProfile, { ProfileCharacter } from './local-profile';
 import { ArrowLeftIcon } from './ui-icons';
 import '../app/auth-portal.css';
@@ -9,6 +9,17 @@ export interface AuthenticatedUser {
   id: string;
   username: string;
   email: string;
+}
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285f4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 01-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z" />
+      <path fill="#34a853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0012 22z" />
+      <path fill="#fbbc05" d="M6.4 14a6 6 0 010-3.9V7.5H3.1a10 10 0 000 9.1L6.4 14z" />
+      <path fill="#ea4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.8A9.7 9.7 0 0012 2a10 10 0 00-8.9 5.5l3.3 2.6A6 6 0 0112 5.9z" />
+    </svg>
+  );
 }
 
 interface AuthPortalProps {
@@ -25,6 +36,21 @@ export default function AuthPortal({ onAuthenticated, onOffline }: AuthPortalPro
   const [loading, setLoading] = useState(false);
   const [offlineMode, setOfflineMode] = useState(false);
   const [offlineName, setOfflineName] = useState('');
+
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get('auth_error');
+    if (!code) return;
+    const messages: Record<string, string> = {
+      google_not_configured: 'Đăng nhập Google chưa được cấu hình trên máy chủ.',
+      google_cancelled: 'Bạn đã hủy đăng nhập Google.',
+      invalid_oauth_state: 'Phiên Google đã hết hạn. Vui lòng thử lại.',
+      account_link_conflict: 'Email này đã liên kết với một tài khoản Google khác.',
+      rate_limited: 'Thao tác quá nhanh. Vui lòng thử lại sau.',
+    };
+    const errorTimer = window.setTimeout(() => setError(messages[code] ?? 'Không thể đăng nhập bằng Google. Vui lòng thử lại.'), 0);
+    window.history.replaceState({}, '', window.location.pathname);
+    return () => window.clearTimeout(errorTimer);
+  }, []);
 
   if (offlineMode) {
     return (
@@ -85,6 +111,9 @@ export default function AuthPortal({ onAuthenticated, onOffline }: AuthPortalPro
           <button type="button" role="tab" aria-selected={mode === 'login'} className={mode === 'login' ? 'is-active' : ''} onClick={() => { setMode('login'); setError(''); }}>Đăng nhập</button>
           <button type="button" role="tab" aria-selected={mode === 'register'} className={mode === 'register' ? 'is-active' : ''} onClick={() => { setMode('register'); setError(''); }}>Đăng ký</button>
         </div>
+
+        <a className="google-auth-button" href="/api/auth/google/start"><GoogleIcon /><span>Tiếp tục với Google</span></a>
+        <div className="auth-divider"><span>hoặc dùng tài khoản</span></div>
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="account-username">Tên tài khoản</label>

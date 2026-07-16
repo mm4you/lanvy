@@ -333,7 +333,7 @@ export default function GamePage() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!user) return;
+      if (!user || gameArea !== 'boba') return;
       const target = e.target as HTMLElement;
       if (['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA'].includes(target.tagName)) return;
       
@@ -363,10 +363,10 @@ export default function GamePage() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [user, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted, selectedIngredients]);
+  }, [user, gameArea, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted, selectedIngredients]);
 
   useEffect(() => {
-    if (!user || showCoinShop || showVocabModal || showVoucherWallet || showAdminLogsModal || gameCompleted) return;
+    if (!user || gameArea !== 'boba' || showCoinShop || showVocabModal || showVoucherWallet || showAdminLogsModal || gameCompleted) return;
 
     const interval = setInterval(() => {
       let dx = 0;
@@ -407,7 +407,7 @@ export default function GamePage() {
     }, 120);
 
     return () => clearInterval(interval);
-  }, [playerPos, playerDir, user, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted]);
+  }, [playerPos, playerDir, user, gameArea, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {

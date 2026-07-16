@@ -1,5 +1,5 @@
-const CACHE_NAME = 'hsk-pixel-town-v2';
-const APP_SHELL = ['/', '/manifest.webmanifest', '/icon?size=192', '/assets/world/hsk-pixel-town.webp'];
+const CACHE_NAME = 'hsk-pixel-town-v3';
+const APP_SHELL = ['/', '/manifest.webmanifest', '/icon?size=192', '/assets/world/hsk-pixel-town.webp', '/assets/world/hsk-pixel-town-tile.webp'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

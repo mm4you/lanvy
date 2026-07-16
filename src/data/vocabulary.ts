@@ -69,7 +69,12 @@ export const ORDERS: Order[] = [
     orderVietnamese: 'Tôi muốn một ly trà sữa trân châu.',
     targetIngredients: ['奶茶', '珍珠'],
     successMessage: 'Ngon quá! Đúng món trân châu khoái khẩu của tôi rồi!',
-    failureMessage: 'Hình như thiếu trân châu hoặc trà sữa rồi bạn ơi...'
+    failureMessage: 'Hình như thiếu trân châu hoặc trà sữa rồi bạn ơi...',
+    voucherReward: {
+      title: 'THẺ CỐNG HIẾN TRÀ SỮA',
+      description: 'Nhận ngay 100 Xu vàng thưởng nóng cho sự tận tụy khởi đầu của bạn!',
+      code: 'WELCOME-BOBA-100'
+    }
   },
   {
     id: 2,
@@ -81,7 +86,12 @@ export const ORDERS: Order[] = [
     orderVietnamese: 'Tôi muốn uống trà xanh thạch dừa.',
     targetIngredients: ['绿茶', '椰果'],
     successMessage: 'Cảm ơn chủ quán! Thạch dừa dai ngon tuyệt!',
-    failureMessage: 'Uống nhầm vị rồi, mình gọi trà xanh thạch dừa mà.'
+    failureMessage: 'Uống nhầm vị rồi, mình gọi trà xanh thạch dừa mà.',
+    voucherReward: {
+      title: 'VOUCHER GIẢM 10% TRÀ SỮA',
+      description: 'Voucher giảm 10% khi order tại bất kỳ tiệm trà sữa đối tác thực tế nào của game.',
+      code: 'BOBA-DISCOUNT-10'
+    }
   },
   {
     id: 3,
@@ -93,7 +103,12 @@ export const ORDERS: Order[] = [
     orderVietnamese: 'Cho tôi một ly hồng trà đậu đỏ.',
     targetIngredients: ['红茶', '红豆'],
     successMessage: 'Đậu đỏ bùi ngọt, hồng trà thơm lắm!',
-    failureMessage: 'Hồng trà đậu đỏ của mình đâu rồi bạn ơi?'
+    failureMessage: 'Hồng trà đậu đỏ của mình đâu rồi bạn ơi?',
+    voucherReward: {
+      title: 'THẺ ĐỔI TÊN NHÂN VẬT',
+      description: 'Thẻ cho phép đổi tên bà chủ sang bất cứ biệt danh cute nào bạn thích!',
+      code: 'NAME-CHANGE-TICKET'
+    }
   },
 
   // LEVEL 2: HSK 4/5 - Tùy chọn đường đá chi tiết
@@ -107,7 +122,12 @@ export const ORDERS: Order[] = [
     orderVietnamese: 'Tôi muốn một ly trà sữa trân châu nửa đường, không đá.',
     targetIngredients: ['奶茶', '珍珠', '半糖', '去冰'],
     successMessage: 'Chế biến chuẩn xác ghê! Không đá ít ngọt uống rất vừa miệng!',
-    failureMessage: 'Mình dặn nửa đường không đá mà vị này lạ quá...'
+    failureMessage: 'Mình dặn nửa đường không đá mà vị này lạ quá...',
+    voucherReward: {
+      title: 'HỘP QUÀ MAY MẮN CẤP 2',
+      description: 'Mở hộp quà nhận ngẫu nhiên từ 150 xu đến 300 xu vàng!',
+      code: 'LUCKY-GIFT-BOX-LV2'
+    }
   },
   {
     id: 5,
@@ -119,7 +139,12 @@ export const ORDERS: Order[] = [
     orderVietnamese: 'Làm ơn cho tôi một ly trà xanh thạch dừa ít đường, ít đá.',
     targetIngredients: ['绿茶', '椰果', '少糖', '少冰'],
     successMessage: 'Tuyệt vời! Ít đường ít đá uống thanh mát tốt cho sức khỏe!',
-    failureMessage: 'Hơi sai sai về lượng đường hoặc đá rồi thì phải.'
+    failureMessage: 'Hơi sai sai về lượng đường hoặc đá rồi thì phải.',
+    voucherReward: {
+      title: 'VOUCHER TOPPING MIỄN PHÍ',
+      description: 'Voucher tặng thêm 1 phần trân châu/pudding miễn phí khi mua trà sữa thực tế.',
+      code: 'FREE-TOPPING-COUPON'
+    }
   },
   {
     id: 6,
@@ -131,7 +156,12 @@ export const ORDERS: Order[] = [
     orderVietnamese: 'Tôi muốn một ly hồng trà đậu đỏ không đường, nhiều đá, thêm pudding.',
     targetIngredients: ['红茶', '红豆', '布丁', '无糖', '多冰'],
     successMessage: 'Quá ngon! Đậu đỏ đã ngọt sẵn nên không đường là chuẩn bài!',
-    failureMessage: 'Hình như thiếu bánh pudding hoặc chưa đúng độ đường đá rồi.'
+    failureMessage: 'Hình như thiếu bánh pudding hoặc chưa đúng độ đường đá rồi.',
+    voucherReward: {
+      title: 'THẺ NHÂN ĐÔI ĐIỂM HSK',
+      description: 'Thẻ tăng 2x điểm tích lũy học tập của bạn trên Bảng xếp hạng HSK.',
+      code: 'DOUBLE-HSK-SCORE'
+    }
   },
 
   // LEVEL 3: HSK 5/6 & Love - Độc đáo, ngọt ngào cá nhân hóa

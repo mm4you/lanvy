@@ -24,7 +24,7 @@ export default function GamePage() {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [unlockedVouchers, setUnlockedVouchers] = useState<any[]>([]);
-  const [gameMessage, setGameMessage] = useState<string>('Chào mừng bạn đến với Tiệm Trà Sữa Của Lan Vy!');
+  const [gameMessage, setGameMessage] = useState<string>('Chào mừng bạn đến với Tiệm Trà Sữa HSK của chúng ta!');
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [customerState, setCustomerState] = useState<'entering' | 'idle' | 'leaving' | 'disappointed'>('entering');
   const [activeMistakes, setActiveMistakes] = useState<string[]>([]);
@@ -59,6 +59,20 @@ export default function GamePage() {
   const [playerDir, setPlayerDir] = useState<'up' | 'down' | 'left' | 'right'>('down');
   const [activeStation, setActiveStation] = useState<string | null>(null);
 
+  // Custom naming & AI Assistant states
+  const [characterName, setCharacterName] = useState('Lan Vy');
+  const [showChangeNameModal, setShowChangeNameModal] = useState(false);
+  const [newNameInput, setNewNameInput] = useState('Lan Vy');
+  const [explainWord, setExplainWord] = useState<string | null>(null);
+  const [explanationText, setExplanationText] = useState<string | null>(null);
+  const [isExplaining, setIsExplaining] = useState(false);
+
+  // Customer roleplay chat states
+  const [showChatWithCustomer, setShowChatWithCustomer] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
+  const [isChatting, setIsChatting] = useState(false);
+
   // Admin Logs state
   const [showAdminLogsModal, setShowAdminLogsModal] = useState(false);
   const [adminLogsData, setAdminLogsData] = useState<any[] | null>(null);
@@ -66,6 +80,7 @@ export default function GamePage() {
   const [adminLogsError, setAdminLogsError] = useState('');
 
   // Refs
+  const pressedKeys = useRef<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -317,79 +332,100 @@ export default function GamePage() {
     }
   };
 
+  const playFootstepBeep = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(100, ctx.currentTime);
+        gain.gain.setValueAtTime(0.005, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch(e){}
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!user) return;
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'BUTTON' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') {
-        return;
-      }
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', ' ', 'w', 'a', 's', 'd'].includes(e.key)) {
+      if (['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA'].includes(target.tagName)) return;
+      
+      const key = e.key.toLowerCase();
+      if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ', 'w', 'a', 's', 'd'].includes(key)) {
         e.preventDefault();
       }
+
       if (showCoinShop || showVocabModal || showVoucherWallet || showAdminLogsModal || gameCompleted) return;
 
-      let nextX = playerPos.x;
-      let nextY = playerPos.y;
-      let dir: 'up' | 'down' | 'left' | 'right' = playerDir;
-
-      switch (e.key) {
-        case 'ArrowUp':
-        case 'w':
-        case 'W':
-          nextY -= 1;
-          dir = 'up';
-          break;
-        case 'ArrowDown':
-        case 's':
-        case 'S':
-          nextY += 1;
-          dir = 'down';
-          break;
-        case 'ArrowLeft':
-        case 'a':
-        case 'A':
-          nextX -= 1;
-          dir = 'left';
-          break;
-        case 'ArrowRight':
-        case 'd':
-        case 'D':
-          nextX += 1;
-          dir = 'right';
-          break;
-        case ' ':
-        case 'Spacebar':
-          handleInteract();
-          return;
-        default:
-          return;
+      if (key === ' ' || key === 'spacebar') {
+        handleInteract();
+        return;
       }
 
-      setPlayerDir(dir);
-      if (isWalkable(nextX, nextY)) {
-        setPlayerPos({ x: nextX, y: nextY });
-        // Footstep beep
-        if (typeof window !== 'undefined') {
-          try {
-            const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.frequency.setValueAtTime(100, ctx.currentTime);
-            gain.gain.setValueAtTime(0.005, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.04);
-          } catch(e){}
-        }
-      }
+      pressedKeys.current.add(key);
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      pressedKeys.current.delete(key);
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [playerPos, playerDir, user, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted, selectedIngredients]);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [user, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted, selectedIngredients]);
+
+  useEffect(() => {
+    if (!user || showCoinShop || showVocabModal || showVoucherWallet || showAdminLogsModal || gameCompleted) return;
+
+    const interval = setInterval(() => {
+      let dx = 0;
+      let dy = 0;
+
+      if (pressedKeys.current.has('w') || pressedKeys.current.has('arrowup')) dy = -1;
+      if (pressedKeys.current.has('s') || pressedKeys.current.has('arrowdown')) dy = 1;
+      if (pressedKeys.current.has('a') || pressedKeys.current.has('arrowleft')) dx = -1;
+      if (pressedKeys.current.has('d') || pressedKeys.current.has('arrowright')) dx = 1;
+
+      if (dx === 0 && dy === 0) return;
+
+      let dir: 'up' | 'down' | 'left' | 'right' = playerDir;
+      if (dx > 0) dir = 'right';
+      else if (dx < 0) dir = 'left';
+      else if (dy > 0) dir = 'down';
+      else if (dy < 0) dir = 'up';
+
+      setPlayerDir(dir);
+
+      const nextX = playerPos.x + dx;
+      const nextY = playerPos.y + dy;
+
+      if (isWalkable(nextX, nextY)) {
+        setPlayerPos({ x: nextX, y: nextY });
+        playFootstepBeep();
+      } else {
+        if (dx !== 0 && dy !== 0) {
+          if (isWalkable(playerPos.x + dx, playerPos.y)) {
+            setPlayerPos({ x: playerPos.x + dx, y: playerPos.y });
+            playFootstepBeep();
+          } else if (isWalkable(playerPos.x, playerPos.y + dy)) {
+            setPlayerPos({ x: playerPos.x, y: playerPos.y + dy });
+            playFootstepBeep();
+          }
+        }
+      }
+    }, 120);
+
+    return () => clearInterval(interval);
+  }, [playerPos, playerDir, user, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted]);
 
   useEffect(() => {
     const savedUserId = localStorage.getItem('boba_game_user_id');
@@ -399,6 +435,11 @@ export default function GamePage() {
       const userData = { id: savedUserId, username: savedUsername, email: savedEmail || '' };
       setUser(userData);
       fetchProgress(userData.id);
+    }
+    const savedCharName = localStorage.getItem('boba_character_name');
+    if (savedCharName) {
+      setCharacterName(savedCharName);
+      setNewNameInput(savedCharName);
     }
   }, []);
 
@@ -459,7 +500,7 @@ export default function GamePage() {
         await fetchProgress(data.userId);
         // Welcome message based on email
         if ((data.email || '').toLowerCase() === LOVE_EMAIL) {
-          setGameMessage('Chào mừng Bà chủ Lan Vy! Tiệm Trà Sữa Tình Yêu đã sẵn sàng tiếp đón vị khách đặc biệt Nhựt Khang rồi nè 💕');
+          setGameMessage('Chào mừng Bà chủ Lan Vy! Tiệm Trà Sữa Tình Yêu đã sẵn sàng tiếp đón vị khách đặc biệt Nhựt Khang rồi nè!');
           setMessageType('success');
         } else {
           setGameMessage(`Chào mừng ${data.username}! Hãy bắt đầu pha trà sữa và học tiếng Trung nào!`);
@@ -735,21 +776,21 @@ export default function GamePage() {
       bonusScore = 150;
       bonusCoins = 75;
       resultType = 'perfect';
-      resultMessage = '✨ PERFECT! Lắc sữa siêu đều tay! +150 Điểm, +75 Xu. ';
+      resultMessage = 'PERFECT! Lắc sữa siêu đều tay! +150 Điểm, +75 Xu. ';
       setComboCount(prev => prev + 1);
       playSfx('perfect');
     } else if ((sliderValue >= 20 && sliderValue < 40) || (sliderValue > 60 && sliderValue <= 80)) {
       bonusScore = 100;
       bonusCoins = 50;
       resultType = 'good';
-      resultMessage = '👍 GOOD! Hương vị vừa miệng! +100 Điểm, +50 Xu. ';
+      resultMessage = 'GOOD! Hương vị vừa miệng! +100 Điểm, +50 Xu. ';
       setComboCount(prev => prev + 1);
       playSfx('success');
     } else {
       bonusScore = 50;
       bonusCoins = 25;
       resultType = 'miss';
-      resultMessage = '💨 MISS! Lắc hơi lệch một chút rồi! +50 Điểm, +25 Xu. ';
+      resultMessage = 'MISS! Lắc hơi lệch một chút rồi! +50 Điểm, +25 Xu. ';
       setComboCount(0);
       playSfx('error');
     }
@@ -814,11 +855,15 @@ export default function GamePage() {
         setCurrentOrderIndex(nextIndex);
         setSelectedIngredients([]);
         setShowTranslation(false);
+        setChatHistory([]);
+        setShowChatWithCustomer(false);
       } else {
         setCurrentOrderIndex(nextIndex);
         setSelectedIngredients([]);
         setGameCompleted(true);
         setGameMessage('Bà chủ Vy đã gặp hết tất cả khách hàng rồi!');
+        setChatHistory([]);
+        setShowChatWithCustomer(false);
       }
     }, 1000);
   };
@@ -901,8 +946,86 @@ export default function GamePage() {
     setGameCompleted(false);
     setCustomerState('entering');
     await saveProgress(score, coins, 1, null);
-    setGameMessage('Chào mừng Bà chủ Vy chơi lại từ đầu! Hãy tiếp đón khách hàng nhé.');
+    setGameMessage('Chào mừng Bà chủ chơi lại từ đầu! Hãy tiếp đón khách hàng nhé.');
     setMessageType('info');
+  };
+
+  const handleExplainWord = async (wordToExplain: string) => {
+    setExplainWord(wordToExplain);
+    setExplanationText(null);
+    setIsExplaining(true);
+    try {
+      const res = await fetch('/api/ai/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ word: wordToExplain })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setExplanationText(data.explanation);
+      } else {
+        setExplanationText('Có lỗi xảy ra khi kết nối với Trợ lý AI.');
+      }
+    } catch (e) {
+      setExplanationText('Không thể kết nối với Trợ lý AI. Vui lòng kiểm tra kết nối mạng.');
+    } finally {
+      setIsExplaining(false);
+    }
+  };
+
+  const handleSendChatMessage = async () => {
+    if (!chatInput.trim() || !currentOrder) return;
+    const msgText = chatInput.trim();
+    setChatInput('');
+    
+    const userMsg = { sender: 'player', text: msgText };
+    const nextHistory = [...chatHistory, userMsg];
+    setChatHistory(nextHistory);
+    setIsChatting(true);
+
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: currentOrder.customerName,
+          message: msgText,
+          history: chatHistory
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setChatHistory([...nextHistory, {
+          sender: 'customer',
+          text: data.text,
+          pinyin: data.pinyin,
+          translation: data.translation
+        }]);
+      } else {
+        setChatHistory([...nextHistory, {
+          sender: 'customer',
+          text: '...... (Có vẻ tôi đang bận suy nghĩ gì đó)',
+          translation: 'Khách hàng tạm thời chưa trả lời được.'
+        }]);
+      }
+    } catch (e) {
+      setChatHistory([...nextHistory, {
+        sender: 'customer',
+        text: '...... (Kết nối chập chờn)',
+        translation: 'Lỗi kết nối mạng.'
+      }]);
+    } finally {
+      setIsChatting(false);
+    }
+  };
+
+  const handleChangeName = () => {
+    if (!newNameInput.trim()) return;
+    setCharacterName(newNameInput);
+    localStorage.setItem('boba_character_name', newNameInput);
+    setShowChangeNameModal(false);
+    setGameMessage(`Đã đổi tên bà chủ thành ${newNameInput}!`);
+    setMessageType('success');
   };
 
   // Clean audio on unmount
@@ -913,6 +1036,140 @@ export default function GamePage() {
       }
     };
   }, []);
+
+  const renderTeaIcon = (className = "w-6 h-6") => (
+    <svg viewBox="0 0 32 32" className={`${className} pixelated inline`}>
+      <rect x="6" y="4" width="20" height="24" fill="#4b5563" stroke="#1f2937" strokeWidth="2" />
+      <rect x="8" y="6" width="16" height="6" fill="#1e293b" />
+      <circle cx="11" cy="9" r="1.5" fill="#22c55e" />
+      <circle cx="16" cy="9" r="1.5" fill="#3b82f6" />
+      <circle cx="21" cy="9" r="1.5" fill="#ef4444" />
+      <rect x="14" y="16" width="4" height="4" fill="#94a3b8" stroke="#1f2937" strokeWidth="1" />
+      <rect x="8" y="24" width="16" height="3" fill="#334155" />
+    </svg>
+  );
+
+  const renderToppingIcon = (className = "w-6 h-6") => (
+    <svg viewBox="0 0 32 32" className={`${className} pixelated inline`}>
+      <rect x="4" y="8" width="24" height="18" fill="#ca8a04" stroke="#1f2937" strokeWidth="2" />
+      <rect x="6" y="12" width="6" height="5" fill="#f1f5f9" stroke="#1f2937" strokeWidth="1" />
+      <circle cx="9" cy="14" r="1.5" fill="#1e293b" />
+      <rect x="13" y="12" width="6" height="5" fill="#f1f5f9" stroke="#1f2937" strokeWidth="1" />
+      <rect x="15" y="14" width="2" height="2" fill="#fbbf24" />
+      <rect x="20" y="12" width="6" height="5" fill="#f1f5f9" stroke="#1f2937" strokeWidth="1" />
+      <rect x="22" y="13" width="2" height="3" fill="#7f1d1d" />
+    </svg>
+  );
+
+  const renderFruitIcon = (className = "w-6 h-6") => (
+    <svg viewBox="0 0 32 32" className={`${className} pixelated inline`}>
+      <rect x="4" y="10" width="24" height="16" fill="#854d0e" stroke="#1f2937" strokeWidth="2" />
+      <line x1="4" y1="16" x2="28" y2="16" stroke="#1f2937" strokeWidth="1.5" />
+      <line x1="4" y1="21" x2="28" y2="21" stroke="#1f2937" strokeWidth="1.5" />
+      <circle cx="9" cy="8" r="3.5" fill="#ef4444" />
+      <circle cx="16" cy="7" r="4.5" fill="#eab308" />
+      <circle cx="23" cy="8" r="3.5" fill="#eab308" />
+    </svg>
+  );
+
+  const renderIceIcon = (className = "w-6 h-6") => (
+    <svg viewBox="0 0 32 32" className={`${className} pixelated inline`}>
+      <rect x="6" y="4" width="20" height="24" fill="#0ea5e9" stroke="#1f2937" strokeWidth="2" />
+      <rect x="8" y="6" width="16" height="8" fill="#e0f2fe" />
+      <rect x="11" y="9" width="3" height="3" fill="#ffffff" />
+      <rect x="17" y="8" width="3" height="3" fill="#ffffff" />
+      <rect x="15" y="16" width="2" height="6" fill="#64748b" stroke="#1f2937" strokeWidth="1" />
+    </svg>
+  );
+
+  const renderBookshelfIcon = (className = "w-6 h-6") => (
+    <svg viewBox="0 0 32 32" className={`${className} pixelated inline`}>
+      <rect x="4" y="4" width="24" height="24" fill="#78350f" stroke="#1f2937" strokeWidth="2" />
+      <line x1="4" y1="13" x2="28" y2="13" stroke="#1f2937" strokeWidth="2" />
+      <line x1="4" y1="21" x2="28" y2="21" stroke="#1f2937" strokeWidth="2" />
+      <rect x="6" y="6" width="4" height="7" fill="#ef4444" stroke="#1f2937" strokeWidth="1" />
+      <rect x="10" y="7" width="3" height="6" fill="#3b82f6" stroke="#1f2937" strokeWidth="1" />
+      <rect x="13" y="5" width="4" height="8" fill="#eab308" stroke="#1f2937" strokeWidth="1" />
+      <rect x="19" y="15" width="4" height="6" fill="#22c55e" stroke="#1f2937" strokeWidth="1" />
+      <rect x="23" y="16" width="3" height="5" fill="#ec4899" stroke="#1f2937" strokeWidth="1" />
+    </svg>
+  );
+
+  const renderShakerIcon = (className = "w-6 h-6") => (
+    <svg viewBox="0 0 32 32" className={`${className} pixelated inline`}>
+      <rect x="8" y="4" width="16" height="24" fill="#64748b" stroke="#1f2937" strokeWidth="2" />
+      <path d="M12 10 L14 22 L18 22 L20 10 Z" fill="#94a3b8" stroke="#1f2937" strokeWidth="1.5" />
+      <line x1="16" y1="4" x2="16" y2="9" stroke="#1f2937" strokeWidth="3" />
+      <rect x="11" y="7" width="10" height="2" fill="#475569" />
+    </svg>
+  );
+
+  const renderRegisterIcon = (className = "w-6 h-6") => (
+    <svg viewBox="0 0 32 32" className={`${className} pixelated inline`}>
+      <rect x="6" y="8" width="20" height="18" fill="#334155" stroke="#1f2937" strokeWidth="2" />
+      <rect x="8" y="10" width="16" height="8" fill="#10b981" stroke="#1f2937" strokeWidth="1.5" />
+      <rect x="10" y="12" width="6" height="2" fill="#ffffff" />
+      <rect x="8" y="20" width="4" height="3" fill="#e2e8f0" stroke="#1f2937" strokeWidth="1" />
+      <rect x="14" y="20" width="4" height="3" fill="#e2e8f0" stroke="#1f2937" strokeWidth="1" />
+      <rect x="20" y="20" width="4" height="3" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
+    </svg>
+  );
+
+  const renderPencilIcon = (className = "w-3 h-3") => (
+    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+    </svg>
+  );
+
+  const renderHeartIcon = (className = "w-4 h-4") => (
+    <svg viewBox="0 0 24 24" className={`${className} fill-current text-red-500 inline-block`} stroke="currentColor" strokeWidth="2">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+    </svg>
+  );
+
+  const renderAudioIcon = (className = "w-4 h-4") => (
+    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+    </svg>
+  );
+
+  const renderMicIcon = (className = "w-4 h-4") => (
+    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
+    </svg>
+  );
+
+  const renderStopIcon = (className = "w-4 h-4") => (
+    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    </svg>
+  );
+
+  const renderNextIcon = (className = "w-4 h-4") => (
+    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="5 4 15 12 5 20 5 4" />
+      <line x1="19" y1="5" x2="19" y2="19" />
+    </svg>
+  );
+
+  const renderChartIcon = (className = "w-4 h-4") => (
+    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+
+  const renderTrashIcon = (className = "w-4 h-4") => (
+    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      <line x1="10" y1="11" x2="10" y2="17" />
+      <line x1="14" y1="11" x2="14" y2="17" />
+    </svg>
+  );
 
   const renderPlayerAvatar = () => {
     switch (playerDir) {
@@ -1691,8 +1948,20 @@ export default function GamePage() {
             T
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Của Lan Vy</h1>
-            <p className="text-xs text-[#5b6474] font-medium">Chào bà chủ: <span className="font-bold text-[#1e3b8b]">{user.username}</span></p>
+            <h1 className="font-serif font-black text-lg text-[#111827]">Tiệm Trà Sữa Của {characterName}</h1>
+            <p className="text-xs text-[#5b6474] font-medium flex items-center gap-1">
+              Bà chủ: <span className="font-bold text-[#1e3b8b]">{characterName}</span> ({user.username})
+              <button 
+                onClick={() => {
+                  setNewNameInput(characterName);
+                  setShowChangeNameModal(true);
+                }} 
+                className="text-xs text-[#0ea5e9] hover:underline border-none bg-transparent cursor-pointer ml-1 font-bold flex items-center gap-0.5"
+                title="Đổi tên nhân vật"
+              >
+                {renderPencilIcon("w-3 h-3")} Đổi tên
+              </button>
+            </p>
           </div>
         </div>
 
@@ -1775,9 +2044,9 @@ export default function GamePage() {
           {user?.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
             <button
               onClick={handleOpenAdminLogs}
-              className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+              className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5"
             >
-              📊 Logs Admin
+              {renderChartIcon("w-3.5 h-3.5")} Logs Admin
             </button>
           )}
 
@@ -1809,7 +2078,7 @@ export default function GamePage() {
               onClick={handleRestartGame}
               className="px-6 py-3.5 bg-[#ca8a04] hover:bg-[#a16207] text-white border-2 border-[#1f2937] rounded-xl font-black text-sm uppercase tracking-wider shadow-[4px_4px_0px_#1f2937] hover:-translate-y-0.5 transition-all cursor-pointer"
             >
-              CHƠI LẠI TỪ ĐẦU 🔄
+              CHƠI LẠI TỪ ĐẦU
             </button>
           </div>
         </div>
@@ -1832,46 +2101,46 @@ export default function GamePage() {
             <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-4 flex flex-col items-center">
               
               {/* Cozy 2D Grid map render */}
-              <div className="w-full aspect-[12/10] bg-[#eed9b3] border-[3px] border-[#1f2937] shadow-[4px_4px_0px_#1f2937] rounded-xl relative overflow-hidden select-none">
+              <div className="w-full h-[400px] md:h-[450px] bg-[#eed9b3] border-[3px] border-[#1f2937] shadow-[4px_4px_0px_#1f2937] rounded-xl relative overflow-hidden select-none cozy-wood-floor">
                 <div className="grid grid-cols-12 grid-rows-10 w-full h-full">
                   {Array.from({ length: 120 }).map((_, idx) => {
                     const x = idx % 12;
                     const y = Math.floor(idx / 12);
                     
-                    let bgClass = "bg-[#eed9b3] border-[0.5px] border-dashed border-[#e6c99c]/40"; 
+                    let bgClass = "cozy-wood-tile"; 
                     let cellContent = null;
 
                     if (y === 0) {
-                      bgClass = "bg-[#4b5563] border-b-4 border-[#1f2937]";
+                      bgClass = "cozy-brick-wall";
                     } else if (y === 9) {
                       bgClass = "bg-[#78350f] border-t-4 border-[#1f2937]";
                     } else if (x === 0 || x === 11) {
-                      bgClass = "bg-[#4b5563]";
+                      bgClass = "bg-[#4b5563] border-x border-[#1f2937]";
                     } else if (y === 2) {
                       if (x === 2) {
-                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
-                        cellContent = <span className="text-[14px]">🍵</span>;
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center shadow-[inset_1px_1px_4px_rgba(0,0,0,0.3)]";
+                        cellContent = renderTeaIcon("w-9 h-9");
                       } else if (x === 4) {
-                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
-                        cellContent = <span className="text-[14px]">🧋</span>;
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center shadow-[inset_1px_1px_4px_rgba(0,0,0,0.3)]";
+                        cellContent = renderToppingIcon("w-9 h-9");
                       } else if (x === 6) {
-                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
-                        cellContent = <span className="text-[14px]">🍓</span>;
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center shadow-[inset_1px_1px_4px_rgba(0,0,0,0.3)]";
+                        cellContent = renderFruitIcon("w-9 h-9");
                       } else if (x === 8) {
-                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
-                        cellContent = <span className="text-[14px]">🧊</span>;
+                        bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center shadow-[inset_1px_1px_4px_rgba(0,0,0,0.3)]";
+                        cellContent = renderIceIcon("w-9 h-9");
                       } else if (x === 10) {
-                        bgClass = "bg-[#854d0e] border-2 border-[#1f2937] flex items-center justify-center";
-                        cellContent = <span className="text-[14px]">📚</span>;
+                        bgClass = "bg-[#854d0e] border-2 border-[#1f2937] flex items-center justify-center shadow-[inset_1px_1px_4px_rgba(0,0,0,0.3)]";
+                        cellContent = renderBookshelfIcon("w-9 h-9");
                       }
                     } else if (y === 6 && x === 2) {
-                      bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center";
-                      cellContent = <span className="text-[14px]">🌪️</span>;
+                      bgClass = "bg-[#ca8a04] border-2 border-[#1f2937] flex items-center justify-center shadow-[inset_1px_1px_4px_rgba(0,0,0,0.3)]";
+                      cellContent = renderShakerIcon("w-9 h-9");
                     } else if (y === 6 && x === 9) {
-                      bgClass = "bg-[#f59e0b] border-2 border-[#1f2937] flex items-center justify-center";
-                      cellContent = <span className="text-[14px]">🔔</span>;
+                      bgClass = "bg-[#f59e0b] border-2 border-[#1f2937] flex items-center justify-center shadow-[inset_1px_1px_4px_rgba(0,0,0,0.3)]";
+                      cellContent = renderRegisterIcon("w-9 h-9");
                     } else if (y === 4 && x >= 2 && x <= 9) {
-                      bgClass = "bg-[#78350f] border-t-2 border-b-2 border-x border-[#1f2937]";
+                      bgClass = "bg-[#78350f] border-t-2 border-b-2 border-x border-[#1f2937] shadow-md";
                     }
 
                     const isCustomerCell = y === 3 && x === 5;
@@ -1916,15 +2185,15 @@ export default function GamePage() {
                   return (
                     <button
                       onClick={handleInteract}
-                      className="w-full mt-3 p-2 bg-[#fde047] hover:bg-[#facc15] text-[#111827] font-black text-xs uppercase tracking-wider border-2 border-[#1f2937] rounded-lg shadow-[2px_2px_0px_#1f2937] active:scale-[0.98] transition-all animate-pulse cursor-pointer"
+                      className="w-full mt-3 p-2 bg-[#fde047] hover:bg-[#facc15] text-[#111827] font-black text-xs uppercase tracking-wider border-2 border-[#1f2937] rounded-lg shadow-[2px_2px_0px_#1f2937] active:scale-[0.98] transition-all animate-pulse cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                      👉 Bấm vào đây hoặc nhấn SPACE để mở {station.label}!
+                      {renderNextIcon("w-3.5 h-3.5")} Bấm vào đây hoặc nhấn SPACE để mở {station.label}!
                     </button>
                   );
                 }
                 return (
                   <p className="text-[10px] font-bold text-[#5b6474] mt-3 bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-center w-full">
-                    💡 Dùng phím **WASD / Phím mũi tên** để di chuyển Lan Vy, hoặc **Click chuột trực tiếp lên quầy** để đi nhanh.
+                    Hướng dẫn: Dùng phím WASD / Phím mũi tên để di chuyển Lan Vy, hoặc Click chuột trực tiếp lên quầy để đi nhanh.
                   </p>
                 );
               })()}
@@ -1938,12 +2207,14 @@ export default function GamePage() {
                   return (
                     <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full">
                       <div className="flex justify-between items-center mb-3 border-b-2 border-dashed border-[#1f2937] pb-2">
-                        <h4 className="font-serif font-black text-sm text-[#111827]">🍵 Quầy Trà Nền (Bases)</h4>
+                        <h4 className="font-serif font-black text-sm text-[#111827] flex items-center gap-1.5">
+                          {renderTeaIcon("w-5 h-5")} Quầy Trà Nền (Bases)
+                        </h4>
                         <button 
                           onClick={() => setActiveStation(null)}
                           className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
                         >
-                          Quay lại đi bộ 🚶‍♀️
+                          Quay lại đi bộ
                         </button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1971,12 +2242,14 @@ export default function GamePage() {
                   return (
                     <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full">
                       <div className="flex justify-between items-center mb-3 border-b-2 border-dashed border-[#1f2937] pb-2">
-                        <h4 className="font-serif font-black text-sm text-[#111827]">🧋 Quầy Topping & Kem Sữa</h4>
+                        <h4 className="font-serif font-black text-sm text-[#111827] flex items-center gap-1.5">
+                          {renderToppingIcon("w-5 h-5")} Quầy Topping & Kem Sữa
+                        </h4>
                         <button 
                           onClick={() => setActiveStation(null)}
                           className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
                         >
-                          Quay lại đi bộ 🚶‍♀️
+                          Quay lại đi bộ
                         </button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -2004,12 +2277,14 @@ export default function GamePage() {
                   return (
                     <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full">
                       <div className="flex justify-between items-center mb-3 border-b-2 border-dashed border-[#1f2937] pb-2">
-                        <h4 className="font-serif font-black text-sm text-[#111827]">🍓 Quầy Trái Cây (Fruits)</h4>
+                        <h4 className="font-serif font-black text-sm text-[#111827] flex items-center gap-1.5">
+                          {renderFruitIcon("w-5 h-5")} Quầy Trái Cây (Fruits)
+                        </h4>
                         <button 
                           onClick={() => setActiveStation(null)}
                           className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
                         >
-                          Quay lại đi bộ 🚶‍♀️
+                          Quay lại đi bộ
                         </button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -2038,12 +2313,14 @@ export default function GamePage() {
                   return (
                     <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full space-y-4">
                       <div className="flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-2">
-                        <h4 className="font-serif font-black text-sm text-[#111827]">🧊 Quầy Lượng Đường & Đá</h4>
+                        <h4 className="font-serif font-black text-sm text-[#111827] flex items-center gap-1.5">
+                          {renderIceIcon("w-5 h-5")} Quầy Lượng Đường & Đá
+                        </h4>
                         <button 
                           onClick={() => setActiveStation(null)}
                           className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
                         >
-                          Quay lại đi bộ 🚶‍♀️
+                          Quay lại đi bộ
                         </button>
                       </div>
 
@@ -2096,12 +2373,14 @@ export default function GamePage() {
                   return (
                     <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full space-y-4">
                       <div className="flex justify-between items-center border-b-2 border-dashed border-[#1f2937] pb-2">
-                        <h4 className="font-serif font-black text-sm text-[#111827]">💬 Gọi món & Phục vụ (Order)</h4>
+                        <h4 className="font-serif font-black text-sm text-[#111827] flex items-center gap-1.5">
+                          {renderRegisterIcon("w-5 h-5")} Gọi món & Phục vụ (Order)
+                        </h4>
                         <button 
                           onClick={() => setActiveStation(null)}
                           className="px-2.5 py-1 bg-white hover:bg-gray-100 border-2 border-[#1f2937] rounded-md text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] cursor-pointer"
                         >
-                          Quay lại đi bộ 🚶‍♀️
+                          Quay lại đi bộ
                         </button>
                       </div>
 
@@ -2127,7 +2406,7 @@ export default function GamePage() {
                           className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1
                             ${isPlayingAudio ? 'bg-[#16a34a] text-white' : 'bg-white text-[#111827]'}`}
                         >
-                          🔊 Nghe đọc
+                          {renderAudioIcon("w-3.5 h-3.5")} Nghe đọc
                         </button>
                         <button
                           onClick={() => setShowPinyin(prev => !prev)}
@@ -2144,34 +2423,106 @@ export default function GamePage() {
                           Dịch nghĩa
                         </button>
                         <button
+                          onClick={() => handleExplainWord(currentOrder.orderChinese)}
+                          className="p-2 rounded-lg border-2 border-[#1f2937] bg-[#0ea5e9] text-white font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1"
+                        >
+                          AI Giải Thích
+                        </button>
+                        <button
+                          onClick={() => setShowChatWithCustomer(prev => !prev)}
+                          className={`p-2 rounded-lg border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1
+                            ${showChatWithCustomer ? 'bg-[#a855f7] text-white' : 'bg-white text-[#111827]'}`}
+                        >
+                          Trò chuyện
+                        </button>
+                        <button
                           onClick={handleNextCustomer}
                           className="p-2 rounded-lg border-2 border-[#1f2937] bg-white text-[#1f2937] font-black text-xs uppercase tracking-wider transition-all shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center gap-1"
                         >
-                          ⏭️ Khách tiếp
+                          {renderNextIcon("w-3.5 h-3.5")} Khách tiếp
                         </button>
                       </div>
+
+                      {/* Customer Chat Logs Box */}
+                      {showChatWithCustomer && (
+                        <div className="bg-[#fffdf8] border-2 border-[#1f2937] p-3.5 rounded-xl space-y-3 flex flex-col max-h-[220px] overflow-hidden">
+                          <h5 className="text-[10px] font-black text-purple-700 uppercase tracking-wider flex items-center gap-1">
+                            Nhắn tin cùng {currentOrder.customerName}
+                          </h5>
+                          
+                          {/* Messages list */}
+                          <div className="flex-1 overflow-y-auto space-y-2 text-xs pr-1">
+                            {chatHistory.length === 0 ? (
+                              <div className="text-gray-400 italic text-center py-4">Bắt đầu câu chuyện với khách hàng...</div>
+                            ) : (
+                              chatHistory.map((chat, idx) => (
+                                <div key={idx} className={`flex flex-col ${chat.sender === 'player' ? 'items-end' : 'items-start'}`}>
+                                  <div className={`p-2 rounded-lg max-w-[85%] border border-[#1f2937] font-bold text-[11px] leading-relaxed
+                                    ${chat.sender === 'player' ? 'bg-[#e9f5ff] text-[#111827] rounded-tr-none' : 'bg-white text-[#111827] rounded-tl-none'}`}
+                                  >
+                                    <div className={chat.sender === 'customer' ? 'font-serif text-sm' : ''}>{chat.text}</div>
+                                    {chat.pinyin && <div className="text-[9px] text-[#0ea5e9] font-mono mt-0.5">{chat.pinyin}</div>}
+                                    {chat.translation && <div className="text-[9px] text-[#5b6474] italic mt-0.5">{chat.translation}</div>}
+                                  </div>
+                                </div>
+                              ))
+                            )}
+                            {isChatting && (
+                              <div className="flex items-center gap-1 text-[10px] font-bold text-gray-400 animate-pulse">
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                                <span>{currentOrder.customerName} đang gõ...</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Chat input box */}
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={chatInput}
+                              onChange={(e) => setChatInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSendChatMessage();
+                              }}
+                              placeholder="Nhắn tin (bằng tiếng Trung hoặc tiếng Việt)..."
+                              className="flex-1 px-3 py-1.5 border border-[#1f2937] bg-white rounded-lg text-[11px] font-bold focus:outline-none shadow-[1.5px_1.5px_0px_#1f2937]"
+                              maxLength={100}
+                              disabled={isChatting}
+                            />
+                            <button
+                              onClick={handleSendChatMessage}
+                              disabled={isChatting || !chatInput.trim()}
+                              className="px-3 py-1.5 bg-[#a855f7] text-white border-2 border-[#1f2937] rounded-lg font-black text-[10px] uppercase shadow-[1.5px_1.5px_0px_#1f2937] disabled:opacity-50 active:translate-y-0.5 active:shadow-none cursor-pointer"
+                            >
+                              Gửi
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Luyện nói */}
                       <div className="bg-[#fffdf8] border-2 border-[#1f2937] p-3.5 rounded-xl flex items-center justify-between gap-4">
                         <div>
-                          <h5 className="text-xs font-black text-[#111827] uppercase">🎙️ Luyện nói phát âm</h5>
+                          <h5 className="text-xs font-black text-[#111827] uppercase flex items-center gap-1">{renderMicIcon("w-4 h-4")} Luyện nói phát âm</h5>
                           <p className="text-[10px] text-[#5b6474] font-bold mt-0.5">Bấm nút micro để bắt đầu nói, hệ thống sẽ chấm điểm phát âm của bạn.</p>
                         </div>
                         <div>
                           {isRecording ? (
                             <button
                               onClick={stopRecording}
-                              className="p-3 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-full animate-pulse shadow-[2px_2px_0px_#1f2937] cursor-pointer"
+                              className="p-3 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-full animate-pulse shadow-[2px_2px_0px_#1f2937] cursor-pointer flex items-center justify-center"
                             >
-                              🛑 Dừng
+                              {renderStopIcon("w-4 h-4")} Dừng
                             </button>
                           ) : (
                             <button
                               disabled={isTranscribing}
                               onClick={startRecording}
-                              className="p-3 bg-[#0ea5e9] text-white border-2 border-[#1f2937] rounded-full shadow-[2px_2px_0px_#1f2937] hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
+                              className="p-3 bg-[#0ea5e9] text-white border-2 border-[#1f2937] rounded-full shadow-[2px_2px_0px_#1f2937] hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50 flex items-center justify-center"
                             >
-                              🎙️ Nói
+                              {renderMicIcon("w-4 h-4")} Nói
                             </button>
                           )}
                         </div>
@@ -2183,16 +2534,16 @@ export default function GamePage() {
                 // Default null panel (Instructions)
                 return (
                   <div className="bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 w-full text-center space-y-3">
-                    <h4 className="font-serif font-black text-sm text-[#111827] uppercase tracking-wide">🚶‍♀️ Quầy Chế Biến Trà Sữa</h4>
+                    <h4 className="font-serif font-black text-sm text-[#111827] uppercase tracking-wide">Quầy Chế Biến Trà Sữa</h4>
                     <p className="text-xs text-[#5b6474] font-bold leading-relaxed">
-                      Hãy di chuyển Lan Vy đến Máy trà, Quầy toppings, Quầy trái cây để chọn nguyên liệu. 
-                      Đến Máy lắc bình (🌪️) để lắc phục vụ nước, hoặc quay lại Quầy Order (💬) để xem lại yêu cầu khách hàng nhé!
+                      Hãy di chuyển nhân vật đến Máy trà, Quầy toppings, Quầy trái cây để chọn nguyên liệu. 
+                      Đến Máy lắc bình để lắc phục vụ nước, hoặc quay lại Quầy Order để xem lại yêu cầu khách hàng nhé!
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-black pt-1">
-                      <div className="bg-amber-50 border border-amber-300 rounded p-1.5 text-amber-800">🍵 Máy Trà Nền</div>
-                      <div className="bg-orange-50 border border-orange-300 rounded p-1.5 text-orange-800">🧋 Quầy Topping</div>
-                      <div className="bg-red-50 border border-red-300 rounded p-1.5 text-red-800">🍓 Quầy Trái Cây</div>
-                      <div className="bg-blue-50 border border-blue-300 rounded p-1.5 text-blue-800">🧊 Đường & Đá</div>
+                      <div className="bg-amber-50 border border-amber-300 rounded p-1.5 text-amber-800 flex items-center justify-center gap-1">{renderTeaIcon("w-4 h-4")} Máy Trà Nền</div>
+                      <div className="bg-orange-50 border border-orange-300 rounded p-1.5 text-orange-800 flex items-center justify-center gap-1">{renderToppingIcon("w-4 h-4")} Quầy Topping</div>
+                      <div className="bg-red-50 border border-red-300 rounded p-1.5 text-red-800 flex items-center justify-center gap-1">{renderFruitIcon("w-4 h-4")} Quầy Trái Cây</div>
+                      <div className="bg-blue-50 border border-blue-300 rounded p-1.5 text-blue-800 flex items-center justify-center gap-1">{renderIceIcon("w-4 h-4")} Đường & Đá</div>
                     </div>
                   </div>
                 );
@@ -2566,20 +2917,20 @@ export default function GamePage() {
             <div className="flex gap-2 border-b-2 border-[#1f2937] pb-3 mb-4">
               <button
                 onClick={() => setVocabTab('list')}
-                className={`px-4 py-2 border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer
+                className={`px-4 py-2 border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5
                   ${vocabTab === 'list' ? 'bg-[#0ea5e9] text-white' : 'bg-white text-[#111827]'}`}
               >
-                📖 Sách từ vựng HSK
+                {renderBookshelfIcon("w-3.5 h-3.5")} Sách từ vựng HSK
               </button>
               <button
                 onClick={() => {
                   setVocabTab('flashcard');
                   setFlashcardFlipped(false);
                 }}
-                className={`px-4 py-2 border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer
+                className={`px-4 py-2 border-2 border-[#1f2937] font-black text-xs uppercase tracking-wider rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5
                   ${vocabTab === 'flashcard' ? 'bg-[#f59e0b] text-[#111827]' : 'bg-white text-[#111827]'}`}
               >
-                ⚡ Thẻ Ghi Nhớ (Flashcards)
+                Thẻ Ghi Nhớ (Flashcards)
               </button>
             </div>
 
@@ -2599,7 +2950,16 @@ export default function GamePage() {
                   <tbody className="divide-y divide-[#1f2937]/10 text-sm font-bold text-[#111827]">
                     {VOCAB_LIST.map((vocab, index) => (
                       <tr key={index} className="hover:bg-amber-50/40">
-                        <td className="py-2 px-3 font-serif text-lg font-bold">{vocab.chinese}</td>
+                        <td className="py-2 px-3 font-serif text-lg font-bold flex items-center gap-1.5">
+                          <span>{vocab.chinese}</span>
+                          <button
+                            onClick={() => handleExplainWord(vocab.chinese)}
+                            className="px-1.5 py-0.5 bg-[#0ea5e9] text-white border border-[#1f2937] rounded text-[9px] font-black uppercase shadow-[1px_1px_0px_#1f2937] active:scale-95 transition-all cursor-pointer flex items-center gap-0.5"
+                            title="Giải nghĩa từ vựng bằng AI"
+                          >
+                            AI
+                          </button>
+                        </td>
                         <td className="py-2 px-3 text-xs text-[#0ea5e9] font-mono">{vocab.pinyin}</td>
                         <td className="py-2 px-3 text-xs text-[#5b6474]">{vocab.vietnamese}</td>
                         <td className="py-2 px-3 text-center">
@@ -2616,7 +2976,7 @@ export default function GamePage() {
                             }}
                             className="p-1 bg-white hover:bg-gray-100 border border-[#1f2937] rounded shadow-[1px_1px_0px_#1f2937] active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
                           >
-                            🔊
+                            {renderAudioIcon("w-3.5 h-3.5")}
                           </button>
                         </td>
                       </tr>
@@ -2666,7 +3026,7 @@ export default function GamePage() {
                         }}
                         className="mt-3 px-3 py-1 bg-[#fef08a] hover:bg-[#fde047] border border-[#1f2937] rounded text-xs font-black shadow-[1px_1px_0px_#1f2937] active:scale-95 cursor-pointer inline-flex items-center gap-1"
                       >
-                        🔊 Nghe đọc
+                        {renderAudioIcon("w-3.5 h-3.5")} Nghe đọc
                       </button>
                     </div>
                   )}
@@ -2682,7 +3042,7 @@ export default function GamePage() {
                     }}
                     className="px-3 py-1.5 bg-[#fffdf8] hover:bg-gray-100 border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none cursor-pointer"
                   >
-                    ◀ Trước
+                    Trước
                   </button>
 
                   <button
@@ -2691,9 +3051,9 @@ export default function GamePage() {
                       setFlashcardFlipped(false);
                       setCurrentFlashcardIdx(prev => (prev === VOCAB_LIST.length - 1 ? 0 : prev + 1));
                     }}
-                    className="px-3 py-1.5 bg-[#fffdf8] hover:bg-gray-100 border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none cursor-pointer"
+                    className="px-3 py-2 bg-[#fffdf8] hover:bg-gray-100 border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] active:translate-y-0.5 active:shadow-none cursor-pointer"
                   >
-                    Tiếp ▶
+                    Tiếp
                   </button>
                 </div>
               </div>
@@ -2714,7 +3074,7 @@ export default function GamePage() {
             </button>
 
             <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center gap-2">
-              📊 Nhật ký & Logs Hệ Thống (Admin)
+              {renderChartIcon("w-5 h-5")} Nhật ký & Logs Hệ Thống (Admin)
             </h3>
 
             {adminLogsLoading ? (
@@ -2785,14 +3145,82 @@ export default function GamePage() {
         </div>
       )}
 
+      {/* AI Explanation Modal */}
+      {explainWord && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="max-w-md w-full bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[8px_8px_0px_#1f2937] rounded-xl p-5 relative max-h-[80vh] flex flex-col overflow-hidden">
+            <button
+              onClick={() => setExplainWord(null)}
+              className="absolute top-3 right-3 w-7 h-7 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[1.5px_1.5px_0px_#1f2937] active:scale-95"
+            >
+              ✕
+            </button>
+            
+            <h3 className="text-base font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-2 mb-3 flex items-center gap-2">
+              🤖 Trợ lý AI Giải Nghĩa Từ: <span className="text-[#0ea5e9] font-serif">{explainWord}</span>
+            </h3>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 text-xs leading-relaxed font-medium text-[#374151]">
+              {isExplaining ? (
+                <div className="flex flex-col items-center justify-center py-10 space-y-2 text-[#5b6474]">
+                  <div className="w-8 h-8 border-4 border-t-[#0ea5e9] border-gray-200 rounded-full animate-spin"></div>
+                  <span className="font-bold animate-pulse">Bot AI đang suy ngẫm giải nghĩa...</span>
+                </div>
+              ) : (
+                <div className="whitespace-pre-wrap font-sans bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm text-left">
+                  {explanationText}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Name Modal */}
+      {showChangeNameModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="max-w-sm w-full bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-5 relative text-center">
+            <button
+              onClick={() => setShowChangeNameModal(false)}
+              className="absolute top-3 right-3 w-7 h-7 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[1.5px_1.5px_0px_#1f2937]"
+            >
+              ✕
+            </button>
+            
+            <h3 className="text-base font-serif font-black text-[#111827] mb-3">
+              ✏️ Đặt Tên Bà Chủ Mới
+            </h3>
+            <p className="text-[11px] text-gray-500 font-bold mb-4">
+              Nhập biệt danh hoặc tên riêng bạn muốn đặt cho nhân vật của mình:
+            </p>
+            
+            <input
+              type="text"
+              value={newNameInput}
+              onChange={(e) => setNewNameInput(e.target.value)}
+              className="w-full p-2.5 border-2 border-[#1f2937] bg-white rounded-lg font-black text-sm text-center mb-4 focus:outline-none shadow-[2px_2px_0px_#1f2937]"
+              maxLength={20}
+              placeholder="Nhập tên..."
+            />
+
+            <button
+              onClick={handleChangeName}
+              className="w-full py-2 bg-[#16a34a] hover:bg-green-700 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+            >
+              Xác nhận đổi tên
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Floating Click Hearts */}
       {hearts.map((h) => (
         <span
           key={h.id}
-          className="absolute text-red-500 font-bold pointer-events-none select-none animate-heart-float z-50 text-xl"
+          className="absolute pointer-events-none select-none animate-heart-float z-50"
           style={{ left: h.x, top: h.y - 12 }}
         >
-          ❤️
+          {renderHeartIcon("w-6 h-6")}
         </span>
       ))}
 
@@ -2817,6 +3245,30 @@ export default function GamePage() {
         }
         .animate-bounce-short {
           animation: bounceShort 1.5s ease-in-out infinite;
+        }
+        .cozy-wood-floor {
+          background-color: #eed9b3;
+          background-image: linear-gradient(90deg, transparent 50%, rgba(120,53,15,0.04) 50%),
+                            linear-gradient(rgba(120,53,15,0.04) 50%, transparent 50%);
+          background-size: 24px 24px;
+        }
+        .cozy-wood-tile {
+          background-color: #eed9b3;
+          border: 1px solid rgba(139, 92, 26, 0.15);
+        }
+        .cozy-brick-wall {
+          background-color: #991b1b;
+          background-image: linear-gradient(90deg, rgba(255,255,255,0.07) 50%, transparent 50%),
+                            linear-gradient(transparent 50%, rgba(0,0,0,0.15) 50%);
+          background-size: 20px 10px;
+          border-bottom: 4px solid #1f2937;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.15s ease-out forwards;
         }
       `}</style>
     </main>

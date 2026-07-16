@@ -14,9 +14,9 @@ export async function POST(request: Request) {
     }
 
     // Build history context if provided
-    const formattedHistory = (history || []).map((h: { sender?: unknown; text?: unknown }) => ({
+    const formattedHistory = (history || []).map((h: any) => ({
       role: h.sender === 'player' ? 'user' : 'assistant',
-      content: typeof h.text === 'string' ? h.text : ''
+      content: h.text
     }));
 
     const systemInstruction = `Bạn là khách hàng người Trung Quốc có tên là "${customerName}" đang ngồi uống nước trong tiệm trà sữa.
@@ -66,8 +66,7 @@ Ví dụ:
       pinyin: replyPinyin,
       translation: replyTranslation
     });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

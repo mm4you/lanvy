@@ -29,17 +29,21 @@ export async function GET(request: Request) {
     // Map requested language to high-quality Edge TTS voices
     let voice = 'zh-CN-XiaoxiaoNeural'; // Default: Chinese Female (Xiaoxiao)
     let lang = 'zh-CN';
+    let fallbackLang = 'zh';
 
     const lowerLang = langParam.toLowerCase();
     if (lowerLang === 'en') {
       voice = 'en-US-AvaNeural';
       lang = 'en-US';
+      fallbackLang = 'en';
     } else if (lowerLang === 'vi') {
       voice = 'vi-VN-HoaiMyNeural';
       lang = 'vi-VN';
+      fallbackLang = 'vi';
     } else if (lowerLang === 'zh-tw' || lowerLang === 'zhtw') {
       voice = 'zh-TW-HsiaoChenNeural';
       lang = 'zh-TW';
+      fallbackLang = 'zh-TW';
     }
 
     const tts = new EdgeTTS({

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Fraunces } from "next/font/google";
 import "./globals.css";
-import PwaRegister from "../components/pwa-register";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -14,8 +13,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "HSK Pixel Town - Game ôn từ tiếng Trung",
-  description: "Game nhập vai 2D pixel ôn từ vựng HSK theo chủ đề, hỗ trợ chơi offline và đồng bộ tiến trình.",
+  title: "Tiệm Trà Sữa Của Lan Vy - Chinese Review Game",
+  description: "Game 2D Pixel ôn tập tiếng Trung ngọt ngào dành riêng cho Bà chủ Lan Vy.",
 };
 
 export default function RootLayout({
@@ -28,7 +27,7 @@ export default function RootLayout({
       lang="vi"
       className={`${spaceGrotesk.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#fffdf8]"><PwaRegister />{children}</body>
+      <body className="min-h-full flex flex-col bg-[#fffdf8]">{children}</body>
     </html>
   );
 }

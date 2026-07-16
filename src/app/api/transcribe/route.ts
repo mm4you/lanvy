@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     const data = await response.json();
     return NextResponse.json({ text: data.text });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error('Transcription error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

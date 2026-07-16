@@ -1,29 +1,36 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { INGREDIENTS, ORDERS, VOCAB_LIST, Ingredient, Order, VocabWord } from '../data/vocabulary';
+import { INGREDIENTS, ORDERS, VOCAB_LIST } from '../data/vocabulary';
+import { GAME_ORDERS } from '../data/game-orders';
+import OpenWorldGame from '../components/open-world-game';
+import AuthPortal, { AuthenticatedUser } from '../components/auth-portal';
+import { AdminUserLog, BrowserWindow, ChatMessage, Voucher } from '../types/game';
+import { AvatarConfig, DEFAULT_AVATAR, normalizeAvatar } from '../data/avatar';
+import PixelAvatar from '../components/pixel-avatar';
+import { ArrowLeftIcon, BotIcon, CloseIcon, EditIcon } from '../components/ui-icons';
+
+const OFFLINE_USER_ID = 'offline-guest';
+const LOVE_EMAIL = 'nguyenthilanvy12a2@gmail.com';
+const OFFLINE_PROGRESS_KEY = 'hsk_boba_offline_progress_v1';
 
 export default function GamePage() {
   // Auth & Session state
   const [user, setUser] = useState<{ id: string; username: string; email: string } | null>(null);
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [usernameInput, setUsernameInput] = useState('');
-  const [emailInput, setEmailInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
-  const [authError, setAuthError] = useState('');
-  const [authLoading, setAuthLoading] = useState(false);
 
-  const LOVE_EMAIL = 'nguyenthilanvy12a2@gmail.com';
-  const isLoveUser = user?.email?.toLowerCase() === LOVE_EMAIL;
+  const isLoveUser = user?.email.toLowerCase() === LOVE_EMAIL;
+
+  const [gameArea, setGameArea] = useState<'world' | 'boba'>('world');
+  const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>(DEFAULT_AVATAR);
 
   // Game state
-  const [orders, setOrders] = useState<Order[]>(ORDERS);
+  const orders = GAME_ORDERS;
   const [currentOrderIndex, setCurrentOrderIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [coins, setCoins] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
-  const [unlockedVouchers, setUnlockedVouchers] = useState<any[]>([]);
+  const [unlockedVouchers, setUnlockedVouchers] = useState<Voucher[]>([]);
   const [gameMessage, setGameMessage] = useState<string>('Chào mừng bạn đến với Tiệm Trà Sữa HSK của chúng ta!');
   const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [customerState, setCustomerState] = useState<'entering' | 'idle' | 'leaving' | 'disappointed'>('entering');
@@ -51,7 +58,7 @@ export default function GamePage() {
   const [flashcardFlipped, setFlashcardFlipped] = useState(false);
   const [hearts, setHearts] = useState<{ id: number; x: number; y: number }[]>([]);
   const [comboCount, setComboCount] = useState(0);
-  const [newlyUnlockedVoucher, setNewlyUnlockedVoucher] = useState<any | null>(null);
+  const [newlyUnlockedVoucher, setNewlyUnlockedVoucher] = useState<Voucher | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(false);
 
   // 2D Movement States
@@ -70,12 +77,12 @@ export default function GamePage() {
   // Customer roleplay chat states
   const [showChatWithCustomer, setShowChatWithCustomer] = useState(false);
   const [chatInput, setChatInput] = useState('');
-  const [chatHistory, setChatHistory] = useState<any[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isChatting, setIsChatting] = useState(false);
 
   // Admin Logs state
   const [showAdminLogsModal, setShowAdminLogsModal] = useState(false);
-  const [adminLogsData, setAdminLogsData] = useState<any[] | null>(null);
+  const [adminLogsData, setAdminLogsData] = useState<AdminUserLog[] | null>(null);
   const [adminLogsLoading, setAdminLogsLoading] = useState(false);
   const [adminLogsError, setAdminLogsError] = useState('');
 
@@ -91,9 +98,9 @@ export default function GamePage() {
   const playSfx = (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => {
     if (typeof window === 'undefined') return;
     try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContext) return;
-      const ctx = new AudioContext();
+      const AudioContextClass = window.AudioContext || (window as BrowserWindow).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
       
       const playTone = (freq: number, start: number, duration: number, vol = 0.08, wave: OscillatorType = 'sine') => {
         const osc = ctx.createOscillator();
@@ -161,7 +168,7 @@ export default function GamePage() {
     if (!isShakingGameActive) return;
     const interval = setInterval(() => {
       setSliderValue((prev) => {
-        let next = prev + 5 * sliderDirection;
+        const next = prev + 5 * sliderDirection;
         if (next >= 100) {
           setSliderDirection(-1);
           return 100;
@@ -176,36 +183,6 @@ export default function GamePage() {
     return () => clearInterval(interval);
   }, [isShakingGameActive, sliderDirection]);
 
-  // Randomize customers for non-love orders to make it super cute and diverse across levels
-  useEffect(() => {
-    const CUTE_CUSTOMERS = [
-      { name: 'Tiên', sprite: 'tien' },
-      { name: 'Ngọc', sprite: 'ngoc' },
-      { name: 'Vy', sprite: 'vy' },
-      { name: 'Mèo ú Pixel', sprite: 'cat' },
-      { name: 'Gấu trúc Panda', sprite: 'panda' },
-      { name: 'Thỏ bông dễ thương', sprite: 'rabbit' },
-      { name: 'Cún Shiba tinh nghịch', sprite: 'shiba' },
-      { name: 'Gấu nâu vui vẻ', sprite: 'bear' },
-      { name: 'Nhựt Khang', sprite: 'khang' },
-      { name: 'Cánh cụt lăng xăng', sprite: 'penguin' },
-      { name: 'Khủng long con đáng yêu', sprite: 'dino' },
-      { name: 'Cáo nhỏ tinh ranh', sprite: 'fox' }
-    ];
-
-    const randomizedOrders = ORDERS.map(order => {
-      if (order.isLoveOrder) return order;
-      // Pick a random customer
-      const randIdx = Math.floor(Math.random() * CUTE_CUSTOMERS.length);
-      const customer = CUTE_CUSTOMERS[randIdx];
-      return {
-        ...order,
-        customerName: customer.name,
-        customerSprite: customer.sprite
-      };
-    });
-    setOrders(randomizedOrders);
-  }, []);
 
   const COLS = 12;
   const ROWS = 10;
@@ -276,6 +253,11 @@ export default function GamePage() {
     }
   };
 
+  const handleInteractRef = useRef(handleInteract);
+  useEffect(() => {
+    handleInteractRef.current = handleInteract;
+  });
+
   const handleCellClick = (x: number, y: number) => {
     if (isWalkable(x, y)) {
       setPlayerPos({ x, y });
@@ -335,7 +317,7 @@ export default function GamePage() {
   const playFootstepBeep = () => {
     if (typeof window !== 'undefined') {
       try {
-        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const ctx = new (window.AudioContext || (window as BrowserWindow).webkitAudioContext!)();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain);
@@ -345,7 +327,7 @@ export default function GamePage() {
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
         osc.start();
         osc.stop(ctx.currentTime + 0.04);
-      } catch(e){}
+      } catch {}
     }
   };
 
@@ -363,7 +345,7 @@ export default function GamePage() {
       if (showCoinShop || showVocabModal || showVoucherWallet || showAdminLogsModal || gameCompleted) return;
 
       if (key === ' ' || key === 'spacebar') {
-        handleInteract();
+        handleInteractRef.current();
         return;
       }
 
@@ -428,28 +410,45 @@ export default function GamePage() {
   }, [playerPos, playerDir, user, showCoinShop, showVocabModal, showVoucherWallet, showAdminLogsModal, gameCompleted]);
 
   useEffect(() => {
-    const savedUserId = localStorage.getItem('boba_game_user_id');
-    const savedUsername = localStorage.getItem('boba_game_username');
-    const savedEmail = localStorage.getItem('boba_game_email');
-    if (savedUserId && savedUsername) {
-      const userData = { id: savedUserId, username: savedUsername, email: savedEmail || '' };
-      setUser(userData);
-      fetchProgress(userData.id);
-    }
-    const savedCharName = localStorage.getItem('boba_character_name');
-    if (savedCharName) {
-      setCharacterName(savedCharName);
-      setNewNameInput(savedCharName);
-    }
+    const timer = window.setTimeout(() => {
+      const savedUserId = localStorage.getItem('boba_game_user_id');
+      const savedUsername = localStorage.getItem('boba_game_username');
+      const savedEmail = localStorage.getItem('boba_game_email');
+      if (savedUserId && savedUsername) {
+        const userData = { id: savedUserId, username: savedUsername, email: savedEmail || '' };
+        setUser(userData);
+        void fetchProgress(userData.id);
+      }
+      const savedAvatar = localStorage.getItem('hsk_avatar_config_v1');
+      if (savedAvatar) {
+        try { setAvatarConfig(normalizeAvatar(JSON.parse(savedAvatar) as Partial<AvatarConfig>)); } catch { localStorage.removeItem('hsk_avatar_config_v1'); }
+      }
+      const savedCharName = localStorage.getItem('boba_character_name');
+      if (savedCharName) {
+        setCharacterName(savedCharName);
+        setNewNameInput(savedCharName);
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
-  // Fetch progress and vouchers from DB
-  const fetchProgress = async (userId: string) => {
+  // Fetch progress from local storage for offline guests or from the signed online session.
+  async function fetchProgress(userId: string) {
     setLoadingProgress(true);
     try {
-      const res = await fetch('/api/progress', {
-        headers: { 'x-user-id': userId }
-      });
+      if (userId === OFFLINE_USER_ID) {
+        const saved = localStorage.getItem(OFFLINE_PROGRESS_KEY);
+        const data = saved ? JSON.parse(saved) : { score: 0, coins: 0, level: 1, vouchers: [] };
+        setScore(data.score ?? 0);
+        setCoins(data.coins ?? 0);
+        setCurrentLevel(data.level ?? 1);
+        setUnlockedVouchers(data.vouchers ?? []);
+        const startingIndex = ((data.level ?? 1) - 1) * 3;
+        if (startingIndex < ORDERS.length) setCurrentOrderIndex(startingIndex);
+        return;
+      }
+
+      const res = await fetch('/api/progress');
       if (res.ok) {
         const data = await res.json();
         setScore(data.progress.score);
@@ -469,54 +468,47 @@ export default function GamePage() {
     } finally {
       setLoadingProgress(false);
     }
+  }
+
+  // Local profile: gameplay never requires an account or a network request.
+  const handleOfflinePlay = (requestedName?: string) => {
+    const localName = requestedName?.trim() || 'Người học HSK';
+    const offlineUser = { id: OFFLINE_USER_ID, username: localName, email: '' };
+    localStorage.setItem('boba_game_user_id', offlineUser.id);
+    localStorage.setItem('boba_game_username', offlineUser.username);
+    localStorage.setItem('boba_game_email', '');
+    localStorage.setItem('boba_character_name', localName);
+    setCharacterName(localName);
+    setNewNameInput(localName);
+    setUser(offlineUser);
+    setGameArea('world');
+    void fetchProgress(offlineUser.id);
   };
 
-  // Auth actions
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!usernameInput || !passwordInput || (authMode === 'register' && !emailInput)) {
-      setAuthError('Vui lòng nhập đầy đủ thông tin.');
-      return;
-    }
-    setAuthLoading(true);
-    setAuthError('');
-
-    const endpoint = authMode === 'login' ? '/api/login' : '/api/register';
-    try {
-      const body: any = { username: usernameInput, password: passwordInput };
-      if (authMode === 'register') body.email = emailInput;
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        localStorage.setItem('boba_game_user_id', data.userId);
-        localStorage.setItem('boba_game_username', data.username);
-        localStorage.setItem('boba_game_email', data.email || '');
-        const userData = { id: data.userId, username: data.username, email: data.email || '' };
-        setUser(userData);
-        await fetchProgress(data.userId);
-        // Welcome message based on email
-        if ((data.email || '').toLowerCase() === LOVE_EMAIL) {
-          setGameMessage('Chào mừng Bà chủ Lan Vy! Tiệm Trà Sữa Tình Yêu đã sẵn sàng tiếp đón vị khách đặc biệt Nhựt Khang rồi nè!');
-          setMessageType('success');
-        } else {
-          setGameMessage(`Chào mừng ${data.username}! Hãy bắt đầu pha trà sữa và học tiếng Trung nào!`);
-          setMessageType('info');
-        }
-      } else {
-        setAuthError(data.error || 'Có lỗi xảy ra.');
-      }
-    } catch (err) {
-      setAuthError('Lỗi kết nối máy chủ.');
-    } finally {
-      setAuthLoading(false);
+  const handleOnlineAuthenticated = (authenticatedUser: AuthenticatedUser) => {
+    localStorage.setItem('boba_game_user_id', authenticatedUser.id);
+    localStorage.setItem('boba_game_username', authenticatedUser.username);
+    localStorage.setItem('boba_game_email', authenticatedUser.email);
+    setUser(authenticatedUser);
+    setGameArea('world');
+    void fetchProgress(authenticatedUser.id);
+    if (authenticatedUser.email.toLowerCase() === LOVE_EMAIL) {
+      setCharacterName('Lan Vy');
+      setNewNameInput('Lan Vy');
+      setGameMessage('Chào mừng Lan Vy! Thị trấn và những món quà riêng của Khang đã sẵn sàng.');
+      setMessageType('success');
+    } else {
+      setCharacterName(authenticatedUser.username);
+      setNewNameInput(authenticatedUser.username);
+      setGameMessage('Chào mừng ' + authenticatedUser.username + ' đến HSK Pixel Town!');
+      setMessageType('info');
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (user?.id !== OFFLINE_USER_ID) {
+      await fetch('/api/logout', { method: 'POST' }).catch(() => undefined);
+    }
     localStorage.removeItem('boba_game_user_id');
     localStorage.removeItem('boba_game_username');
     localStorage.removeItem('boba_game_email');
@@ -525,6 +517,7 @@ export default function GamePage() {
     setUnlockedVouchers([]);
     setNewlyUnlockedVoucher(null);
     setCurrentOrderIndex(0);
+    setGameArea('world');
   };
 
   const handleOpenAdminLogs = async () => {
@@ -532,9 +525,7 @@ export default function GamePage() {
     setAdminLogsLoading(true);
     setAdminLogsError('');
     try {
-      const res = await fetch('/api/admin/logs', {
-        headers: { 'x-user-id': user?.id || '' }
-      });
+      const res = await fetch('/api/admin/logs');
       if (res.ok) {
         const data = await res.json();
         setAdminLogsData(data.users || []);
@@ -542,22 +533,30 @@ export default function GamePage() {
         const data = await res.json();
         setAdminLogsError(data.error || 'Lỗi khi tải dữ liệu logs.');
       }
-    } catch (e) {
+    } catch {
       setAdminLogsError('Lỗi kết nối máy chủ.');
     } finally {
       setAdminLogsLoading(false);
     }
   };
 
-  // Sync progress & unlocks to DB
-  const saveProgress = async (newScore: number, newCoins: number, newLevel: number, voucherToUnlock: any = null) => {
+  // Persist progress locally for offline guests and to PostgreSQL for signed-in users.
+  const saveProgress = async (newScore: number, newCoins: number, newLevel: number, voucherToUnlock: Voucher | null = null) => {
     if (!user) return;
+    if (user.id === OFFLINE_USER_ID) {
+      const nextVouchers = voucherToUnlock && !unlockedVouchers.some((voucher) => voucher.code === voucherToUnlock.code)
+        ? [...unlockedVouchers, { ...voucherToUnlock, id: voucherToUnlock.code, isRedeemed: false }]
+        : unlockedVouchers;
+      localStorage.setItem(OFFLINE_PROGRESS_KEY, JSON.stringify({ score: newScore, coins: newCoins, level: newLevel, vouchers: nextVouchers }));
+      setUnlockedVouchers(nextVouchers);
+      if (voucherToUnlock) setNewlyUnlockedVoucher(voucherToUnlock);
+      return;
+    }
     try {
       const res = await fetch('/api/progress', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           score: newScore,
@@ -621,7 +620,7 @@ export default function GamePage() {
       setIsRecording(true);
       setGameMessage('Đang lắng nghe phát âm tiếng Trung của bạn...');
       setMessageType('info');
-    } catch (e) {
+    } catch {
       setGameMessage('Không thể truy cập Mic của bạn. Hãy cấp quyền mic nhé!');
       setMessageType('error');
     }
@@ -694,14 +693,14 @@ export default function GamePage() {
 
   // Effect to handle customer entering animation on index changes
   useEffect(() => {
-    if (currentOrder) {
-      setCustomerState('entering');
-      const timer = setTimeout(() => {
-        setCustomerState('idle');
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [currentOrderIndex]);
+    if (!currentOrder) return;
+    const enterTimer = window.setTimeout(() => setCustomerState('entering'), 0);
+    const idleTimer = window.setTimeout(() => setCustomerState('idle'), 1000);
+    return () => {
+      window.clearTimeout(enterTimer);
+      window.clearTimeout(idleTimer);
+    };
+  }, [currentOrder]);
 
   // Serve drink check
   const handleServe = () => {
@@ -871,12 +870,17 @@ export default function GamePage() {
   // Redeem voucher
   const handleRedeemVoucher = async (code: string) => {
     if (!user) return;
+    if (user.id === OFFLINE_USER_ID) {
+      const nextVouchers = unlockedVouchers.map((voucher) => voucher.code === code ? { ...voucher, isRedeemed: true } : voucher);
+      setUnlockedVouchers(nextVouchers);
+      localStorage.setItem(OFFLINE_PROGRESS_KEY, JSON.stringify({ score, coins, level: currentLevel, vouchers: nextVouchers }));
+      return;
+    }
     try {
       const res = await fetch('/api/vouchers/redeem', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ code })
       });
@@ -966,7 +970,7 @@ export default function GamePage() {
       } else {
         setExplanationText('Có lỗi xảy ra khi kết nối với Trợ lý AI.');
       }
-    } catch (e) {
+    } catch {
       setExplanationText('Không thể kết nối với Trợ lý AI. Vui lòng kiểm tra kết nối mạng.');
     } finally {
       setIsExplaining(false);
@@ -978,7 +982,7 @@ export default function GamePage() {
     const msgText = chatInput.trim();
     setChatInput('');
     
-    const userMsg = { sender: 'player', text: msgText };
+    const userMsg: ChatMessage = { sender: 'player', text: msgText };
     const nextHistory = [...chatHistory, userMsg];
     setChatHistory(nextHistory);
     setIsChatting(true);
@@ -1008,7 +1012,7 @@ export default function GamePage() {
           translation: 'Khách hàng tạm thời chưa trả lời được.'
         }]);
       }
-    } catch (e) {
+    } catch {
       setChatHistory([...nextHistory, {
         sender: 'customer',
         text: '...... (Kết nối chập chờn)',
@@ -1162,104 +1166,9 @@ export default function GamePage() {
     </svg>
   );
 
-  const renderTrashIcon = (className = "w-4 h-4") => (
-    <svg viewBox="0 0 24 24" className={`${className} inline-block`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-      <line x1="10" y1="11" x2="10" y2="17" />
-      <line x1="14" y1="11" x2="14" y2="17" />
-    </svg>
+  const renderPlayerAvatar = () => (
+    <PixelAvatar config={avatarConfig} direction={playerDir} className="h-full w-full" />
   );
-
-  const renderPlayerAvatar = () => {
-    switch (playerDir) {
-      case 'up':
-        return (
-          <svg viewBox="0 0 32 32" className="w-full h-full pixelated">
-            <rect x="6" y="2" width="20" height="21" fill="#18181b" />
-            <rect x="8" y="3" width="12" height="1" fill="#52525b" />
-            <rect x="5" y="4" width="2" height="2" fill="#ef4444" />
-            <rect x="7" y="5" width="1" height="1" fill="#fecdd3" />
-            <rect x="8" y="4" width="2" height="2" fill="#ef4444" />
-            <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
-            <rect x="8" y="24" width="16" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
-            <rect x="6" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
-            <rect x="23" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
-          </svg>
-        );
-      case 'left':
-        return (
-          <svg viewBox="0 0 32 32" className="w-full h-full pixelated transform scale-x-[-1]">
-            <rect x="8" y="2" width="15" height="22" fill="#18181b" />
-            <rect x="6" y="10" width="5" height="13" fill="#18181b" />
-            <rect x="17" y="8" width="7" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
-            <rect x="15" y="8" width="3" height="15" fill="#18181b" />
-            <rect x="21" y="13" width="2" height="3" fill="#1f2937" />
-            <rect x="22" y="13" width="1" height="1" fill="#ffffff" />
-            <rect x="22" y="16" width="2" height="2" fill="#fda4af" />
-            <rect x="23" y="18" width="1" height="1" fill="#db2777" />
-            <rect x="13" y="23" width="4" height="1" fill="#ffedd5" />
-            <rect x="10" y="24" width="12" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
-            <rect x="8" y="24" width="4" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
-          </svg>
-        );
-      case 'right':
-        return (
-          <svg viewBox="0 0 32 32" className="w-full h-full pixelated">
-            <rect x="8" y="2" width="15" height="22" fill="#18181b" />
-            <rect x="6" y="10" width="5" height="13" fill="#18181b" />
-            <rect x="17" y="8" width="7" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
-            <rect x="15" y="8" width="3" height="15" fill="#18181b" />
-            <rect x="21" y="13" width="2" height="3" fill="#1f2937" />
-            <rect x="22" y="13" width="1" height="1" fill="#ffffff" />
-            <rect x="22" y="16" width="2" height="2" fill="#fda4af" />
-            <rect x="23" y="18" width="1" height="1" fill="#db2777" />
-            <rect x="13" y="23" width="4" height="1" fill="#ffedd5" />
-            <rect x="10" y="24" width="12" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
-            <rect x="8" y="24" width="4" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
-          </svg>
-        );
-      case 'down':
-      default:
-        return (
-          <svg viewBox="0 0 32 32" className="w-full h-full pixelated">
-            <rect x="6" y="2" width="20" height="9" fill="#18181b" />
-            <rect x="4" y="10" width="4" height="14" fill="#18181b" />
-            <rect x="24" y="10" width="4" height="14" fill="#18181b" />
-            <rect x="3" y="13" width="2" height="8" fill="#18181b" />
-            <rect x="27" y="13" width="2" height="8" fill="#18181b" />
-            <rect x="25" y="3" width="1" height="8" fill="#09090b" />
-            <rect x="26" y="10" width="2" height="14" fill="#09090b" />
-            <rect x="8" y="3" width="12" height="1" fill="#52525b" />
-            <rect x="5" y="4" width="2" height="2" fill="#ef4444" />
-            <rect x="7" y="5" width="1" height="1" fill="#fecdd3" />
-            <rect x="8" y="4" width="2" height="2" fill="#ef4444" />
-            <rect x="8" y="8" width="16" height="15" fill="#ffedd5" stroke="#1f2937" strokeWidth="2" />
-            <rect x="22" y="9" width="2" height="13" fill="#fed7aa" />
-            <rect x="9" y="8" width="1" height="4" fill="#18181b" />
-            <rect x="12" y="8" width="2" height="3" fill="#18181b" />
-            <rect x="16" y="8" width="1" height="4" fill="#18181b" />
-            <rect x="20" y="8" width="2" height="3" fill="#18181b" />
-            <rect x="10" y="13" width="2" height="3" fill="#1f2937" />
-            <rect x="20" y="13" width="2" height="3" fill="#1f2937" />
-            <rect x="9" y="12" width="4" height="1" fill="#78350f" />
-            <rect x="19" y="12" width="4" height="1" fill="#78350f" />
-            <rect x="11" y="13" width="1" height="1" fill="#ffffff" />
-            <rect x="21" y="13" width="1" height="1" fill="#ffffff" />
-            <rect x="7" y="16" width="3" height="2" fill="#fda4af" />
-            <rect x="22" y="16" width="3" height="2" fill="#fda4af" />
-            <rect x="14" y="18" width="3" height="1" fill="#db2777" />
-            <rect x="15" y="19" width="1" height="1" fill="#db2777" />
-            <rect x="13" y="23" width="6" height="1" fill="#ffedd5" />
-            <rect x="14.5" y="23.5" width="2" height="1" fill="#ef4444" />
-            <rect x="8" y="24" width="16" height="6" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
-            <rect x="22" y="25" width="2" height="4" fill="#e4e4e7" />
-            <rect x="6" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
-            <rect x="23" y="24" width="3" height="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
-          </svg>
-        );
-    }
-  };
 
   // Character SVGs (Pixel/Blocky Art styled via pure vector shapes)
   const renderCustomerSVG = (sprite: string) => {
@@ -1857,85 +1766,34 @@ export default function GamePage() {
   // MAIN LAYOUT
   if (!user) {
     return (
-      <main className="min-h-screen bg-[#fffdf8] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[8px_8px_0px_#1f2937] rounded-2xl p-6 relative overflow-hidden">
-          {/* Accent header */}
-          <div className="bg-[#f59e0b] border-b-[3px] border-[#1f2937] -mx-6 -mt-6 p-4 mb-6">
-            <h1 className="text-xl font-black text-[#111827] text-center tracking-wider font-serif">
-              TIỆM TRÀ SỮA CỦA LAN VY
-            </h1>
-          </div>
+      <AuthPortal
+        onAuthenticated={handleOnlineAuthenticated}
+        onOffline={handleOfflinePlay}
+      />
+    );
+  }
 
-          <div className="text-center mb-6">
-            <p className="text-sm font-bold text-[#5b6474]">
-              Chào mừng bạn! Hãy đăng nhập hoặc đăng ký để bắt đầu học tiếng Trung qua trò chơi pha trà sữa nhé.
-            </p>
-          </div>
-
-          <form onSubmit={handleAuth} className="space-y-4">
-            <div>
-              <label className="block text-xs font-black text-[#111827] uppercase tracking-wide mb-1">Tên tài khoản</label>
-              <input
-                type="text"
-                value={usernameInput}
-                onChange={(e) => setUsernameInput(e.target.value)}
-                className="w-full p-3 border-2 border-[#1f2937] bg-white rounded-lg font-bold text-base focus:outline-none shadow-[2px_2px_0px_#1f2937]"
-                placeholder="Nhập tên tài khoản..."
-              />
-            </div>
-
-            {authMode === 'register' && (
-              <div>
-                <label className="block text-xs font-black text-[#111827] uppercase tracking-wide mb-1">Email</label>
-                <input
-                  type="email"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  className="w-full p-3 border-2 border-[#1f2937] bg-white rounded-lg font-bold text-base focus:outline-none shadow-[2px_2px_0px_#1f2937]"
-                  placeholder="Nhập email..."
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-black text-[#111827] uppercase tracking-wide mb-1">Mật khẩu</label>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                className="w-full p-3 border-2 border-[#1f2937] bg-white rounded-lg font-bold text-base focus:outline-none shadow-[2px_2px_0px_#1f2937]"
-                placeholder="Nhập mật khẩu..."
-              />
-            </div>
-
-            {authError && (
-              <div className="bg-[#dc2626] text-white border-2 border-[#1f2937] p-2.5 rounded-lg text-xs font-bold shadow-[2px_2px_0px_#1f2937]">
-                {authError}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={authLoading}
-              className="w-full p-3.5 bg-[#f59e0b] hover:bg-[#d97706] text-[#111827] border-2 border-[#1f2937] rounded-lg font-black text-sm uppercase tracking-wider transition-all hover:-translate-y-0.5 active:translate-y-0.5 shadow-[4px_4px_0px_#1f2937] active:shadow-none cursor-pointer"
-            >
-              {authLoading ? 'Đang xử lý...' : authMode === 'login' ? 'Đăng nhập' : 'Đăng ký tài khoản'}
-            </button>
-          </form>
-
-          <div className="mt-6 border-t-2 border-dashed border-[#1f2937] pt-4 text-center">
-            <button
-              onClick={() => {
-                setAuthMode(prev => prev === 'login' ? 'register' : 'login');
-                setAuthError('');
-              }}
-              className="text-xs font-black text-[#0ea5e9] hover:underline"
-            >
-              {authMode === 'login' ? 'Chưa có tài khoản? Tạo ngay tại đây' : 'Đã có tài khoản? Đăng nhập'}
-            </button>
-          </div>
-        </div>
-      </main>
+  if (gameArea === 'world') {
+    return (
+      <OpenWorldGame
+        playerName={characterName}
+        score={score}
+        coins={coins}
+        avatarConfig={avatarConfig}
+        onAvatarChange={(nextAvatar) => {
+          setAvatarConfig(nextAvatar);
+          localStorage.setItem('hsk_avatar_config_v1', JSON.stringify(nextAvatar));
+        }}
+        onEnterBoba={() => setGameArea('boba')}
+        onLogout={() => void handleLogout()}
+        onReward={(scoreReward, coinReward) => {
+          const nextScore = score + scoreReward;
+          const nextCoins = coins + coinReward;
+          setScore(nextScore);
+          setCoins(nextCoins);
+          void saveProgress(nextScore, nextCoins, currentLevel);
+        }}
+      />
     );
   }
 
@@ -1944,6 +1802,7 @@ export default function GamePage() {
       {/* Header bar */}
       <div className="w-full max-w-4xl bg-[#fffaf0] border-[3px] border-[#1f2937] shadow-[6px_6px_0px_#1f2937] rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
+          <button type="button" onClick={() => setGameArea("world")} className="mr-1 flex h-9 w-9 items-center justify-center border-2 border-[#1f2937] bg-white font-black shadow-[2px_2px_0_#1f2937]" title="Ra thị trấn" aria-label="Ra thị trấn"><ArrowLeftIcon /></button>
           <div className="w-8 h-8 rounded-full bg-[#f59e0b] border-2 border-[#1f2937] flex items-center justify-center font-black text-xs shadow-[1.5px_1.5px_0px_#1f2937]">
             T
           </div>
@@ -1997,7 +1856,7 @@ export default function GamePage() {
           </div>
 
           <div className="bg-[#fffdf8] border-2 border-[#1f2937] px-3 py-1.5 rounded-lg shadow-[2px_2px_0px_#1f2937] text-center min-w-[80px]">
-            <span className="text-[10px] font-black text-[#5b6474] uppercase block">Điểm số</span>
+            <span className="text-[10px] font-black text-[#5b6474] uppercase block">Điểm số {comboCount > 1 ? ' · x' + comboCount : ''}</span>
             <span className="text-base font-black text-[#0ea5e9]">{score}</span>
           </div>
 
@@ -2560,7 +2419,7 @@ export default function GamePage() {
                 <div className="flex flex-col justify-between h-full w-full">
                   <div>
                     <h3 className="text-xs font-black text-[#dc2626] uppercase tracking-wider mb-2 animate-pulse">
-                      ⚡ LẮC ĐỀU BÌNH ⚡
+                      LẮC ĐỀU BÌNH
                     </h3>
                     
                     <div className="my-2 animate-bounce-short">
@@ -2593,7 +2452,7 @@ export default function GamePage() {
                       {shakingResult ? (
                         <span className={`text-xs font-black uppercase tracking-wider
                           ${shakingResult === 'perfect' ? 'text-[#16a34a] animate-bounce-short' : shakingResult === 'good' ? 'text-[#eab308]' : 'text-[#dc2626]'}`}>
-                          {shakingResult === 'perfect' ? '✨ PERFECT! ✨' : shakingResult === 'good' ? '👍 GOOD! 👍' : '💨 MISS! 💨'}
+                          {shakingResult === 'perfect' ? 'PERFECT!' : shakingResult === 'good' ? 'GOOD!' : 'MISS!'}
                         </span>
                       ) : (
                         <span className="text-[10px] font-bold text-[#9ca3af] italic">
@@ -2693,9 +2552,7 @@ export default function GamePage() {
             <button
               onClick={() => setNewlyUnlockedVoucher(null)}
               className="absolute top-3 right-3 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95"
-            >
-              ✕
-            </button>
+            ><CloseIcon /></button>
 
             {/* Glowing pixels */}
             <div className="w-16 h-16 bg-[#f59e0b] border-3 border-[#1f2937] rounded-full mx-auto flex items-center justify-center shadow-[3px_3px_0px_#1f2937] mb-4">
@@ -2742,9 +2599,7 @@ export default function GamePage() {
             <button
               onClick={() => setShowVoucherWallet(false)}
               className="absolute top-4 right-4 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95"
-            >
-              ✕
-            </button>
+            ><CloseIcon /></button>
 
             <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-6 flex items-center gap-2">
               <svg className="w-5 h-5 text-[#f59e0b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2814,9 +2669,7 @@ export default function GamePage() {
             <button
               onClick={() => setShowCoinShop(false)}
               className="absolute top-4 right-4 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95"
-            >
-              ✕
-            </button>
+            ><CloseIcon /></button>
 
             <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-[#16a34a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2851,7 +2704,7 @@ export default function GamePage() {
               {/* Item 2: Boba Real Voucher */}
               <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
                 <div>
-                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Trà Sữa Đời Thực 🥤</h4>
+                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Trà Sữa Đời Thực</h4>
                   <p className="text-[10px] font-bold text-[#5b6474] mt-0.5">Đổi 1 ly Gongcha hoặc KoiThé bất kỳ ngoài đời thật do anh Khang bao trọn gói.</p>
                 </div>
                 <button
@@ -2865,7 +2718,7 @@ export default function GamePage() {
               {/* Item 3: Hug Voucher */}
               <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
                 <div>
-                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Cái Ôm Siêu Ấm Áp 💖</h4>
+                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Cái Ôm Siêu Ấm Áp</h4>
                   <p className="text-[10px] font-bold text-[#5b6474] mt-0.5">Đổi 1 cái ôm siết chặt từ bạn trai Nhựt Khang bất cứ lúc nào bé muốn.</p>
                 </div>
                 <button
@@ -2879,7 +2732,7 @@ export default function GamePage() {
               {/* Item 4: Date Voucher */}
               <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex justify-between items-center gap-4">
                 <div>
-                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Hẹn Hò Công Chúa 👑</h4>
+                  <h4 className="font-serif font-black text-sm text-[#111827]">Thẻ Hẹn Hò Công Chúa</h4>
                   <p className="text-[10px] font-bold text-[#5b6474] mt-0.5">Đổi 1 buổi đi chơi lãng mạn do anh Khang lên lịch đưa đón và chiêu đãi.</p>
                 </div>
                 <button
@@ -2902,9 +2755,7 @@ export default function GamePage() {
             <button
               onClick={() => setShowVocabModal(false)}
               className="absolute top-4 right-4 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95 z-10"
-            >
-              ✕
-            </button>
+            ><CloseIcon /></button>
 
             <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-[#0ea5e9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3069,9 +2920,7 @@ export default function GamePage() {
             <button
               onClick={() => setShowAdminLogsModal(false)}
               className="absolute top-4 right-4 w-8 h-8 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95 z-10"
-            >
-              ✕
-            </button>
+            ><CloseIcon /></button>
 
             <h3 className="text-xl font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center gap-2">
               {renderChartIcon("w-5 h-5")} Nhật ký & Logs Hệ Thống (Admin)
@@ -3097,7 +2946,7 @@ export default function GamePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {adminLogsData.map((usr: any) => (
+                    {adminLogsData.map((usr) => (
                       <tr key={usr.id} className="border-b border-gray-200 hover:bg-gray-50">
                         <td className="p-2 border-x-2 border-b-2 border-[#1f2937] font-bold text-[#111827]">
                           <div>{usr.username}</div>
@@ -3114,7 +2963,7 @@ export default function GamePage() {
                         <td className="p-2 border-r-2 border-b-2 border-[#1f2937]">
                           {usr.vouchers && usr.vouchers.length > 0 ? (
                             <div className="space-y-1">
-                              {usr.vouchers.map((v: any) => (
+                              {usr.vouchers.map((v) => (
                                 <div key={v.id} className="bg-amber-50 border border-amber-200 rounded p-1 text-[10px]">
                                   <div className="font-bold text-amber-800">{v.title}</div>
                                   <div className="text-[9px] text-gray-600">{v.description}</div>
@@ -3152,12 +3001,10 @@ export default function GamePage() {
             <button
               onClick={() => setExplainWord(null)}
               className="absolute top-3 right-3 w-7 h-7 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[1.5px_1.5px_0px_#1f2937] active:scale-95"
-            >
-              ✕
-            </button>
+            ><CloseIcon /></button>
             
             <h3 className="text-base font-serif font-black text-[#111827] border-b-2 border-dashed border-[#1f2937] pb-2 mb-3 flex items-center gap-2">
-              🤖 Trợ lý AI Giải Nghĩa Từ: <span className="text-[#0ea5e9] font-serif">{explainWord}</span>
+              <BotIcon /> Trợ lý AI Giải Nghĩa Từ: <span className="text-[#0ea5e9] font-serif">{explainWord}</span>
             </h3>
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 text-xs leading-relaxed font-medium text-[#374151]">
@@ -3183,12 +3030,10 @@ export default function GamePage() {
             <button
               onClick={() => setShowChangeNameModal(false)}
               className="absolute top-3 right-3 w-7 h-7 bg-[#dc2626] text-white border-2 border-[#1f2937] rounded-lg font-black flex items-center justify-center cursor-pointer shadow-[1.5px_1.5px_0px_#1f2937]"
-            >
-              ✕
-            </button>
+            ><CloseIcon /></button>
             
             <h3 className="text-base font-serif font-black text-[#111827] mb-3">
-              ✏️ Đặt Tên Bà Chủ Mới
+              <EditIcon className="inline-block h-5 w-5 mr-1" /> Đặt Tên Bà Chủ Mới
             </h3>
             <p className="text-[11px] text-gray-500 font-bold mb-4">
               Nhập biệt danh hoặc tên riêng bạn muốn đặt cho nhân vật của mình:

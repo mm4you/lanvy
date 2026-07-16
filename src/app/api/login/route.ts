@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { rateLimit } from '@/lib/rate-limit';
+import { setSessionCookie } from '@/lib/session';
 
 export async function POST(request: Request) {
   try {
@@ -12,14 +13,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Thao tác quá nhanh. Vui lòng thử lại sau.' }, { status: 429 });
     }
 
-    const { username, password } = await request.json().catch(() => ({}));
+    const body = await request.json().catch(() => null) as { username?: unknown; password?: unknown } | null;
+    const username = typeof body?.username === 'string' ? body.username.trim().toLowerCase() : '';
+    const password = typeof body?.password === 'string' ? body.password : '';
 
     if (!username || !password) {
       return NextResponse.json({ error: 'Vui lòng nhập đầy đủ tên tài khoản và mật khẩu.' }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({
-      where: { username: username.toLowerCase() }
+      where: { username }
     });
 
     if (!user) {
@@ -31,12 +34,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Tên tài khoản hoặc mật khẩu không chính xác.' }, { status: 400 });
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       userId: user.id,
       username: user.username,
       email: user.email
     });
+    return setSessionCookie(response, user.id);
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ error: 'Lỗi máy chủ nội bộ. Vui lòng thử lại sau.' }, { status: 500 });

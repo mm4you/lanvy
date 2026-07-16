@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { rateLimit } from '@/lib/rate-limit';
+import { setSessionCookie } from '@/lib/session';
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +13,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Thao tác quá nhanh. Vui lòng thử lại sau.' }, { status: 429 });
     }
 
-    const { username, password, email } = await request.json().catch(() => ({}));
+    const body = await request.json().catch(() => null) as { username?: unknown; password?: unknown; email?: unknown } | null;
+    const username = typeof body?.username === 'string' ? body.username.trim().toLowerCase() : '';
+    const password = typeof body?.password === 'string' ? body.password : '';
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
 
     if (!username || !password || !email) {
       return NextResponse.json({ error: 'Vui lòng nhập đầy đủ thông tin.' }, { status: 400 });
@@ -33,14 +37,14 @@ export async function POST(request: Request) {
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { username: username.toLowerCase() }
+      where: { username }
     });
     if (existingUser) {
       return NextResponse.json({ error: 'Tên tài khoản này đã được sử dụng.' }, { status: 400 });
     }
 
     const existingEmail = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }
+      where: { email }
     });
     if (existingEmail) {
       return NextResponse.json({ error: 'Email này đã được sử dụng.' }, { status: 400 });
@@ -53,8 +57,8 @@ export async function POST(request: Request) {
     const user = await prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
         data: {
-          username: username.toLowerCase(),
-          email: email.toLowerCase(),
+          username,
+          email,
           password: hashedPassword
         }
       });
@@ -71,12 +75,13 @@ export async function POST(request: Request) {
       return newUser;
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       userId: user.id,
       username: user.username,
       email: user.email
     });
+    return setSessionCookie(response, user.id);
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json({ error: 'Lỗi máy chủ nội bộ. Vui lòng thử lại sau.' }, { status: 500 });

@@ -48,7 +48,8 @@ Tuyệt đối KHÔNG được sử dụng bất kỳ biểu tượng cảm xúc
     const explanation = data.choices?.[0]?.message?.content || 'Không thể tạo giải thích.';
 
     return NextResponse.json({ explanation });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

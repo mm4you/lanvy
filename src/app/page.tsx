@@ -173,7 +173,7 @@ export default function Home() {
   const [floorType, setFloorType] = useState<string>('cozy_wood');
 
   // Navigation tab state
-  const [activeTab, setActiveTab] = useState<'studio' | 'quiz' | 'room' | 'love' | 'library'>('studio');
+  const [activeTab, setActiveTab] = useState<'studio' | 'quiz' | 'room' | 'love' | 'library' | 'admin'>('studio');
 
   // AI assistant states
   const [explainWord, setExplainWord] = useState<string | null>(null);
@@ -183,6 +183,68 @@ export default function Home() {
   // Contracts state
   const [currentContract, setCurrentContract] = useState<DesignContract | null>(null);
   const [contractSubmitMsg, setContractSubmitMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Admin state & functions
+  const ADMIN_EMAIL = 'ungnhutkhang53@gmail.com';
+  const [adminUsers, setAdminUsers] = useState<any[]>([]);
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [selectedUserForVoucher, setSelectedUserForVoucher] = useState<string | null>(null);
+  const [customVoucherTitle, setCustomVoucherTitle] = useState('');
+  const [customVoucherDesc, setCustomVoucherDesc] = useState('');
+  const [customVoucherCode, setCustomVoucherCode] = useState('');
+  const [adminVoucherMsg, setAdminVoucherMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const fetchAdminLogs = async () => {
+    setAdminLoading(true);
+    try {
+      const res = await fetch('/api/admin/logs', {
+        headers: { 'x-user-id': user?.id || '' }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAdminUsers(data.users || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  const handleIssueVoucher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserForVoucher || !customVoucherTitle || !customVoucherDesc || !customVoucherCode) {
+      setAdminVoucherMsg({ type: 'error', text: 'Vui lòng nhập đầy đủ thông tin.' });
+      return;
+    }
+    try {
+      const res = await fetch('/api/admin/voucher', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user?.id || ''
+        },
+        body: JSON.stringify({
+          userId: selectedUserForVoucher,
+          title: customVoucherTitle,
+          description: customVoucherDesc,
+          code: customVoucherCode
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setAdminVoucherMsg({ type: 'success', text: 'Tạo và gửi voucher thành công!' });
+        setCustomVoucherTitle('');
+        setCustomVoucherDesc('');
+        setCustomVoucherCode('');
+        await fetchAdminLogs();
+      } else {
+        setAdminVoucherMsg({ type: 'error', text: data.error || 'Có lỗi xảy ra khi tạo voucher.' });
+      }
+    } catch (e) {
+      setAdminVoucherMsg({ type: 'error', text: 'Lỗi kết nối máy chủ.' });
+    }
+  };
 
   // Sound effects synthesizer
   const playSfx = (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => {
@@ -652,6 +714,20 @@ export default function Home() {
             >
               {renderBookIcon()} Từ điển Vật liệu
             </button>
+            {user.email.toLowerCase() === ADMIN_EMAIL && (
+              <button
+                onClick={() => {
+                  setActiveTab('admin');
+                  fetchAdminLogs();
+                  playSfx('click');
+                }}
+                className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
+                  activeTab === 'admin' ? 'bg-purple-600 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                }`}
+              >
+                {renderAIIcon()} Điều Khiển Admin
+              </button>
+            )}
           </nav>
 
           {/* NỘI DUNG TABS CHÍNH */}
@@ -889,6 +965,151 @@ export default function Home() {
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* TAB 6: BẢNG ĐIỀU KHIỂN ADMIN CỦA KHÁCH KHANG */}
+            {activeTab === 'admin' && user.email.toLowerCase() === ADMIN_EMAIL && (
+              <div className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6">
+                <h2 className="text-xl font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 flex justify-between items-center">
+                  <span>Bảng Điều Khiển Admin Của Khang</span>
+                  <button
+                    onClick={fetchAdminLogs}
+                    className="px-3 py-1 bg-white hover:bg-gray-100 border border-[#1f2937] rounded-lg text-xs font-black cursor-pointer transition-all"
+                  >
+                    Tải Lại CSDL
+                  </button>
+                </h2>
+
+                {adminLoading ? (
+                  <div className="py-12 flex justify-center">
+                    <div className="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Danh sách người dùng */}
+                    <div className="lg:col-span-7 space-y-4 max-h-[500px] overflow-y-auto pr-1">
+                      <h3 className="text-xs font-black uppercase text-gray-400">Danh sách tài khoản Vy & Hệ thống ({adminUsers.length})</h3>
+                      {adminUsers.map(u => (
+                        <div key={u.id} className="p-4 bg-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] space-y-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="text-sm font-black text-rose-600">{u.username}</h4>
+                              <p className="text-[11px] text-gray-500 font-bold">{u.email}</p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                setSelectedUserForVoucher(u.id);
+                                setAdminVoucherMsg(null);
+                                playSfx('click');
+                              }}
+                              className="px-2.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] cursor-pointer"
+                            >
+                              Tặng Voucher
+                            </button>
+                          </div>
+                          
+                          {/* Tiến trình */}
+                          <div className="grid grid-cols-3 gap-2 p-2 bg-[#fffaf0] rounded-lg border border-[#1f2937] text-[10.5px] font-black text-[#1f2937] text-center">
+                            <div>Xu: {u.progress?.coins || 0}</div>
+                            <div>Điểm: {u.progress?.score || 0}</div>
+                            <div>Cấp: {u.progress?.level || 1}</div>
+                          </div>
+
+                          {/* Danh sách voucher đã có */}
+                          {u.vouchers && u.vouchers.length > 0 && (
+                            <div className="space-y-1">
+                              <span className="text-[9px] font-black text-gray-400 uppercase">Voucher đã sở hữu:</span>
+                              <div className="flex gap-1.5 flex-wrap">
+                                {u.vouchers.map((v: any) => (
+                                  <span key={v.id} className="text-[9.5px] px-2 py-0.5 bg-green-50 text-green-700 border border-green-300 rounded font-mono font-bold" title={v.description}>
+                                    {v.code}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Form tặng Voucher */}
+                    <div className="lg:col-span-5 bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] h-fit">
+                      <h3 className="text-sm font-serif font-black text-[#1f2937] mb-3">Tặng Voucher Đặc Quyền</h3>
+                      
+                      {selectedUserForVoucher ? (
+                        <form onSubmit={handleIssueVoucher} className="space-y-3">
+                          <div className="text-xs font-bold text-gray-500 bg-amber-50 p-2 rounded border border-amber-200">
+                            Người nhận: <span className="font-black text-rose-600">{adminUsers.find(u => u.id === selectedUserForVoucher)?.username}</span>
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Tiêu đề Voucher:</label>
+                            <input
+                              type="text"
+                              value={customVoucherTitle}
+                              onChange={e => setCustomVoucherTitle(e.target.value)}
+                              placeholder="Ví dụ: Voucher Trà sữa ôm ấm..."
+                              className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+                              maxLength={100}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Mô tả đặc quyền:</label>
+                            <textarea
+                              value={customVoucherDesc}
+                              onChange={e => setCustomVoucherDesc(e.target.value)}
+                              placeholder="Mô tả cụ thể đặc quyền dành cho Vy..."
+                              className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none h-16 resize-none"
+                              maxLength={500}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Mã Voucher (Duy nhất):</label>
+                            <input
+                              type="text"
+                              value={customVoucherCode}
+                              onChange={e => setCustomVoucherCode(e.target.value)}
+                              placeholder="Ví dụ: KHANG-OM-VY"
+                              className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+                              maxLength={100}
+                            />
+                          </div>
+
+                          <div className="flex gap-2 pt-2">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedUserForVoucher(null)}
+                              className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 border-2 border-[#1f2937] text-xs font-black rounded-lg cursor-pointer"
+                            >
+                              Hủy
+                            </button>
+                            <button
+                              type="submit"
+                              className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] active:shadow-none active:translate-y-0.5 transition-all cursor-pointer"
+                            >
+                              Gửi Tặng
+                            </button>
+                          </div>
+
+                          {adminVoucherMsg && (
+                            <p className={`text-[11px] font-bold p-2 rounded border text-center ${
+                              adminVoucherMsg.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-700'
+                            }`}>
+                              {adminVoucherMsg.text}
+                            </p>
+                          )}
+                        </form>
+                      ) : (
+                        <div className="text-center py-12 text-gray-400 font-bold text-xs">
+                          Chọn nút "Tặng Voucher" của một tài khoản bên trái để bắt đầu tạo quà tặng đặc cách.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

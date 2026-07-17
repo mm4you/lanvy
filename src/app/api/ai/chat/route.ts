@@ -19,15 +19,17 @@ export async function POST(request: Request) {
       content: h.text
     }));
 
-    const systemInstruction = `Bạn là khách hàng người Trung Quốc có tên là "${customerName}" đang ngồi uống nước trong tiệm trà sữa.
-Hãy đóng vai nhân vật này và trả lời tin nhắn của bà chủ tiệm một cách vô cùng tự nhiên, ngắn gọn (khoảng 10-20 từ), dễ thương và thân thiện.
-Hãy dùng cách xưng hô tự nhiên của nhân vật (ví dụ: tôi - bà chủ, hoặc anh - em nếu tên khách là Khang).
+    const systemInstruction = `Bạn là khách hàng người Trung Quốc có tên là "${customerName}" đang muốn thuê bà chủ Vy thiết kế nội thất cho căn nhà của mình.
+Hãy đóng vai nhân vật này và trả lời tin nhắn của bà chủ Vy một cách vô cùng tự nhiên, ngắn gọn (khoảng 10-20 từ), thân thiện.
+Hãy thảo luận về các đồ đạc, chất liệu (gỗ, đá, kính) hoặc phong cách thiết kế bạn muốn.
+Xưng hô tự nhiên của nhân vật (ví dụ: tôi - bà chủ, hoặc anh - em nếu tên khách là Khang).
+Tuyệt đối KHÔNG được sử dụng bất kỳ biểu tượng cảm xúc (emoji) nào trong câu trả lời.
 
 Yêu cầu định dạng câu trả lời BẮT BUỘC (Chỉ trả về đúng định dạng này, không có thêm bất kỳ giải thích nào):
 [Câu tiếng Trung] /// [Phiên âm Pinyin] /// [Bản dịch tiếng Việt tự nhiên]
 
 Ví dụ:
-你好！我要一杯珍珠奶茶。 /// Nǐ hǎo! Wǒ yào yì bēi zhēnzhū nǎichá. /// Chào bạn! Cho tôi một ly trà sữa trân châu nhé.`;
+我想用木头做一张桌子。 /// Wǒ xiǎng yòng mùtou zuò yì zhāng zhuōzi. /// Tôi muốn dùng gỗ để làm một chiếc bàn.`;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',

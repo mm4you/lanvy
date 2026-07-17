@@ -15,6 +15,23 @@ interface PlacedItem {
 }
 
 // Các Icon SVG dùng chung thay thế cho Emojis
+function renderCoinIcon(className = 'w-4 h-4 text-amber-500 inline mr-1') {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+      <circle cx="12" cy="12" r="8" fill="#fef08a" />
+      <circle cx="12" cy="12" r="4" />
+    </svg>
+  );
+}
+
+function renderClipboardIcon(className = 'w-5 h-5 text-gray-500 inline mr-1') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+    </svg>
+  );
+}
+
 function renderHeartIcon(className = 'w-6 h-6') {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
@@ -642,11 +659,11 @@ export default function Home() {
 
             {/* Chỉ số tài khoản */}
             <div className="flex items-center gap-3 flex-wrap">
-              <div className="bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono">
-                💰 Xu: {coins}
+              <div className="bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono flex items-center">
+                {renderCoinIcon()} Xu: {coins}
               </div>
-              <div className="bg-blue-100 text-blue-800 border border-blue-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono">
-                🏆 Điểm: {score}
+              <div className="bg-blue-100 text-blue-800 border border-blue-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono flex items-center">
+                {renderAwardIcon('w-4 h-4 text-blue-600 inline mr-1')} Điểm: {score}
               </div>
               <button
                 onClick={handleLogout}
@@ -736,8 +753,8 @@ export default function Home() {
             {activeTab === 'studio' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-4 bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 h-[460px] flex flex-col">
-                  <h2 className="text-base font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 mb-3">
-                    📋 Danh Sách Hợp Đồng
+                  <h2 className="text-base font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 mb-3 flex items-center">
+                    {renderClipboardIcon()} Danh Sách Hợp Đồng
                   </h2>
                   <div className="flex-1 overflow-y-auto space-y-3 pr-1">
                     {DESIGN_CONTRACTS.filter(c => !c.isLoveContract).map((contract) => (

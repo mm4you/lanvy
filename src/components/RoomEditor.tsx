@@ -329,8 +329,10 @@ export function renderFurnitureSVG(typeId: string, rotation: number = 0, sizeCla
       );
     default:
       return (
-        <div className="w-full h-full bg-amber-200 border-2 border-[#1f2937] rounded flex items-center justify-center font-bold text-[10px]">
-          🛋️
+        <div className="w-full h-full bg-amber-200 border-2 border-[#1f2937] rounded flex items-center justify-center">
+          <svg className="w-6 h-6 text-[#1f2937]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-1.5M15.75 21v-1.5m-7.5-15h7.5M21 21v-7.5A2.25 2.25 0 0018.75 11.25H5.25A2.25 2.25 0 003 13.5V21h18zM3 13.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 13.5v.75H3v-.75z" />
+          </svg>
         </div>
       );
   }

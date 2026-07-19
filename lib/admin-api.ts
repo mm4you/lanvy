@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { getSessionUserId } from '@/lib/session';
 import { NextResponse } from 'next/server';
 
-export const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com', 'nguyenthilanvy12a2@gmail.com'];
+export const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com'];
 
 export async function requireAdmin(request: Request) {
   const userId = getSessionUserId(request);

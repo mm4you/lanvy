@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FURNITURE_ITEMS, MATERIAL_ITEMS, DESIGN_CONTRACTS, FurnitureItem, MaterialItem, DesignContract, HSK_GRAMMAR_RULES } from '../data/vocabulary';
+import { FURNITURE_ITEMS, MATERIAL_ITEMS, DESIGN_CONTRACTS, FurnitureItem, MaterialItem, DesignContract, HSK_GRAMMAR_RULES, GENERAL_VOCAB_ITEMS } from '../data/vocabulary';
 import RoomEditor, { renderFurnitureSVG } from '../components/RoomEditor';
 import BlueprintQuiz from '../components/BlueprintQuiz';
 import LoveInbox from '../components/LoveInbox';
@@ -274,10 +274,10 @@ export default function Home() {
   const [contractSubmitMsg, setContractSubmitMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Library subtab state
-  const [librarySubTab, setLibrarySubTab] = useState<'vocab' | 'grammar'>('vocab');
+  const [librarySubTab, setLibrarySubTab] = useState<'furniture' | 'vocab' | 'grammar'>('furniture');
 
   // Admin state & functions
-  const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com', 'nguyenthilanvy12a2@gmail.com'];
+  const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com'];
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [adminLoading, setAdminLoading] = useState(false);
   const [selectedUserForVoucher, setSelectedUserForVoucher] = useState<string | null>(null);
@@ -285,6 +285,97 @@ export default function Home() {
   const [customVoucherDesc, setCustomVoucherDesc] = useState('');
   const [customVoucherCode, setCustomVoucherCode] = useState('');
   const [adminVoucherMsg, setAdminVoucherMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Admin Vocab Bot state
+  const [customVocabs, setCustomVocabs] = useState<any[]>([]);
+  const [vocabQuery, setVocabQuery] = useState('');
+  const [vocabHskLevel, setVocabHskLevel] = useState<number>(1);
+  const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
+  const [vocabBotLoading, setVocabBotLoading] = useState(false);
+  const [vocabBotMsg, setVocabBotMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const fetchCustomVocabs = async () => {
+    try {
+      const res = await fetch('/api/vocab/list');
+      const data = await res.json();
+      if (data.success) {
+        setCustomVocabs(data.list || []);
+      }
+    } catch (e) {
+      console.error("Failed to fetch custom vocabs", e);
+    }
+  };
+
+  const handleGenerateVocab = async () => {
+    if (!vocabQuery.trim()) {
+      setVocabBotMsg({ type: 'error', text: 'Vui lòng nhập từ khóa hoặc danh sách từ.' });
+      return;
+    }
+    setVocabBotLoading(true);
+    setVocabBotMsg(null);
+    try {
+      const res = await fetch('/api/admin/vocab/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: vocabQuery, hskLevel: vocabHskLevel })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setGeneratedVocab(data.vocabList.map((item: any) => ({ ...item, selected: true })));
+      } else {
+        setVocabBotMsg({ type: 'error', text: data.error || 'Lỗi khi tạo từ vựng.' });
+      }
+    } catch (e) {
+      setVocabBotMsg({ type: 'error', text: 'Lỗi kết nối máy chủ.' });
+    } finally {
+      setVocabBotLoading(false);
+    }
+  };
+
+  const handleSaveVocab = async () => {
+    const toSave = generatedVocab.filter(item => item.selected);
+    if (toSave.length === 0) {
+      setVocabBotMsg({ type: 'error', text: 'Chưa chọn từ vựng nào để lưu.' });
+      return;
+    }
+    setVocabBotLoading(true);
+    try {
+      const res = await fetch('/api/admin/vocab/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vocabList: toSave })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setVocabBotMsg({ type: 'success', text: `Đã lưu thành công ${data.count} từ vào game!` });
+        setGeneratedVocab([]);
+        setVocabQuery('');
+        await fetchCustomVocabs();
+      } else {
+        setVocabBotMsg({ type: 'error', text: data.error || 'Lỗi khi lưu.' });
+      }
+    } catch (e) {
+      setVocabBotMsg({ type: 'error', text: 'Lỗi kết nối máy chủ.' });
+    } finally {
+      setVocabBotLoading(false);
+    }
+  };
+
+  const handleDeleteVocab = async (id: string) => {
+    try {
+      const res = await fetch('/api/admin/vocab/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchCustomVocabs();
+      }
+    } catch (e) {
+      console.error("Failed to delete vocab", e);
+    }
+  };
 
   const fetchAdminLogs = async () => {
     setAdminLoading(true);
@@ -491,6 +582,7 @@ export default function Home() {
     };
 
     checkSession();
+    fetchCustomVocabs();
   }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -1025,6 +1117,7 @@ export default function Home() {
                 setCoins={setCoins}
                 playSfx={playSfx}
                 onExplainWord={handleExplainWord}
+                customVocabs={customVocabs}
               />
             )}
 
@@ -1041,6 +1134,9 @@ export default function Home() {
                 setWallpaper={setWallpaper}
                 floorType={floorType}
                 setFloorType={setFloorType}
+                currentContract={currentContract}
+                onSubmitContract={handleSubmitContract}
+                contractSubmitMsg={contractSubmitMsg}
               />
             )}
 
@@ -1062,14 +1158,22 @@ export default function Home() {
                 </h2>
 
                 {/* Sub-tab selection */}
-                <div className="flex gap-3 mb-4">
+                <div className="flex gap-3 mb-4 flex-wrap">
+                  <button
+                    onClick={() => { setLibrarySubTab('furniture'); playSfx('click'); }}
+                    className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
+                      librarySubTab === 'furniture' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                    }`}
+                  >
+                    Từ điển Nội Thất HSK
+                  </button>
                   <button
                     onClick={() => { setLibrarySubTab('vocab'); playSfx('click'); }}
                     className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
                       librarySubTab === 'vocab' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
                     }`}
                   >
-                    Từ điển Từ vựng
+                    Từ vựng HSK 1-2-3 ({GENERAL_VOCAB_ITEMS.length + customVocabs.length})
                   </button>
                   <button
                     onClick={() => { setLibrarySubTab('grammar'); playSfx('click'); }}
@@ -1081,7 +1185,7 @@ export default function Home() {
                   </button>
                 </div>
 
-                {librarySubTab === 'vocab' ? (
+                {librarySubTab === 'furniture' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {hskGroupedFurniture.map((item) => {
                       const isUnlocked = unlockedItems.includes(item.id);
@@ -1097,7 +1201,7 @@ export default function Home() {
                             <div className="w-12 h-12 border-2 border-[#1f2937] bg-[#fff5f6] rounded-lg p-1 flex items-center justify-center shrink-0">
                               {renderFurnitureSVG(item.id, 0, 'w-10 h-10')}
                             </div>
-                            <div>
+                            <div className="text-left">
                               <h4 className="text-xs font-serif font-black text-[#1f2937] flex items-center gap-1.5">
                                 <span>{item.nameVietnamese}</span>
                                 <span className="text-[9px] bg-pink-100 text-pink-800 border border-pink-200 px-1.5 py-0.2 rounded font-sans font-black">
@@ -1138,7 +1242,55 @@ export default function Home() {
                       );
                     })}
                   </div>
-                ) : (
+                )}
+
+                {librarySubTab === 'vocab' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[...GENERAL_VOCAB_ITEMS, ...customVocabs].map((item, idx) => {
+                      return (
+                        <div
+                          key={item.id || idx}
+                          className="p-4 bg-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex flex-col justify-between space-y-3"
+                        >
+                          <div className="space-y-1.5 text-left">
+                            <div className="flex justify-between items-center border-b border-dashed border-pink-200 pb-1.5">
+                              <h4 className="text-sm font-serif font-black text-rose-600 flex items-center gap-1.5">
+                                <span>{item.nameChinese}</span>
+                                <button
+                                  onClick={() => handlePlayTTS(item.nameChinese)}
+                                  className="p-0.5 bg-pink-50 hover:bg-pink-100 border border-gray-300 rounded cursor-pointer"
+                                >
+                                  {renderAudioIcon('w-3 h-3 text-[#1f2937]')}
+                                </button>
+                              </h4>
+                              <span className="text-[9px] bg-pink-100 text-pink-800 border border-pink-200 px-1.5 py-0.2 rounded font-sans font-black">
+                                HSK {item.hskLevel}
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-gray-400 font-bold font-mono">{item.namePinyin}</p>
+                            <p className="text-xs font-black text-[#1f2937]">Nghĩa: {item.nameVietnamese}</p>
+                            {item.exampleChinese && (
+                              <div className="mt-2 p-2 bg-[#fffaf0] rounded border border-dashed border-pink-200/60 text-[10.5px]">
+                                <p className="font-bold text-gray-600">Ví dụ: {item.exampleChinese}</p>
+                                <p className="text-blue-500 italic text-[9.5px]">{item.examplePinyin}</p>
+                                <p className="text-gray-500 font-bold text-[9.5px]">Nghĩa ví dụ: {item.exampleVietnamese}</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <button
+                            onClick={() => handleExplainWord(item.nameChinese)}
+                            className="w-full py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center justify-center gap-1 shadow-[1px_1px_0px_#1f2937]"
+                          >
+                            {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI Cà Khịa
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {librarySubTab === 'grammar' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {HSK_GRAMMAR_RULES.map((rule) => (
                       <div key={rule.id} className="p-4 bg-white border-2 border-[#1f2937] rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-3">
@@ -1190,7 +1342,8 @@ export default function Home() {
                     <div className="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     {/* Danh sách người dùng */}
                     <div className="lg:col-span-7 space-y-4 max-h-[500px] overflow-y-auto pr-1">
                       <h3 className="text-xs font-black uppercase text-gray-400">Danh sách tài khoản Vy & Hệ thống ({adminUsers.length})</h3>
@@ -1313,7 +1466,169 @@ export default function Home() {
                       )}
                     </div>
                   </div>
-                )}
+
+                  {/* PHẦN 2: BOT AI CRAWL TỪ VỰNG & QUẢN LÝ (CHO KHANG) */}
+                  <div className="border-t-2 border-dashed border-[#1f2937] pt-6 space-y-6">
+                    <h3 className="text-lg font-serif font-black text-[#1f2937] flex items-center gap-2">
+                      🤖 Trợ Lý AI: Bot Tạo & Crawl Từ Vựng HSK (Admin Khang)
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                      {/* CỘT TRÁI: FORM CRAWL/GENERATE */}
+                      <div className="lg:col-span-6 bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-4">
+                        <h4 className="text-sm font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                          ✨ Nhập chủ đề hoặc danh sách chữ Hán cần tạo
+                        </h4>
+                        <p className="text-[11px] text-gray-500 font-bold">
+                          Nhập chữ Hán (ví dụ: 苹果, 香蕉) hoặc chủ đề (ví dụ: Màu sắc, Thời tiết, Đồ ăn) để Bot AI tự động tìm Pinyin, nghĩa Việt và tạo câu ví dụ cực dễ thương cho Vy.
+                        </p>
+
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Cấp độ HSK:</label>
+                            <select
+                              value={vocabHskLevel}
+                              onChange={(e) => setVocabHskLevel(Number(e.target.value))}
+                              className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                            >
+                              <option value={1}>HSK 1</option>
+                              <option value={2}>HSK 2</option>
+                              <option value={3}>HSK 3</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Yêu cầu từ vựng:</label>
+                            <input
+                              type="text"
+                              value={vocabQuery}
+                              onChange={e => setVocabQuery(e.target.value)}
+                              placeholder="Ví dụ: Con vật, Trái cây, 电脑, 苹果..."
+                              className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+                            />
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={handleGenerateVocab}
+                            disabled={vocabBotLoading}
+                            className="w-full py-2 bg-pink-500 hover:bg-pink-600 text-white disabled:bg-gray-200 disabled:text-gray-400 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] active:shadow-none active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                          >
+                            {vocabBotLoading ? (
+                              <>
+                                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                Đang tạo...
+                              </>
+                            ) : (
+                              'Khởi Chạy Bot Crawl'
+                            )}
+                          </button>
+                        </div>
+
+                        {vocabBotMsg && (
+                          <p className={`text-[11px] font-bold p-2.5 rounded border text-center ${
+                            vocabBotMsg.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-700'
+                          }`}>
+                            {vocabBotMsg.text}
+                          </p>
+                        )}
+
+                        {/* Hiển thị danh sách từ vựng vừa tạo được */}
+                        {generatedVocab.length > 0 && (
+                          <div className="space-y-3 pt-3 border-t border-dashed border-[#1f2937]">
+                            <div className="flex justify-between items-center">
+                              <h5 className="text-xs font-black uppercase text-gray-500">Kết quả Bot AI ({generatedVocab.length} từ)</h5>
+                              <button
+                                type="button"
+                                onClick={handleSaveVocab}
+                                className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white border-2 border-[#1f2937] rounded-lg text-[10px] font-black uppercase cursor-pointer"
+                              >
+                                Lưu Vào Game
+                              </button>
+                            </div>
+
+                            <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
+                              {generatedVocab.map((item, idx) => (
+                                <div key={idx} className="p-2.5 bg-pink-50/50 border border-[#1f2937] rounded-lg flex items-start gap-2.5 text-left">
+                                  <input
+                                    type="checkbox"
+                                    checked={item.selected}
+                                    onChange={(e) => {
+                                      const next = [...generatedVocab];
+                                      next[idx].selected = e.target.checked;
+                                      setGeneratedVocab(next);
+                                    }}
+                                    className="mt-1 accent-pink-500"
+                                  />
+                                  <div className="text-xs flex-1">
+                                    <div className="font-serif font-black text-rose-600 flex items-center gap-1.5">
+                                      <span>{item.nameChinese}</span>
+                                      <span className="text-[10px] text-gray-500 font-sans">[{item.namePinyin}]</span>
+                                      <span className="text-[9px] bg-rose-200 text-rose-800 px-1 py-0.2 rounded font-sans uppercase">HSK {item.hskLevel}</span>
+                                    </div>
+                                    <div className="font-bold text-gray-700">Nghĩa: {item.nameVietnamese}</div>
+                                    {item.exampleChinese && (
+                                      <div className="mt-1 text-[10.5px] text-gray-400 bg-white p-1.5 rounded border border-[#1f2937]/10">
+                                        <p className="font-bold text-gray-500">Ví dụ: {item.exampleChinese}</p>
+                                        <p className="text-[9.5px] italic text-blue-500">{item.examplePinyin}</p>
+                                        <p className="text-[9.5px] text-gray-500 font-bold">Nghĩa ví dụ: {item.exampleVietnamese}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* CỘT PHẢI: DANH SÁCH TỪ VỰNG DƯỚI CSDL */}
+                      <div className="lg:col-span-6 bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-3">
+                        <h4 className="text-sm font-serif font-black text-[#1f2937] flex items-center justify-between">
+                          <span>Kho từ vựng bổ sung trong CSDL ({customVocabs.length})</span>
+                        </h4>
+                        <p className="text-[11px] text-gray-500 font-bold">
+                          Các từ vựng do bạn tạo sẽ lưu trữ tại đây và tự động gộp vào dải câu hỏi ngẫu nhiên trong phần giải Bản Vẽ của Vy.
+                        </p>
+
+                        {customVocabs.length === 0 ? (
+                          <div className="py-12 border-2 border-dashed border-[#1f2937]/20 rounded-xl text-center text-gray-400 font-bold text-xs">
+                            Hiện chưa có từ vựng bổ sung nào trong CSDL.
+                          </div>
+                        ) : (
+                          <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                            {customVocabs.map((item) => (
+                              <div key={item.id} className="p-2.5 bg-gray-50 border border-[#1f2937] rounded-lg flex justify-between items-center text-left">
+                                <div className="text-xs">
+                                  <div className="font-serif font-black text-gray-800 flex items-center gap-1.5">
+                                    <span>{item.nameChinese}</span>
+                                    <span className="text-[10px] text-gray-400 font-sans">[{item.namePinyin}]</span>
+                                    <span className="text-[9px] bg-gray-200 text-gray-700 px-1 py-0.2 rounded font-sans">HSK {item.hskLevel}</span>
+                                  </div>
+                                  <div className="font-bold text-gray-600 mt-0.5">Nghĩa: {item.nameVietnamese}</div>
+                                  {item.exampleChinese && (
+                                    <div className="text-[10px] text-gray-400 italic">
+                                      Ví dụ: {item.exampleChinese} ({item.exampleVietnamese})
+                                    </div>
+                                  )}
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteVocab(item.id)}
+                                  className="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded text-[9px] font-black uppercase cursor-pointer"
+                                >
+                                  Xóa
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
               </div>
             )}
           </div>

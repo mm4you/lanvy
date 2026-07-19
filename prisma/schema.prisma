@@ -38,3 +38,15 @@ model UnlockedVoucher {
   unlockedAt  DateTime @default(now())
   isRedeemed  Boolean  @default(false)
 }
+
+model CustomVocab {
+  id                String   @id @default(uuid())
+  nameChinese       String
+  namePinyin        String
+  nameVietnamese    String
+  hskLevel          Int      @default(1)
+  exampleChinese    String?
+  examplePinyin     String?
+  exampleVietnamese String?
+  createdAt         DateTime @default(now())
+}

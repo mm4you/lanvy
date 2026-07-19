@@ -11,6 +11,7 @@ interface BlueprintQuizProps {
   setCoins: (c: number) => void;
   playSfx: (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => void;
   onExplainWord: (word: string) => void;
+  customVocabs?: any[];
 }
 
 interface Question {
@@ -71,7 +72,8 @@ export default function BlueprintQuiz({
   coins,
   setCoins,
   playSfx,
-  onExplainWord
+  onExplainWord,
+  customVocabs
 }: BlueprintQuizProps) {
   const [quizMode, setQuizMode] = useState<'furniture' | 'general'>('furniture');
   const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all'>('all');
@@ -112,6 +114,7 @@ export default function BlueprintQuiz({
   const generateQuestion = () => {
     let randomItem: FurnitureItem | GeneralVocabItem;
     let hskLevel = 1;
+    const dynamicGeneralVocabPool = [...GENERAL_VOCAB_ITEMS, ...(customVocabs || [])];
     
     if (quizMode === 'furniture') {
       const filteredPool = FURNITURE_ITEMS.filter((item) => {
@@ -123,7 +126,7 @@ export default function BlueprintQuiz({
       randomItem = filteredPool[Math.floor(Math.random() * filteredPool.length)];
       hskLevel = getHskLevel(randomItem.id);
     } else {
-      const filteredPool = GENERAL_VOCAB_ITEMS.filter((item) => {
+      const filteredPool = dynamicGeneralVocabPool.filter((item) => {
         return selectedHskFilter === 'all' || item.hskLevel === selectedHskFilter;
       });
 
@@ -148,7 +151,7 @@ export default function BlueprintQuiz({
       questionText = `Hãy chọn chữ Hán chính xác cho từ: "${itemVietnameseName}"`;
       correctAnswer = itemChineseName;
       
-      const pool = isFurniture ? FURNITURE_ITEMS : GENERAL_VOCAB_ITEMS;
+      const pool = isFurniture ? FURNITURE_ITEMS : dynamicGeneralVocabPool;
       const distractors = pool.filter((i) => i.id !== randomItem.id)
         .map((i) => i.nameChinese)
         .sort(() => 0.5 - Math.random())
@@ -158,7 +161,7 @@ export default function BlueprintQuiz({
       questionText = `Phiên âm Pinyin chính xác của từ "${itemChineseName}" (${itemVietnameseName}) là:`;
       correctAnswer = itemPinyinName;
 
-      const pool = isFurniture ? FURNITURE_ITEMS : GENERAL_VOCAB_ITEMS;
+      const pool = isFurniture ? FURNITURE_ITEMS : dynamicGeneralVocabPool;
       const distractors = pool.filter((i) => i.id !== randomItem.id)
         .map((i) => i.namePinyin)
         .sort(() => 0.5 - Math.random())
@@ -168,7 +171,7 @@ export default function BlueprintQuiz({
       questionText = 'Nghe phát âm tiếng Trung sau đây và chọn đáp án tương ứng:';
       correctAnswer = itemVietnameseName;
 
-      const pool = isFurniture ? FURNITURE_ITEMS : GENERAL_VOCAB_ITEMS;
+      const pool = isFurniture ? FURNITURE_ITEMS : dynamicGeneralVocabPool;
       const distractors = pool.filter((i) => i.id !== randomItem.id)
         .map((i) => i.nameVietnamese)
         .sort(() => 0.5 - Math.random())
@@ -325,7 +328,7 @@ export default function BlueprintQuiz({
               HSK Cấp {currentQuestion.hskLevel}
             </span>
             <p className="text-sm font-serif font-black text-[#1f2937] mt-3">
-              {currentQuestion.questionText || currentQuestion.type === 'listening' ? (
+              currentQuestion.type === 'listening' ? (
                 <div className="flex items-center justify-center gap-2">
                   <span>Nghe phát âm tiếng Trung:</span>
                   <button

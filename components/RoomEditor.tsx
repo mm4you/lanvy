@@ -870,7 +870,7 @@ export default function RoomEditor({
           </div>
 
           <div className="mt-3 bg-pink-50 border border-pink-200 p-2 rounded-lg text-[10.5px] text-pink-800 font-bold flex items-start gap-1.5">
-            {renderLightbulbIcon('shrink-0 text-pink-600 mt-0.5')}
+            {renderLightbulbIcon('w-5 h-5 shrink-0 text-pink-600 mt-0.5')}
             <span>
               <b>Chạm Đặt Đồ:</b> Để đặt nội thất vào phòng, bấm <b>Lấy Ra</b> rồi click một ô trống trên mặt sàn. Bạn có thể hover để xem trước vị trí đặt đồ!
             </span>

@@ -204,29 +204,7 @@ function renderClientAvatar(sprite: string, className = 'w-12 h-12') {
     case 'vy':
     case 'lan_vy':
       return (
-        <svg viewBox="0 0 32 32" className={className}>
-          {/* Long hair background */}
-          <path d="M 6 14 L 6 26 C 6 28, 8 29, 9 29 C 10 27, 9 20, 9 14" fill="#3f2305" />
-          <path d="M 26 14 L 26 26 C 26 28, 24 29, 23 29 C 22 27, 23 20, 23 14" fill="#3f2305" />
-          {/* Head */}
-          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
-          {/* Long dark brown hair */}
-          <path d="M 6 13 C 6 6, 26 6, 26 13 Z" fill="#4a2711" />
-          <path d="M 6 13 Q 16 7 26 13 Q 18 13 16 10 Q 14 13 6 13" fill="#4a2711" stroke="#1f2937" strokeWidth="1.5" />
-          {/* Pink hair bow */}
-          <path d="M 12 7 Q 16 9 20 7 Q 22 5 18 5 Q 16 7 14 5 Q 10 5 12 7" fill="#f43f5e" stroke="#1f2937" strokeWidth="1.5" />
-          <circle cx="16" cy="6" r="2.2" fill="#fda4af" stroke="#1f2937" strokeWidth="1" />
-          {/* Large expressive eyes */}
-          <circle cx="12" cy="17" r="1.5" fill="#1f2937" />
-          <circle cx="20" cy="17" r="1.5" fill="#1f2937" />
-          <circle cx="11.4" cy="16.2" r="0.5" fill="#ffffff" />
-          <circle cx="19.4" cy="16.2" r="0.5" fill="#ffffff" />
-          {/* Blushing cheeks */}
-          <ellipse cx="9.5" cy="19.5" rx="1.5" ry="1" fill="#fda4af" />
-          <ellipse cx="22.5" cy="19.5" rx="1.5" ry="1" fill="#fda4af" />
-          {/* Smile */}
-          <path d="M 14 21.5 Q 16 23 18 21.5" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+        <img src="/lanvy-avatar.png" alt="Lan Vy" className={`${className} rounded-full object-cover border-2 border-pink-300`} />
       );
     default:
       return (

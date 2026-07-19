@@ -56,7 +56,7 @@ export function readOAuthState(cookieValue: string | undefined, returnedState: s
 export function getGoogleOAuthClient(origin: string) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? `${origin}/api/auth/google/callback`;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/google/callback`;
   if (!clientId || !clientSecret) throw new Error('Google OAuth is not configured.');
   return {
     clientId,

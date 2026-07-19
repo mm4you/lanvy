@@ -275,6 +275,7 @@ export default function Home() {
 
   // Library subtab state
   const [librarySubTab, setLibrarySubTab] = useState<'furniture' | 'vocab' | 'grammar'>('furniture');
+  const [selectedLibraryTheme, setSelectedLibraryTheme] = useState<string>('all');
 
   // Admin state & functions
   const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com'];
@@ -948,62 +949,67 @@ export default function Home() {
             </div>
           </header>
 
-          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH */}
-          <nav className="flex gap-2 flex-wrap">
+          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (Tối ưu cho cả Điện thoại & Máy tính) */}
+          <nav className="grid grid-cols-3 md:flex md:flex-wrap gap-2 w-full">
             <button
               onClick={() => {
                 setActiveTab('studio');
                 playSfx('click');
               }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                 activeTab === 'studio' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderAwardIcon()} Hợp Đồng Thiết Kế
+              {activeTab === 'studio' ? renderAwardIcon('w-4 h-4 text-white') : renderAwardIcon('w-4 h-4 text-[#1f2937]')}
+              <span className="truncate">Studio</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab('quiz');
                 playSfx('click');
               }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                 activeTab === 'quiz' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderBookIcon()} Bản Vẽ HSK
+              {activeTab === 'quiz' ? renderBookIcon('w-4 h-4 text-white') : renderBookIcon('w-4 h-4 text-[#1f2937]')}
+              <span className="truncate">Quiz HSK</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab('room');
                 playSfx('click');
               }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                 activeTab === 'room' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderHomeIcon()} Phòng Của Vy
+              {activeTab === 'room' ? renderHomeIcon('w-4 h-4 text-white') : renderHomeIcon('w-4 h-4 text-[#1f2937]')}
+              <span className="truncate">Phòng Vy</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab('love');
                 playSfx('click');
               }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                 activeTab === 'love' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderMailIcon()} Hòm Thư Tình Yêu
+              {activeTab === 'love' ? renderMailIcon('w-4 h-4 text-white') : renderMailIcon('w-4 h-4 text-[#1f2937]')}
+              <span className="truncate">Thư Tình</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab('library');
                 playSfx('click');
               }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                 activeTab === 'library' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderBookIcon()} Từ điển & Ngữ pháp
+              {activeTab === 'library' ? renderBookIcon('w-4 h-4 text-white') : renderBookIcon('w-4 h-4 text-[#1f2937]')}
+              <span className="truncate">Thư Viện</span>
             </button>
             {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
               <button
@@ -1012,11 +1018,12 @@ export default function Home() {
                   fetchAdminLogs();
                   playSfx('click');
                 }}
-                className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
+                className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                   activeTab === 'admin' ? 'bg-purple-600 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
                 }`}
               >
-                {renderAIIcon()} Điều Khiển Admin
+                {activeTab === 'admin' ? renderAIIcon('w-4 h-4 text-white') : renderAIIcon('w-4 h-4 text-[#1f2937]')}
+                <span className="truncate">Admin</span>
               </button>
             )}
           </nav>
@@ -1384,8 +1391,14 @@ export default function Home() {
 
                 {librarySubTab === 'vocab' && (() => {
                   const allVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
+                  const uniqueCategories = Array.from(new Set(allVocabs.map(item => getVocabCategory(item))));
+
+                  const filteredVocabs = selectedLibraryTheme === 'all'
+                    ? allVocabs
+                    : allVocabs.filter(item => getVocabCategory(item) === selectedLibraryTheme);
+
                   const groupedVocabs: { [key: string]: any[] } = {};
-                  allVocabs.forEach((item) => {
+                  filteredVocabs.forEach((item) => {
                     const cat = getVocabCategory(item);
                     if (!groupedVocabs[cat]) {
                       groupedVocabs[cat] = [];
@@ -1395,6 +1408,42 @@ export default function Home() {
 
                   return (
                     <div className="space-y-6">
+                      {/* BỘ LỌC CHỦ ĐỀ THƯ VIỆN */}
+                      <div className="flex gap-1.5 flex-wrap pb-3 border-b-2 border-dashed border-pink-200">
+                        <button
+                          onClick={() => {
+                            setSelectedLibraryTheme('all');
+                            playSfx('click');
+                          }}
+                          className={`px-3 py-1 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
+                            selectedLibraryTheme === 'all'
+                              ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                              : 'bg-white text-[#1f2937]'
+                          }`}
+                        >
+                          Tất cả ({allVocabs.length})
+                        </button>
+                        {uniqueCategories.map((cat) => {
+                          const count = allVocabs.filter(item => getVocabCategory(item) === cat).length;
+                          return (
+                            <button
+                              key={cat}
+                              onClick={() => {
+                                setSelectedLibraryTheme(cat);
+                                playSfx('click');
+                              }}
+                              className={`px-3 py-1 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
+                                selectedLibraryTheme === cat
+                                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                                  : 'bg-white text-[#1f2937]'
+                              }`}
+                            >
+                              {cat} ({count})
+                            </button>
+                          );
+                        })}
+                      </div>
+
                       {Object.entries(groupedVocabs).map(([categoryName, items]) => (
                         <div key={categoryName} className="space-y-3 text-left">
                           <div className="flex items-center gap-2 border-b-2 border-dashed border-[#1f2937] pb-1.5 mt-2">

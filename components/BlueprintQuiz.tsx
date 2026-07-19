@@ -340,7 +340,7 @@ export default function BlueprintQuiz({
   };
 
   return (
-    <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 max-w-2xl mx-auto my-4">
+    <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 sm:p-6 max-w-2xl mx-auto my-4">
       {/* CHUYỂN ĐỔI CHẾ ĐỘ CHƠI */}
       <div className="flex justify-center gap-3 mb-6 flex-wrap sm:flex-nowrap">
         <button

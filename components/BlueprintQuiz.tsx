@@ -132,7 +132,7 @@ export default function BlueprintQuiz({
 
       if (filteredPool.length === 0) return;
       randomItem = filteredPool[Math.floor(Math.random() * filteredPool.length)];
-      hskLevel = randomItem.hskLevel;
+      hskLevel = (randomItem as GeneralVocabItem).hskLevel;
     }
 
     const types: ('translate' | 'pinyin' | 'listening')[] = ['translate', 'pinyin', 'listening'];
@@ -328,7 +328,7 @@ export default function BlueprintQuiz({
               HSK Cấp {currentQuestion.hskLevel}
             </span>
             <p className="text-sm font-serif font-black text-[#1f2937] mt-3">
-              currentQuestion.type === 'listening' ? (
+              {currentQuestion.type === 'listening' ? (
                 <div className="flex items-center justify-center gap-2">
                   <span>Nghe phát âm tiếng Trung:</span>
                   <button

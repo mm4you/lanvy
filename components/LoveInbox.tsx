@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DesignContract, DESIGN_CONTRACTS } from '../data/vocabulary';
+import { DesignContract, DESIGN_CONTRACTS, FURNITURE_ITEMS } from '../data/vocabulary';
+import { renderFurnitureSVG } from './RoomEditor';
 
 interface PlacedItem {
   id: string;
@@ -68,14 +69,16 @@ export default function LoveInbox({
   const [activeTab, setActiveTab] = useState<'contracts' | 'wallet'>('contracts');
   const [selectedContract, setSelectedContract] = useState<DesignContract | null>(null);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   // Chỉ lấy các hợp đồng tình yêu đặc biệt của Khang
   const loveContracts = DESIGN_CONTRACTS.filter((c) => c.isLoveContract);
 
   // Kiểm tra xem phòng hiện tại của Vy đã thỏa mãn các yêu cầu của hợp đồng chưa
   const checkContractCompletion = (contract: DesignContract) => {
-    const placedTypeIds = placedItems.map((item) => item.itemTypeId);
-    return contract.targetRequirements.every((reqId) => placedTypeIds.includes(reqId));
+    const hasAll = contract.targetRequirements.every((reqId) => selectedItems.includes(reqId));
+    const noExtra = selectedItems.every((reqId) => contract.targetRequirements.includes(reqId));
+    return hasAll && noExtra;
   };
 
   const handleSubmitDesign = (contract: DesignContract) => {
@@ -90,19 +93,33 @@ export default function LoveInbox({
         text: `Tuyệt vời! Bạn đã hoàn thành xuất sắc bản vẽ "${contract.title}". Voucher quà tặng độc quyền "${contract.voucherReward?.title}" đã được gửi vào ví của bạn!`,
       });
       playSfx('success');
+      setSelectedItems([]);
     } else {
-      // Thiếu đồ đạc
-      const placedTypeIds = placedItems.map((item) => item.itemTypeId);
       const missingItemsNames = contract.targetRequirements
-        .filter((reqId) => !placedTypeIds.includes(reqId))
+        .filter((reqId) => !selectedItems.includes(reqId))
         .map((reqId) => {
           const items = require('../data/vocabulary').FURNITURE_ITEMS;
           return items.find((i: any) => i.id === reqId)?.nameVietnamese || reqId;
         });
 
+      const extraItemsNames = selectedItems
+        .filter((reqId) => !contract.targetRequirements.includes(reqId))
+        .map((reqId) => {
+          const items = require('../data/vocabulary').FURNITURE_ITEMS;
+          return items.find((i: any) => i.id === reqId)?.nameVietnamese || reqId;
+        });
+
+      let errorMsg = 'Bản vẽ chưa chính xác Vy ơi! ';
+      if (missingItemsNames.length > 0) {
+        errorMsg += `Còn thiếu đồ: ${missingItemsNames.join(', ')}. `;
+      }
+      if (extraItemsNames.length > 0) {
+        errorMsg += `Bị thừa đồ không yêu cầu: ${extraItemsNames.join(', ')}.`;
+      }
+
       setSubmitMessage({
         type: 'error',
-        text: `Chưa hoàn thành rồi Vy ơi! Bạn cần đặt thêm các món đồ sau vào phòng của mình: ${missingItemsNames.join(', ')}`,
+        text: errorMsg,
       });
       playSfx('error');
     }
@@ -232,33 +249,88 @@ export default function LoveInbox({
                 <p className="text-[12px] font-bold text-gray-500">Dịch nghĩa: {selectedContract.promptVietnamese}</p>
               </div>
 
-              {/* YÊU CẦU ĐỒ NỘI THẤT */}
-              <div className="space-y-2">
-                <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">Yêu cầu nội thất cần đặt trong phòng:</h5>
-                <div className="flex gap-2 flex-wrap">
-                  {selectedContract.targetRequirements.map((reqId) => {
-                    const items = require('../data/vocabulary').FURNITURE_ITEMS;
-                    const name = items.find((i: any) => i.id === reqId)?.nameVietnamese || reqId;
-                    const isPlaced = placedItems.some((pi) => pi.itemTypeId === reqId);
-
-                    return (
-                      <span
-                        key={reqId}
-                        className={`text-xs px-2.5 py-1 border-2 border-[#1f2937] rounded-lg font-black flex items-center gap-1.5 ${
-                          isPlaced ? 'bg-green-100 text-green-800' : 'bg-red-50 text-red-600'
-                        }`}
-                      >
-                        <span className="w-2 h-2 rounded-full bg-current" />
-                        {name} {isPlaced ? '(Đã đặt)' : '(Chưa đặt)'}
+              {/* PHÒNG PHÁC THẢO CHỌN ĐỒ */}
+              <div className="space-y-2 text-left">
+                <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">
+                  Phòng phác thảo ảo (Vy hãy chọn đồ vật ở dưới để thêm vào phòng):
+                </h5>
+                <div className="h-32 bg-pink-900/5 border-2 border-[#1f2937] rounded-xl flex items-center justify-center gap-4 relative overflow-hidden p-3">
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(31,41,55,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(31,41,55,0.04)_1px,transparent_1px)] bg-[size:12px_12px]" />
+                  
+                  {unlockedVouchers.some((v) => v.code === selectedContract.voucherReward?.code) ? (
+                    <div className="flex flex-col items-center gap-1.5 z-10">
+                      <span className="text-xs font-black text-emerald-600 uppercase border-2 border-emerald-600 px-3 py-1 rounded bg-white rotate-[-2deg] shadow-sm">
+                        [ Thử thách đã hoàn thành ]
                       </span>
-                    );
-                  })}
+                    </div>
+                  ) : selectedItems.length === 0 ? (
+                    <span className="text-[11px] text-gray-400 font-bold italic z-10">Vy hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!</span>
+                  ) : (
+                    <div className="flex gap-3 overflow-x-auto max-w-full z-10 py-1 px-2">
+                      {selectedItems.map((itemId) => {
+                        const item = FURNITURE_ITEMS.find(i => i.id === itemId);
+                        return (
+                          <div key={itemId} className="flex flex-col items-center bg-white border border-[#1f2937] p-1.5 rounded-lg shadow-[1px_1px_0px_#1f2937] shrink-0">
+                            {renderFurnitureSVG(itemId, 0, 'w-8 h-8')}
+                            <span className="text-[9px] font-black text-[#1f2937] mt-1">{item?.nameVietnamese}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
+              </div>
+
+              {/* YÊU CẦU ĐỒ NỘI THẤT */}
+              <div className="space-y-2 text-left">
+                <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">Danh mục đồ nội thất để Vy lựa chọn:</h5>
+                {unlockedVouchers.some((v) => v.code === selectedContract.voucherReward?.code) ? (
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-800">
+                    Bạn đã hoàn thành xuất sắc thử thách này và rinh trọn vẹn phần thưởng!
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[180px] overflow-y-auto pr-1">
+                    {FURNITURE_ITEMS.map((item) => {
+                      const isSelected = selectedItems.includes(item.id);
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => {
+                            playSfx('click');
+                            if (isSelected) {
+                              setSelectedItems(prev => prev.filter(id => id !== item.id));
+                            } else {
+                              setSelectedItems(prev => [...prev, item.id]);
+                            }
+                          }}
+                          className={`p-2 border border-[#1f2937] rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-center relative ${
+                            isSelected
+                              ? 'bg-rose-100 border-rose-500 shadow-none translate-y-0.5'
+                              : 'bg-white hover:bg-rose-50 shadow-[1.5px_1.5px_0px_#1f2937]'
+                          }`}
+                        >
+                          <div className="w-8 h-8 flex items-center justify-center">
+                            {renderFurnitureSVG(item.id, 0, 'w-6 h-6')}
+                          </div>
+                          <span className="text-[9px] font-black text-[#1f2937] leading-tight truncate w-full">{item.nameVietnamese}</span>
+                          <span className="text-[8px] font-bold text-pink-600 font-serif">{item.nameChinese}</span>
+                          
+                          {isSelected && (
+                            <div className="absolute top-0.5 right-0.5 w-3 h-3 bg-rose-500 rounded-full border border-white flex items-center justify-center text-white text-[7px] font-black">
+                              ✓
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* VOUCHER PHẦN THƯỞNG */}
               {selectedContract.voucherReward && (
-                <div className="p-3 bg-pink-50/40 border border-pink-200 rounded-xl flex items-center gap-3">
+                <div className="p-3 bg-pink-50/40 border border-pink-200 rounded-xl flex items-center gap-3 text-left">
                   <div className="text-pink-600 shrink-0">
                     {renderTicketIconSVG('w-8 h-8')}
                   </div>
@@ -271,7 +343,7 @@ export default function LoveInbox({
               )}
 
               {/* NỘP BẢN THIẾT KẾ */}
-              <div className="pt-3 border-t border-dashed border-[#1f2937] flex justify-between items-center">
+              <div className="pt-3 border-t border-dashed border-[#1f2937] flex justify-between items-center text-left">
                 <div className="text-xs font-bold text-gray-500">
                   Phần thưởng: <span className="font-black text-[#1f2937]">{selectedContract.rewardCoins} Xu</span>
                 </div>

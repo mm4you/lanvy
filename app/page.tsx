@@ -513,8 +513,22 @@ export default function Home() {
       if (savedWall) setWallpaper(savedWall);
       const savedFloor = localStorage.getItem(`room_floor_${user.id}`);
       if (savedFloor) setFloorType(savedFloor);
+
+      const savedCompleted = localStorage.getItem(`room_completed_contracts_${user.id}`);
+      if (savedCompleted) {
+        try {
+          setCompletedContracts(JSON.parse(savedCompleted));
+        } catch (e) {}
+      }
     }
   }, [user]);
+
+  const saveCompletedContracts = (newCompleted: number[]) => {
+    if (user) {
+      localStorage.setItem(`room_completed_contracts_${user.id}`, JSON.stringify(newCompleted));
+    }
+    setCompletedContracts(newCompleted);
+  };
 
   useEffect(() => {
     if (user && placedItems.length > 0) {
@@ -650,13 +664,23 @@ export default function Home() {
 
   // Kiểm tra yêu cầu của hợp đồng thiết kế bình thường
   const checkContractCompletion = (contract: DesignContract) => {
-    const placedTypeIds = placedItems.map(item => item.itemTypeId);
-    return contract.targetRequirements.every(reqId => placedTypeIds.includes(reqId));
+    const hasAll = contract.targetRequirements.every(reqId => contractSelectedItems.includes(reqId));
+    const noExtra = contractSelectedItems.every(reqId => contract.targetRequirements.includes(reqId));
+    return hasAll && noExtra;
   };
 
   // Nộp hợp đồng thiết kế bình thường
   const handleSubmitContract = (contract: DesignContract) => {
     playSfx('click');
+
+    if (completedContracts.includes(contract.id)) {
+      setContractSubmitMsg({
+        type: 'error',
+        text: 'Hợp đồng này đã được hoàn thành trước đó rồi.'
+      });
+      return;
+    }
+
     const completed = checkContractCompletion(contract);
 
     if (completed) {
@@ -666,6 +690,10 @@ export default function Home() {
       setScore(newScore);
       setCoins(newCoins);
       playSfx('success');
+
+      // Tự động lưu vào completed list
+      const newCompleted = [...completedContracts, contract.id];
+      saveCompletedContracts(newCompleted);
 
       // Tự động mở khóa voucher thưởng nếu có
       let nextVoucher = null;
@@ -682,18 +710,29 @@ export default function Home() {
 
       setContractSubmitMsg({
         type: 'success',
-        text: `Tuyệt vời! Bản vẽ phòng của bạn đã thỏa mãn khách hàng ${contract.clientName}! Bạn nhận được +${contract.rewardCoins} Xu, +${contract.rewardScore} Điểm!`
+        text: `Tuyệt vời! Bản vẽ phòng của bạn đã chính xác và làm hài lòng khách hàng ${contract.clientName}! Bạn nhận được +${contract.rewardCoins} Xu, +${contract.rewardScore} Điểm!`
       });
-      setCurrentContract(null);
+      setContractSelectedItems([]);
     } else {
-      const placedTypeIds = placedItems.map(item => item.itemTypeId);
       const missing = contract.targetRequirements
-        .filter(reqId => !placedTypeIds.includes(reqId))
+        .filter(reqId => !contractSelectedItems.includes(reqId))
         .map(reqId => FURNITURE_ITEMS.find(i => i.id === reqId)?.nameVietnamese || reqId);
+
+      const extra = contractSelectedItems
+        .filter(reqId => !contract.targetRequirements.includes(reqId))
+        .map(reqId => FURNITURE_ITEMS.find(i => i.id === reqId)?.nameVietnamese || reqId);
+
+      let errorText = 'Bản vẽ chưa chính xác Vy ơi! ';
+      if (missing.length > 0) {
+        errorText += `Còn thiếu đồ: ${missing.join(', ')}. `;
+      }
+      if (extra.length > 0) {
+        errorText += `Bị thừa đồ không yêu cầu: ${extra.join(', ')}.`;
+      }
 
       setContractSubmitMsg({
         type: 'error',
-        text: `Vẫn thiếu một số yêu cầu của khách hàng. Hãy bố trí thêm: ${missing.join(', ')}`
+        text: errorText
       });
       playSfx('error');
     }
@@ -970,9 +1009,10 @@ export default function Home() {
                         onClick={() => {
                           setCurrentContract(contract);
                           setContractSubmitMsg(null);
+                          setContractSelectedItems([]);
                           playSfx('click');
                         }}
-                        className={`p-3 border-2 border-[#1f2937] rounded-xl flex items-center gap-3 cursor-pointer transition-all ${
+                        className={`p-3 border-2 border-[#1f2937] rounded-xl flex items-center gap-3 cursor-pointer transition-all relative ${
                           currentContract?.id === contract.id
                             ? 'bg-rose-100 shadow-none translate-y-0.5'
                             : 'bg-white shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1f2937]'
@@ -981,12 +1021,19 @@ export default function Home() {
                         <div className="shrink-0 bg-[#fffaf0] border-2 border-[#1f2937] w-12 h-12 rounded-xl flex items-center justify-center">
                           {renderClientAvatar(contract.clientSprite)}
                         </div>
-                        <div>
-                          <h3 className="text-xs font-serif font-black text-[#1f2937]">{contract.title}</h3>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-xs font-serif font-black text-[#1f2937] truncate">{contract.title}</h3>
                           <p className="text-[10px] text-gray-500 font-bold mt-0.5">Khách hàng: {contract.clientName}</p>
-                          <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.2 rounded font-black font-sans">
-                            HSK Cấp {contract.level}
-                          </span>
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.2 rounded font-black font-sans">
+                              HSK Cấp {contract.level}
+                            </span>
+                            {completedContracts.includes(contract.id) && (
+                              <span className="text-[9px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.2 rounded font-black font-sans">
+                                Đã hoàn thành
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1007,13 +1054,13 @@ export default function Home() {
                         </div>
                       </div>
 
-                      <div className="space-y-1">
+                      <div className="space-y-1 text-left">
                         <h4 className="text-lg font-serif font-black text-rose-500">{currentContract.title}</h4>
                         <p className="text-xs text-gray-600 font-bold leading-relaxed">{currentContract.description}</p>
                       </div>
 
                       {/* KHU VỰC THƯ TỪ KHÁCH HÀNG BẰNG TIẾNG TRUNG */}
-                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
+                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-2 text-left">
                         <div className="flex justify-between items-center">
                           <span className="text-[9px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-black uppercase font-sans">
                             Yêu cầu từ khách hàng (Tiếng Trung):
@@ -1030,40 +1077,99 @@ export default function Home() {
                         <p className="text-xs font-bold text-gray-500">Dịch nghĩa: {currentContract.promptVietnamese}</p>
                       </div>
 
-                      {/* CHI TIẾT YÊU CẦU ĐỒ NỘI THẤT */}
-                      <div className="space-y-2">
-                        <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">Các đồ đạc cần thiết:</h5>
-                        <div className="flex gap-2 flex-wrap">
-                          {currentContract.targetRequirements.map((reqId) => {
-                            const name = FURNITURE_ITEMS.find((i) => i.id === reqId)?.nameVietnamese || reqId;
-                            const isPlaced = placedItems.some((pi) => pi.itemTypeId === reqId);
-
-                            return (
-                              <span
-                                key={reqId}
-                                className={`text-xs px-2.5 py-1 border-2 border-[#1f2937] rounded-lg font-black flex items-center gap-1.5 ${
-                                  isPlaced ? 'bg-green-100 text-green-800' : 'bg-red-50 text-red-600'
-                                }`}
-                              >
-                                <span className="w-2 h-2 rounded-full bg-current" />
-                                {name} {isPlaced ? '(Đã đặt)' : '(Chưa đặt)'}
+                      {/* PHÒNG PHÁC THẢO CHỌN ĐỒ */}
+                      <div className="space-y-2 text-left">
+                        <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">
+                          Phòng phác thảo ảo (Vy hãy chọn đồ vật ở dưới để thêm vào phòng):
+                        </h5>
+                        <div className="h-32 bg-pink-900/5 border-2 border-[#1f2937] rounded-xl flex items-center justify-center gap-4 relative overflow-hidden p-3">
+                          {/* Lưới ô vuông mờ phong cách blueprint */}
+                          <div className="absolute inset-0 bg-[linear-gradient(rgba(31,41,55,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(31,41,55,0.04)_1px,transparent_1px)] bg-[size:12px_12px]" />
+                          
+                          {completedContracts.includes(currentContract.id) ? (
+                            <div className="flex flex-col items-center gap-1.5 z-10">
+                              <span className="text-xs font-black text-emerald-600 uppercase border-2 border-emerald-600 px-3 py-1 rounded bg-white rotate-[-2deg] shadow-sm">
+                                [ Đã Nộp & Nhận Thưởng ]
                               </span>
-                            );
-                          })}
+                            </div>
+                          ) : contractSelectedItems.length === 0 ? (
+                            <span className="text-[11px] text-gray-400 font-bold italic z-10">Vy hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!</span>
+                          ) : (
+                            <div className="flex gap-3 overflow-x-auto max-w-full z-10 py-1 px-2">
+                              {contractSelectedItems.map((itemId) => {
+                                const item = FURNITURE_ITEMS.find(i => i.id === itemId);
+                                return (
+                                  <div key={itemId} className="flex flex-col items-center bg-white border border-[#1f2937] p-1.5 rounded-lg shadow-[1px_1px_0px_#1f2937] shrink-0">
+                                    {renderFurnitureSVG(itemId, 0, 'w-8 h-8')}
+                                    <span className="text-[9px] font-black text-[#1f2937] mt-1">{item?.nameVietnamese}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
+                      </div>
+
+                      {/* CHI TIẾT YÊU CẦU ĐỒ NỘI THẤT */}
+                      <div className="space-y-2 text-left">
+                        <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">Danh mục đồ nội thất để Vy lựa chọn:</h5>
+                        {completedContracts.includes(currentContract.id) ? (
+                          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-800">
+                            Bạn đã hoàn thành xuất sắc thử thách này và rinh trọn vẹn phần thưởng!
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[220px] overflow-y-auto pr-1">
+                            {FURNITURE_ITEMS.map((item) => {
+                              const isSelected = contractSelectedItems.includes(item.id);
+                              return (
+                                <button
+                                  key={item.id}
+                                  type="button"
+                                  onClick={() => {
+                                    playSfx('click');
+                                    if (isSelected) {
+                                      setContractSelectedItems(prev => prev.filter(id => id !== item.id));
+                                    } else {
+                                      setContractSelectedItems(prev => [...prev, item.id]);
+                                    }
+                                  }}
+                                  className={`p-2 border border-[#1f2937] rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-center relative ${
+                                    isSelected
+                                      ? 'bg-rose-100 border-rose-500 shadow-none translate-y-0.5'
+                                      : 'bg-white hover:bg-rose-50 shadow-[1.5px_1.5px_0px_#1f2937]'
+                                  }`}
+                                >
+                                  <div className="w-8 h-8 flex items-center justify-center">
+                                    {renderFurnitureSVG(item.id, 0, 'w-6 h-6')}
+                                  </div>
+                                  <span className="text-[9px] font-black text-[#1f2937] leading-tight truncate w-full">{item.nameVietnamese}</span>
+                                  <span className="text-[8px] font-bold text-pink-600 font-serif">{item.nameChinese}</span>
+                                  
+                                  {isSelected && (
+                                    <div className="absolute top-0.5 right-0.5 w-3 h-3 bg-rose-500 rounded-full border border-white flex items-center justify-center text-white text-[7px] font-black">
+                                      ✓
+                                    </div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
 
                       {/* BUTTON NỘP HỢP ĐỒNG */}
                       <div className="pt-4 border-t border-dashed border-[#1f2937] flex justify-between items-center">
-                        <div className="text-xs font-black text-gray-600">
+                        <div className="text-xs font-black text-gray-600 text-left">
                           Phần thưởng: <span className="text-amber-600">{currentContract.rewardCoins} Xu</span> // <span className="text-blue-600">{currentContract.rewardScore} Điểm</span>
                         </div>
-                        <button
-                          onClick={() => handleSubmitContract(currentContract)}
-                          className="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
-                        >
-                          Nộp Bản Thiết Kế
-                        </button>
+                        {!completedContracts.includes(currentContract.id) && (
+                          <button
+                            onClick={() => handleSubmitContract(currentContract)}
+                            className="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                          >
+                            Nộp Bản Thiết Kế
+                          </button>
+                        )}
                       </div>
 
                       {/* HIỂN THỊ THÔNG BÁO NỘP */}
@@ -1215,7 +1321,7 @@ export default function Home() {
                               onClick={() => handleExplainWord(item.nameChinese)}
                               className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center gap-1 shadow-[1px_1px_0px_#1f2937]"
                             >
-                              {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI
+                              {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI Mỏ Hỗn (BETA)
                             </button>
                           </div>
                         </div>
@@ -1248,6 +1354,12 @@ export default function Home() {
                               </span>
                             </div>
                             <p className="text-[10px] text-gray-400 font-bold font-mono">{item.namePinyin}</p>
+                            <button
+                              onClick={() => handleExplainWord(item.nameChinese)}
+                              className="w-full py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center justify-center gap-1 shadow-[1px_1px_0px_#1f2937]"
+                            >
+                              {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI Mỏ Hỗn (BETA)
+                            </button>
                             <p className="text-xs font-black text-[#1f2937]">Nghĩa: {item.nameVietnamese}</p>
                             {item.exampleChinese && (
                               <div className="mt-2 p-2 bg-[#fffaf0] rounded border border-dashed border-pink-200/60 text-[10.5px]">
@@ -1257,13 +1369,6 @@ export default function Home() {
                               </div>
                             )}
                           </div>
-                          
-                          <button
-                            onClick={() => handleExplainWord(item.nameChinese)}
-                            className="w-full py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center justify-center gap-1 shadow-[1px_1px_0px_#1f2937]"
-                          >
-                            {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI Cà Khịa
-                          </button>
                         </div>
                       );
                     })}

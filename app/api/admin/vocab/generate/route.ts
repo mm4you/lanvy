@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-api';
+import { getAIChatCompletion } from '@/lib/ai';
 
 export async function POST(request: Request) {
   try {
@@ -13,12 +14,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Thiếu từ khóa hoặc danh sách từ.' }, { status: 400 });
     }
 
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: 'Groq API Key chưa cấu hình trên server.' }, { status: 500 });
-    }
-
-    const systemPrompt = `Bạn là bot tạo từ vựng tiếng Trung HSK cho game.
+    const systemPrompt = `Bạn là bot tạo từ vựng tiếng Trung HSK cho game, mang nhãn [BETA - AI Cà Khịa Mỏ Hỗn].
 Hãy phân tích yêu cầu của người dùng (có thể là danh sách từ tiếng Trung, hoặc chủ đề bằng tiếng Việt, hoặc cấp độ HSK).
 Hãy tạo ra một danh sách từ vựng gồm tối đa 10 từ phù hợp nhất.
 Với mỗi từ, hãy tạo cấu trúc JSON chính xác như sau:
@@ -29,37 +25,19 @@ Với mỗi từ, hãy tạo cấu trúc JSON chính xác như sau:
   "hskLevel": ${hskLevel},
   "exampleChinese": "Ví dụ tiếng Trung",
   "examplePinyin": "Phiên âm câu ví dụ",
-  "exampleVietnamese": "Dịch nghĩa câu ví dụ"
+  "exampleVietnamese": "Dịch nghĩa câu ví dụ (phải mang văn phong hài hước, cà khịa xéo xắt, mỏ hỗn kiểu Gen Z cực vui)"
 }
 Lưu ý quan trọng:
 - Chỉ trả về duy nhất một mảng JSON hợp lệ dạng [...], không được bao bọc trong block code hay thêm bất kỳ chữ chào hỏi/giải thích nào khác ngoài JSON.
 - Cấp độ HSK phải là số nguyên ${hskLevel}.
 - Tuyệt đối KHÔNG sử dụng bất kỳ biểu tượng cảm xúc (emoji) nào trong câu trả lời.`;
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'llama3-8b-8192',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Hãy tạo từ vựng cho yêu cầu sau: "${query}"` }
-        ],
-        temperature: 0.6,
-        max_tokens: 1500
-      })
+    const content = await getAIChatCompletion({
+      systemPrompt,
+      userPrompt: `Hãy tạo từ vựng cho yêu cầu sau: "${query}"`,
+      temperature: 0.8,
+      maxTokens: 2000
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return NextResponse.json({ error: `Groq error: ${errorText}` }, { status: response.status });
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content?.trim() || '[]';
     
     try {
       const jsonStart = content.indexOf('[');

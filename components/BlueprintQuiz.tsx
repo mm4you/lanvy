@@ -406,7 +406,7 @@ export default function BlueprintQuiz({
                   onClick={() => onExplainWord(currentQuestion.chinese)}
                   className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 border border-[#1f2937] rounded-lg text-[10.5px] font-black uppercase tracking-wider text-blue-800 flex items-center gap-1 cursor-pointer transition-all shadow-[1px_1px_0px_#1f2937]"
                 >
-                  {renderAIIcon('w-3.5 h-3.5 text-blue-800')} Hỏi AI Giải Thích
+                  {renderAIIcon('w-3.5 h-3.5 text-blue-800')} Hỏi AI Mỏ Hỗn (BETA)
                 </button>
                 <button
                   onClick={generateQuestion}

@@ -22,6 +22,9 @@ interface RoomEditorProps {
   setWallpaper: (w: string) => void;
   floorType: string;
   setFloorType: (f: string) => void;
+  currentContract?: any;
+  onSubmitContract?: (contract: any) => void;
+  contractSubmitMsg?: { type: 'success' | 'error'; text: string } | null;
 }
 
 // Các SVG Icon bổ trợ thay cho Emojis
@@ -349,7 +352,10 @@ export default function RoomEditor({
   wallpaper,
   setWallpaper,
   floorType,
-  setFloorType
+  setFloorType,
+  currentContract,
+  onSubmitContract,
+  contractSubmitMsg
 }: RoomEditorProps) {
   const [selectedCatalogItem, setSelectedCatalogItem] = useState<string | null>(null);
   const [draggedRoomItemIndex, setDraggedRoomItemIndex] = useState<number | null>(null);
@@ -526,6 +532,68 @@ export default function RoomEditor({
         <h2 className="text-xl font-serif font-black text-[#1f2937] mb-4 flex items-center gap-2">
           {renderPaletteIcon('w-6 h-6 text-pink-500')} Tiệm Thiết Kế Màu Hồng của Vy
         </h2>
+
+        {/* BẢNG THEO DÕI HỢP ĐỒNG HIỆN TẠI (ĐÚNG PHONG CÁCH CUTE, TIỆN LỢI) */}
+        {currentContract ? (
+          <div className="w-full bg-[#fffaf0] border-2 border-[#1f2937] rounded-xl p-3 mb-4 shadow-[2px_2px_0px_#1f2937] flex flex-col md:flex-row md:items-center justify-between gap-3 text-left">
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="text-[9px] bg-rose-500 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Nhiệm vụ:
+                </span>
+                <span className="text-xs font-black text-gray-800">
+                  {currentContract.title} ({currentContract.clientName})
+                </span>
+              </div>
+              
+              {/* Checklist đồ đạc */}
+              <div className="flex gap-2 flex-wrap">
+                {currentContract.targetRequirements.map((reqId: string) => {
+                  const name = FURNITURE_ITEMS.find((i) => i.id === reqId)?.nameVietnamese || reqId;
+                  const isPlaced = placedItems.some((pi) => pi.itemTypeId === reqId);
+                  return (
+                    <span
+                      key={reqId}
+                      className={`text-[10px] px-2.5 py-0.5 border border-[#1f2937] rounded-md font-black flex items-center gap-1.5 ${
+                        isPlaced ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-50 text-red-600 border-red-200'
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${isPlaced ? 'bg-green-600' : 'bg-red-500'}`} />
+                      {name} {isPlaced ? '✓' : '✗'}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Nút nộp bản vẽ */}
+            <div className="shrink-0">
+              <button
+                onClick={() => onSubmitContract?.(currentContract)}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+              >
+                Nộp Bản Thiết Kế
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full bg-pink-50/50 border-2 border-dashed border-[#1f2937]/30 rounded-xl p-3 mb-4 text-center text-xs font-bold text-gray-500">
+            💡 Gợi ý: Hãy nhận một Hợp đồng thiết kế từ các NPC (ở tab Studio) để bắt đầu nhận Voucher đặc quyền!
+          </div>
+        )}
+
+        {/* HIỂN THỊ THÔNG BÁO NỘP */}
+        {contractSubmitMsg && (
+          <div
+            className={`w-full p-2.5 mb-4 rounded-lg border text-xs font-bold text-center ${
+              contractSubmitMsg.type === 'success'
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : 'bg-red-50 border-red-200 text-red-700'
+            }`}
+          >
+            {contractSubmitMsg.text}
+          </div>
+        )}
 
         {/* Nút chức năng phòng */}
         <div className="flex gap-2 mb-4 flex-wrap justify-center">

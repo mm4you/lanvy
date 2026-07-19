@@ -757,8 +757,10 @@ export default function Home() {
           <header className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-rose-100 border-2 border-[#1f2937] rounded-full overflow-hidden flex items-center justify-center text-rose-500 shrink-0">
-                {user.email.toLowerCase() === LOVE_EMAIL ? (
+                {user.email?.toLowerCase() === LOVE_EMAIL ? (
                   renderClientAvatar('lan_vy', 'w-10 h-10')
+                ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
+                  renderClientAvatar('khang', 'w-10 h-10')
                 ) : (
                   renderPaletteIcon('w-7 h-7')
                 )}
@@ -766,14 +768,26 @@ export default function Home() {
               <div>
                 <h1 className="text-lg font-serif font-black text-[#1f2937] flex items-center gap-2">
                   Atelier Thiết Kế HSK
-                  {user.email.toLowerCase() === LOVE_EMAIL && (
+                  {user.email?.toLowerCase() === LOVE_EMAIL && (
                     <span className="text-[10px] bg-rose-100 text-rose-700 border border-rose-300 px-2 py-0.5 rounded-full font-sans uppercase font-black tracking-wider flex items-center gap-1">
                       {renderHeartIcon('w-3 h-3 text-rose-500 fill-current')} Vy Của Khang
                     </span>
                   )}
+                  {user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
+                    <span className="text-[10px] bg-blue-100 text-blue-700 border border-blue-300 px-2 py-0.5 rounded-full font-sans uppercase font-black tracking-wider flex items-center gap-1">
+                      Khang Của Vy
+                    </span>
+                  )}
                 </h1>
                 <p className="text-xs text-gray-500 font-bold">
-                  Bà chủ: <span className="text-rose-600">Lan Vy</span> // Chào mừng trở lại!
+                  {user.email?.toLowerCase() === LOVE_EMAIL ? (
+                    <>Bà chủ: <span className="text-rose-600">Lan Vy</span></>
+                  ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
+                    <>Ông chủ: <span className="text-blue-600">Nhựt Khang</span></>
+                  ) : (
+                    <>Chủ tiệm: <span className="text-rose-600">{user.username}</span></>
+                  )}{' '}
+                  // Chào mừng trở lại!
                 </p>
               </div>
             </div>

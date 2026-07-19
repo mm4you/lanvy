@@ -9,12 +9,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Quyền truy cập bị từ chối.' }, { status: 403 });
     }
 
-    const { query, hskLevel = 1 } = await request.json();
+    const { query, hskLevel = 1, tone = 'roast', category = 'Khác' } = await request.json();
     if (!query) {
       return NextResponse.json({ error: 'Thiếu từ khóa hoặc danh sách từ.' }, { status: 400 });
     }
 
-    const systemPrompt = `Bạn là bot tạo từ vựng tiếng Trung HSK cho game, mang nhãn [BETA - AI Cà Khịa Mỏ Hỗn].
+    let toneDescription = '';
+    if (tone === 'roast') {
+      toneDescription = 'Ví dụ câu (exampleChinese) và nghĩa câu ví dụ (exampleVietnamese) phải cực kỳ hài hước, xéo xắt, mỏ hỗn, cà khịa phong cách Gen Z để tạo niềm vui châm biếm khi học tập.';
+    } else if (tone === 'sweet') {
+      toneDescription = 'Ví dụ câu (exampleChinese) và nghĩa câu ví dụ (exampleVietnamese) phải tràn ngập sự ngọt ngào, cưng chiều, ngôn tình, đầy thính tình yêu siêu lãng mạn dành cho các cặp đôi yêu nhau.';
+    } else {
+      toneDescription = 'Ví dụ câu (exampleChinese) và nghĩa câu ví dụ (exampleVietnamese) phải chuẩn mực, nghiêm túc, mang tính học thuật và chính xác cao theo chuẩn đề thi HSK.';
+    }
+
+    const systemPrompt = `Bạn là bot tạo từ vựng tiếng Trung HSK cho game.
 Hãy phân tích yêu cầu của người dùng (có thể là danh sách từ tiếng Trung, hoặc chủ đề bằng tiếng Việt, hoặc cấp độ HSK).
 Hãy tạo ra một danh sách từ vựng gồm tối đa 10 từ phù hợp nhất.
 Với mỗi từ, hãy tạo cấu trúc JSON chính xác như sau:
@@ -23,11 +32,13 @@ Với mỗi từ, hãy tạo cấu trúc JSON chính xác như sau:
   "namePinyin": "Phiên âm",
   "nameVietnamese": "Dịch nghĩa tiếng Việt",
   "hskLevel": ${hskLevel},
+  "category": "${category}",
   "exampleChinese": "Ví dụ tiếng Trung",
   "examplePinyin": "Phiên âm câu ví dụ",
-  "exampleVietnamese": "Dịch nghĩa câu ví dụ (phải mang văn phong hài hước, cà khịa xéo xắt, mỏ hỗn kiểu Gen Z cực vui)"
+  "exampleVietnamese": "Dịch nghĩa câu ví dụ"
 }
-Lưu ý quan trọng:
+Lưu ý quan trọng về văn phong ví dụ:
+- ${toneDescription}
 - Chỉ trả về duy nhất một mảng JSON hợp lệ dạng [...], không được bao bọc trong block code hay thêm bất kỳ chữ chào hỏi/giải thích nào khác ngoài JSON.
 - Cấp độ HSK phải là số nguyên ${hskLevel}.
 - Tuyệt đối KHÔNG sử dụng bất kỳ biểu tượng cảm xúc (emoji) nào trong câu trả lời.`;

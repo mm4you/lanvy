@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DesignContract, DESIGN_CONTRACTS, FURNITURE_ITEMS } from '../data/vocabulary';
 import { renderFurnitureSVG } from './RoomEditor';
 
@@ -60,16 +60,144 @@ function renderLockOpenIconSVG(className = 'w-4 h-4') {
   );
 }
 
+function renderLightbulbIcon(className = 'w-4 h-4') {
+  return (
+    <svg className={className} width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+    </svg>
+  );
+}
+
+function renderChatIconSVG(className = 'w-5 h-5') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+  );
+}
+
+function renderAudioIcon(className = 'w-4 h-4') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+    </svg>
+  );
+}
+
 export default function LoveInbox({
   placedItems,
   unlockedVouchers,
   onUnlockVoucher,
   playSfx
 }: LoveInboxProps) {
-  const [activeTab, setActiveTab] = useState<'contracts' | 'wallet'>('contracts');
+  const [activeTab, setActiveTab] = useState<'contracts' | 'chat' | 'wallet'>('contracts');
   const [selectedContract, setSelectedContract] = useState<DesignContract | null>(null);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [showLoveHint, setShowLoveHint] = useState(false);
+
+  // Chat states
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [showChatTranslations, setShowChatTranslations] = useState<{[key: string]: boolean}>({});
+
+  // Load chat messages
+  useEffect(() => {
+    const saved = localStorage.getItem('love_inbox_chat_history');
+    if (saved) {
+      try {
+        setChatMessages(JSON.parse(saved));
+      } catch (e) {}
+    } else {
+      setChatMessages([
+        {
+          id: 'welcome',
+          sender: 'ai',
+          text: '你好，我的薇薇！最近学习中文累不累？有空找我聊天哦，我随时都在！',
+          pinyin: 'Nǐ hǎo, wǒ de wēiwēi! Zuìjìn xuéxí zhōngwén lèi bú lèi? Yǒu kòng zhǎo wǒ liáotiān o, wǒ suíshí dōu zài!',
+          translation: 'Chào em, Vy Vy của anh! Dạo này học tiếng Trung có mệt không? Rảnh rỗi nhắn tin nói chuyện với anh nhé, anh luôn ở đây!',
+          timestamp: new Date().toISOString()
+        }
+      ]);
+    }
+  }, []);
+
+  // Save chat messages
+  useEffect(() => {
+    if (chatMessages.length > 0) {
+      localStorage.setItem('love_inbox_chat_history', JSON.stringify(chatMessages));
+    }
+  }, [chatMessages]);
+
+  const handlePlayTTS = (text: string) => {
+    playSfx('click');
+    const audio = new Audio(`/api/tts?text=${encodeURIComponent(text)}&lang=zh`);
+    audio.play().catch((e) => console.warn('TTS playback failed', e));
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || chatLoading) return;
+
+    const userMsg = {
+      id: Math.random().toString(),
+      sender: 'player',
+      text: chatInput,
+      timestamp: new Date().toISOString(),
+    };
+
+    const updatedMsgs = [...chatMessages, userMsg];
+    setChatMessages(updatedMsgs);
+    setChatInput('');
+    setChatLoading(true);
+    playSfx('click');
+
+    try {
+      const history = updatedMsgs.slice(-10).map((m) => ({
+        sender: m.sender === 'player' ? 'user' : 'model',
+        text: m.text,
+      }));
+
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: 'Nhựt Khang',
+          message: userMsg.text,
+          history,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.text) {
+        const aiMsg = {
+          id: Math.random().toString(),
+          sender: 'ai',
+          text: data.text,
+          pinyin: data.pinyin,
+          translation: data.translation,
+          timestamp: new Date().toISOString(),
+        };
+        setChatMessages((prev) => [...prev, aiMsg]);
+        playSfx('success');
+      } else {
+        throw new Error(data.error || 'Lỗi phản hồi từ Khang AI');
+      }
+    } catch (e) {
+      console.error(e);
+      const errorMsg = {
+        id: Math.random().toString(),
+        sender: 'ai',
+        text: 'Anh xin lỗi, mạng bị chập chờn rồi Vy ơi. Để anh kiểm tra lại nhé!',
+        timestamp: new Date().toISOString(),
+      };
+      setChatMessages((prev) => [...prev, errorMsg]);
+      playSfx('error');
+    } finally {
+      setChatLoading(false);
+    }
+  };
 
   // Chỉ lấy các hợp đồng tình yêu đặc biệt của Khang
   const loveContracts = DESIGN_CONTRACTS.filter((c) => c.isLoveContract);
@@ -147,6 +275,22 @@ export default function LoveInbox({
         </button>
         <button
           onClick={() => {
+            setActiveTab('chat');
+            setSelectedContract(null);
+            setSubmitMessage(null);
+            playSfx('click');
+          }}
+          className={`flex-1 py-3 font-serif font-black text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-t-2 border-x-2 border-transparent ${
+            activeTab === 'chat'
+              ? 'bg-[#fff0f3] border-[#1f2937] border-b-4 border-b-[#fff0f3] -mb-[2px] rounded-t-lg text-[#1f2937]'
+              : 'text-gray-400 hover:text-gray-600'
+          }`}
+        >
+          {renderChatIconSVG(activeTab === 'chat' ? 'text-rose-500 w-5 h-5' : 'w-5 h-5')}
+          Chat Với Khang (AI)
+        </button>
+        <button
+          onClick={() => {
             setActiveTab('wallet');
             setSelectedContract(null);
             setSubmitMessage(null);
@@ -178,6 +322,7 @@ export default function LoveInbox({
                     onClick={() => {
                       setSelectedContract(contract);
                       setSubmitMessage(null);
+                      setShowLoveHint(false);
                       playSfx('click');
                     }}
                     className={`border-2 border-[#1f2937] p-4 rounded-xl cursor-pointer transition-all flex flex-col justify-between ${
@@ -241,12 +386,44 @@ export default function LoveInbox({
 
               {/* KHU VỰC TIẾNG TRUNG GIAO NHIỆM VỤ */}
               <div className="p-4 bg-rose-50/50 border border-rose-200 rounded-xl space-y-2">
-                <span className="text-[9px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-black uppercase font-sans">
-                  Lời nhắn tiếng Trung của Khang:
-                </span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-black uppercase font-sans">
+                    Lời nhắn tiếng Trung của Khang:
+                  </span>
+                  <button
+                    onClick={() => handlePlayTTS(selectedContract.promptChinese)}
+                    className="p-1 bg-white hover:bg-rose-100 border border-[#1f2937] rounded-lg cursor-pointer"
+                  >
+                    {renderAudioIcon('w-4 h-4 text-[#1f2937]')}
+                  </button>
+                </div>
                 <p className="text-base font-serif font-black text-[#1f2937]">{selectedContract.promptChinese}</p>
                 <p className="text-[12px] font-bold text-blue-600 font-sans">{selectedContract.promptPinyin}</p>
-                <p className="text-[12px] font-bold text-gray-500">Dịch nghĩa: {selectedContract.promptVietnamese}</p>
+                
+                {showLoveHint ? (
+                  <div className="pt-1.5 border-t border-dashed border-rose-200 flex justify-between items-start gap-4">
+                    <p className="text-[12px] font-bold text-gray-500">Dịch nghĩa: {selectedContract.promptVietnamese}</p>
+                    <button
+                      onClick={() => {
+                        playSfx('click');
+                        setShowLoveHint(false);
+                      }}
+                      className="text-[9px] font-black text-rose-600 uppercase hover:underline shrink-0 cursor-pointer"
+                    >
+                      Ẩn gợi ý
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      playSfx('click');
+                      setShowLoveHint(true);
+                    }}
+                    className="text-[10px] font-black text-blue-600 uppercase hover:underline flex items-center gap-1.5 cursor-pointer"
+                  >
+                    {renderLightbulbIcon('w-3.5 h-3.5 text-blue-600')} Xem Gợi Ý Nghĩa Tiếng Việt
+                  </button>
+                )}
               </div>
 
               {/* PHÒNG PHÁC THẢO CHỌN ĐỒ */}
@@ -378,6 +555,142 @@ export default function LoveInbox({
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* TAB: TRÒ CHUYỆN VỚI KHANG (AI) */}
+      {activeTab === 'chat' && (
+        <div className="flex flex-col h-[420px] bg-white border-2 border-[#1f2937] rounded-xl shadow-[3px_3px_0px_#1f2937] overflow-hidden">
+          {/* Header */}
+          <div className="bg-[#fff5f6] border-b-2 border-[#1f2937] p-3 flex justify-between items-center shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse border border-[#1f2937]" />
+              <span className="text-xs font-serif font-black text-[#1f2937]">Khang Đang Online (AI)</span>
+            </div>
+            <button
+              onClick={() => {
+                if (confirm('Vy có chắc chắn muốn xóa lịch sử chat không?')) {
+                  localStorage.removeItem('love_inbox_chat_history');
+                  setChatMessages([
+                    {
+                      id: 'welcome',
+                      sender: 'ai',
+                      text: '你好，我的薇薇！最近学习中文累不累？有空找我聊天哦，我随时都在！',
+                      pinyin: 'Nǐ hǎo, wǒ de wēiwēi! Zuìjìn xuéxí zhōngwén lèi bú lèi? Yǒu kòng zhǎo wǒ liáotiān o, wã suíshí dōu zài!',
+                      translation: 'Chào em, Vy Vy của anh! Dạo này học tiếng Trung có mệt không? Rảnh rỗi nhắn tin nói chuyện với anh nhé, anh luôn ở đây!',
+                      timestamp: new Date().toISOString()
+                    }
+                  ]);
+                  playSfx('flip');
+                }
+              }}
+              className="text-[9px] font-black text-rose-500 hover:text-rose-700 uppercase hover:underline cursor-pointer"
+            >
+              Xóa Lịch Sử
+            </button>
+          </div>
+
+          {/* Messages list */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-pink-50/10 scrollbar-thin">
+            {chatMessages.map((msg) => {
+              const isPlayer = msg.sender === 'player';
+              const showTranslate = showChatTranslations[msg.id];
+
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex ${isPlayer ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed ${
+                      isPlayer
+                        ? 'bg-rose-500 text-white font-bold rounded-tr-none shadow-sm'
+                        : 'bg-white text-[#1f2937] border-2 border-[#1f2937] rounded-tl-none shadow-[2px_2px_0px_#1f2937]'
+                    }`}
+                  >
+                    {!isPlayer ? (
+                      <div className="space-y-1.5 text-left">
+                        {/* Hàng chữ Hán + Audio */}
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-serif font-black text-sm text-[#1f2937] break-words">{msg.text}</span>
+                          <button
+                            onClick={() => handlePlayTTS(msg.text)}
+                            className="p-1 bg-pink-50 hover:bg-pink-100 border border-gray-300 rounded-lg cursor-pointer shrink-0"
+                          >
+                            {renderAudioIcon('w-3.5 h-3.5 text-[#1f2937]')}
+                          </button>
+                        </div>
+                        {/* Pinyin */}
+                        {msg.pinyin && (
+                          <p className="text-[10px] text-blue-600 font-bold font-mono break-words">{msg.pinyin}</p>
+                        )}
+                        {/* Translation toggle */}
+                        {msg.translation && (
+                          <div className="pt-1.5 border-t border-dashed border-gray-200 mt-1">
+                            {showTranslate ? (
+                              <div className="flex justify-between items-start gap-4">
+                                <p className="text-[10.5px] text-gray-500 font-bold italic">{msg.translation}</p>
+                                <button
+                                  onClick={() => setShowChatTranslations(prev => ({ ...prev, [msg.id]: false }))}
+                                  className="text-[8px] font-black text-rose-500 uppercase hover:underline shrink-0 cursor-pointer mt-0.5"
+                                >
+                                  Ẩn
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  playSfx('click');
+                                  setShowChatTranslations(prev => ({ ...prev, [msg.id]: true }));
+                                }}
+                                className="text-[9px] font-black text-blue-500 hover:underline uppercase flex items-center gap-1 cursor-pointer"
+                              >
+                                {renderLightbulbIcon('w-3 h-3 text-blue-500')} Dịch tiếng Việt
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-left font-sans break-words">{msg.text}</div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {chatLoading && (
+              <div className="flex justify-start">
+                <div className="bg-white border-2 border-[#1f2937] rounded-2xl rounded-tl-none p-3 shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Form input */}
+          <form
+            onSubmit={handleSendMessage}
+            className="p-2.5 border-t-2 border-[#1f2937] bg-[#fff5f6] flex gap-2 shrink-0 items-center"
+          >
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Gõ tiếng Việt hoặc Trung gửi anh Khang..."
+              className="flex-1 px-3 py-2 border-2 border-[#1f2937] rounded-lg text-xs font-bold bg-white focus:outline-none"
+              disabled={chatLoading}
+            />
+            <button
+              type="submit"
+              disabled={chatLoading || !chatInput.trim()}
+              className="px-4 py-2 bg-pink-500 hover:bg-pink-600 disabled:bg-gray-200 text-white disabled:text-gray-400 border-2 border-[#1f2937] rounded-lg font-black text-xs uppercase shadow-[2px_2px_0px_#1f2937] active:shadow-none active:translate-y-0.5 cursor-pointer shrink-0 transition-all"
+            >
+              Gửi
+            </button>
+          </form>
         </div>
       )}
 

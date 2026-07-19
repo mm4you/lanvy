@@ -45,6 +45,7 @@ model CustomVocab {
   namePinyin        String
   nameVietnamese    String
   hskLevel          Int      @default(1)
+  category          String   @default("Khác")
   exampleChinese    String?
   examplePinyin     String?
   exampleVietnamese String?

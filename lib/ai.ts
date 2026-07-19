@@ -22,6 +22,8 @@ export async function getAIChatCompletion({
 
   // Try Groq first
   if (groqKey) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500); // 2.5 seconds timeout
     try {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -30,12 +32,14 @@ export async function getAIChatCompletion({
           'Authorization': `Bearer ${groqKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: 'llama-3.1-8b-instant',
           messages: fullMessages,
           temperature,
           max_tokens: maxTokens
-        })
+        }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
@@ -45,13 +49,16 @@ export async function getAIChatCompletion({
         const errorText = await response.text();
         console.warn(`Groq request failed: ${response.status} - ${errorText}`);
       }
-    } catch (e) {
+    } catch (e: any) {
+      clearTimeout(timeoutId);
       console.error('Groq error, trying Nvidia NIM fallback...', e);
     }
   }
 
   // Fallback to NVIDIA NIM
   if (nvidiaKey) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 seconds timeout
     try {
       const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
         method: 'POST',
@@ -60,12 +67,14 @@ export async function getAIChatCompletion({
           'Authorization': `Bearer ${nvidiaKey}`
         },
         body: JSON.stringify({
-          model: 'meta/llama-3.1-70b-instruct',
+          model: 'meta/llama-3.1-8b-instruct',
           messages: fullMessages,
           temperature,
           max_tokens: maxTokens
-        })
+        }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
@@ -76,6 +85,7 @@ export async function getAIChatCompletion({
         throw new Error(`Nvidia NIM error: ${response.status} - ${errorText}`);
       }
     } catch (e: any) {
+      clearTimeout(timeoutId);
       console.error('Nvidia NIM error:', e);
       throw e;
     }

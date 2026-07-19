@@ -24,6 +24,15 @@ interface Question {
   hskLevel: number; // 1-6
   options: string[];
   correctAnswer: string;
+  explanation?: string;
+}
+
+function renderSparklesIcon(className = 'w-5 h-5') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l-.813-5.096L3 15l5.187-.904L9 9l.813 5.096L15 15l-5.187.904zM19.071 4.929l-.707 2.122-2.122.707 2.122.707.707 2.122.707-2.122 2.122-.707-2.122-.707-.707-2.122z" />
+    </svg>
+  );
 }
 
 function renderBookOpenIcon(className = 'w-5 h-5') {
@@ -75,13 +84,20 @@ export default function BlueprintQuiz({
   onExplainWord,
   customVocabs
 }: BlueprintQuizProps) {
-  const [quizMode, setQuizMode] = useState<'furniture' | 'general'>('furniture');
+  const [quizMode, setQuizMode] = useState<'furniture' | 'general' | 'custom'>('furniture');
   const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all'>('all');
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [streak, setStreak] = useState(0);
+
+  // AI custom quiz states
+  const [customTheme, setCustomTheme] = useState('');
+  const [customQuestions, setCustomQuestions] = useState<any[]>([]);
+  const [customQuestionIndex, setCustomQuestionIndex] = useState(0);
+  const [customLoading, setCustomLoading] = useState(false);
+  const [customError, setCustomError] = useState<string | null>(null);
 
   // Phân bổ HSK cho từ vựng nội thất
   const getHskLevel = (itemId: string): number => {
@@ -198,8 +214,93 @@ export default function BlueprintQuiz({
     }
   };
 
+  const startCustomQuiz = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customTheme.trim() || customLoading) return;
+
+    setCustomLoading(true);
+    setCustomError(null);
+    playSfx('click');
+
+    try {
+      const res = await fetch('/api/ai/quiz/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ theme: customTheme, hskLevel: 1 })
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.questions)) {
+        setCustomQuestions(data.questions);
+        setCustomQuestionIndex(0);
+        
+        const q = data.questions[0];
+        setCurrentQuestion({
+          type: 'translate',
+          item: { id: 'custom_vocab', nameChinese: q.chinese, namePinyin: q.pinyin, nameVietnamese: q.translation, hskLevel: 1 },
+          questionText: `Dịch nghĩa chính xác của từ/câu: "${q.chinese}"`,
+          chinese: q.chinese,
+          pinyin: q.pinyin,
+          translation: q.translation,
+          hskLevel: 1,
+          options: q.options,
+          correctAnswer: q.translation,
+          explanation: q.explanation
+        } as any);
+        
+        setSelectedAnswer(null);
+        setIsAnswered(false);
+        playSfx('perfect');
+      } else {
+        throw new Error(data.error || 'Lỗi tạo câu hỏi từ AI.');
+      }
+    } catch (err: any) {
+      setCustomError(err.message || 'Lỗi kết nối máy chủ.');
+      playSfx('error');
+    } finally {
+      setCustomLoading(false);
+    }
+  };
+
+  const handleContinue = () => {
+    if (quizMode === 'custom') {
+      const nextIdx = customQuestionIndex + 1;
+      if (nextIdx < customQuestions.length) {
+        setCustomQuestionIndex(nextIdx);
+        const q = customQuestions[nextIdx];
+        setCurrentQuestion({
+          type: 'translate',
+          item: { id: 'custom_vocab', nameChinese: q.chinese, namePinyin: q.pinyin, nameVietnamese: q.translation, hskLevel: 1 },
+          questionText: `Dịch nghĩa chính xác của từ/câu: "${q.chinese}"`,
+          chinese: q.chinese,
+          pinyin: q.pinyin,
+          translation: q.translation,
+          hskLevel: 1,
+          options: q.options,
+          correctAnswer: q.translation,
+          explanation: q.explanation
+        } as any);
+        setSelectedAnswer(null);
+        setIsAnswered(false);
+      } else {
+        setCurrentQuestion(null);
+        setCustomQuestions([]);
+        setCustomQuestionIndex(0);
+        playSfx('perfect');
+        alert('Chúc mừng Vy đã hoàn thành xuất sắc bộ câu hỏi HSK Custom từ AI!');
+      }
+    } else {
+      generateQuestion();
+    }
+  };
+
   useEffect(() => {
-    generateQuestion();
+    if (quizMode !== 'custom') {
+      generateQuestion();
+    } else {
+      setCurrentQuestion(null);
+      setCustomQuestions([]);
+      setCustomQuestionIndex(0);
+    }
   }, [selectedHskFilter, quizMode]);
 
   const playAudio = (text: string) => {
@@ -223,13 +324,13 @@ export default function BlueprintQuiz({
       
       if (quizMode === 'furniture') {
         setCoins(coins + 20);
-        // Mở khóa đồ đạc
         if (!unlockedItems.includes(currentQuestion.item.id)) {
           setUnlockedItems((prev) => [...prev, currentQuestion.item.id]);
           playSfx('levelUp');
         }
+      } else if (quizMode === 'custom') {
+        setCoins(coins + 20);
       } else {
-        // Chế độ ôn tập từ vựng: +15 xu
         setCoins(coins + 15);
       }
     } else {
@@ -241,7 +342,7 @@ export default function BlueprintQuiz({
   return (
     <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 max-w-2xl mx-auto my-4">
       {/* CHUYỂN ĐỔI CHẾ ĐỘ CHƠI */}
-      <div className="flex justify-center gap-3 mb-6">
+      <div className="flex justify-center gap-3 mb-6 flex-wrap sm:flex-nowrap">
         <button
           onClick={() => {
             setQuizMode('furniture');
@@ -268,7 +369,24 @@ export default function BlueprintQuiz({
               : 'bg-white text-[#1f2937]'
           }`}
         >
-          Từ vựng HSK 1-2-3 tổng hợp
+          Từ vựng HSK 1-2-3
+        </button>
+        <button
+          onClick={() => {
+            setQuizMode('custom');
+            setStreak(0);
+            setCurrentQuestion(null);
+            setCustomQuestions([]);
+            playSfx('click');
+          }}
+          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            quizMode === 'custom'
+              ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+              : 'bg-white text-[#1f2937]'
+          }`}
+        >
+          {renderSparklesIcon('w-4 h-4')}
+          AI Tự Tạo Luyện Tập (Beta)
         </button>
       </div>
 
@@ -281,25 +399,77 @@ export default function BlueprintQuiz({
       </h2>
 
       {/* BỘ LỌC CẤP ĐỘ HSK */}
-      <div className="flex gap-1.5 mb-6 flex-wrap">
-        <span className="text-xs font-black text-gray-500 uppercase self-center mr-2">Cấp độ HSK:</span>
-        {['all', 1, 2, 3].map((level) => (
-          <button
-            key={level}
-            onClick={() => {
-              setSelectedHskFilter(level === 'all' ? 'all' : Number(level));
-              playSfx('click');
-            }}
-            className={`px-3 py-1 border-2 border-[#1f2937] font-black text-xs rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
-              selectedHskFilter === (level === 'all' ? 'all' : Number(level))
-                ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
-                : 'bg-white text-[#1f2937]'
-            }`}
-          >
-            {level === 'all' ? 'Tất cả' : `HSK ${level}`}
-          </button>
-        ))}
-      </div>
+      {quizMode !== 'custom' && (
+        <div className="flex gap-1.5 mb-6 flex-wrap">
+          <span className="text-xs font-black text-gray-500 uppercase self-center mr-2">Cấp độ HSK:</span>
+          {['all', 1, 2, 3].map((level) => (
+            <button
+              key={level}
+              onClick={() => {
+                setSelectedHskFilter(level === 'all' ? 'all' : Number(level));
+                playSfx('click');
+              }}
+              className={`px-3 py-1 border-2 border-[#1f2937] font-black text-xs rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
+                selectedHskFilter === (level === 'all' ? 'all' : Number(level))
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  : 'bg-white text-[#1f2937]'
+              }`}
+            >
+              {level === 'all' ? 'Tất cả' : `HSK ${level}`}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {quizMode === 'custom' && !currentQuestion && (
+        <div className="bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-4 text-left">
+          <h3 className="text-sm font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+            {renderSparklesIcon('text-pink-500 w-5 h-5')} AI Tự Tạo Luyện Tập Theo Chủ Đề
+          </h3>
+          <p className="text-[11px] text-gray-500 font-bold leading-normal">
+            Vy muốn học tiếng Trung theo chủ đề gì hôm nay? Hãy điền chủ đề (ví dụ: "Đi uống trà sữa với Khang", "Đi mua sắm", "Món ăn ngọt"...), AI của game sẽ tự động soạn một bộ 5 câu hỏi trắc nghiệm tương ứng ngay lập tức để ôn tập!
+          </p>
+
+          <form onSubmit={startCustomQuiz} className="space-y-3">
+            <div>
+              <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Chủ đề mong muốn:</label>
+              <input
+                type="text"
+                value={customTheme}
+                onChange={(e) => setCustomTheme(e.target.value)}
+                placeholder="Ví dụ: Ăn lẩu Haidilao, Đi xem phim..."
+                className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+                disabled={customLoading}
+                required
+              />
+            </div>
+
+            {customError && (
+              <div className="text-[11px] text-red-600 font-bold bg-red-50 p-2 border border-red-200 rounded-lg">
+                {customError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={customLoading || !customTheme.trim()}
+              className="w-full py-2.5 bg-pink-500 hover:bg-pink-600 disabled:bg-gray-200 text-white disabled:text-gray-400 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] active:shadow-none active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              {customLoading ? (
+                <>
+                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>AI Đang Soạn Câu Hỏi...</span>
+                </>
+              ) : (
+                <>
+                  {renderSparklesIcon('w-4 h-4')}
+                  <span>Tạo Bộ Câu Hỏi HSK</span>
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+      )}
 
       {currentQuestion && (
         <div className="space-y-6">
@@ -384,11 +554,11 @@ export default function BlueprintQuiz({
                   {isCorrect ? 'Chúc mừng! Bạn đã trả lời đúng' : 'Rất tiếc! Câu trả lời chưa chính xác'}
                 </span>
                 <span className="text-[10px] bg-pink-100 border border-pink-300 text-pink-800 font-bold px-2 py-0.5 rounded-full flex items-center gap-1 font-sans">
-                  {renderAwardIcon()} +{quizMode === 'furniture' ? '20' : '15'} Xu
+                  {renderAwardIcon()} +{quizMode === 'furniture' ? '20' : quizMode === 'custom' ? '20' : '15'} Xu
                 </span>
               </div>
               
-              <div className="p-3 bg-pink-50/20 rounded-lg border border-pink-200">
+              <div className="p-3 bg-pink-50/20 rounded-lg border border-pink-200 text-left">
                 <p className="text-sm font-serif font-black text-[#1f2937]">
                   Chữ Hán: <span className="text-pink-600 text-base">{currentQuestion.chinese}</span>
                 </p>
@@ -400,6 +570,16 @@ export default function BlueprintQuiz({
                 </p>
               </div>
 
+              {/* Lời giải thích từ AI */}
+              {quizMode === 'custom' && currentQuestion.explanation && (
+                <div className="p-3 bg-blue-50/40 border border-blue-200 rounded-lg text-left">
+                  <h5 className="text-[10px] font-black uppercase text-blue-800 tracking-wider mb-1 flex items-center gap-1">
+                    {renderSparklesIcon('w-3.5 h-3.5')} Lời Giải Thích Của AI Mỏ Hỗn (BETA):
+                  </h5>
+                  <p className="text-[11px] font-bold text-blue-900 leading-normal">{currentQuestion.explanation}</p>
+                </div>
+              )}
+
               {/* Hàng hành động bổ trợ */}
               <div className="flex gap-2 justify-end">
                 <button
@@ -409,10 +589,10 @@ export default function BlueprintQuiz({
                   {renderAIIcon('w-3.5 h-3.5 text-blue-800')} Hỏi AI Mỏ Hỗn (BETA)
                 </button>
                 <button
-                  onClick={generateQuestion}
+                  onClick={handleContinue}
                   className="px-4 py-1.5 bg-pink-500 hover:bg-pink-600 text-white border-2 border-[#1f2937] rounded-lg text-[10.5px] font-black uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                 >
-                  Tiếp Tục
+                  {quizMode === 'custom' && customQuestionIndex < customQuestions.length - 1 ? 'Câu Tiếp Theo' : 'Tiếp Tục'}
                 </button>
               </div>
             </div>

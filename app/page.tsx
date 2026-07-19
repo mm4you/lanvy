@@ -88,6 +88,25 @@ function renderAIIcon(className = 'w-4 h-4') {
   );
 }
 
+function getVocabCategory(item: any): string {
+  if (item.category) return item.category;
+  
+  const text = (item.nameVietnamese || '') + ' ' + (item.nameChinese || '');
+  if (text.includes('Yêu') || text.includes('thích') || text.includes('Sở thích') || text.includes('Tình yêu') || text.includes('Ca hát') || text.includes('Cảm ơn') || text.includes('Tạm biệt') || text.includes('quen') || text.includes('爱') || text.includes('谢谢') || text.includes('歌')) {
+    return 'Sở thích & Hẹn hò';
+  }
+  if (text.includes('cốc') || text.includes('bàn') || text.includes('ghế') || text.includes('vi tính') || text.includes('Tivi') || text.includes('phòng') || text.includes('nhà') || text.includes('cửa') || text.includes('Trường học') || text.includes('Màu') || text.includes('trắng') || text.includes('Quần áo') || text.includes('杯') || text.includes('桌') || text.includes('椅') || text.includes('电') || text.includes('白') || text.includes('衣')) {
+    return 'Gia đình & Nhà cửa';
+  }
+  if (text.includes('Học') || text.includes('Công việc') || text.includes('Tiếng Trung') || text.includes('Giúp') || text.includes('Báo') || text.includes('học') || text.includes('viên') || text.includes('gặp') || text.includes('biết') || text.includes('汉语') || text.includes('学') || text.includes('工') || text.includes('报')) {
+    return 'Học tập & Công việc';
+  }
+  if (text.includes('Thời tiết') || text.includes('Hôm qua') || text.includes('Hôm nay') || text.includes('Ngày mai') || text.includes('thời gian') || text.includes('phút') || text.includes('giờ') || text.includes('天') || text.includes('昨') || text.includes('今') || text.includes('明') || text.includes('时')) {
+    return 'Thời tiết & Thời gian';
+  }
+  return 'Tổng hợp HSK (Mặc định)';
+}
+
 function renderSignoutIcon(className = 'w-4 h-4') {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -252,6 +271,7 @@ export default function Home() {
   const [contractSubmitMsg, setContractSubmitMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [completedContracts, setCompletedContracts] = useState<number[]>([]);
   const [contractSelectedItems, setContractSelectedItems] = useState<string[]>([]);
+  const [showStudioHint, setShowStudioHint] = useState(false);
 
   // Library subtab state
   const [librarySubTab, setLibrarySubTab] = useState<'furniture' | 'vocab' | 'grammar'>('furniture');
@@ -268,8 +288,10 @@ export default function Home() {
 
   // Admin Vocab Bot state
   const [customVocabs, setCustomVocabs] = useState<any[]>([]);
-  const [vocabQuery, setVocabQuery] = useState('');
+  const [vocabTheme, setVocabTheme] = useState('Mua sắm & Shopping');
+  const [vocabCustomTheme, setVocabCustomTheme] = useState('');
   const [vocabHskLevel, setVocabHskLevel] = useState<number>(1);
+  const [vocabTone, setVocabTone] = useState<'roast' | 'sweet' | 'academic'>('roast');
   const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
   const [vocabBotLoading, setVocabBotLoading] = useState(false);
   const [vocabBotMsg, setVocabBotMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -287,8 +309,9 @@ export default function Home() {
   };
 
   const handleGenerateVocab = async () => {
-    if (!vocabQuery.trim()) {
-      setVocabBotMsg({ type: 'error', text: 'Vui lòng nhập từ khóa hoặc danh sách từ.' });
+    const finalTheme = vocabTheme === 'custom' ? vocabCustomTheme : vocabTheme;
+    if (!finalTheme.trim()) {
+      setVocabBotMsg({ type: 'error', text: 'Vui lòng chọn hoặc nhập chủ đề từ vựng.' });
       return;
     }
     setVocabBotLoading(true);
@@ -297,7 +320,12 @@ export default function Home() {
       const res = await fetch('/api/admin/vocab/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: vocabQuery, hskLevel: vocabHskLevel })
+        body: JSON.stringify({ 
+          query: finalTheme, 
+          hskLevel: vocabHskLevel, 
+          tone: vocabTone, 
+          category: finalTheme 
+        })
       });
       const data = await res.json();
       if (data.success) {
@@ -329,7 +357,7 @@ export default function Home() {
       if (data.success) {
         setVocabBotMsg({ type: 'success', text: `Đã lưu thành công ${data.count} từ vào game!` });
         setGeneratedVocab([]);
-        setVocabQuery('');
+        setVocabCustomTheme('');
         await fetchCustomVocabs();
       } else {
         setVocabBotMsg({ type: 'error', text: data.error || 'Lỗi khi lưu.' });
@@ -1010,6 +1038,7 @@ export default function Home() {
                           setCurrentContract(contract);
                           setContractSubmitMsg(null);
                           setContractSelectedItems([]);
+                          setShowStudioHint(false);
                           playSfx('click');
                         }}
                         className={`p-3 border-2 border-[#1f2937] rounded-xl flex items-center gap-3 cursor-pointer transition-all relative ${
@@ -1074,7 +1103,30 @@ export default function Home() {
                         </div>
                         <p className="text-base font-serif font-black text-[#1f2937]">{currentContract.promptChinese}</p>
                         <p className="text-xs font-bold text-blue-600 font-sans">{currentContract.promptPinyin}</p>
-                        <p className="text-xs font-bold text-gray-500">Dịch nghĩa: {currentContract.promptVietnamese}</p>
+                        {showStudioHint ? (
+                          <div className="pt-1.5 border-t border-dashed border-amber-300 flex justify-between items-start gap-4">
+                            <p className="text-xs font-bold text-gray-500">Dịch nghĩa: {currentContract.promptVietnamese}</p>
+                            <button
+                              onClick={() => {
+                                playSfx('click');
+                                setShowStudioHint(false);
+                              }}
+                              className="text-[9px] font-black text-rose-600 uppercase hover:underline shrink-0 cursor-pointer"
+                            >
+                              Ẩn gợi ý
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              playSfx('click');
+                              setShowStudioHint(true);
+                            }}
+                            className="text-[10px] font-black text-blue-600 uppercase hover:underline flex items-center gap-1.5 cursor-pointer"
+                          >
+                            {renderAwardIcon('w-3.5 h-3.5 text-blue-600')} Xem Gợi Ý Nghĩa Tiếng Việt
+                          </button>
+                        )}
                       </div>
 
                       {/* PHÒNG PHÁC THẢO CHỌN ĐỒ */}
@@ -1330,50 +1382,72 @@ export default function Home() {
                   </div>
                 )}
 
-                {librarySubTab === 'vocab' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[...GENERAL_VOCAB_ITEMS, ...customVocabs].map((item, idx) => {
-                      return (
-                        <div
-                          key={item.id || idx}
-                          className="p-4 bg-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex flex-col justify-between space-y-3"
-                        >
-                          <div className="space-y-1.5 text-left">
-                            <div className="flex justify-between items-center border-b border-dashed border-pink-200 pb-1.5">
-                              <h4 className="text-sm font-serif font-black text-rose-600 flex items-center gap-1.5">
-                                <span>{item.nameChinese}</span>
-                                <button
-                                  onClick={() => handlePlayTTS(item.nameChinese)}
-                                  className="p-0.5 bg-pink-50 hover:bg-pink-100 border border-gray-300 rounded cursor-pointer"
-                                >
-                                  {renderAudioIcon('w-3 h-3 text-[#1f2937]')}
-                                </button>
-                              </h4>
-                              <span className="text-[9px] bg-pink-100 text-pink-800 border border-pink-200 px-1.5 py-0.2 rounded font-sans font-black">
-                                HSK {item.hskLevel}
-                              </span>
-                            </div>
-                            <p className="text-[10px] text-gray-400 font-bold font-mono">{item.namePinyin}</p>
-                            <button
-                              onClick={() => handleExplainWord(item.nameChinese)}
-                              className="w-full py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center justify-center gap-1 shadow-[1px_1px_0px_#1f2937]"
-                            >
-                              {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI Mỏ Hỗn (BETA)
-                            </button>
-                            <p className="text-xs font-black text-[#1f2937]">Nghĩa: {item.nameVietnamese}</p>
-                            {item.exampleChinese && (
-                              <div className="mt-2 p-2 bg-[#fffaf0] rounded border border-dashed border-pink-200/60 text-[10.5px]">
-                                <p className="font-bold text-gray-600">Ví dụ: {item.exampleChinese}</p>
-                                <p className="text-blue-500 italic text-[9.5px]">{item.examplePinyin}</p>
-                                <p className="text-gray-500 font-bold text-[9.5px]">Nghĩa ví dụ: {item.exampleVietnamese}</p>
+                {librarySubTab === 'vocab' && (() => {
+                  const allVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
+                  const groupedVocabs: { [key: string]: any[] } = {};
+                  allVocabs.forEach((item) => {
+                    const cat = getVocabCategory(item);
+                    if (!groupedVocabs[cat]) {
+                      groupedVocabs[cat] = [];
+                    }
+                    groupedVocabs[cat].push(item);
+                  });
+
+                  return (
+                    <div className="space-y-6">
+                      {Object.entries(groupedVocabs).map(([categoryName, items]) => (
+                        <div key={categoryName} className="space-y-3 text-left">
+                          <div className="flex items-center gap-2 border-b-2 border-dashed border-[#1f2937] pb-1.5 mt-2">
+                            <span className="text-[10px] font-black px-2 py-0.5 bg-pink-500 text-white rounded border border-[#1f2937] shadow-[1px_1px_0px_#1f2937]">
+                              {items.length} từ
+                            </span>
+                            <h3 className="text-sm font-serif font-black text-[#1f2937]">{categoryName}</h3>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {items.map((item, idx) => (
+                              <div
+                                key={item.id || idx}
+                                className="p-4 bg-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex flex-col justify-between space-y-3"
+                              >
+                                <div className="space-y-1.5 text-left">
+                                  <div className="flex justify-between items-center border-b border-dashed border-pink-200 pb-1.5">
+                                    <h4 className="text-sm font-serif font-black text-rose-600 flex items-center gap-1.5">
+                                      <span>{item.nameChinese}</span>
+                                      <button
+                                        onClick={() => handlePlayTTS(item.nameChinese)}
+                                        className="p-0.5 bg-pink-50 hover:bg-pink-100 border border-gray-300 rounded cursor-pointer"
+                                      >
+                                        {renderAudioIcon('w-3 h-3 text-[#1f2937]')}
+                                      </button>
+                                    </h4>
+                                    <span className="text-[9px] bg-pink-100 text-pink-800 border border-pink-200 px-1.5 py-0.2 rounded font-sans font-black">
+                                      HSK {item.hskLevel}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] text-gray-400 font-bold font-mono">{item.namePinyin}</p>
+                                  <button
+                                    onClick={() => handleExplainWord(item.nameChinese)}
+                                    className="w-full py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center justify-center gap-1 shadow-[1px_1px_0px_#1f2937]"
+                                  >
+                                    {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI Mỏ Hỗn (BETA)
+                                  </button>
+                                  <p className="text-xs font-black text-[#1f2937]">Nghĩa: {item.nameVietnamese}</p>
+                                  {item.exampleChinese && (
+                                    <div className="mt-2 p-2 bg-[#fffaf0] rounded border border-dashed border-pink-200/60 text-[10.5px]">
+                                      <p className="font-bold text-gray-600">Ví dụ: {item.exampleChinese}</p>
+                                      <p className="text-blue-500 italic text-[9.5px]">{item.examplePinyin}</p>
+                                      <p className="text-gray-500 font-bold text-[9.5px]">Nghĩa ví dụ: {item.exampleVietnamese}</p>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            )}
+                            ))}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  );
+                })()}
 
                 {librarySubTab === 'grammar' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1583,15 +1657,49 @@ export default function Home() {
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Yêu cầu từ vựng:</label>
-                            <input
-                              type="text"
-                              value={vocabQuery}
-                              onChange={e => setVocabQuery(e.target.value)}
-                              placeholder="Ví dụ: Con vật, Trái cây, 电脑, 苹果..."
-                              className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
-                            />
+                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Giọng điệu ví dụ của AI:</label>
+                            <select
+                              value={vocabTone}
+                              onChange={(e: any) => setVocabTone(e.target.value)}
+                              className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                            >
+                              <option value="roast">Cà khịa mỏ hỗn Gen Z (Beta)</option>
+                              <option value="sweet">Ngọt ngào cưng chiều Vy (Love)</option>
+                              <option value="academic">Nghiêm túc, chuẩn học thuật</option>
+                            </select>
                           </div>
+
+                          <div>
+                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Chủ đề từ vựng cần tạo:</label>
+                            <select
+                              value={vocabTheme}
+                              onChange={(e) => setVocabTheme(e.target.value)}
+                              className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                            >
+                              <option value="Mua sắm & Shopping">Mua sắm & Shopping</option>
+                              <option value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
+                              <option value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>
+                              <option value="Thời tiết & Thời gian">Thời tiết & Thời gian</option>
+                              <option value="Gia đình & Nhà cửa">Gia đình & Nhà cửa</option>
+                              <option value="Phương hướng & Vị trí">Phương hướng & Vị trí</option>
+                              <option value="Sở thích & Hẹn hò">Sở thích & Hẹn hò</option>
+                              <option value="Động vật">Động vật & Thú cưng</option>
+                              <option value="custom">Chủ đề tùy chọn tự nhập...</option>
+                            </select>
+                          </div>
+
+                          {vocabTheme === 'custom' && (
+                            <div>
+                              <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Nhập chủ đề tùy chọn:</label>
+                              <input
+                                type="text"
+                                value={vocabCustomTheme}
+                                onChange={e => setVocabCustomTheme(e.target.value)}
+                                placeholder="Ví dụ: Đồ ăn ngọt, Đi uống trà sữa..."
+                                className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+                              />
+                            </div>
+                          )}
 
                           <button
                             type="button"

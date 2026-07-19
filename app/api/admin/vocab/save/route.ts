@@ -25,6 +25,7 @@ export async function POST(request: Request) {
           namePinyin: item.namePinyin.trim(),
           nameVietnamese: item.nameVietnamese.trim(),
           hskLevel: Number(item.hskLevel) || 1,
+          category: item.category?.trim() || 'Khác',
           exampleChinese: item.exampleChinese?.trim() || null,
           examplePinyin: item.examplePinyin?.trim() || null,
           exampleVietnamese: item.exampleVietnamese?.trim() || null,

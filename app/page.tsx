@@ -250,6 +250,8 @@ export default function Home() {
   // Contracts state
   const [currentContract, setCurrentContract] = useState<DesignContract | null>(null);
   const [contractSubmitMsg, setContractSubmitMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [completedContracts, setCompletedContracts] = useState<number[]>([]);
+  const [contractSelectedItems, setContractSelectedItems] = useState<string[]>([]);
 
   // Library subtab state
   const [librarySubTab, setLibrarySubTab] = useState<'furniture' | 'vocab' | 'grammar'>('furniture');
@@ -1448,14 +1450,14 @@ export default function Home() {
                   {/* PHẦN 2: BOT AI CRAWL TỪ VỰNG & QUẢN LÝ (CHO KHANG) */}
                   <div className="border-t-2 border-dashed border-[#1f2937] pt-6 space-y-6">
                     <h3 className="text-lg font-serif font-black text-[#1f2937] flex items-center gap-2">
-                      🤖 Trợ Lý AI: Bot Tạo & Crawl Từ Vựng HSK (Admin Khang)
+                      {renderAIIcon('w-6 h-6 text-blue-600')} Trợ Lý AI: Bot Tạo & Crawl Từ Vựng HSK (Admin Khang)
                     </h3>
                     
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                       {/* CỘT TRÁI: FORM CRAWL/GENERATE */}
                       <div className="lg:col-span-6 bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-4">
                         <h4 className="text-sm font-serif font-black text-[#1f2937] flex items-center gap-1.5">
-                          ✨ Nhập chủ đề hoặc danh sách chữ Hán cần tạo
+                          {renderAIIcon('w-4 h-4 text-amber-500')} Nhập chủ đề hoặc danh sách chữ Hán cần tạo
                         </h4>
                         <p className="text-[11px] text-gray-500 font-bold">
                           Nhập chữ Hán (ví dụ: 苹果, 香蕉) hoặc chủ đề (ví dụ: Màu sắc, Thời tiết, Đồ ăn) để Bot AI tự động tìm Pinyin, nghĩa Việt và tạo câu ví dụ cực dễ thương cho Vy.

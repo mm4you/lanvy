@@ -559,7 +559,7 @@ export default function RoomEditor({
                       }`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${isPlaced ? 'bg-green-600' : 'bg-red-500'}`} />
-                      {name} {isPlaced ? '✓' : '✗'}
+                      {name} {isPlaced ? '(OK)' : '(Thiếu)'}
                     </span>
                   );
                 })}
@@ -578,7 +578,7 @@ export default function RoomEditor({
           </div>
         ) : (
           <div className="w-full bg-pink-50/50 border-2 border-dashed border-[#1f2937]/30 rounded-xl p-3 mb-4 text-center text-xs font-bold text-gray-500">
-            💡 Gợi ý: Hãy nhận một Hợp đồng thiết kế từ các NPC (ở tab Studio) để bắt đầu nhận Voucher đặc quyền!
+            Gợi ý: Hãy nhận một Hợp đồng thiết kế từ các NPC (ở tab Studio) để bắt đầu nhận Voucher đặc quyền!
           </div>
         )}
 

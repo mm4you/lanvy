@@ -621,10 +621,9 @@ export default function Home() {
   const hskGroupedFurniture = FURNITURE_ITEMS.map(item => {
     const levels: { [key: string]: number } = {
       wood_chair: 1, wood_table: 1, mirror: 1,
-      study_desk: 2, single_bed: 2, desk_lamp: 2, painting: 2,
+      study_desk: 2, single_bed: 2, desk_lamp: 2, painting: 2, office_chair: 2, potted_plant: 2,
       double_bed: 3, sofa: 3, coffee_table: 3, bookshelf: 3, carpet: 3,
-      cactus: 4, office_chair: 4, floor_lamp: 4, potted_plant: 4,
-      sofa_bed: 5, wardrobe: 5, bamboo: 5, chandelier: 6
+      cactus: 3, floor_lamp: 3, sofa_bed: 3, wardrobe: 3, bamboo: 3, chandelier: 3
     };
     return { ...item, hsk: levels[item.id] || 1 };
   });

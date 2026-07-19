@@ -91,19 +91,19 @@ export default function BlueprintQuiz({
       single_bed: 2,
       desk_lamp: 2,
       painting: 2,
+      office_chair: 2,
+      potted_plant: 2,
       double_bed: 3,
       sofa: 3,
       coffee_table: 3,
       bookshelf: 3,
       carpet: 3,
-      cactus: 4,
-      office_chair: 4,
-      floor_lamp: 4,
-      potted_plant: 4,
-      sofa_bed: 5,
-      wardrobe: 5,
-      bamboo: 5,
-      chandelier: 6,
+      cactus: 3,
+      floor_lamp: 3,
+      sofa_bed: 3,
+      wardrobe: 3,
+      bamboo: 3,
+      chandelier: 3,
     };
     return levels[itemId] || 1;
   };
@@ -280,7 +280,7 @@ export default function BlueprintQuiz({
       {/* BỘ LỌC CẤP ĐỘ HSK */}
       <div className="flex gap-1.5 mb-6 flex-wrap">
         <span className="text-xs font-black text-gray-500 uppercase self-center mr-2">Cấp độ HSK:</span>
-        {['all', 1, 2, 3].concat(quizMode === 'furniture' ? ['4', '5', '6'] : []).map((level) => (
+        {['all', 1, 2, 3].map((level) => (
           <button
             key={level}
             onClick={() => {

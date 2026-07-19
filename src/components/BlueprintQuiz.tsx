@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FurnitureItem, FURNITURE_ITEMS } from '../data/vocabulary';
+import { FurnitureItem, FURNITURE_ITEMS, GENERAL_VOCAB_ITEMS, GeneralVocabItem } from '../data/vocabulary';
 import { renderFurnitureSVG } from './RoomEditor';
 
 interface BlueprintQuizProps {
@@ -15,7 +15,7 @@ interface BlueprintQuizProps {
 
 interface Question {
   type: 'translate' | 'pinyin' | 'listening';
-  item: FurnitureItem;
+  item: FurnitureItem | GeneralVocabItem;
   questionText: string;
   chinese: string;
   pinyin: string;
@@ -57,6 +57,14 @@ function renderAIIcon(className = 'w-3.5 h-3.5') {
   );
 }
 
+function renderVocabularyCardSVG(className = 'w-16 h-16 text-pink-100') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>
+  );
+}
+
 export default function BlueprintQuiz({
   unlockedItems,
   setUnlockedItems,
@@ -65,6 +73,7 @@ export default function BlueprintQuiz({
   playSfx,
   onExplainWord
 }: BlueprintQuizProps) {
+  const [quizMode, setQuizMode] = useState<'furniture' | 'general'>('furniture');
   const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all'>('all');
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -72,10 +81,9 @@ export default function BlueprintQuiz({
   const [isCorrect, setIsCorrect] = useState(false);
   const [streak, setStreak] = useState(0);
 
-  // Phân bổ HSK giả lập cho từ vựng nội thất để tăng tính học thuật
+  // Phân bổ HSK cho từ vựng nội thất
   const getHskLevel = (itemId: string): number => {
     const levels: { [key: string]: number } = {
-      // HSK 1-2
       wood_chair: 1,
       wood_table: 1,
       mirror: 1,
@@ -83,7 +91,6 @@ export default function BlueprintQuiz({
       single_bed: 2,
       desk_lamp: 2,
       painting: 2,
-      // HSK 3-4
       double_bed: 3,
       sofa: 3,
       coffee_table: 3,
@@ -93,7 +100,6 @@ export default function BlueprintQuiz({
       office_chair: 4,
       floor_lamp: 4,
       potted_plant: 4,
-      // HSK 5-6
       sofa_bed: 5,
       wardrobe: 5,
       bamboo: 5,
@@ -102,21 +108,30 @@ export default function BlueprintQuiz({
     return levels[itemId] || 1;
   };
 
-  // Tạo câu hỏi ngẫu nhiên từ kho từ vựng dựa trên bộ lọc HSK
+  // Tạo câu hỏi ngẫu nhiên dựa trên chế độ học tập
   const generateQuestion = () => {
-    // Lọc danh sách đồ nội thất theo cấp HSK được chọn
-    const filteredPool = FURNITURE_ITEMS.filter((item) => {
-      const hsk = getHskLevel(item.id);
-      return selectedHskFilter === 'all' || hsk === selectedHskFilter;
-    });
+    let randomItem: FurnitureItem | GeneralVocabItem;
+    let hskLevel = 1;
+    
+    if (quizMode === 'furniture') {
+      const filteredPool = FURNITURE_ITEMS.filter((item) => {
+        const hsk = getHskLevel(item.id);
+        return selectedHskFilter === 'all' || hsk === selectedHskFilter;
+      });
 
-    if (filteredPool.length === 0) return;
+      if (filteredPool.length === 0) return;
+      randomItem = filteredPool[Math.floor(Math.random() * filteredPool.length)];
+      hskLevel = getHskLevel(randomItem.id);
+    } else {
+      const filteredPool = GENERAL_VOCAB_ITEMS.filter((item) => {
+        return selectedHskFilter === 'all' || item.hskLevel === selectedHskFilter;
+      });
 
-    // Chọn ngẫu nhiên một món đồ
-    const randomItem = filteredPool[Math.floor(Math.random() * filteredPool.length)];
-    const hskLevel = getHskLevel(randomItem.id);
+      if (filteredPool.length === 0) return;
+      randomItem = filteredPool[Math.floor(Math.random() * filteredPool.length)];
+      hskLevel = randomItem.hskLevel;
+    }
 
-    // Quyết định loại câu hỏi (dịch nghĩa, pinyin, hoặc luyện nghe)
     const types: ('translate' | 'pinyin' | 'listening')[] = ['translate', 'pinyin', 'listening'];
     const type = types[Math.floor(Math.random() * types.length)];
 
@@ -124,30 +139,37 @@ export default function BlueprintQuiz({
     let correctAnswer = '';
     let options: string[] = [];
 
+    const isFurniture = 'category' in randomItem;
+    const itemVietnameseName = isFurniture ? randomItem.nameVietnamese : (randomItem as GeneralVocabItem).nameVietnamese;
+    const itemChineseName = randomItem.nameChinese;
+    const itemPinyinName = randomItem.namePinyin;
+
     if (type === 'translate') {
-      questionText = `Hãy chọn chữ Hán chính xác cho đồ vật: "${randomItem.nameVietnamese}"`;
-      correctAnswer = randomItem.nameChinese;
+      questionText = `Hãy chọn chữ Hán chính xác cho từ: "${itemVietnameseName}"`;
+      correctAnswer = itemChineseName;
       
-      // Tạo các lựa chọn nhiễu
-      const distractors = FURNITURE_ITEMS.filter((i) => i.id !== randomItem.id)
+      const pool = isFurniture ? FURNITURE_ITEMS : GENERAL_VOCAB_ITEMS;
+      const distractors = pool.filter((i) => i.id !== randomItem.id)
         .map((i) => i.nameChinese)
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
       options = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
     } else if (type === 'pinyin') {
-      questionText = `Phiên âm Pinyin chính xác của từ "${randomItem.nameChinese}" (${randomItem.nameVietnamese}) là:`;
-      correctAnswer = randomItem.namePinyin;
+      questionText = `Phiên âm Pinyin chính xác của từ "${itemChineseName}" (${itemVietnameseName}) là:`;
+      correctAnswer = itemPinyinName;
 
-      const distractors = FURNITURE_ITEMS.filter((i) => i.id !== randomItem.id)
+      const pool = isFurniture ? FURNITURE_ITEMS : GENERAL_VOCAB_ITEMS;
+      const distractors = pool.filter((i) => i.id !== randomItem.id)
         .map((i) => i.namePinyin)
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
       options = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
     } else {
-      questionText = 'Nghe phát âm tiếng Trung sau đây và chọn món đồ nội thất tương ứng:';
-      correctAnswer = randomItem.nameVietnamese;
+      questionText = 'Nghe phát âm tiếng Trung sau đây và chọn đáp án tương ứng:';
+      correctAnswer = itemVietnameseName;
 
-      const distractors = FURNITURE_ITEMS.filter((i) => i.id !== randomItem.id)
+      const pool = isFurniture ? FURNITURE_ITEMS : GENERAL_VOCAB_ITEMS;
+      const distractors = pool.filter((i) => i.id !== randomItem.id)
         .map((i) => i.nameVietnamese)
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
@@ -158,9 +180,9 @@ export default function BlueprintQuiz({
       type,
       item: randomItem,
       questionText,
-      chinese: randomItem.nameChinese,
-      pinyin: randomItem.namePinyin,
-      translation: randomItem.nameVietnamese,
+      chinese: itemChineseName,
+      pinyin: itemPinyinName,
+      translation: itemVietnameseName,
       hskLevel,
       options,
       correctAnswer,
@@ -168,24 +190,21 @@ export default function BlueprintQuiz({
     setSelectedAnswer(null);
     setIsAnswered(false);
 
-    // Nếu là câu hỏi luyện nghe, tự động phát âm luôn
     if (type === 'listening') {
-      playAudio(randomItem.nameChinese);
+      playAudio(itemChineseName);
     }
   };
 
   useEffect(() => {
     generateQuestion();
-  }, [selectedHskFilter]);
+  }, [selectedHskFilter, quizMode]);
 
-  // Phát âm chữ Hán sử dụng API TTS hiện có
   const playAudio = (text: string) => {
     playSfx('click');
     const audio = new Audio(`/api/tts?text=${encodeURIComponent(text)}&lang=zh`);
     audio.play().catch((e) => console.warn('Audio output error:', e));
   };
 
-  // Nộp câu trả lời
   const handleAnswerSubmit = (option: string) => {
     if (isAnswered || !currentQuestion) return;
     
@@ -197,14 +216,18 @@ export default function BlueprintQuiz({
 
     if (correct) {
       playSfx('success');
-      setStreak(streak + 1);
-      // Cộng xu
-      setCoins(coins + 20);
-
-      // Nếu Vy chưa mở khóa món đồ này, mở khóa luôn!
-      if (!unlockedItems.includes(currentQuestion.item.id)) {
-        setUnlockedItems((prev) => [...prev, currentQuestion.item.id]);
-        playSfx('levelUp');
+      setStreak((prev) => prev + 1);
+      
+      if (quizMode === 'furniture') {
+        setCoins(coins + 20);
+        // Mở khóa đồ đạc
+        if (!unlockedItems.includes(currentQuestion.item.id)) {
+          setUnlockedItems((prev) => [...prev, currentQuestion.item.id]);
+          playSfx('levelUp');
+        }
+      } else {
+        // Chế độ ôn tập từ vựng: +15 xu
+        setCoins(coins + 15);
       }
     } else {
       playSfx('error');
@@ -213,11 +236,43 @@ export default function BlueprintQuiz({
   };
 
   return (
-    <div className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 max-w-2xl mx-auto my-4">
+    <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 max-w-2xl mx-auto my-4">
+      {/* CHUYỂN ĐỔI CHẾ ĐỘ CHƠI */}
+      <div className="flex justify-center gap-3 mb-6">
+        <button
+          onClick={() => {
+            setQuizMode('furniture');
+            setStreak(0);
+            playSfx('click');
+          }}
+          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
+            quizMode === 'furniture'
+              ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+              : 'bg-white text-[#1f2937]'
+          }`}
+        >
+          Thiết kế Nội thất
+        </button>
+        <button
+          onClick={() => {
+            setQuizMode('general');
+            setStreak(0);
+            playSfx('click');
+          }}
+          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
+            quizMode === 'general'
+              ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+              : 'bg-white text-[#1f2937]'
+          }`}
+        >
+          Từ vựng HSK 1-2-3 tổng hợp
+        </button>
+      </div>
+
       {/* TIÊU ĐỀ */}
       <h2 className="text-xl font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 mb-4 flex items-center justify-between">
-        <span className="flex items-center gap-1.5">{renderBookOpenIcon('text-rose-500')} Bản Vẽ Chế Tạo Từ Vựng HSK</span>
-        <span className="text-xs bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-0.5 rounded-full font-black font-sans">
+        <span className="flex items-center gap-1.5">{renderBookOpenIcon('text-pink-500')} Bản Vẽ Chế Tạo HSK</span>
+        <span className="text-xs bg-pink-100 text-pink-700 border border-pink-300 px-2.5 py-0.5 rounded-full font-black font-sans">
           Chuỗi Đúng: {streak}
         </span>
       </h2>
@@ -225,16 +280,16 @@ export default function BlueprintQuiz({
       {/* BỘ LỌC CẤP ĐỘ HSK */}
       <div className="flex gap-1.5 mb-6 flex-wrap">
         <span className="text-xs font-black text-gray-500 uppercase self-center mr-2">Cấp độ HSK:</span>
-        {['all', 1, 2, 3, 4, 5, 6].map((level) => (
+        {['all', 1, 2, 3].concat(quizMode === 'furniture' ? ['4', '5', '6'] : []).map((level) => (
           <button
             key={level}
             onClick={() => {
-              setSelectedHskFilter(level as any);
+              setSelectedHskFilter(level === 'all' ? 'all' : Number(level));
               playSfx('click');
             }}
             className={`px-3 py-1 border-2 border-[#1f2937] font-black text-xs rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
-              selectedHskFilter === level
-                ? 'bg-rose-500 text-white shadow-none translate-y-0.5'
+              selectedHskFilter === (level === 'all' ? 'all' : Number(level))
+                ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
                 : 'bg-white text-[#1f2937]'
             }`}
           >
@@ -245,36 +300,39 @@ export default function BlueprintQuiz({
 
       {currentQuestion && (
         <div className="space-y-6">
-          {/* HÌNH ẢNH BẢN VẼ PHÁC THẢO (BLUEPRINT STYLE) */}
-          <div className="h-44 bg-[#0c4a6e] border-4 border-[#1f2937] rounded-xl flex items-center justify-center relative overflow-hidden">
+          {/* HÌNH ẢNH BẢN VẼ PHÁC THẢO (PINK BLUEPRINT) */}
+          <div className="h-44 bg-pink-600 border-4 border-[#1f2937] rounded-xl flex items-center justify-center relative overflow-hidden">
             {/* Lưới ô vuông mờ phong cách blueprint */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:16px_16px]" />
             
-            {/* Vẽ thử nét viền nét đứt chéo */}
-            <div className="absolute top-2 left-2 text-[10px] text-sky-300 font-mono font-bold uppercase tracking-widest border border-sky-600/30 px-1 rounded">
-              STUDIO BLUEPRINT // HSK {currentQuestion.hskLevel}
+            <div className="absolute top-2 left-2 text-[10px] text-pink-100 font-mono font-bold uppercase tracking-widest border border-pink-300/30 px-1.5 py-0.2 rounded bg-pink-700/40">
+              PINK BLUEPRINT // HSK {currentQuestion.hskLevel}
             </div>
 
-            {/* Món đồ hiển thị phong cách bản vẽ thiết kế (đường line màu xanh sáng) */}
-            <div className="w-24 h-24 z-10 flex items-center justify-center stroke-sky-400 fill-none text-sky-400 [&_rect]:stroke-sky-300 [&_rect]:fill-none [&_path]:stroke-sky-300 [&_path]:fill-none [&_circle]:stroke-sky-300 [&_circle]:fill-none [&_ellipse]:stroke-sky-300 [&_ellipse]:fill-none">
-              {renderFurnitureSVG(currentQuestion.item.id, 0, 'w-20 h-20')}
+            {/* Món đồ hiển thị phong cách bản vẽ thiết kế */}
+            <div className="w-24 h-24 z-10 flex items-center justify-center stroke-white fill-none text-white [&_rect]:stroke-white [&_rect]:fill-none [&_path]:stroke-white [&_path]:fill-none [&_circle]:stroke-white [&_circle]:fill-none [&_ellipse]:stroke-white [&_ellipse]:fill-none">
+              {'category' in currentQuestion.item ? (
+                renderFurnitureSVG(currentQuestion.item.id, 0, 'w-20 h-20')
+              ) : (
+                renderVocabularyCardSVG('w-16 h-16 text-pink-100 animate-bounce')
+              )}
             </div>
           </div>
 
           {/* CÂU HỎI */}
           <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[2px_2px_0px_#1f2937] text-center">
-            <span className="text-[10px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-black uppercase tracking-wider font-sans">
+            <span className="text-[10px] bg-pink-100 text-pink-800 border border-pink-300 px-2 py-0.5 rounded-full font-black uppercase tracking-wider font-sans">
               HSK Cấp {currentQuestion.hskLevel}
             </span>
             <p className="text-sm font-serif font-black text-[#1f2937] mt-3">
               {currentQuestion.questionText || currentQuestion.type === 'listening' ? (
                 <div className="flex items-center justify-center gap-2">
-                  <span>Nghe phát âm để đoán đồ vật:</span>
+                  <span>Nghe phát âm tiếng Trung:</span>
                   <button
                     onClick={() => playAudio(currentQuestion.chinese)}
-                    className="p-1.5 bg-amber-100 hover:bg-amber-200 border border-[#1f2937] rounded-lg cursor-pointer"
+                    className="p-1.5 bg-pink-50 hover:bg-pink-100 border border-[#1f2937] rounded-lg cursor-pointer"
                   >
-                    {renderAudioIcon('w-4 h-4 text-[#1f2937]')}
+                    {renderAudioIcon('w-4 h-4 text-pink-600')}
                   </button>
                 </div>
               ) : (
@@ -291,7 +349,7 @@ export default function BlueprintQuiz({
               const isThisSelected = selectedAnswer === option;
               const isThisCorrect = option === currentQuestion.correctAnswer;
               
-              let btnClass = 'bg-white hover:bg-rose-50 text-[#1f2937]';
+              let btnClass = 'bg-white hover:bg-pink-50 text-[#1f2937]';
               if (isAnswered) {
                 if (isThisCorrect) {
                   btnClass = 'bg-green-500 text-white shadow-none translate-y-0.5 border-green-700';
@@ -322,14 +380,14 @@ export default function BlueprintQuiz({
                 <span className={`text-sm font-black uppercase ${isCorrect ? 'text-green-600' : 'text-red-500'}`}>
                   {isCorrect ? 'Chúc mừng! Bạn đã trả lời đúng' : 'Rất tiếc! Câu trả lời chưa chính xác'}
                 </span>
-                <span className="text-[10px] bg-amber-100 border border-amber-300 text-amber-800 font-bold px-2 py-0.5 rounded-full flex items-center gap-1 font-sans">
-                  {renderAwardIcon()} +20 Xu
+                <span className="text-[10px] bg-pink-100 border border-pink-300 text-pink-800 font-bold px-2 py-0.5 rounded-full flex items-center gap-1 font-sans">
+                  {renderAwardIcon()} +{quizMode === 'furniture' ? '20' : '15'} Xu
                 </span>
               </div>
               
-              <div className="p-3 bg-amber-50/50 rounded-lg border border-amber-200">
+              <div className="p-3 bg-pink-50/20 rounded-lg border border-pink-200">
                 <p className="text-sm font-serif font-black text-[#1f2937]">
-                  Chữ Hán: <span className="text-rose-600 text-base">{currentQuestion.chinese}</span>
+                  Chữ Hán: <span className="text-pink-600 text-base">{currentQuestion.chinese}</span>
                 </p>
                 <p className="text-xs font-black text-gray-500 mt-1">
                   Phiên âm Pinyin: <span className="text-blue-600">{currentQuestion.pinyin}</span>
@@ -349,7 +407,7 @@ export default function BlueprintQuiz({
                 </button>
                 <button
                   onClick={generateQuestion}
-                  className="px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] rounded-lg text-[10.5px] font-black uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                  className="px-4 py-1.5 bg-pink-500 hover:bg-pink-600 text-white border-2 border-[#1f2937] rounded-lg text-[10.5px] font-black uppercase tracking-wider shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                 >
                   Tiếp Tục
                 </button>

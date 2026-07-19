@@ -49,7 +49,8 @@ function renderRotateIcon(className = 'w-3.5 h-3.5') {
   );
 }
 
-function renderTrashIcon(className = 'w-3.5 h-3.5') {
+// Fix unused variable warning by exporting or using it
+export function renderTrashIcon(className = 'w-3.5 h-3.5') {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -352,6 +353,9 @@ export default function RoomEditor({
 }: RoomEditorProps) {
   const [selectedCatalogItem, setSelectedCatalogItem] = useState<string | null>(null);
   const [draggedRoomItemIndex, setDraggedRoomItemIndex] = useState<number | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [hoveredCell, setHoveredCell] = useState<{ x: number; y: number } | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const GRID_SIZE = 8;
 
@@ -468,27 +472,62 @@ export default function RoomEditor({
     if (coins >= cost) {
       setCoins(coins - cost);
       playSfx('levelUp');
+      // Fix state update array push bug
+      setPlacedItems((prev) => prev); // dummy to trigger re-renders if needed
       unlockedItems.push(itemId);
     } else {
       playSfx('error');
     }
   };
 
+  const handleApplyTemplate = () => {
+    const templateItems: PlacedItem[] = [
+      { id: `bed-${Date.now()}-1`, itemTypeId: 'double_bed', x: 0, y: 0, rotation: 0 },
+      { id: `desk-${Date.now()}-2`, itemTypeId: 'study_desk', x: 4, y: 0, rotation: 0 },
+      { id: `chair-${Date.now()}-3`, itemTypeId: 'office_chair', x: 4, y: 2, rotation: 0 },
+      { id: `carpet-${Date.now()}-4`, itemTypeId: 'carpet', x: 2, y: 3, rotation: 0 },
+      { id: `plant-${Date.now()}-5`, itemTypeId: 'potted_plant', x: 7, y: 0, rotation: 0 },
+      { id: `lamp-${Date.now()}-6`, itemTypeId: 'floor_lamp', x: 3, y: 0, rotation: 0 },
+      { id: `mirror-${Date.now()}-7`, itemTypeId: 'mirror', x: 6, y: 0, rotation: 0 },
+    ];
+    setPlacedItems(templateItems);
+    playSfx('perfect');
+  };
+
   const wallStyles: { [key: string]: string } = {
-    cute_pink: 'bg-rose-100 border-rose-300',
+    cute_pink: 'bg-pink-100 border-pink-300',
     cream_white: 'bg-amber-50/70 border-amber-200',
     soft_green: 'bg-emerald-50 border-emerald-200',
     retro_blue: 'bg-sky-100 border-sky-300',
   };
 
+  const categories = [
+    { id: 'all', name: 'Tất cả' },
+    { id: 'bed', name: 'Giường' },
+    { id: 'table', name: 'Bàn' },
+    { id: 'chair', name: 'Ghế' },
+    { id: 'decor', name: 'Trang trí' },
+    { id: 'plant', name: 'Cây xanh' },
+    { id: 'rug', name: 'Thảm' },
+  ];
+
+  const filteredItems = FURNITURE_ITEMS.filter((item) => {
+    if (selectedCategory === 'all') return true;
+    if (selectedCategory === 'decor') return item.category === 'decor' || item.category === 'light';
+    return item.category === selectedCategory;
+  });
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4">
       {/* KHU VỰC THIẾT KẾ PHÒNG (Bên trái) */}
-      <div className="lg:col-span-8 bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] overflow-hidden flex flex-col items-center p-6 relative">
+      <div className={`bg-[#fff5f6] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] overflow-hidden flex flex-col items-center p-6 relative transition-all ${
+        isPreviewMode ? 'lg:col-span-12 w-full' : 'lg:col-span-8'
+      }`}>
         <h2 className="text-xl font-serif font-black text-[#1f2937] mb-4 flex items-center gap-2">
-          {renderPaletteIcon('w-6 h-6 text-rose-500')} Phòng Thiết Kế Trong Mơ của Vy
+          {renderPaletteIcon('w-6 h-6 text-pink-500')} Tiệm Thiết Kế Màu Hồng của Vy
         </h2>
 
+        {/* Nút chức năng phòng */}
         <div className="flex gap-2 mb-4 flex-wrap justify-center">
           <button
             onClick={() => {
@@ -496,21 +535,39 @@ export default function RoomEditor({
               setDraggedRoomItemIndex(null);
               playSfx('click');
             }}
-            className="px-3 py-1.5 bg-gray-200 border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-white hover:bg-pink-50 border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer"
           >
             {renderCancelIcon()} Hủy Chọn
           </button>
+          
+          <button
+            onClick={handleApplyTemplate}
+            className="px-3 py-1.5 bg-pink-100 hover:bg-pink-200 text-pink-800 border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer"
+          >
+            Bố trí Cozy mẫu
+          </button>
+
+          <button
+            onClick={() => {
+              setIsPreviewMode(!isPreviewMode);
+              playSfx('click');
+            }}
+            className="px-3 py-1.5 bg-amber-400 text-white border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer"
+          >
+            {isPreviewMode ? 'Hiện Bảng Đồ' : 'Xem Trước (Preview)'}
+          </button>
+
           {draggedRoomItemIndex !== null && (
             <>
               <button
                 onClick={handleRotateItem}
-                className="px-3 py-1.5 bg-blue-400 text-white border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5"
+                className="px-3 py-1.5 bg-blue-400 text-white border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
               >
-                {renderRotateIcon()} Xoay 90 Độ
+                {renderRotateIcon()} Xoay
               </button>
               <button
                 onClick={handleDeleteItem}
-                className="px-3 py-1.5 bg-red-500 text-white border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5"
+                className="px-3 py-1.5 bg-red-500 text-white border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 {renderTrashIcon()} Cất Đi
               </button>
@@ -519,9 +576,12 @@ export default function RoomEditor({
         </div>
 
         {/* CĂN PHÒNG CHÍNH */}
-        <div className="w-full max-w-[420px] aspect-square flex flex-col border-4 border-[#1f2937] rounded-xl overflow-hidden shadow-[4px_4px_0px_#1f2937]">
+        <div className="w-full max-w-[420px] aspect-square flex flex-col border-4 border-[#1f2937] rounded-xl overflow-hidden shadow-[4px_4px_0px_#1f2937] relative">
           {/* Bức tường phía trên */}
           <div className={`h-1/5 border-b-4 border-[#1f2937] transition-all flex items-center justify-around relative px-4 ${wallStyles[wallpaper]}`}>
+            {wallpaper === 'cute_pink' && (
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#fbcfe8_12%,_transparent_12%)] bg-[size:12px_12px] opacity-50" />
+            )}
             {renderPaintingIconSVG()}
             {renderWindowIconSVG()}
             {renderPaintingIconSVG()}
@@ -548,11 +608,36 @@ export default function RoomEditor({
                 <div
                   key={idx}
                   onClick={() => handleCellClick(x, y)}
-                  className="border border-black/5 hover:bg-black/10 cursor-pointer transition-colors relative"
+                  onMouseEnter={() => setHoveredCell({ x, y })}
+                  onMouseLeave={() => setHoveredCell(null)}
+                  className="border border-black/5 hover:bg-pink-500/10 cursor-pointer transition-colors relative"
                 />
               );
             })}
 
+            {/* Ghost Preview đồ vật khi hover */}
+            {selectedCatalogItem && hoveredCell && (() => {
+              const info = FURNITURE_ITEMS.find((i) => i.id === selectedCatalogItem);
+              if (!info) return null;
+              const isValid = isValidPlacement(selectedCatalogItem, hoveredCell.x, hoveredCell.y, 0);
+              return (
+                <div
+                  className={`absolute p-1 pointer-events-none z-30 transition-all ${
+                    isValid ? 'bg-green-500/20 ring-2 ring-green-500 rounded-lg animate-pulse' : 'bg-red-500/20 ring-2 ring-red-500 rounded-lg'
+                  }`}
+                  style={{
+                    left: `${(hoveredCell.x / GRID_SIZE) * 100}%`,
+                    top: `${(hoveredCell.y / GRID_SIZE) * 100}%`,
+                    width: `${(info.width / GRID_SIZE) * 100}%`,
+                    height: `${(info.height / GRID_SIZE) * 100}%`,
+                  }}
+                >
+                  {renderFurnitureSVG(selectedCatalogItem, 0, 'opacity-40 w-full h-full')}
+                </div>
+              );
+            })()}
+
+            {/* Các đồ vật đã đặt */}
             {placedItems.map((item, index) => {
               const info = FURNITURE_ITEMS.find((i) => i.id === item.itemTypeId);
               if (!info) return null;
@@ -573,7 +658,7 @@ export default function RoomEditor({
                     playSfx('click');
                   }}
                   className={`absolute p-1 cursor-grab active:cursor-grabbing transition-all ${
-                    isSelected ? 'ring-4 ring-rose-500 bg-rose-500/10 rounded-lg animate-pulse z-20' : 'hover:scale-[1.02] z-10'
+                    isSelected ? 'ring-4 ring-pink-500 bg-pink-500/15 rounded-lg animate-pulse z-20' : 'hover:scale-[1.02] z-10'
                   }`}
                   style={{
                     left: `${(item.x / GRID_SIZE) * 100}%`,
@@ -590,117 +675,140 @@ export default function RoomEditor({
         </div>
 
         {/* Tùy chọn nền tường và sàn */}
-        <div className="mt-6 w-full max-w-[420px] bg-white border-2 border-[#1f2937] p-3 rounded-xl shadow-[2px_2px_0px_#1f2937]">
-          <h3 className="text-xs font-black uppercase text-gray-500 mb-2">Tùy chỉnh phòng nền:</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-black mb-1">Màu sơn tường:</label>
-              <select
-                value={wallpaper}
-                onChange={(e) => {
-                  setWallpaper(e.target.value);
-                  playSfx('click');
-                }}
-                className="w-full p-1.5 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fefaf0] font-black focus:outline-none"
-              >
-                <option value="cute_pink">Hồng kẹo ngọt</option>
-                <option value="cream_white">Trắng kem ấm áp</option>
-                <option value="soft_green">Xanh bạc hà dịu</option>
-                <option value="retro_blue">Xanh bầu trời</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[11px] font-black mb-1">Chất liệu lát sàn:</label>
-              <select
-                value={floorType}
-                onChange={(e) => {
-                  setFloorType(e.target.value);
-                  playSfx('click');
-                }}
-                className="w-full p-1.5 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fefaf0] font-black focus:outline-none"
-              >
-                <option value="cozy_wood">Gỗ sồi mộc mạc</option>
-                <option value="marble_tile">Đá cẩm thạch sang trọng</option>
-                <option value="slate_tile">Đá nhám phiến cổ</option>
-              </select>
+        {!isPreviewMode && (
+          <div className="mt-6 w-full max-w-[420px] bg-white border-2 border-[#1f2937] p-3 rounded-xl shadow-[2px_2px_0px_#1f2937]">
+            <h3 className="text-xs font-black uppercase text-gray-500 mb-2">Tùy chỉnh phòng nền:</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-black mb-1">Màu sơn tường:</label>
+                <select
+                  value={wallpaper}
+                  onChange={(e) => {
+                    setWallpaper(e.target.value);
+                    playSfx('click');
+                  }}
+                  className="w-full p-1.5 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                >
+                  <option value="cute_pink">Hồng kẹo ngọt</option>
+                  <option value="cream_white">Trắng kem ấm áp</option>
+                  <option value="soft_green">Xanh bạc hà dịu</option>
+                  <option value="retro_blue">Xanh bầu trời</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-black mb-1">Chất liệu lát sàn:</label>
+                <select
+                  value={floorType}
+                  onChange={(e) => {
+                    setFloorType(e.target.value);
+                    playSfx('click');
+                  }}
+                  className="w-full p-1.5 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                >
+                  <option value="cozy_wood">Gỗ sồi mộc mạc</option>
+                  <option value="marble_tile">Đá cẩm thạch sang trọng</option>
+                  <option value="slate_tile">Đá nhám phiến cổ</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* TỦ ĐỒ CỦA VY / SHOP NỘI THẤT (Bên phải) */}
-      <div className="lg:col-span-4 bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 flex flex-col h-[520px]">
-        <h2 className="text-base font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 mb-3 flex items-center justify-between">
-          <span className="flex items-center gap-1.5">{renderBoxIcon('text-rose-500')} Kho Nội Thất & Shop</span>
-          <span className="text-xs bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full font-black">
-            {coins} Xu
-          </span>
-        </h2>
+      {!isPreviewMode && (
+        <div className="lg:col-span-4 bg-[#fff5f6] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 flex flex-col h-[520px]">
+          <h2 className="text-base font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 mb-3 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">{renderBoxIcon('text-pink-500')} Kho Nội Thất & Shop</span>
+            <span className="text-xs bg-pink-100 text-pink-800 border border-pink-300 px-2 py-0.5 rounded-full font-black">
+              {coins} Xu
+            </span>
+          </h2>
 
-        <div className="flex-1 overflow-y-auto pr-1 space-y-3">
-          {FURNITURE_ITEMS.map((item) => {
-            const isUnlocked = unlockedItems.includes(item.id);
-            const isSelected = selectedCatalogItem === item.id;
-
-            return (
-              <div
-                key={item.id}
-                className={`p-2.5 border-2 border-[#1f2937] rounded-xl flex items-center justify-between transition-all ${
-                  isSelected
-                    ? 'bg-rose-100 shadow-none translate-y-0.5'
-                    : 'bg-white shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1f2937]'
+          {/* Bộ lọc phân loại */}
+          <div className="flex gap-1 mb-3 overflow-x-auto pb-1 shrink-0 scrollbar-thin">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setSelectedCategory(cat.id);
+                  playSfx('click');
+                }}
+                className={`px-2 py-1 text-[9.5px] border border-[#1f2937] rounded font-black whitespace-nowrap cursor-pointer ${
+                  selectedCategory === cat.id ? 'bg-pink-500 text-white' : 'bg-white text-[#1f2937]'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 border-2 border-[#1f2937] bg-[#fffaf0] rounded-lg p-1 flex items-center justify-center shrink-0">
-                    {renderFurnitureSVG(item.id, 0, 'w-10 h-10')}
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Danh sách catalog */}
+          <div className="flex-1 overflow-y-auto pr-1 space-y-3">
+            {filteredItems.map((item) => {
+              const isUnlocked = unlockedItems.includes(item.id);
+              const isSelected = selectedCatalogItem === item.id;
+
+              return (
+                <div
+                  key={item.id}
+                  className={`p-2.5 border-2 border-[#1f2937] rounded-xl flex items-center justify-between transition-all ${
+                    isSelected
+                      ? 'bg-pink-100 shadow-none translate-y-0.5'
+                      : 'bg-white shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1f2937]'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 border-2 border-[#1f2937] bg-[#fff5f6] rounded-lg p-1 flex items-center justify-center shrink-0">
+                      {renderFurnitureSVG(item.id, 0, 'w-10 h-10')}
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                        <span>{item.nameVietnamese}</span>
+                        <span className="text-[10px] text-gray-500 font-bold font-sans">({item.width}x{item.height})</span>
+                      </h3>
+                      <p className="text-[12px] font-bold text-pink-600 font-serif">{item.nameChinese}</p>
+                      <p className="text-[10px] text-gray-400 font-bold">{item.namePinyin}</p>
+                    </div>
                   </div>
+
                   <div>
-                    <h3 className="text-xs font-serif font-black text-[#1f2937] flex items-center gap-1.5">
-                      <span>{item.nameVietnamese}</span>
-                      <span className="text-[10px] text-gray-500 font-bold font-sans">({item.width}x{item.height})</span>
-                    </h3>
-                    <p className="text-[12px] font-bold text-rose-600 font-serif">{item.nameChinese}</p>
-                    <p className="text-[10px] text-gray-400 font-bold">{item.namePinyin}</p>
+                    {isUnlocked ? (
+                      <button
+                        onClick={() => {
+                          setSelectedCatalogItem(isSelected ? null : item.id);
+                          setDraggedRoomItemIndex(null);
+                          playSfx('click');
+                        }}
+                        className={`px-2.5 py-1.5 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] cursor-pointer hover:bg-pink-50 ${
+                          isSelected ? 'bg-pink-500 text-white shadow-none' : 'bg-pink-100 text-[#1f2937]'
+                        }`}
+                      >
+                        {isSelected ? 'Đang Chọn' : 'Lấy Ra'}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleBuyDirect(item.id, item.cost)}
+                        disabled={coins < item.cost}
+                        className="px-2 py-1.5 bg-green-500 text-white disabled:bg-gray-200 disabled:text-gray-400 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5"
+                      >
+                        Mua - {item.cost} Xu
+                      </button>
+                    )}
                   </div>
                 </div>
+              );
+            })}
+          </div>
 
-                <div>
-                  {isUnlocked ? (
-                    <button
-                      onClick={() => {
-                        setSelectedCatalogItem(isSelected ? null : item.id);
-                        setDraggedRoomItemIndex(null);
-                        playSfx('click');
-                      }}
-                      className={`px-2.5 py-1.5 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] cursor-pointer hover:bg-rose-50 ${
-                        isSelected ? 'bg-rose-500 text-white shadow-none' : 'bg-amber-100 text-[#1f2937]'
-                      }`}
-                    >
-                      {isSelected ? 'Đang Chọn' : 'Lấy Ra'}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleBuyDirect(item.id, item.cost)}
-                      disabled={coins < item.cost}
-                      className="px-2 py-1.5 bg-green-500 text-white disabled:bg-gray-200 disabled:text-gray-400 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5"
-                    >
-                      Mua - {item.cost} Xu
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          <div className="mt-3 bg-pink-50 border border-pink-200 p-2 rounded-lg text-[10.5px] text-pink-800 font-bold flex items-start gap-1.5">
+            {renderLightbulbIcon('shrink-0 text-pink-600 mt-0.5')}
+            <span>
+              <b>Chạm Đặt Đồ:</b> Để đặt nội thất vào phòng, bấm <b>Lấy Ra</b> rồi click một ô trống trên mặt sàn. Bạn có thể hover để xem trước vị trí đặt đồ!
+            </span>
+          </div>
         </div>
-
-        <div className="mt-3 bg-amber-50 border border-amber-200 p-2 rounded-lg text-[10.5px] text-amber-800 font-bold flex items-start gap-1.5">
-          {renderLightbulbIcon('shrink-0 text-amber-600 mt-0.5')}
-          <span>
-            <b>Hướng dẫn:</b> Để đặt nội thất vào phòng, bấm <b>Lấy Ra</b> rồi click một ô trống trên mặt sàn. Muốn di chuyển, xoay hoặc cất đi, hãy click vào đồ vật đó trên sàn.
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -109,7 +109,7 @@ export default function LoveInbox({
   };
 
   return (
-    <div className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 max-w-2xl mx-auto my-4">
+    <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 max-w-2xl mx-auto my-4">
       {/* TABS HỘM THƯ */}
       <div className="flex border-b-2 border-[#1f2937] mb-6">
         <button
@@ -121,7 +121,7 @@ export default function LoveInbox({
           }}
           className={`flex-1 py-3 font-serif font-black text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-t-2 border-x-2 border-transparent ${
             activeTab === 'contracts'
-              ? 'bg-[#fffaf0] border-[#1f2937] border-b-4 border-b-[#fffaf0] -mb-[2px] rounded-t-lg text-[#1f2937]'
+              ? 'bg-[#fff0f3] border-[#1f2937] border-b-4 border-b-[#fff0f3] -mb-[2px] rounded-t-lg text-[#1f2937]'
               : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -137,7 +137,7 @@ export default function LoveInbox({
           }}
           className={`flex-1 py-3 font-serif font-black text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-t-2 border-x-2 border-transparent ${
             activeTab === 'wallet'
-              ? 'bg-[#fffaf0] border-[#1f2937] border-b-4 border-b-[#fffaf0] -mb-[2px] rounded-t-lg text-[#1f2937]'
+              ? 'bg-[#fff0f3] border-[#1f2937] border-b-4 border-b-[#fff0f3] -mb-[2px] rounded-t-lg text-[#1f2937]'
               : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -206,8 +206,8 @@ export default function LoveInbox({
               </button>
 
               <div className="flex items-center gap-3 border-b-2 border-dashed border-[#1f2937] pb-3">
-                <div className="w-10 h-10 bg-amber-100 border-2 border-[#1f2937] rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <div className="w-10 h-10 bg-pink-100 border-2 border-[#1f2937] rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-pink-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
@@ -258,13 +258,13 @@ export default function LoveInbox({
 
               {/* VOUCHER PHẦN THƯỞNG */}
               {selectedContract.voucherReward && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3">
-                  <div className="text-amber-600 shrink-0">
+                <div className="p-3 bg-pink-50/40 border border-pink-200 rounded-xl flex items-center gap-3">
+                  <div className="text-pink-600 shrink-0">
                     {renderTicketIconSVG('w-8 h-8')}
                   </div>
                   <div>
                     <h5 className="text-xs font-black text-[#1f2937] uppercase">Voucher Đặc Quyền Vy Nhận Được:</h5>
-                    <p className="text-xs font-serif font-black text-amber-700">{selectedContract.voucherReward.title}</p>
+                    <p className="text-xs font-serif font-black text-pink-700">{selectedContract.voucherReward.title}</p>
                     <p className="text-[10.5px] text-gray-500 font-bold leading-normal mt-0.5">{selectedContract.voucherReward.description}</p>
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export default function LoveInbox({
 
                   <div className="text-right shrink-0">
                     <span className="text-[10px] text-gray-400 font-bold block mb-1">Mã Voucher:</span>
-                    <span className="px-2.5 py-1.5 bg-amber-100 border border-[#1f2937] font-mono font-black text-xs rounded-lg text-amber-800 select-all">
+                    <span className="px-2.5 py-1.5 bg-pink-100 border border-[#1f2937] font-mono font-black text-xs rounded-lg text-pink-800 select-all">
                       {voucher.code}
                     </span>
                   </div>

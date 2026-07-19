@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FURNITURE_ITEMS, MATERIAL_ITEMS, DESIGN_CONTRACTS, FurnitureItem, MaterialItem, DesignContract } from '../data/vocabulary';
+import { FURNITURE_ITEMS, MATERIAL_ITEMS, DESIGN_CONTRACTS, FurnitureItem, MaterialItem, DesignContract, HSK_GRAMMAR_RULES } from '../data/vocabulary';
 import RoomEditor, { renderFurnitureSVG } from '../components/RoomEditor';
 import BlueprintQuiz from '../components/BlueprintQuiz';
 import LoveInbox from '../components/LoveInbox';
@@ -156,6 +156,78 @@ function renderClientAvatar(sprite: string, className = 'w-12 h-12') {
           <path d="M 14 22 Q 16 23.5 18 22" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       );
+    case 'tien':
+      return (
+        <svg viewBox="0 0 32 32" className={className}>
+          {/* Short brown hair */}
+          <path d="M 6 13 C 6 6, 26 6, 26 13 Z" fill="#7c2d12" />
+          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
+          {/* Hair bangs */}
+          <path d="M 6 13 Q 16 7 26 13 Q 20 14 18 11 Q 13 15 6 13" fill="#7c2d12" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Flower hair clip */}
+          <circle cx="9" cy="11" r="2" fill="#fbbf24" stroke="#1f2937" strokeWidth="1" />
+          <circle cx="7.5" cy="9.5" r="1.2" fill="#ffffff" />
+          <circle cx="10.5" cy="9.5" r="1.2" fill="#ffffff" />
+          <circle cx="7.5" cy="12.5" r="1.2" fill="#ffffff" />
+          <circle cx="10.5" cy="12.5" r="1.2" fill="#ffffff" />
+          {/* Eyes */}
+          <circle cx="12" cy="17" r="1.2" fill="#1f2937" />
+          <circle cx="20" cy="17" r="1.2" fill="#1f2937" />
+          {/* Blushing cheeks */}
+          <ellipse cx="9" cy="19" rx="1.5" ry="1" fill="#fecdd3" />
+          <ellipse cx="23" cy="19" rx="1.5" ry="1" fill="#fecdd3" />
+          {/* Smile */}
+          <path d="M 14 21 Q 16 22.5 18 21" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case 'ngoc':
+      return (
+        <svg viewBox="0 0 32 32" className={className}>
+          {/* Ponytail extension */}
+          <path d="M 23 11 C 28 8, 30 18, 25 21 C 23 18, 23 13, 23 11 Z" fill="#1e293b" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Head */}
+          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
+          {/* Black hair */}
+          <path d="M 6 13 C 6 6, 26 6, 26 13 Z" fill="#1e293b" />
+          <path d="M 6 13 Q 16 8 26 13 Q 19 13 16 11 Q 12 14 6 13" fill="#1e293b" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Glasses */}
+          <rect x="9" y="14" width="6" height="5" rx="1.5" fill="none" stroke="#1f2937" strokeWidth="2" />
+          <rect x="17" y="14" width="6" height="5" rx="1.5" fill="none" stroke="#1f2937" strokeWidth="2" />
+          <line x1="15" y1="16" x2="17" y2="16" stroke="#1f2937" strokeWidth="2" />
+          {/* Eyes inside glasses */}
+          <circle cx="12" cy="16.5" r="0.8" fill="#1f2937" />
+          <circle cx="20" cy="16.5" r="0.8" fill="#1f2937" />
+          {/* Smile */}
+          <path d="M 14 22 Q 16 23.5 18 22" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case 'vy':
+    case 'lan_vy':
+      return (
+        <svg viewBox="0 0 32 32" className={className}>
+          {/* Long hair background */}
+          <path d="M 6 14 L 6 26 C 6 28, 8 29, 9 29 C 10 27, 9 20, 9 14" fill="#3f2305" />
+          <path d="M 26 14 L 26 26 C 26 28, 24 29, 23 29 C 22 27, 23 20, 23 14" fill="#3f2305" />
+          {/* Head */}
+          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
+          {/* Long dark brown hair */}
+          <path d="M 6 13 C 6 6, 26 6, 26 13 Z" fill="#4a2711" />
+          <path d="M 6 13 Q 16 7 26 13 Q 18 13 16 10 Q 14 13 6 13" fill="#4a2711" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Pink hair bow */}
+          <path d="M 12 7 Q 16 9 20 7 Q 22 5 18 5 Q 16 7 14 5 Q 10 5 12 7" fill="#f43f5e" stroke="#1f2937" strokeWidth="1.5" />
+          <circle cx="16" cy="6" r="2.2" fill="#fda4af" stroke="#1f2937" strokeWidth="1" />
+          {/* Large expressive eyes */}
+          <circle cx="12" cy="17" r="1.5" fill="#1f2937" />
+          <circle cx="20" cy="17" r="1.5" fill="#1f2937" />
+          <circle cx="11.4" cy="16.2" r="0.5" fill="#ffffff" />
+          <circle cx="19.4" cy="16.2" r="0.5" fill="#ffffff" />
+          {/* Blushing cheeks */}
+          <ellipse cx="9.5" cy="19.5" rx="1.5" ry="1" fill="#fda4af" />
+          <ellipse cx="22.5" cy="19.5" rx="1.5" ry="1" fill="#fda4af" />
+          {/* Smile */}
+          <path d="M 14 21.5 Q 16 23 18 21.5" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
     default:
       return (
         <div className="w-10 h-10 rounded-full bg-rose-200 flex items-center justify-center font-bold text-[#1f2937]">
@@ -200,6 +272,9 @@ export default function Home() {
   // Contracts state
   const [currentContract, setCurrentContract] = useState<DesignContract | null>(null);
   const [contractSubmitMsg, setContractSubmitMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Library subtab state
+  const [librarySubTab, setLibrarySubTab] = useState<'vocab' | 'grammar'>('vocab');
 
   // Admin state & functions
   const ADMIN_EMAIL = 'ungnhutkhang53@gmail.com';
@@ -555,7 +630,7 @@ export default function Home() {
   });
 
   return (
-    <main className="min-h-screen bg-[#fdf6e2] text-[#1f2937] font-sans antialiased p-4">
+    <main className="min-h-screen bg-[#fff0f3] text-[#1f2937] font-sans antialiased p-4">
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ */}
       {!user ? (
         <div className="max-w-md mx-auto my-16 bg-[#fffaf0] border-4 border-[#1f2937] rounded-3xl shadow-[4px_4px_0px_#1f2937] overflow-hidden p-8">
@@ -639,8 +714,12 @@ export default function Home() {
           {/* HEADER TRANG CHỦ */}
           <header className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-rose-100 border-2 border-[#1f2937] rounded-full flex items-center justify-center text-rose-500">
-                {renderPaletteIcon('w-7 h-7')}
+              <div className="w-12 h-12 bg-rose-100 border-2 border-[#1f2937] rounded-full overflow-hidden flex items-center justify-center text-rose-500 shrink-0">
+                {user.email.toLowerCase() === LOVE_EMAIL ? (
+                  renderClientAvatar('lan_vy', 'w-10 h-10')
+                ) : (
+                  renderPaletteIcon('w-7 h-7')
+                )}
               </div>
               <div>
                 <h1 className="text-lg font-serif font-black text-[#1f2937] flex items-center gap-2">
@@ -682,7 +761,7 @@ export default function Home() {
                 playSfx('click');
               }}
               className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
-                activeTab === 'studio' ? 'bg-rose-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                activeTab === 'studio' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
               {renderAwardIcon()} Hợp Đồng Thiết Kế
@@ -693,7 +772,7 @@ export default function Home() {
                 playSfx('click');
               }}
               className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
-                activeTab === 'quiz' ? 'bg-rose-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                activeTab === 'quiz' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
               {renderBookIcon()} Bản Vẽ HSK
@@ -704,7 +783,7 @@ export default function Home() {
                 playSfx('click');
               }}
               className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
-                activeTab === 'room' ? 'bg-rose-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                activeTab === 'room' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
               {renderHomeIcon()} Phòng Của Vy
@@ -715,7 +794,7 @@ export default function Home() {
                 playSfx('click');
               }}
               className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
-                activeTab === 'love' ? 'bg-rose-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                activeTab === 'love' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
               {renderMailIcon()} Hòm Thư Tình Yêu
@@ -726,10 +805,10 @@ export default function Home() {
                 playSfx('click');
               }}
               className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 ${
-                activeTab === 'library' ? 'bg-rose-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                activeTab === 'library' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderBookIcon()} Từ điển Vật liệu
+              {renderBookIcon()} Từ điển & Ngữ pháp
             </button>
             {user.email.toLowerCase() === ADMIN_EMAIL && (
               <button
@@ -921,67 +1000,120 @@ export default function Home() {
 
             {/* TAB 5: TỪ ĐIỂN VẬT LIỆU HSK (MATERIALS DICTIONARY) */}
             {activeTab === 'library' && (
-              <div className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6">
+              <div className="bg-[#fff5f6] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6">
                 <h2 className="text-xl font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 flex items-center justify-between">
-                  <span>Từ Điển Vật Liệu & Đồ Đạc HSK</span>
+                  <span>Từ Điển Vật Liệu & Ngữ Pháp HSK 1-2-3</span>
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {hskGroupedFurniture.map((item) => {
-                    const isUnlocked = unlockedItems.includes(item.id);
-                    
-                    return (
-                      <div
-                        key={item.id}
-                        className={`p-3 border-2 border-[#1f2937] rounded-xl flex items-center justify-between transition-all ${
-                          isUnlocked ? 'bg-white shadow-[2px_2px_0px_#1f2937]' : 'bg-gray-50 border-gray-300 opacity-80'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 border-2 border-[#1f2937] bg-[#fefaf0] rounded-lg p-1 flex items-center justify-center shrink-0">
-                            {renderFurnitureSVG(item.id, 0, 'w-10 h-10')}
+                {/* Sub-tab selection */}
+                <div className="flex gap-3 mb-4">
+                  <button
+                    onClick={() => { setLibrarySubTab('vocab'); playSfx('click'); }}
+                    className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
+                      librarySubTab === 'vocab' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                    }`}
+                  >
+                    Từ điển Từ vựng
+                  </button>
+                  <button
+                    onClick={() => { setLibrarySubTab('grammar'); playSfx('click'); }}
+                    className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
+                      librarySubTab === 'grammar' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                    }`}
+                  >
+                    Sổ tay Ngữ pháp
+                  </button>
+                </div>
+
+                {librarySubTab === 'vocab' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {hskGroupedFurniture.map((item) => {
+                      const isUnlocked = unlockedItems.includes(item.id);
+                      
+                      return (
+                        <div
+                          key={item.id}
+                          className={`p-3 border-2 border-[#1f2937] rounded-xl flex items-center justify-between transition-all ${
+                            isUnlocked ? 'bg-white shadow-[2px_2px_0px_#1f2937]' : 'bg-pink-50/40 border-pink-200 opacity-80'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 border-2 border-[#1f2937] bg-[#fff5f6] rounded-lg p-1 flex items-center justify-center shrink-0">
+                              {renderFurnitureSVG(item.id, 0, 'w-10 h-10')}
+                            </div>
+                            <div>
+                              <h4 className="text-xs font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                                <span>{item.nameVietnamese}</span>
+                                <span className="text-[9px] bg-pink-100 text-pink-800 border border-pink-200 px-1.5 py-0.2 rounded font-sans font-black">
+                                  HSK {item.hsk}
+                                </span>
+                              </h4>
+                              <p className="text-sm font-black text-pink-600 font-serif flex items-center gap-1.5">
+                                <span>{item.nameChinese}</span>
+                                <button
+                                  onClick={() => handlePlayTTS(item.nameChinese)}
+                                  className="p-0.5 bg-pink-50 hover:bg-pink-100 border border-gray-300 rounded cursor-pointer"
+                                >
+                                  {renderAudioIcon('w-3 h-3 text-[#1f2937]')}
+                                </button>
+                              </p>
+                              <p className="text-[10px] text-gray-400 font-bold font-mono">{item.namePinyin}</p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="text-xs font-serif font-black text-[#1f2937] flex items-center gap-1.5">
-                              <span>{item.nameVietnamese}</span>
-                              <span className="text-[9px] bg-rose-100 text-rose-800 border border-rose-200 px-1.5 py-0.2 rounded font-sans font-black">
-                                HSK {item.hsk}
+
+                          <div className="flex flex-col gap-1.5">
+                            {isUnlocked ? (
+                              <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 rounded font-black text-center">
+                                Sở Hữu
                               </span>
-                            </h4>
-                            <p className="text-sm font-black text-rose-600 font-serif flex items-center gap-1.5">
-                              <span>{item.nameChinese}</span>
-                              <button
-                                onClick={() => handlePlayTTS(item.nameChinese)}
-                                className="p-0.5 bg-amber-50 hover:bg-amber-100 border border-gray-300 rounded cursor-pointer"
-                              >
-                                {renderAudioIcon('w-3 h-3 text-[#1f2937]')}
-                              </button>
-                            </p>
-                            <p className="text-[10px] text-gray-400 font-bold font-mono">{item.namePinyin}</p>
+                            ) : (
+                              <span className="text-[10px] bg-gray-200 text-gray-500 border border-gray-300 px-1.5 py-0.5 rounded font-black text-center">
+                                Chưa Mở
+                              </span>
+                            )}
+                            <button
+                              onClick={() => handleExplainWord(item.nameChinese)}
+                              className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center gap-1 shadow-[1px_1px_0px_#1f2937]"
+                            >
+                              {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI
+                            </button>
                           </div>
                         </div>
-
-                        <div className="flex flex-col gap-1.5">
-                          {isUnlocked ? (
-                            <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 rounded font-black text-center">
-                              Sở Hữu
-                            </span>
-                          ) : (
-                            <span className="text-[10px] bg-gray-200 text-gray-500 border border-gray-300 px-1.5 py-0.5 rounded font-black text-center">
-                              Chưa Mở
-                            </span>
-                          )}
-                          <button
-                            onClick={() => handleExplainWord(item.nameChinese)}
-                            className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-[#1f2937] text-[9.5px] font-black uppercase rounded cursor-pointer flex items-center gap-1 shadow-[1px_1px_0px_#1f2937]"
-                          >
-                            {renderAIIcon('w-3 h-3 text-blue-800')} Hỏi AI
-                          </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {HSK_GRAMMAR_RULES.map((rule) => (
+                      <div key={rule.id} className="p-4 bg-white border-2 border-[#1f2937] rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-3">
+                        <div className="flex justify-between items-center border-b border-dashed border-pink-200 pb-2">
+                          <h4 className="text-xs font-serif font-black text-pink-600">{rule.title}</h4>
+                          <span className="text-[9px] bg-pink-100 text-pink-800 border border-pink-200 px-2 py-0.5 rounded font-black font-sans">
+                            HSK {rule.level}
+                          </span>
+                        </div>
+                        <p className="text-[11.5px] font-black text-gray-500">
+                          Cấu trúc: <code className="bg-pink-50 text-pink-700 px-1.5 py-0.5 rounded font-mono font-bold">{rule.structure}</code>
+                        </p>
+                        <p className="text-xs font-bold text-[#1f2937] leading-relaxed">{rule.explanation}</p>
+                        
+                        <div className="p-2.5 bg-pink-50/20 rounded-lg border border-pink-100 space-y-1">
+                          <p className="text-sm font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                            <span>{rule.exampleChinese}</span>
+                            <button
+                              onClick={() => handlePlayTTS(rule.exampleChinese)}
+                              className="p-0.5 bg-white border border-gray-300 rounded cursor-pointer"
+                            >
+                              {renderAudioIcon('w-3 h-3 text-[#1f2937]')}
+                            </button>
+                          </p>
+                          <p className="text-[10px] text-blue-600 font-bold font-sans">{rule.examplePinyin}</p>
+                          <p className="text-[10.5px] text-gray-500 font-bold">Dịch nghĩa: {rule.exampleVietnamese}</p>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

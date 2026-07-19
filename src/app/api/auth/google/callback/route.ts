@@ -35,21 +35,45 @@ export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
   const returnedState = request.nextUrl.searchParams.get('state');
   const savedState = readOAuthState(request.cookies.get(GOOGLE_OAUTH_COOKIE)?.value, returnedState);
-  if (!code || !savedState) return authError(request, 'invalid_oauth_state');
+  
+  console.log("=== GOOGLE OAUTH CALLBACK ===");
+  console.log("Code received:", code ? "Yes (length: " + code.length + ")" : "No");
+  console.log("Returned State:", returnedState);
+  console.log("Saved State exists:", !!savedState);
+  
+  if (!code || !savedState) {
+    console.error("Callback Validation Failed! Missing code or invalid state.");
+    return authError(request, 'invalid_oauth_state');
+  }
 
   try {
     const { client, clientId, redirectUri } = getGoogleOAuthClient(request.nextUrl.origin);
+    console.log("Token exchange redirect_uri:", redirectUri);
+    
     const { tokens } = await client.getToken({ code, codeVerifier: savedState.codeVerifier, redirect_uri: redirectUri });
+    console.log("Tokens exchange successful. Has id_token:", !!tokens.id_token);
+    
     if (!tokens.id_token) return authError(request, 'missing_id_token');
 
     const ticket = await client.verifyIdToken({ idToken: tokens.id_token, audience: clientId });
     const profile = ticket.getPayload();
     const email = profile?.email?.trim().toLowerCase();
-    if (!profile?.sub || !email || !profile.email_verified) return authError(request, 'unverified_google_account');
+    
+    console.log("Verified Profile Email:", email);
+    console.log("Profile Name:", profile?.name);
+    
+    if (!profile?.sub || !email || !profile.email_verified) {
+      console.error("Profile validation failed. email_verified:", profile?.email_verified);
+      return authError(request, 'unverified_google_account');
+    }
 
     const existingGoogleUser = await prisma.user.findUnique({ where: { googleSub: profile.sub } });
     const existingEmailUser = existingGoogleUser ?? await prisma.user.findUnique({ where: { email } });
+    
+    console.log("User DB lookup results. Google Sub User exists:", !!existingGoogleUser, "Email User exists:", !!existingEmailUser);
+    
     if (existingEmailUser?.googleSub && existingEmailUser.googleSub !== profile.sub) {
+      console.error("Account link conflict for email:", email);
       return authError(request, 'account_link_conflict');
     }
 

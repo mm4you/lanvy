@@ -2,13 +2,13 @@ import { prisma } from '@/lib/prisma';
 import { getSessionUserId } from '@/lib/session';
 import { NextResponse } from 'next/server';
 
-export const ADMIN_EMAIL = 'ungnhutkhang53@gmail.com';
+export const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com', 'nguyenthilanvy12a2@gmail.com'];
 
 export async function requireAdmin(request: Request) {
   const userId = getSessionUserId(request);
   if (!userId) return null;
   return prisma.user.findFirst({
-    where: { id: userId, email: ADMIN_EMAIL },
+    where: { id: userId, email: { in: ADMIN_EMAILS } },
     select: { id: true, username: true, email: true },
   });
 }

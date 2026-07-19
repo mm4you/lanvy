@@ -277,7 +277,7 @@ export default function Home() {
   const [librarySubTab, setLibrarySubTab] = useState<'vocab' | 'grammar'>('vocab');
 
   // Admin state & functions
-  const ADMIN_EMAIL = 'ungnhutkhang53@gmail.com';
+  const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com', 'nguyenthilanvy12a2@gmail.com'];
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [adminLoading, setAdminLoading] = useState(false);
   const [selectedUserForVoucher, setSelectedUserForVoucher] = useState<string | null>(null);
@@ -810,7 +810,7 @@ export default function Home() {
             >
               {renderBookIcon()} Từ điển & Ngữ pháp
             </button>
-            {user.email.toLowerCase() === ADMIN_EMAIL && (
+            {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
               <button
                 onClick={() => {
                   setActiveTab('admin');
@@ -1117,11 +1117,10 @@ export default function Home() {
               </div>
             )}
 
-            {/* TAB 6: BẢNG ĐIỀU KHIỂN ADMIN CỦA KHÁCH KHANG */}
-            {activeTab === 'admin' && user.email.toLowerCase() === ADMIN_EMAIL && (
+            {activeTab === 'admin' && ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
               <div className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6">
                 <h2 className="text-xl font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 flex justify-between items-center">
-                  <span>Bảng Điều Khiển Admin Của Khang</span>
+                  <span>Bảng Điều Khiển Admin (Khang & Vy)</span>
                   <button
                     onClick={fetchAdminLogs}
                     className="px-3 py-1 bg-white hover:bg-gray-100 border border-[#1f2937] rounded-lg text-xs font-black cursor-pointer transition-all"

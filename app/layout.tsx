@@ -13,8 +13,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Tiệm Trà Sữa Của Lan Vy - Chinese Review Game",
-  description: "Game 2D Pixel ôn tập tiếng Trung ngọt ngào dành riêng cho Bà chủ Lan Vy.",
+  title: "Tiệm Thiết Kế Của Vy - Học Tiếng Trung HSK",
+  description: "Atelier thiết kế nội thất pixel và học tiếng Trung HSK 1-3 ngọt ngào dành riêng cho Vy.",
 };
 
 export default function RootLayout({

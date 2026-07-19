@@ -458,16 +458,39 @@ export default function Home() {
     }
   }, [wallpaper, floorType, user]);
 
-  // Auth checking on mount
+  // Auth checking on mount (checks session cookie first, falls back to localStorage)
   useEffect(() => {
-    const savedUserId = localStorage.getItem('boba_game_user_id');
-    const savedUsername = localStorage.getItem('boba_game_username');
-    const savedEmail = localStorage.getItem('boba_game_email');
-    if (savedUserId && savedUsername) {
-      const userData = { id: savedUserId, username: savedUsername, email: savedEmail || '' };
-      setUser(userData);
-      loadProgress(userData.id);
-    }
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/session');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.user) {
+            const userData = { id: data.user.id, username: data.user.username, email: data.user.email || '' };
+            setUser(userData);
+            localStorage.setItem('boba_game_user_id', userData.id);
+            localStorage.setItem('boba_game_username', userData.username);
+            localStorage.setItem('boba_game_email', userData.email);
+            loadProgress(userData.id);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Session check failed:', err);
+      }
+
+      // Fallback to localStorage if cookie session check fails
+      const savedUserId = localStorage.getItem('boba_game_user_id');
+      const savedUsername = localStorage.getItem('boba_game_username');
+      const savedEmail = localStorage.getItem('boba_game_email');
+      if (savedUserId && savedUsername) {
+        const userData = { id: savedUserId, username: savedUsername, email: savedEmail || '' };
+        setUser(userData);
+        loadProgress(userData.id);
+      }
+    };
+
+    checkSession();
   }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -508,13 +531,16 @@ export default function Home() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem('boba_game_user_id');
     localStorage.removeItem('boba_game_username');
     localStorage.removeItem('boba_game_email');
     setUser(null);
     setPlacedItems([]);
     setUnlockedVouchers([]);
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+    } catch (e) {}
   };
 
   // AI Word Explainer trigger

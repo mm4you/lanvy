@@ -61,6 +61,6 @@ export function getGoogleOAuthClient(origin: string) {
   return {
     clientId,
     redirectUri,
-    client: new OAuth2Client({ clientId, clientSecret, redirectUri }),
+    client: new OAuth2Client(clientId, clientSecret, redirectUri),
   };
 }

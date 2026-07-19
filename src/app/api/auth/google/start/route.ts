@@ -10,7 +10,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/?auth_error=rate_limited', request.url));
     }
 
-    const { client, redirectUri } = getGoogleOAuthClient(request.nextUrl.origin);
+    const { client, clientId, redirectUri } = getGoogleOAuthClient(request.nextUrl.origin);
+    console.log("=== GOOGLE OAUTH START ===");
+    console.log("Client ID:", clientId);
+    console.log("Redirect URI:", redirectUri);
+    console.log("==========================");
     const { codeVerifier, codeChallenge } = await client.generateCodeVerifierAsync();
     const { state, cookieValue } = createOAuthState(codeVerifier);
     const authorizationUrl = client.generateAuthUrl({

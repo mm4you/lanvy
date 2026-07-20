@@ -1026,7 +1026,7 @@ export default function Home() {
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div className="max-w-6xl mx-auto space-y-6 pb-20 md:pb-0">
           {/* HEADER TRANG CHỦ */}
           <header className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -1101,14 +1101,14 @@ export default function Home() {
             </div>
           </header>
 
-          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (Tối ưu cho cả Điện thoại & Máy tính) */}
-          <nav className="grid grid-cols-3 md:flex md:flex-wrap gap-2 w-full">
+          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (Tối ưu cho Máy tính Desktop) */}
+          <nav className="hidden md:flex md:flex-wrap gap-2 w-full">
             <button
               onClick={() => {
                 setActiveTab('studio');
                 playSfx('click');
               }}
-              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'studio' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
@@ -1120,7 +1120,7 @@ export default function Home() {
                 setActiveTab('quiz');
                 playSfx('click');
               }}
-              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'quiz' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
@@ -1132,7 +1132,7 @@ export default function Home() {
                 setActiveTab('room');
                 playSfx('click');
               }}
-              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'room' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
@@ -1144,7 +1144,7 @@ export default function Home() {
                 setActiveTab('love');
                 playSfx('click');
               }}
-              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'love' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
@@ -1156,7 +1156,7 @@ export default function Home() {
                 setActiveTab('library');
                 playSfx('click');
               }}
-              className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'library' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
               }`}
             >
@@ -1170,12 +1170,60 @@ export default function Home() {
                   fetchAdminLogs();
                   playSfx('click');
                 }}
-                className={`px-2.5 py-2 sm:px-4 sm:py-2 border-2 border-[#1f2937] font-serif font-black text-[10px] sm:text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+                className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === 'admin' ? 'bg-purple-600 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
                 }`}
               >
                 {activeTab === 'admin' ? renderAIIcon('w-4 h-4 text-white') : renderAIIcon('w-4 h-4 text-[#1f2937]')}
                 <span className="truncate">Admin</span>
+              </button>
+            )}
+          </nav>
+
+          {/* STICKY BOTTOM NAVIGATION BAR CHO MOBILE (< 768px) */}
+          <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur border-t-4 border-[#1f2937] px-2 py-1.5 flex justify-around items-center md:hidden shadow-lg">
+            <button
+              onClick={() => { setActiveTab('studio'); playSfx('click'); }}
+              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'studio' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+            >
+              {renderAwardIcon('w-5 h-5')}
+              <span className="text-[10px] mt-0.5">Studio</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
+              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'quiz' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+            >
+              {renderBookIcon('w-5 h-5')}
+              <span className="text-[10px] mt-0.5">Quiz</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab('room'); playSfx('click'); }}
+              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'room' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+            >
+              {renderHomeIcon('w-5 h-5')}
+              <span className="text-[10px] mt-0.5">Phòng</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab('love'); playSfx('click'); }}
+              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'love' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+            >
+              {renderMailIcon('w-5 h-5')}
+              <span className="text-[10px] mt-0.5">{isVy ? 'Thư Tình' : 'Voucher'}</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab('library'); playSfx('click'); }}
+              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'library' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+            >
+              {renderBookIcon('w-5 h-5')}
+              <span className="text-[10px] mt-0.5">Thư Viện</span>
+            </button>
+            {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
+              <button
+                onClick={() => { setActiveTab('admin'); fetchAdminLogs(); playSfx('click'); }}
+                className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'admin' ? 'text-purple-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+              >
+                {renderAIIcon('w-5 h-5')}
+                <span className="text-[10px] mt-0.5">Admin</span>
               </button>
             )}
           </nav>

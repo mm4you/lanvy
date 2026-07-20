@@ -1125,48 +1125,45 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Chỉ số tài khoản */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <button
-                onClick={toggleDarkMode}
-                className={`px-3 py-1.5 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
-                  isDarkMode ? 'bg-indigo-600 text-white' : 'bg-amber-100 text-amber-900'
-                }`}
-                title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
-              >
-                {isDarkMode ? 'Ban Ngày' : 'Ban Đêm'}
-              </button>
-              <button
-                onClick={handleInstallPWA}
-                className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] text-xs font-serif font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
-                title="Thêm ứng dụng vào màn hình chính điện thoại / máy tính"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                Cài App
-              </button>
-              <button
-                onClick={() => {
-                  setShowArchitectModal(true);
-                  playSfx('click');
-                }}
-                className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-[#1f2937] border-2 border-[#1f2937] text-xs font-serif font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
-              >
-                Sổ Tay Kiến Trúc HSK
-              </button>
-              <div className="bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono flex items-center">
-                {renderCoinIcon()} Xu: {coins}
+            {/* Chỉ số tài khoản & Thao tác */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              {/* Chỉ số Xu & Điểm */}
+              <div className="flex items-center gap-2">
+                <div className="bg-amber-100 text-amber-900 border-2 border-[#1f2937] px-3 py-1.5 rounded-xl text-xs font-black font-mono flex items-center shadow-[2px_2px_0px_#1f2937]">
+                  {renderCoinIcon()} Xu: {coins}
+                </div>
+                <div className="bg-blue-100 text-blue-900 border-2 border-[#1f2937] px-3 py-1.5 rounded-xl text-xs font-black font-mono flex items-center shadow-[2px_2px_0px_#1f2937]">
+                  {renderAwardIcon('w-4 h-4 text-blue-600 inline mr-1')} Điểm: {score}
+                </div>
               </div>
-              <div className="bg-blue-100 text-blue-800 border border-blue-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono flex items-center">
-                {renderAwardIcon('w-4 h-4 text-blue-600 inline mr-1')} Điểm: {score}
+
+              {/* Các nút thao tác */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={toggleDarkMode}
+                  className={`px-3 py-1.5 border-2 border-[#1f2937] text-xs font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
+                    isDarkMode ? 'bg-indigo-600 text-white' : 'bg-amber-100 text-amber-900'
+                  }`}
+                  title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
+                >
+                  {isDarkMode ? 'Ban Ngày' : 'Ban Đêm'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowArchitectModal(true);
+                    playSfx('click');
+                  }}
+                  className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-[#1f2937] border-2 border-[#1f2937] text-xs font-serif font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
+                >
+                  Sổ Tay Specs
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border-2 border-[#1f2937] text-xs font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer text-[#1f2937]"
+                >
+                  {renderSignoutIcon()} Đăng Xuất
+                </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer text-[#1f2937]"
-              >
-                {renderSignoutIcon()} Đăng Xuất
-              </button>
             </div>
           </header>
 

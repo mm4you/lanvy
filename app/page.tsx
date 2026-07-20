@@ -48,6 +48,23 @@ function renderCoinIcon(className = 'w-4 h-4 text-amber-500 inline mr-1') {
   );
 }
 
+function renderSunIcon(className = 'w-4 h-4 text-amber-400 fill-current') {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+      <circle cx="12" cy="12" r="4" fill="currentColor" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 16v2m10-10h-2M4 12H2m16.95-6.95l-1.414 1.414M6.464 17.536l-1.414 1.414m14.14 0l-1.414-1.414M6.464 6.464L5.05 5.05" />
+    </svg>
+  );
+}
+
+function renderMoonIcon(className = 'w-4 h-4 text-indigo-300 fill-current') {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    </svg>
+  );
+}
+
 function renderClipboardIcon(className = 'w-5 h-5 text-gray-500 inline mr-1') {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1141,12 +1158,13 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={toggleDarkMode}
-                  className={`px-3 py-1.5 border-2 border-[#1f2937] text-xs font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
-                    isDarkMode ? 'bg-indigo-600 text-white' : 'bg-amber-100 text-amber-900'
+                  className={`px-3.5 py-1.5 border-2 border-[#1f2937] text-xs font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
+                    isDarkMode ? 'bg-slate-800 text-indigo-200 border-indigo-400' : 'bg-amber-100 text-amber-950 border-amber-300'
                   }`}
                   title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
                 >
-                  {isDarkMode ? 'Ban Ngày' : 'Ban Đêm'}
+                  {isDarkMode ? renderSunIcon('w-4 h-4 text-amber-400') : renderMoonIcon('w-4 h-4 text-indigo-600')}
+                  <span>{isDarkMode ? 'Ban Ngày' : 'Ban Đêm'}</span>
                 </button>
                 <button
                   onClick={() => {

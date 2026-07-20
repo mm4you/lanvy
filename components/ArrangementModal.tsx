@@ -20,6 +20,30 @@ interface ArrangementModalProps {
   playSfx: (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => void;
 }
 
+function renderStarSVG(className = 'w-5 h-5 text-amber-400 fill-current inline') {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  );
+}
+
+function renderRotateSVG(className = 'w-3.5 h-3.5 inline') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3" />
+    </svg>
+  );
+}
+
+function renderCheckSVG(className = 'w-4 h-4 inline') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+
 export function ArrangementModal({
   contract,
   selectedItemIds,
@@ -29,12 +53,10 @@ export function ArrangementModal({
 }: ArrangementModalProps) {
   const GRID_SIZE = 6;
 
-  // Lấy chi tiết thông tin các món đồ được chọn
   const furnitureList = selectedItemIds
     .map(id => FURNITURE_ITEMS.find(item => item.id === id))
     .filter((item): item is FurnitureItem => item !== undefined);
 
-  // Khởi tạo vị trí đặt ban đầu rải rác trên lưới phòng
   const [placedItems, setPlacedItems] = useState<PlacedArrangementItem[]>(() => {
     return furnitureList.map((item, index) => {
       const x = (index * 2) % GRID_SIZE;
@@ -57,7 +79,6 @@ export function ArrangementModal({
     feedbackMsg: string;
   } | null>(null);
 
-  // Xoay đồ đạc đang được chọn
   const handleRotate = (instanceId: string) => {
     playSfx('flip');
     setPlacedItems(prev =>
@@ -71,7 +92,6 @@ export function ArrangementModal({
     );
   };
 
-  // Di chuyển đồ đạc tới ô lưới (grid cell)
   const handleCellClick = (targetX: number, targetY: number) => {
     if (!selectedInstanceId) return;
 
@@ -81,7 +101,6 @@ export function ArrangementModal({
     const furnitureDef = FURNITURE_ITEMS.find(f => f.id === itemObj.itemTypeId);
     if (!furnitureDef) return;
 
-    // Giới hạn trong lưới GRID_SIZE
     const newX = Math.max(0, Math.min(GRID_SIZE - furnitureDef.width, targetX));
     const newY = Math.max(0, Math.min(GRID_SIZE - furnitureDef.height, targetY));
 
@@ -93,11 +112,9 @@ export function ArrangementModal({
     );
   };
 
-  // Thuật toán chấm điểm thẩm mỹ (Aesthetic Rating)
   const evaluateAesthetics = () => {
     let scorePoints = 0;
 
-    // 1. Kiểm tra không bị chồng đè (No overlaps)
     const occupiedCells = new Set<string>();
     let hasOverlap = false;
 
@@ -118,9 +135,8 @@ export function ArrangementModal({
       }
     });
 
-    if (!hasOverlap) scorePoints += 2; // Thưởng 2 điểm nếu không bị đè đồ
+    if (!hasOverlap) scorePoints += 2;
 
-    // 2. Kê giường / tủ / bàn sát tường (Wall alignment)
     let wallAligned = false;
     placedItems.forEach(item => {
       const def = FURNITURE_ITEMS.find(f => f.id === item.itemTypeId);
@@ -132,7 +148,6 @@ export function ArrangementModal({
     });
     if (wallAligned) scorePoints += 1;
 
-    // 3. Đồ trang trí (cây/đèn/thảm) được xếp gần giường/bàn/sofa
     let goodDecorProximity = false;
     const decors = placedItems.filter(i => {
       const cat = FURNITURE_ITEMS.find(f => f.id === i.itemTypeId)?.category;
@@ -155,17 +170,15 @@ export function ArrangementModal({
     }
     if (goodDecorProximity) scorePoints += 1;
 
-    // 4. Phân bổ không gian gọn gàng
     if (placedItems.length > 1) {
       const xs = placedItems.map(i => i.x);
       const minX = Math.min(...xs);
       const maxX = Math.max(...xs);
-      if (maxX - minX >= 1) scorePoints += 1; // Đồ đạc được dàn trải tự nhiên
+      if (maxX - minX >= 1) scorePoints += 1;
     } else {
       scorePoints += 1;
     }
 
-    // Quy đổi điểm sang 1 - 3 sao
     let stars = 1;
     if (scorePoints >= 4) stars = 3;
     else if (scorePoints >= 2) stars = 2;
@@ -199,7 +212,7 @@ export function ArrangementModal({
               Bản vẽ phác thảo 2D
             </span>
             <h2 className="text-lg font-serif font-black text-[#1f2937] mt-1">
-              Sắp Xếp Nội Thất Cho Khách Hàng {contract.clientName} 🎨
+              Sắp Xếp Nội Thất Cho Khách Hàng {contract.clientName}
             </h2>
           </div>
           <button
@@ -212,7 +225,7 @@ export function ArrangementModal({
 
         {/* Hướng dẫn ngắn */}
         <p className="text-xs text-amber-800 font-medium mb-4 bg-amber-100/70 p-2.5 rounded-xl border border-amber-300/60">
-          💡 <b>Vy ơi:</b> Hãy nhấp chọn món đồ ở dưới, sau đó nhấp vào vị trí trong phòng để sắp xếp gọn gàng và đẹp mắt nhé. Bố trí càng hài hòa thì khách hàng càng thích và thưởng thêm nhiều Xu!
+          <b>Hướng dẫn:</b> Hãy nhấp chọn món đồ ở dưới, sau đó nhấp vào vị trí trong phòng để sắp xếp gọn gàng và đẹp mắt nhé. Bố trí càng hài hòa thì khách hàng càng thích và thưởng thêm nhiều Xu!
         </p>
 
         {/* Khu vực phòng 2D Canvas Lưới 6x6 */}
@@ -271,10 +284,10 @@ export function ArrangementModal({
                       e.stopPropagation();
                       handleRotate(item.instanceId);
                     }}
-                    className="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full p-1 shadow-md text-[10px] font-black z-30"
+                    className="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full p-1 shadow-md text-[10px] font-black z-30 flex items-center justify-center"
                     title="Xoay 90 độ"
                   >
-                    🔄
+                    {renderRotateSVG()}
                   </button>
                 )}
               </div>
@@ -310,10 +323,10 @@ export function ArrangementModal({
                         e.stopPropagation();
                         handleRotate(item.instanceId);
                       }}
-                      className="bg-white/30 hover:bg-white/50 rounded-full px-1.5 py-0.5 text-[10px]"
+                      className="bg-white/30 hover:bg-white/50 rounded-full px-1.5 py-0.5 text-[10px] flex items-center gap-1"
                       title="Xoay đồ đạc"
                     >
-                      🔄 Xoay
+                      {renderRotateSVG()} Xoay
                     </span>
                   )}
                 </button>
@@ -325,18 +338,18 @@ export function ArrangementModal({
             onClick={evaluateAesthetics}
             className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-wide rounded-xl border-2 border-emerald-700 shadow-md active:translate-y-0.5 transition whitespace-nowrap flex items-center gap-1.5"
           >
-            <span>✨</span> Đánh Giá & Hoàn Thành
+            {renderCheckSVG()} Đánh Giá & Hoàn Thành
           </button>
         </div>
 
-        {/* Overlay Kết Quả Đánh Giá Thẩm Mỹ (Khi bấm Hoàn Thành) */}
+        {/* Overlay Kết Quả Đánh Giá Thẩm Mỹ */}
         {evalResult && (
           <div className="absolute inset-0 bg-amber-950/80 backdrop-blur-md flex items-center justify-center p-6 z-50 animate-pop-in">
             <div className="bg-[#fffbeb] border-4 border-amber-400 rounded-3xl p-6 max-w-md w-full text-center shadow-2xl">
-              <div className="text-4xl mb-2">
+              <div className="flex justify-center items-center gap-1 mb-2">
                 {Array.from({ length: evalResult.stars }).map((_, i) => (
                   <span key={i} className="inline-block animate-bounce" style={{ animationDelay: `${i * 150}ms` }}>
-                    ⭐️
+                    {renderStarSVG('w-8 h-8 text-amber-400 fill-current')}
                   </span>
                 ))}
               </div>
@@ -353,16 +366,15 @@ export function ArrangementModal({
                 "{evalResult.feedbackMsg}"
               </p>
 
-              {/* Chi tiết phần thưởng */}
               <div className="bg-white p-3 rounded-2xl border-2 border-amber-200 mb-5 text-xs text-left space-y-1.5 font-bold">
                 <div className="flex justify-between text-gray-700">
                   <span>Xu hợp đồng cơ bản:</span>
                   <span>+{contract.rewardCoins} Xu</span>
                 </div>
                 {evalResult.bonusCoins > 0 && (
-                  <div className="flex justify-between text-emerald-600 font-black">
+                  <div className="flex justify-between text-emerald-600 font-black items-center">
                     <span>Bonus Thẩm Mỹ ({evalResult.stars === 3 ? '+50%' : '+25%'}):</span>
-                    <span>+{evalResult.bonusCoins} Xu ⭐</span>
+                    <span className="flex items-center gap-1">+{evalResult.bonusCoins} Xu {renderStarSVG('w-3.5 h-3.5 text-amber-400 fill-current')}</span>
                   </div>
                 )}
                 <div className="border-t border-gray-200 pt-1.5 flex justify-between text-amber-900 font-black text-sm">
@@ -380,9 +392,9 @@ export function ArrangementModal({
                     evalResult.feedbackMsg
                   );
                 }}
-                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-sm uppercase tracking-wider rounded-2xl border-2 border-amber-700 shadow-lg active:scale-95 transition"
+                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-sm uppercase tracking-wider rounded-2xl border-2 border-amber-700 shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5"
               >
-                🎉 Nhận Thưởng & Đóng
+                {renderCheckSVG()} Nhận Thưởng & Đóng
               </button>
             </div>
           </div>

@@ -35,9 +35,10 @@ function renderSparklesIcon(className = 'w-5 h-5') {
   );
 }
 
-function renderBookOpenIcon(className = 'w-5 h-5') {
+function renderBookOpenIcon(className = 'w-5 h-5 text-pink-500') {
+  const combinedClass = className.includes('w-') ? className : `w-5 h-5 ${className}`;
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <svg className={combinedClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
     </svg>
   );
@@ -214,6 +215,72 @@ export default function BlueprintQuiz({
     }
   };
 
+  const generateLocalCustomQuestions = (theme: string) => {
+    const t = theme.trim();
+    return [
+      {
+        chinese: `我想去${t}`,
+        pinyin: `Wǒ xiǎng qù ${t}`,
+        translation: `Tôi muốn đi ${t}`,
+        options: [
+          `Tôi muốn đi ${t}`,
+          `Tôi không thích ${t}`,
+          `Hôm nay trời rất ${t}`,
+          `Bạn có ${t} không?`
+        ],
+        explanation: `Mẫu câu "我想去..." dùng để diễn đạt mong muốn đến đâu hoặc làm gì đó liên quan tới ${t}.`
+      },
+      {
+        chinese: `一起去${t}吧！`,
+        pinyin: `Yìqǐ qù ${t} ba!`,
+        translation: `Cùng đi ${t} nhé!`,
+        options: [
+          `Cùng đi ${t} nhé!`,
+          `Tôi vừa đi ${t} về`,
+          `Ngày mai không đi ${t}`,
+          `${t} rất đắt tiền`
+        ],
+        explanation: `Mẫu câu "一起...吧" là lời rủ rê cực kỳ thân thiện để cùng làm điều gì đó!`
+      },
+      {
+        chinese: `${t}非常有趣`,
+        pinyin: `${t} fēicháng yǒuqù`,
+        translation: `${t} rất thú vị`,
+        options: [
+          `${t} rất thú vị`,
+          `${t} rất chán`,
+          `${t} quá khó`,
+          `${t} ở rất xa`
+        ],
+        explanation: `"非常" (fēicháng) nghĩa là rất, cực kỳ; "有趣" (yǒuqù) có nghĩa là thú vị.`
+      },
+      {
+        chinese: `你喜欢${t}吗？`,
+        pinyin: `Nǐ xǐhuān ${t} ma?`,
+        translation: `Bạn có thích ${t} không?`,
+        options: [
+          `Bạn có thích ${t} không?`,
+          `Bạn đã đi ${t} chưa?`,
+          `Khi nào bạn đi ${t}?`,
+          `Ai muốn đi ${t}?`
+        ],
+        explanation: `Mẫu câu hỏi ngỏ "喜欢...吗" là cấu trúc hỏi sở thích cơ bản và thông dụng nhất HSK.`
+      },
+      {
+        chinese: `今天我们${t}`,
+        pinyin: `Jīntiān wǒmen ${t}`,
+        translation: `Hôm nay chúng ta ${t}`,
+        options: [
+          `Hôm nay chúng ta ${t}`,
+          `Ngày mai chúng ta ${t}`,
+          `Hôm qua họ đã ${t}`,
+          `Tuần sau anh ấy ${t}`
+        ],
+        explanation: `"今天" (jīntiān) là hôm nay, "我们" (wǒmen) là chúng ta.`
+      }
+    ];
+  };
+
   const startCustomQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customTheme.trim() || customLoading) return;
@@ -223,38 +290,45 @@ export default function BlueprintQuiz({
     playSfx('click');
 
     try {
-      const res = await fetch('/api/ai/quiz/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ theme: customTheme, hskLevel: 1 })
-      });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.questions)) {
-        setCustomQuestions(data.questions);
-        setCustomQuestionIndex(0);
-        
-        const q = data.questions[0];
-        setCurrentQuestion({
-          type: 'translate',
-          item: { id: 'custom_vocab', nameChinese: q.chinese, namePinyin: q.pinyin, nameVietnamese: q.translation, hskLevel: 1 },
-          questionText: `Dịch nghĩa chính xác của từ/câu: "${q.chinese}"`,
-          chinese: q.chinese,
-          pinyin: q.pinyin,
-          translation: q.translation,
-          hskLevel: 1,
-          options: q.options,
-          correctAnswer: q.translation,
-          explanation: q.explanation
-        } as any);
-        
-        setSelectedAnswer(null);
-        setIsAnswered(false);
-        playSfx('perfect');
-      } else {
-        throw new Error(data.error || 'Lỗi tạo câu hỏi từ AI.');
+      let questionsList: any[] = [];
+      try {
+        const res = await fetch('/api/ai/quiz/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ theme: customTheme, hskLevel: 1 })
+        });
+        const data = await res.json();
+        if (data.success && Array.isArray(data.questions) && data.questions.length > 0) {
+          questionsList = data.questions;
+        } else {
+          questionsList = generateLocalCustomQuestions(customTheme);
+        }
+      } catch (e) {
+        questionsList = generateLocalCustomQuestions(customTheme);
       }
+
+      setCustomQuestions(questionsList);
+      setCustomQuestionIndex(0);
+      
+      const q = questionsList[0];
+      setCurrentQuestion({
+        type: 'translate',
+        item: { id: 'custom_vocab', nameChinese: q.chinese, namePinyin: q.pinyin, nameVietnamese: q.translation, hskLevel: 1 },
+        questionText: `Dịch nghĩa chính xác của từ/câu: "${q.chinese}"`,
+        chinese: q.chinese,
+        pinyin: q.pinyin,
+        translation: q.translation,
+        hskLevel: 1,
+        options: q.options,
+        correctAnswer: q.translation,
+        explanation: q.explanation
+      } as any);
+      
+      setSelectedAnswer(null);
+      setIsAnswered(false);
+      playSfx('perfect');
     } catch (err: any) {
-      setCustomError(err.message || 'Lỗi kết nối máy chủ.');
+      setCustomError('Có lỗi xảy ra, vui lòng thử lại!');
       playSfx('error');
     } finally {
       setCustomLoading(false);

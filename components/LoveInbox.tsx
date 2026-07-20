@@ -13,6 +13,8 @@ interface PlacedItem {
 }
 
 interface LoveInboxProps {
+  user?: any;
+  isVy?: boolean;
   placedItems: PlacedItem[];
   unlockedVouchers: any[];
   onUnlockVoucher: (contract: DesignContract) => void;
@@ -85,12 +87,15 @@ function renderAudioIcon(className = 'w-4 h-4') {
 }
 
 export default function LoveInbox({
+  user,
+  isVy,
   placedItems,
   unlockedVouchers,
   onUnlockVoucher,
   playSfx
 }: LoveInboxProps) {
-  const [activeTab, setActiveTab] = useState<'contracts' | 'chat' | 'wallet'>('contracts');
+  const userName = user?.username || 'Bạn';
+  const [activeTab, setActiveTab] = useState<'contracts' | 'chat' | 'wallet'>(isVy ? 'contracts' : 'wallet');
   const [selectedContract, setSelectedContract] = useState<DesignContract | null>(null);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -104,31 +109,44 @@ export default function LoveInbox({
 
   // Load chat messages
   useEffect(() => {
-    const saved = localStorage.getItem('love_inbox_chat_history');
+    const saved = localStorage.getItem(`love_inbox_chat_history_${user?.id || 'guest'}`);
     if (saved) {
       try {
         setChatMessages(JSON.parse(saved));
       } catch (e) {}
     } else {
-      setChatMessages([
-        {
-          id: 'welcome',
-          sender: 'ai',
-          text: '你好，我的薇薇！最近学习中文累不累？有空找我聊天哦，我随时都在！',
-          pinyin: 'Nǐ hǎo, wǒ de wēiwēi! Zuìjìn xuéxí zhōngwén lèi bú lèi? Yǒu kòng zhǎo wǒ liáotiān o, wǒ suíshí dōu zài!',
-          translation: 'Chào em, Vy Vy của anh! Dạo này học tiếng Trung có mệt không? Rảnh rỗi nhắn tin nói chuyện với anh nhé, anh luôn ở đây!',
-          timestamp: new Date().toISOString()
-        }
-      ]);
+      if (isVy) {
+        setChatMessages([
+          {
+            id: 'welcome',
+            sender: 'ai',
+            text: '你好，我的薇薇！最近学习中文累不累？有空找我聊天哦，我随时都在！',
+            pinyin: 'Nǐ hǎo, wǒ de wēiwēi! Zuìjìn xuéxí zhōngwén lèi bú lèi? Yǒu kòng zhǎo wǒ liáotiān o, wǒ suíshí dōu zài!',
+            translation: 'Chào em, Vy Vy của anh! Dạo này học tiếng Trung có mệt không? Rảnh rỗi nhắn tin nói chuyện với anh nhé, anh luôn ở đây!',
+            timestamp: new Date().toISOString()
+          }
+        ]);
+      } else {
+        setChatMessages([
+          {
+            id: 'welcome',
+            sender: 'ai',
+            text: '你好！我是你的中文设计助手。有什么我可以帮你的吗？',
+            pinyin: 'Nǐ hǎo! Wǒ shì nǐ de Zhōngwén shèjì zhùshǒu. Yǒu shénme wǒ kěyǐ bāng nǐ de ma?',
+            translation: `Chào ${userName}! Tôi là Trợ Lý Tiếng Trung AI của bạn. Tôi có thể giúp gì cho bạn hôm nay?`,
+            timestamp: new Date().toISOString()
+          }
+        ]);
+      }
     }
-  }, []);
+  }, [user, isVy, userName]);
 
   // Save chat messages
   useEffect(() => {
     if (chatMessages.length > 0) {
-      localStorage.setItem('love_inbox_chat_history', JSON.stringify(chatMessages));
+      localStorage.setItem(`love_inbox_chat_history_${user?.id || 'guest'}`, JSON.stringify(chatMessages));
     }
-  }, [chatMessages]);
+  }, [chatMessages, user]);
 
   const handlePlayTTS = (text: string) => {
     playSfx('click');
@@ -163,7 +181,7 @@ export default function LoveInbox({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customerName: 'Nhựt Khang',
+          customerName: isVy ? 'Nhựt Khang' : (userName || 'Trợ Lý AI'),
           message: userMsg.text,
           history,
         }),
@@ -257,22 +275,24 @@ export default function LoveInbox({
     <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 sm:p-6 max-w-2xl mx-auto my-4">
       {/* TABS HỘM THƯ */}
       <div className="flex border-b-2 border-[#1f2937] mb-6">
-        <button
-          onClick={() => {
-            setActiveTab('contracts');
-            setSelectedContract(null);
-            setSubmitMessage(null);
-            playSfx('click');
-          }}
-          className={`flex-1 py-3 font-serif font-black text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-t-2 border-x-2 border-transparent ${
-            activeTab === 'contracts'
-              ? 'bg-[#fff0f3] border-[#1f2937] border-b-4 border-b-[#fff0f3] -mb-[2px] rounded-t-lg text-[#1f2937]'
-              : 'text-gray-400 hover:text-gray-600'
-          }`}
-        >
-          {renderMailIconSVG(activeTab === 'contracts' ? 'text-rose-500 w-5 h-5' : 'w-5 h-5')}
-          Thư Thử Thách Của Khang
-        </button>
+        {isVy && (
+          <button
+            onClick={() => {
+              setActiveTab('contracts');
+              setSelectedContract(null);
+              setSubmitMessage(null);
+              playSfx('click');
+            }}
+            className={`flex-1 py-3 font-serif font-black text-sm flex items-center justify-center gap-2 cursor-pointer transition-all border-t-2 border-x-2 border-transparent ${
+              activeTab === 'contracts'
+                ? 'bg-[#fff0f3] border-[#1f2937] border-b-4 border-b-[#fff0f3] -mb-[2px] rounded-t-lg text-[#1f2937]'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            {renderMailIconSVG(activeTab === 'contracts' ? 'text-rose-500 w-5 h-5' : 'w-5 h-5')}
+            Thử Thách Của Khang
+          </button>
+        )}
         <button
           onClick={() => {
             setActiveTab('chat');
@@ -287,7 +307,7 @@ export default function LoveInbox({
           }`}
         >
           {renderChatIconSVG(activeTab === 'chat' ? 'text-rose-500 w-5 h-5' : 'w-5 h-5')}
-          Chat Với Khang (AI)
+          {isVy ? 'Chat Với Khang (AI)' : 'Trò Chuyện Trợ Lý AI'}
         </button>
         <button
           onClick={() => {
@@ -303,7 +323,7 @@ export default function LoveInbox({
           }`}
         >
           {renderTicketIconSVG(activeTab === 'wallet' ? 'text-rose-500 w-5 h-5' : 'w-5 h-5')}
-          Ví Voucher Của Vy ({unlockedVouchers.length})
+          {isVy ? `Ví Voucher Của Vy (${unlockedVouchers.length})` : `Ví Voucher Của ${userName} (${unlockedVouchers.length})`}
         </button>
       </div>
 
@@ -558,29 +578,42 @@ export default function LoveInbox({
         </div>
       )}
 
-      {/* TAB: TRÒ CHUYỆN VỚI KHANG (AI) */}
+      {/* TAB: TRÒ CHUYỆN TRỢ LÝ AI */}
       {activeTab === 'chat' && (
         <div className="flex flex-col h-[420px] bg-white border-2 border-[#1f2937] rounded-xl shadow-[3px_3px_0px_#1f2937] overflow-hidden">
           {/* Header */}
           <div className="bg-[#fff5f6] border-b-2 border-[#1f2937] p-3 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse border border-[#1f2937]" />
-              <span className="text-xs font-serif font-black text-[#1f2937]">Khang Đang Online (AI)</span>
+              <span className="text-xs font-serif font-black text-[#1f2937]">{isVy ? 'Khang Đang Online (AI)' : 'Trợ Lý AI Đang Online'}</span>
             </div>
             <button
               onClick={() => {
-                if (confirm('Vy có chắc chắn muốn xóa lịch sử chat không?')) {
-                  localStorage.removeItem('love_inbox_chat_history');
-                  setChatMessages([
-                    {
-                      id: 'welcome',
-                      sender: 'ai',
-                      text: '你好，我的薇薇！最近学习中文累不累？有空找我聊天哦，我随时都在！',
-                      pinyin: 'Nǐ hǎo, wǒ de wēiwēi! Zuìjìn xuéxí zhōngwén lèi bú lèi? Yǒu kòng zhǎo wǒ liáotiān o, wã suíshí dōu zài!',
-                      translation: 'Chào em, Vy Vy của anh! Dạo này học tiếng Trung có mệt không? Rảnh rỗi nhắn tin nói chuyện với anh nhé, anh luôn ở đây!',
-                      timestamp: new Date().toISOString()
-                    }
-                  ]);
+                if (confirm('Bạn có chắc chắn muốn xóa lịch sử chat không?')) {
+                  localStorage.removeItem(`love_inbox_chat_history_${user?.id || 'guest'}`);
+                  if (isVy) {
+                    setChatMessages([
+                      {
+                        id: 'welcome',
+                        sender: 'ai',
+                        text: '你好，我的薇薇！最近学习中文累不累？有空找我聊天哦，我随时都在！',
+                        pinyin: 'Nǐ hǎo, wǒ de wēiwēi! Zuìjìn xuéxí zhōngwén lèi bú lèi? Yǒu kòng zhǎo wǒ liáotiān o, wǒ suíshí dōu zài!',
+                        translation: 'Chào em, Vy Vy của anh! Dạo này học tiếng Trung có mệt không? Rảnh rỗi nhắn tin nói chuyện với anh nhé, anh luôn ở đây!',
+                        timestamp: new Date().toISOString()
+                      }
+                    ]);
+                  } else {
+                    setChatMessages([
+                      {
+                        id: 'welcome',
+                        sender: 'ai',
+                        text: '你好！我是你的中文设计助手。有什么我可以帮你的吗？',
+                        pinyin: 'Nǐ hǎo! Wǒ shì nǐ de Zhōngwén shèjì zhùshǒu. Yǒu shénme wǒ kěyǐ bāng nǐ de ma?',
+                        translation: `Chào ${userName}! Tôi là Trợ Lý Tiếng Trung AI của bạn. Tôi có thể giúp gì cho bạn hôm nay?`,
+                        timestamp: new Date().toISOString()
+                      }
+                    ]);
+                  }
                   playSfx('flip');
                 }
               }}
@@ -679,7 +712,7 @@ export default function LoveInbox({
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Gõ tiếng Việt hoặc Trung gửi anh Khang..."
+              placeholder={isVy ? "Gõ tiếng Việt hoặc Trung gửi anh Khang..." : "Gõ tiếng Việt hoặc Trung gửi Trợ lý AI..."}
               className="flex-1 px-3 py-2 border-2 border-[#1f2937] rounded-lg text-xs font-bold bg-white focus:outline-none"
               disabled={chatLoading}
             />
@@ -699,7 +732,7 @@ export default function LoveInbox({
         <div className="space-y-4">
           {unlockedVouchers.length === 0 ? (
             <div className="text-center py-10 bg-white border-2 border-dashed border-[#1f2937] rounded-xl text-gray-400 font-bold">
-              Vy chưa mở khóa voucher nào. Hãy giải quyết các thử thách thiết kế phòng của Khang để rinh quà nhé!
+              {isVy ? 'Vy chưa mở khóa voucher nào. Hãy giải quyết các thử thách thiết kế phòng của Khang để rinh quà nhé!' : `${userName} chưa mở khóa voucher nào. Hãy hoàn thành các hợp đồng thiết kế phòng để rinh quà nhé!`}
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">

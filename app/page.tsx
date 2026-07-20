@@ -2249,14 +2249,16 @@ export default function Home() {
         />
       )}
 
-      {/* THÚ CƯNG PIXEL 2D ĐI DẠO MÀN HÌNH BÊN NGOÀI (PAGE-LEVEL FLOATING PET) */}
-      <PixelPet 
-        coins={coins} 
-        setCoins={setCoins} 
-        onPlayTTS={handlePlayTTS} 
-        playSfx={playSfx} 
-        isDarkMode={isDarkMode} 
-      />
+      {/* THÚ CƯNG PIXEL 2D ĐI DẠO MÀN HÌNH BÊN NGOÀI (CHỈ HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP) */}
+      {user && (
+        <PixelPet 
+          coins={coins} 
+          setCoins={setCoins} 
+          onPlayTTS={handlePlayTTS} 
+          playSfx={playSfx} 
+          isDarkMode={isDarkMode} 
+        />
+      )}
 
       {/* MODAL SỔ TAY THUẬT NGỮ KIẾN TRÚC & VẬT LIỆU HSK (FOR VY) */}
       <ArchitectGlossaryModal

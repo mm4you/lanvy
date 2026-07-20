@@ -44,22 +44,22 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [isWalking, setIsWalking] = useState(false);
 
-  // Tự động cho thú cưng đi dạo vòng quanh MÀN HÌNH BÊN NGOÀI (Outside Room)
+  // Tự động cho thú cưng bước đi dạo mượt mà qua lại liên tục
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (!showShop) {
-        setIsWalking(true);
-        const randomX = Math.floor(Math.random() * 260) - 200; // Walk across bottom screen [-200px, 60px]
-        const randomY = Math.floor(Math.random() * 16) - 8;
-        setDirection(randomX >= posX ? 'right' : 'left');
-        setPosX(randomX);
-        setPosY(randomY);
+    if (showShop) return;
 
-        setTimeout(() => setIsWalking(false), 2200);
-      }
-    }, 4500);
+    const interval = setInterval(() => {
+      setPosX(prev => {
+        const nextTarget = prev > 0 ? -160 : 30;
+        setDirection(nextTarget > prev ? 'right' : 'left');
+        setIsWalking(true);
+        setTimeout(() => setIsWalking(false), 2500);
+        return nextTarget;
+      });
+    }, 4000);
+
     return () => clearInterval(interval);
-  }, [showShop, posX]);
+  }, [showShop]);
 
   const handlePetClick = () => {
     if (playSfx) playSfx('perfect');
@@ -207,7 +207,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
             onClick={() => setCurrentPet(prev => prev === 'cat' ? 'dog' : 'cat')}
             className="text-[10px] font-black text-gray-800 dark:text-slate-200 hover:text-rose-500 cursor-pointer"
           >
-            {currentPet === 'cat' ? 'Đổi Chó 🐶' : 'Đổi Mèo 🐱'}
+            {currentPet === 'cat' ? 'Đổi Sang Chó' : 'Đổi Sang Mèo'}
           </button>
           <span className="text-gray-300">|</span>
           <button

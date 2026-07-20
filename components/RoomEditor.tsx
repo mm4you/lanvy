@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { FurnitureItem, FURNITURE_ITEMS } from '../data/vocabulary';
+import { PixelPet } from './PixelPet';
 
 interface PlacedItem {
   id: string;
@@ -25,6 +26,8 @@ interface RoomEditorProps {
   currentContract?: any;
   onSubmitContract?: (contract: any) => void;
   contractSubmitMsg?: { type: 'success' | 'error'; text: string } | null;
+  onPlayTTS?: (text: string) => void;
+  isDarkMode?: boolean;
 }
 
 // Các SVG Icon bổ trợ thay cho Emojis
@@ -355,7 +358,9 @@ export default function RoomEditor({
   setFloorType,
   currentContract,
   onSubmitContract,
-  contractSubmitMsg
+  contractSubmitMsg,
+  onPlayTTS,
+  isDarkMode
 }: RoomEditorProps) {
   const [selectedCatalogItem, setSelectedCatalogItem] = useState<string | null>(null);
   const [draggedRoomItemIndex, setDraggedRoomItemIndex] = useState<number | null>(null);
@@ -602,6 +607,16 @@ export default function RoomEditor({
 
         {/* CĂN PHÒNG CHÍNH */}
         <div className="w-full max-w-[420px] aspect-square flex flex-col border-4 border-[#1f2937] rounded-xl overflow-hidden shadow-[4px_4px_0px_#1f2937] relative">
+          {/* HIỆU ỨNG ÁNH SÁNG BAN ĐÊM (NIGHT LIGHTING OVERLAY) */}
+          {isDarkMode && (
+            <div className="absolute inset-0 bg-[#0f172a]/30 pointer-events-none z-20 backdrop-brightness-95 transition-all duration-300" />
+          )}
+
+          {/* VỊ TRÍ THÚ CƯNG PIXEL TƯƠNG TÁC (CATS & DOGS) */}
+          <div className="absolute top-2 right-2 z-30">
+            <PixelPet coins={coins} setCoins={setCoins} onPlayTTS={onPlayTTS} playSfx={playSfx} />
+          </div>
+
           {/* Bức tường phía trên */}
           <div className={`h-1/5 border-b-4 border-[#1f2937] transition-all flex items-center justify-around relative px-4 ${wallStyles[wallpaper]}`}>
             {wallpaper === 'cute_pink' && (

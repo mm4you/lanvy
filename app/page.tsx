@@ -261,6 +261,21 @@ export default function Home() {
   const [placedItems, setPlacedItems] = useState<PlacedItem[]>([]);
   const [wallpaper, setWallpaper] = useState<string>('cream_white');
   const [floorType, setFloorType] = useState<string>('cozy_wood');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('boba_game_theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const next = !isDarkMode;
+    setIsDarkMode(next);
+    localStorage.setItem('boba_game_theme', next ? 'dark' : 'light');
+    playSfx('click');
+  };
 
   // Navigation tab state
   const [activeTab, setActiveTab] = useState<'studio' | 'quiz' | 'room' | 'love' | 'library' | 'admin'>('studio');
@@ -912,7 +927,9 @@ export default function Home() {
   });
 
   return (
-    <main className="min-h-screen bg-[#fff0f3] text-[#1f2937] font-sans antialiased p-4">
+    <main className={`min-h-screen font-sans antialiased p-4 transition-colors duration-300 ${
+      isDarkMode ? 'bg-[#0f172a] text-[#f8fafc]' : 'bg-[#fff0f3] text-[#1f2937]'
+    }`}>
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ */}
       {!user ? (
         <div className="max-w-md mx-auto my-16 bg-[#fffaf0] border-4 border-[#1f2937] rounded-3xl shadow-[4px_4px_0px_#1f2937] overflow-hidden p-8">
@@ -1052,6 +1069,15 @@ export default function Home() {
             {/* Chỉ số tài khoản */}
             <div className="flex items-center gap-3 flex-wrap">
               <button
+                onClick={toggleDarkMode}
+                className={`px-3 py-1.5 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
+                  isDarkMode ? 'bg-indigo-600 text-white' : 'bg-amber-100 text-amber-900'
+                }`}
+                title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
+              >
+                {isDarkMode ? '☀️ Ban Ngày' : '🌙 Ban Đêm'}
+              </button>
+              <button
                 onClick={() => {
                   setShowArchitectModal(true);
                   playSfx('click');
@@ -1068,7 +1094,7 @@ export default function Home() {
               </div>
               <button
                 onClick={handleLogout}
-                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer text-[#1f2937]"
               >
                 {renderSignoutIcon()} Đăng Xuất
               </button>
@@ -1417,6 +1443,8 @@ export default function Home() {
                 currentContract={currentContract}
                 onSubmitContract={handleSubmitContract}
                 contractSubmitMsg={contractSubmitMsg}
+                onPlayTTS={handlePlayTTS}
+                isDarkMode={isDarkMode}
               />
             )}
 

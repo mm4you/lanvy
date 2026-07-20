@@ -8,6 +8,7 @@ interface PixelPetProps {
   isDarkMode?: boolean;
   externalShowShop?: boolean;
   onToggleShop?: (show: boolean) => void;
+  isVy?: boolean;
 }
 
 type PetType = 'cat' | 'dog' | 'rabbit' | 'panda';
@@ -46,10 +47,16 @@ const PET_CATALOG: Array<{ id: PetType; name: string; price: number; desc: strin
   { id: 'panda', name: 'Gấu Trúc Panda Quốc Bảo', price: 100, desc: 'Gấu trúc Panda mắt quầng đáng yêu' }
 ];
 
-const VOUCHER_ITEMS = [
+const VOUCHER_ITEMS_VY = [
   { id: 'v_milktea', name: 'Voucher Trà Sữa Size L', price: 50, desc: 'Nhựt Khang bao 1 ly trà sữa tự chọn' },
   { id: 'v_movie', name: 'Voucher Đi Xem Phim Rạp', price: 100, desc: 'Bao 1 buổi xem phim rạp ngọt ngào' },
   { id: 'v_hug', name: 'Voucher 100 Cái Ôm Ấm Cúng', price: 20, desc: 'Đổi lấy cái ôm thật chặt từ Khang' }
+];
+
+const VOUCHER_ITEMS_KHANG = [
+  { id: 'v_praise', name: 'Voucher Đổi 1 Lời Khen Ngọt Ngào', price: 30, desc: 'Đổi 1 lời khen nức nở từ Lan Vy' },
+  { id: 'v_tea', name: 'Voucher Trà Chanh Chém Gió', price: 50, desc: 'Lan Vy bao 1 ly nước ép/trà chanh' },
+  { id: 'v_dish', name: 'Voucher Miễn Phạt Rửa Bát', price: 100, desc: 'Khang được miễn làm việc nhà 1 ngày' }
 ];
 
 export const PixelPet: React.FC<PixelPetProps> = ({
@@ -59,12 +66,16 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   playSfx,
   isDarkMode = false,
   externalShowShop,
-  onToggleShop
+  onToggleShop,
+  isVy = true
 }) => {
   const [currentPet, setCurrentPet] = useState<PetType>('cat');
   const [unlockedPets, setUnlockedPets] = useState<PetType[]>(['cat', 'dog']);
   const [activeSpeech, setActiveSpeech] = useState<{ text: string; pinyin: string; translation: string } | null>(null);
   const [isHearting, setIsHearting] = useState(false);
+  const [isSleeping, setIsSleeping] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
+  const [isEating, setIsEating] = useState(false);
   const [internalShowShop, setInternalShowShop] = useState(false);
   const showShop = externalShowShop !== undefined ? externalShowShop : internalShowShop;
   const setShowShop = (val: boolean) => {
@@ -74,16 +85,27 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [shopTab, setShopTab] = useState<'food' | 'pet' | 'voucher'>('food');
   const [purchasedVouchers, setPurchasedVouchers] = useState<string[]>([]);
 
+  const activeVoucherList = isVy ? VOUCHER_ITEMS_VY : VOUCHER_ITEMS_KHANG;
+
   const [posX, setPosX] = useState(0);
   const [posY, setPosY] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [isWalking, setIsWalking] = useState(false);
 
-  // Tự động cho thú cưng bước đi dạo mượt mà qua lại liên tục
+  // Tự động cho thú cưng bước đi dạo mượt mà & cử chỉ ngủ Zzz khi nghỉ ngơi
   useEffect(() => {
     if (showShop) return;
 
     const interval = setInterval(() => {
+      // 30% cơ hội thú cưng ngơi nghỉ đi ngủ Zzz
+      if (Math.random() < 0.35 && !isJumping && !isEating) {
+        setIsSleeping(true);
+        setIsWalking(false);
+        setTimeout(() => setIsSleeping(false), 5000);
+        return;
+      }
+
+      setIsSleeping(false);
       setPosX(prev => {
         const nextTarget = prev > 0 ? -120 : 20;
         setDirection(nextTarget > prev ? 'right' : 'left');
@@ -91,13 +113,18 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         setTimeout(() => setIsWalking(false), 2500);
         return nextTarget;
       });
-    }, 4000);
+    }, 4500);
 
     return () => clearInterval(interval);
-  }, [showShop]);
+  }, [showShop, isJumping, isEating]);
 
   const handlePetClick = () => {
     if (playSfx) playSfx('perfect');
+
+    // Kích hoạt animation nhảy cẫng vui sướng
+    setIsSleeping(false);
+    setIsJumping(true);
+    setTimeout(() => setIsJumping(false), 1000);
 
     const phrases = PET_PHRASES[currentPet];
     const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
@@ -121,6 +148,12 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
     if (setCoins) setCoins(coins - food.price);
     if (playSfx) playSfx('levelUp');
+
+    setIsSleeping(false);
+    setIsEating(true);
+    setIsJumping(true);
+    setTimeout(() => setIsJumping(false), 1200);
+    setTimeout(() => setIsEating(false), 3000);
 
     setActiveSpeech(food.phrase);
     setIsHearting(true);
@@ -151,7 +184,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     alert(`Chúc mừng Vy đã mở khóa thú cưng ${pet.name}!`);
   };
 
-  const handleBuyVoucher = (v: typeof VOUCHER_ITEMS[0]) => {
+  const handleBuyVoucher = (v: typeof VOUCHER_ITEMS_VY[0]) => {
     if (coins < v.price) {
       if (playSfx) playSfx('error');
       alert(`Vy cần ${v.price} Xu để đổi ${v.name}!`);
@@ -323,19 +356,9 @@ export const PixelPet: React.FC<PixelPetProps> = ({
             </svg>
           )}
         </div>
-
-        {/* NÚT MO PHỎNG ĐỔI & MUA ĐỒ KHU VỰC PIXEL PET */}
-        <div className="flex gap-1.5 items-center bg-white/95 dark:bg-slate-800/95 border-2 border-[#1f2937] dark:border-slate-600 px-2.5 py-0.5 rounded-full shadow-[2px_2px_0px_#1f2937]">
-          <button
-            onClick={() => setShowShop(true)}
-            className="text-[9px] sm:text-[10px] font-black text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
-          >
-            Cửa Hàng Pixel Pet
-          </button>
-        </div>
       </div>
 
-      {/* MODAL CỬA HÀNG PIXEL PET & VOUCHER HSK (FIXED BACKDROP) */}
+      {/* MODAL CỬA HÀNG PIXEL PET & VOUCHER HSK */}
       {showShop && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/65 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-[#fffaf0] dark:bg-slate-900 border-4 border-[#1f2937] dark:border-slate-700 p-4 sm:p-5 rounded-3xl shadow-[6px_6px_0px_#1f2937] max-w-md w-full space-y-3 text-left text-[#1f2937] dark:text-slate-100">
@@ -379,7 +402,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                   shopTab === 'voucher' ? 'bg-indigo-600 text-white shadow' : 'text-gray-700 dark:text-slate-300'
                 }`}
               >
-                Voucher Vy
+                {isVy ? 'Voucher Vy' : 'Ví Voucher'}
               </button>
             </div>
 
@@ -447,7 +470,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
               {shopTab === 'voucher' && (
                 <>
-                  {VOUCHER_ITEMS.map(v => {
+                  {activeVoucherList.map(v => {
                     const isBought = purchasedVouchers.includes(v.name);
 
                     return (

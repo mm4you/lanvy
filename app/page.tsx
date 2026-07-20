@@ -1291,9 +1291,13 @@ export default function Home() {
             {/* NÚT CỬA HÀNG TRÊN NGAO DIỆN MENU (NEO-BRUTALISM IELTS VOCAB) */}
             <button
               onClick={() => { setShowPetShopModal(true); playSfx('click'); }}
-              className="px-4 py-2.5 border-4 border-black dark:border-slate-700 bg-amber-400 hover:bg-amber-500 text-black font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start"
+              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
+                showPetShopModal
+                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
+              }`}
             >
-              {renderShoppingBagIcon('w-4 h-4 text-black')}
+              {renderShoppingBagIcon(showPetShopModal ? 'w-4 h-4 text-white' : 'w-4 h-4 text-amber-500')}
               <span>Cửa Hàng</span>
             </button>
 
@@ -2330,6 +2334,7 @@ export default function Home() {
           isDarkMode={isDarkMode} 
           externalShowShop={showPetShopModal}
           onToggleShop={setShowPetShopModal}
+          isVy={isVy}
         />
       )}
 

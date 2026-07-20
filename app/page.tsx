@@ -653,6 +653,43 @@ export default function Home() {
     }
   };
 
+  // Feedback modal state
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackType, setFeedbackType] = useState('Góp ý giao diện');
+  const [feedbackContent, setFeedbackContent] = useState('');
+  const [feedbackContact, setFeedbackContact] = useState('');
+  const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+
+  const handleSendFeedback = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFeedbackLoading(true);
+    setFeedbackMsg(null);
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: feedbackType,
+          content: feedbackContent,
+          contactEmail: feedbackContact,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFeedbackMsg({ type: 'success', text: data.message });
+        setFeedbackContent('');
+        setTimeout(() => setShowFeedbackModal(false), 2000);
+      } else {
+        setFeedbackMsg({ type: 'error', text: data.error || 'Gửi góp ý thất bại.' });
+      }
+    } catch (e) {
+      setFeedbackMsg({ type: 'error', text: 'Lỗi kết nối máy chủ.' });
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
   // Sound effects synthesizer
   const playSfx = (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip' | 'meow' | 'bark' | 'squeak' | 'grunt') => {
     if (typeof window === 'undefined') return;
@@ -661,7 +698,7 @@ export default function Home() {
       if (!AudioContext) return;
       const ctx = new AudioContext();
 
-      const playTone = (freq: number, start: number, duration: number, vol = 0.08, wave: OscillatorType = 'sine') => {
+      const playTone = (freq: number, start: number, duration: number, vol = 0.06, wave: OscillatorType = 'sine') => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = wave;
@@ -681,33 +718,31 @@ export default function Home() {
         playTone(300, now, 0.04, 0.06, 'sine');
         playTone(600, now + 0.04, 0.08, 0.06, 'sine');
       } else if (type === 'meow') {
-        // Tiếng mèo kêu meo meo nũng nịu
+        // Tiếng mèo kêu meo meo nũng nịu êm ái
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(750, now);
-        osc.frequency.exponentialRampToValueAtTime(950, now + 0.15);
-        osc.frequency.exponentialRampToValueAtTime(550, now + 0.35);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(820, now + 0.1);
+        osc.frequency.exponentialRampToValueAtTime(480, now + 0.28);
+        gain.gain.setValueAtTime(0.07, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.38);
+        osc.stop(now + 0.3);
       } else if (type === 'bark') {
-        // Tiếng chó sủa gâu gâu vui mừng
-        playTone(380, now, 0.08, 0.15, 'square');
-        playTone(200, now + 0.04, 0.08, 0.12, 'triangle');
-        playTone(420, now + 0.14, 0.08, 0.15, 'square');
-        playTone(220, now + 0.18, 0.08, 0.12, 'triangle');
+        // Tiếng chó sủa gâu gâu vui mừng mượt mà
+        playTone(380, now, 0.06, 0.08, 'triangle');
+        playTone(420, now + 0.09, 0.06, 0.08, 'triangle');
       } else if (type === 'squeak') {
         // Tiếng thỏ chíp chíp nhút nhát
-        playTone(1200, now, 0.06, 0.09, 'sine');
-        playTone(1600, now + 0.06, 0.08, 0.09, 'sine');
+        playTone(1300, now, 0.05, 0.05, 'sine');
+        playTone(1700, now + 0.05, 0.06, 0.05, 'sine');
       } else if (type === 'grunt') {
         // Tiếng gấu trúc nhai lá măng khịt khịt
-        playTone(180, now, 0.1, 0.12, 'triangle');
-        playTone(140, now + 0.08, 0.12, 0.12, 'triangle');
+        playTone(160, now, 0.08, 0.07, 'triangle');
+        playTone(130, now + 0.07, 0.09, 0.07, 'triangle');
       } else if (type === 'success') {
         playTone(523.25, now, 0.1, 0.08, 'square');
         playTone(659.25, now + 0.08, 0.1, 0.08, 'square');
@@ -1454,6 +1489,17 @@ export default function Home() {
                   className="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-black border-4 border-black dark:border-slate-600 text-xs font-mono font-black rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 transition-all"
                 >
                   Sổ Tay Specs
+                </button>
+                <button
+                  onClick={() => {
+                    setShowFeedbackModal(true);
+                    setFeedbackMsg(null);
+                    playSfx('click');
+                  }}
+                  className="px-3.5 py-2 bg-cyan-400 hover:bg-cyan-500 text-black border-4 border-black dark:border-slate-600 text-xs font-mono font-black rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 transition-all"
+                  title="Gửi phản hồi / góp ý tính năng cho Studio Vocab"
+                >
+                  Góp Ý
                 </button>
                 <button
                   onClick={handleLogout}
@@ -2560,6 +2606,89 @@ export default function Home() {
         onClose={() => setShowArchitectModal(false)}
         onPlayTTS={handlePlayTTS}
       />
+
+      {/* MODAL GÓP Ý FEEDBACK DÙNG CHUNG SMTP STUDIO VOCAB */}
+      {showFeedbackModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-[#fffdf8] dark:bg-slate-900 border-4 border-black dark:border-slate-700 p-6 rounded-2xl shadow-[6px_6px_0_#000] dark:shadow-[6px_6px_0_#020617] max-w-md w-full space-y-4 text-black dark:text-slate-100 text-left relative">
+            <div className="flex justify-between items-center border-b-4 border-black dark:border-slate-700 pb-3">
+              <h3 className="font-serif font-black text-xl flex items-center gap-2 text-rose-600 dark:text-rose-400">
+                Góp Ý & Phản Hồi Tính Năng
+              </h3>
+              <button
+                onClick={() => { setShowFeedbackModal(false); playSfx('click'); }}
+                className="w-8 h-8 bg-rose-500 hover:bg-rose-600 text-white font-mono font-black border-2 border-black dark:border-slate-700 rounded-lg shadow-[2px_2px_0_#000] flex items-center justify-center cursor-pointer"
+              >
+                X
+              </button>
+            </div>
+
+            <form onSubmit={handleSendFeedback} className="space-y-4">
+              <div className="flex flex-col gap-1">
+                <label className="font-mono text-xs font-bold uppercase">Loại phản hồi</label>
+                <select
+                  value={feedbackType}
+                  onChange={(e) => setFeedbackType(e.target.value)}
+                  className="w-full border-4 border-black dark:border-slate-700 p-2.5 font-mono font-bold text-sm rounded bg-white dark:bg-slate-800 text-black dark:text-slate-100 focus:outline-none shadow-[2px_2px_0_#000]"
+                >
+                  <option value="Góp ý giao diện">Góp ý giao diện & trải nghiệm</option>
+                  <option value="Báo lỗi tính năng">Báo lỗi (Bug Report)</option>
+                  <option value="Đề xuất tính năng mới">Đề xuất tính năng mới</option>
+                  <option value="Khác">Góp ý khác</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-mono text-xs font-bold uppercase">Email liên hệ của bạn (tùy chọn)</label>
+                <input
+                  type="email"
+                  value={feedbackContact}
+                  onChange={(e) => setFeedbackContact(e.target.value)}
+                  placeholder="email@example.com"
+                  className="w-full border-4 border-black dark:border-slate-700 p-2.5 font-mono font-bold text-sm rounded bg-white dark:bg-slate-800 text-black dark:text-slate-100 focus:outline-none shadow-[2px_2px_0_#000]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-mono text-xs font-bold uppercase">Nội dung góp ý chi tiết *</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={feedbackContent}
+                  onChange={(e) => setFeedbackContent(e.target.value)}
+                  placeholder="Nhập ý kiến góp ý của bạn để giúp Studio Vocab nâng cấp hoàn thiện hơn..."
+                  className="w-full border-4 border-black dark:border-slate-700 p-3 font-sans font-bold text-sm rounded bg-white dark:bg-slate-800 text-black dark:text-slate-100 focus:outline-none shadow-[2px_2px_0_#000]"
+                />
+              </div>
+
+              {feedbackMsg && (
+                <div className={`p-2.5 border-2 border-black rounded text-xs font-mono font-bold ${
+                  feedbackMsg.type === 'success' ? 'bg-green-100 text-green-800 border-green-700' : 'bg-rose-100 text-rose-800 border-rose-700'
+                }`}>
+                  {feedbackMsg.text}
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFeedbackModal(false)}
+                  className="flex-1 py-2.5 bg-gray-200 dark:bg-slate-800 hover:bg-gray-300 dark:hover:bg-slate-700 text-black dark:text-slate-200 font-mono font-bold text-xs uppercase border-3 border-black dark:border-slate-700 rounded shadow-[2px_2px_0_#000] cursor-pointer"
+                >
+                  Đóng
+                </button>
+                <button
+                  type="submit"
+                  disabled={feedbackLoading}
+                  className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-mono font-bold text-xs uppercase border-3 border-black dark:border-slate-700 rounded shadow-[2px_2px_0_#000] cursor-pointer"
+                >
+                  {feedbackLoading ? 'Đang gửi...' : 'Gửi Thư Góp Ý'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Retro CSS animations style tag */}
       <style>{`

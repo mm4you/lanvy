@@ -1,66 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" shape-rendering="crispEdges">
   <defs>
-    <!-- Gradient Vang Kim Son Son -->
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="50%" stop-color="#facc15" />
-      <stop offset="100%" stop-color="#eab308" />
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
     </linearGradient>
-    <!-- Gradient Do Son Hoang Gia -->
     <linearGradient id="stampGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#f43f5e" />
-      <stop offset="100%" stop-color="#be123c" />
+      <stop offset="100%" stop-color="#e11d48" />
     </linearGradient>
   </defs>
 
-  <!-- Nen The Neo-Brutalism Bo Goc Vang Ho Phach -->
-  <rect x="16" y="16" width="480" height="480" rx="64" fill="#fbbf24" stroke="#1f2937" stroke-width="24" />
-  
-  <!-- Vien Trong Nen Trang Kem Noi Bat -->
-  <rect x="44" y="44" width="424" height="424" rx="48" fill="#fffaf0" stroke="#1f2937" stroke-width="16" />
+  <!-- NEN THE NEO-BRUTALISM HOANG GIA VANG HOB PHACH -->
+  <rect x="16" y="16" width="480" height="480" rx="64" fill="url(#bgGrad)" stroke="#1f2937" stroke-width="20" />
+  <rect x="36" y="36" width="440" height="440" rx="48" fill="#fffaf0" stroke="#1f2937" stroke-width="12" />
 
-  <!-- DAU AN DO SON HOANG GIA (IMPERIAL SEAL STAMP) -->
-  <rect x="96" y="96" width="320" height="320" rx="40" fill="url(#stampGrad)" stroke="#1f2937" stroke-width="20" />
-  
-  <!-- Vien Trong Doi Noi Net Khac Hoa Van -->
-  <rect x="118" y="118" width="276" height="276" rx="28" fill="none" stroke="#fef2f2" stroke-width="8" stroke-dasharray="20,10" />
+  <!-- DASHBOARD KHUNG PIXEL LOGO -->
+  <!-- BIỂU TƯỢNG CON MÈO 2D PIXEL CHIBI NỔI NÉT ĐÁNG YÊU -->
+  <g transform="translate(146, 80)">
+    <!-- Tai Mèo Trái & Phải -->
+    <rect x="16" y="8" width="40" height="40" fill="#ea580c" stroke="#1f2937" stroke-width="8" />
+    <rect x="28" y="20" width="16" height="16" fill="#fca5a5" />
+    <rect x="164" y="8" width="40" height="40" fill="#ea580c" stroke="#1f2937" stroke-width="8" />
+    <rect x="176" y="20" width="16" height="16" fill="#fca5a5" />
 
-  <!-- HOA TIET MAY TUONG VAN CO PHONG PIXEL (4 GOC CON DAU) -->
-  <path d="M128 140 h20 v-12 h12 v20 h-32 z" fill="#fef2f2" opacity="0.8" />
-  <path d="M384 140 h-20 v-12 h-12 v20 h32 z" fill="#fef2f2" opacity="0.8" />
-  <path d="M128 372 h20 v12 h12 v-20 h-32 z" fill="#fef2f2" opacity="0.8" />
-  <path d="M384 372 h-20 v12 h-12 v-20 h32 z" fill="#fef2f2" opacity="0.8" />
+    <!-- Đầu Mèo Cam Pixel -->
+    <rect x="16" y="36" width="188" height="130" rx="20" fill="#f97316" stroke="#1f2937" stroke-width="10" />
+    <!-- Má Mèo Trắng -->
+    <rect x="36" y="90" width="148" height="66" rx="12" fill="#ffffff" stroke="#1f2937" stroke-width="6" />
 
-  <!-- CACH DIEU NGHE THUAT: CHU LAN VY PHONG CACH AN CHUONG TICH HOP PIXEL -->
-  
-  <!-- NUA TREN: CACH DIEU CHU LAN -->
-  <g stroke="#1f2937" stroke-width="10" paint-order="stroke fill">
-    <!-- Net Chu L (Mai Co Phong) -->
-    <path d="M150 160 v80 h50" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
-    
-    <!-- Net Chu A (Co Trai Tim Pixel O Giua) -->
-    <path d="M215 240 L240 160 L265 240 M224 215 h32" fill="none" stroke="url(#goldGrad)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
-    
-    <!-- Net Chu N (Tuong Van Uon Net) -->
-    <path d="M285 240 V160 L335 240 V160" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Mắt Pixel Long Lanh -->
+    <rect x="52" y="76" width="28" height="28" fill="#0f172a" />
+    <rect x="68" y="76" width="10" height="10" fill="#ffffff" />
+    <rect x="140" y="76" width="28" height="28" fill="#0f172a" />
+    <rect x="156" y="76" width="10" height="10" fill="#ffffff" />
+
+    <!-- Mũi & Miệng Mèo Cười -->
+    <polygon points="110,106 118,118 102,118" fill="#f43f5e" />
+    <path d="M96 122 Q108 132 110 122 Q112 132 124 122" fill="none" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Râu Mèo Pixel -->
+    <line x1="8" y1="96" x2="36" y2="102" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
+    <line x1="8" y1="116" x2="36" y2="114" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
+    <line x1="212" y1="96" x2="184" y2="102" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
+    <line x1="212" y1="116" x2="184" y2="114" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
   </g>
 
-  <!-- TRAI TIM PIXEL DO DAU O TAM CHU A -->
-  <path d="M240 190 C235 180, 222 180, 222 190 C222 200, 240 212, 240 212 C240 212, 258 200, 258 190 C258 180, 245 180, 240 190 Z" fill="#f43f5e" stroke="#1f2937" stroke-width="6" />
-
-  <!-- NUA DUOI: CACH DIEU CHU VY TAO HINH VUONG MIEN & HOA SEN PIXEL -->
-  <g stroke="#1f2937" stroke-width="10" paint-order="stroke fill">
-    <!-- Chu V (Tao hinh Canh Thap Hoa) -->
-    <path d="M175 270 L210 335 L245 270" fill="none" stroke="url(#goldGrad)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
-    
-    <!-- Chu Y (Vuon Net Cao Dep) -->
-    <path d="M275 270 L305 305 V338 M335 270 L305 305" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- BANNER CON DẤU ĐỎ THẮM "ATELIER HSK" -->
+  <g transform="translate(76, 270)">
+    <rect x="0" y="0" width="360" height="84" rx="24" fill="url(#stampGrad)" stroke="#1f2937" stroke-width="12" />
+    <text x="180" y="56" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="4" stroke="#1f2937" stroke-width="4" paint-order="stroke fill">ATELIER HSK</text>
   </g>
 
-  <!-- BANNER NOI BAT: DAU AN LAN VY • HSK ATELIER -->
-  <rect x="130" y="348" width="252" height="44" rx="14" fill="#fbbf24" stroke="#1f2937" stroke-width="10" />
-  <text x="256" y="377" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="17" fill="#1f2937" text-anchor="middle" letter-spacing="2">LAN VY • HSK ATELIER</text>
+  <!-- BANNER CON DẤU VÀNG "DẤU ẤN LAN VY" -->
+  <g transform="translate(116, 372)">
+    <rect x="0" y="0" width="280" height="56" rx="16" fill="#fbbf24" stroke="#1f2937" stroke-width="10" />
+    <text x="140" y="38" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="22" fill="#1f2937" text-anchor="middle" letter-spacing="2">DẤU ẤN LAN VY</text>
+  </g>
 
-  <!-- NGOI SAO LAP LANH NEO-BRUTALISM -->
-  <polygon points="420,70 432,98 460,102 438,120 444,148 420,132 396,148 402,120 380,102 408,98" fill="url(#goldGrad)" stroke="#1f2937" stroke-width="10" />
+  <!-- NGÔI SAO LẤP LÁNH & TRÁI TIM NEO-BRUTALISM -->
+  <polygon points="430,64 442,92 470,96 448,114 454,142 430,126 406,142 412,114 390,96 418,92" fill="#fbbf24" stroke="#1f2937" stroke-width="8" />
+  <path d="M80 80 C70 65, 48 65, 48 80 C48 95, 80 115, 80 115 C80 115, 112 95, 112 80 C112 65, 90 65, 80 80 Z" fill="#f43f5e" stroke="#1f2937" stroke-width="6" />
 </svg>

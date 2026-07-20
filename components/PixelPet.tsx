@@ -94,15 +94,15 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 z-40 w-52 bg-white border-2 border-[#1f2937] p-2.5 rounded-2xl shadow-[3px_3px_0px_#1f2937] text-center space-y-1 animate-in fade-in zoom-in-95 duration-200">
           <p className="text-xs font-serif font-black text-rose-600">{activeSpeech.text}</p>
           <p className="text-[10px] font-mono text-gray-500">{activeSpeech.pinyin}</p>
-          <p className="text-[10px] font-bold text-gray-800">👉 {activeSpeech.translation}</p>
+          <p className="text-[10px] font-bold text-gray-800">&gt; {activeSpeech.translation}</p>
           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-b-2 border-r-2 border-[#1f2937] rotate-45" />
         </div>
       )}
 
       {/* HIỆU ỨNG THẢ TIM KHI ĂN / BẤM VÀO */}
       {isHearting && (
-        <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-rose-500 font-black text-base animate-bounce z-50">
-          😋 🐟 💖 💕 ✨
+        <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-rose-500 font-black text-xs animate-bounce z-50 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded-full shadow">
+          +50 HSK XP
         </div>
       )}
 
@@ -154,13 +154,13 @@ export const PixelPet: React.FC<PixelPetProps> = ({
             onClick={() => setCurrentPet(prev => prev === 'cat' ? 'dog' : 'cat')}
             className="text-[9px] font-black bg-white hover:bg-gray-100 border border-[#1f2937] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] cursor-pointer"
           >
-            {currentPet === 'cat' ? '🐱 Đổi Chó' : '🐶 Đổi Mèo'}
+            {currentPet === 'cat' ? 'Đổi sang Chó' : 'Đổi sang Mèo'}
           </button>
           <button
             onClick={() => setShowShop(!showShop)}
             className="text-[9px] font-black bg-amber-400 hover:bg-amber-500 text-[#1f2937] border border-[#1f2937] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_#1f2937] cursor-pointer"
           >
-            🐟 Mua Đồ Ăn
+            Mua Đồ Ăn
           </button>
         </div>
 
@@ -168,7 +168,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         {showShop && (
           <div className="absolute top-16 right-0 z-50 w-56 bg-[#fffaf0] border-2 border-[#1f2937] p-3 rounded-2xl shadow-[4px_4px_0px_#1f2937] space-y-2">
             <div className="flex justify-between items-center border-b border-gray-300 pb-1">
-              <span className="text-xs font-serif font-black text-rose-600">🐟 Tiệm Thức Ăn HSK</span>
+              <span className="text-xs font-serif font-black text-rose-600">Tiệm Thức Ăn HSK</span>
               <button onClick={() => setShowShop(false)} className="text-xs font-black px-1 text-gray-400 hover:text-gray-700">✕</button>
             </div>
 

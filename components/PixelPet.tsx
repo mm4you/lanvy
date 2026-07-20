@@ -39,23 +39,23 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [activeSpeech, setActiveSpeech] = useState<{ text: string; pinyin: string; translation: string } | null>(null);
   const [isHearting, setIsHearting] = useState(false);
   const [showShop, setShowShop] = useState(false);
-  const [posX, setPosX] = useState(0); // Clamped within [-80px, +80px]
+  const [posX, setPosX] = useState(0); // Offset across bottom viewport [-220px to +40px]
   const [posY, setPosY] = useState(0);
-  const [direction, setDirection] = useState<'left' | 'right'>('right');
+  const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [isWalking, setIsWalking] = useState(false);
 
-  // Tự động cho thú cưng đi dạo trong khoảng an toàn dưới sàn phòng (Không ra ngoài)
+  // Tự động cho thú cưng đi dạo vòng quanh MÀN HÌNH BÊN NGOÀI (Outside Room)
   useEffect(() => {
     const interval = setInterval(() => {
       if (!showShop) {
         setIsWalking(true);
-        const randomX = Math.floor(Math.random() * 160) - 80; // Giới hạn [-80px, +80px]
-        const randomY = Math.floor(Math.random() * 24) - 12; // Giới hạn [-12px, +12px]
+        const randomX = Math.floor(Math.random() * 260) - 200; // Walk across bottom screen [-200px, 60px]
+        const randomY = Math.floor(Math.random() * 16) - 8;
         setDirection(randomX >= posX ? 'right' : 'left');
         setPosX(randomX);
         setPosY(randomY);
 
-        setTimeout(() => setIsWalking(false), 2000);
+        setTimeout(() => setIsWalking(false), 2200);
       }
     }, 4500);
     return () => clearInterval(interval);
@@ -97,120 +97,117 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   };
 
   return (
-    <div className="relative inline-block select-none pointer-events-auto z-40">
-      {/* SPEECH BUBBLE TRÒ CHUYỆN TIẾNG TRUNG */}
+    <div className="fixed bottom-4 right-6 z-40 select-none pointer-events-auto">
+      {/* POPUP TRÒ CHUYỆN PIXEL 2D SẮC NÉT (SPEECH BUBBLE) */}
       {activeSpeech && (
         <div 
-          className="absolute -top-28 left-1/2 -translate-x-1/2 z-50 w-52 bg-white dark:bg-slate-800 border-2 border-[#1f2937] dark:border-slate-600 p-2.5 rounded-2xl shadow-[4px_4px_0px_#1f2937] text-center space-y-1 animate-in fade-in zoom-in-95 duration-200"
-          style={{ transform: `translate(${posX}px, ${posY - 50}px)` }}
+          className="absolute -top-32 left-1/2 -translate-x-1/2 z-50 w-56 bg-white dark:bg-slate-800 border-3 border-[#1f2937] dark:border-slate-600 p-3 rounded-2xl shadow-[4px_4px_0px_#1f2937] text-center space-y-1 animate-in fade-in zoom-in-95 duration-200"
+          style={{ transform: `translate(${posX}px, ${posY - 60}px)` }}
         >
           <p className="text-xs font-serif font-black text-rose-600 dark:text-rose-400">{activeSpeech.text}</p>
           <p className="text-[10px] font-mono text-gray-500 dark:text-slate-400">{activeSpeech.pinyin}</p>
           <p className="text-[10px] font-bold text-gray-800 dark:text-slate-200">&gt; {activeSpeech.translation}</p>
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-slate-800 border-b-2 border-r-2 border-[#1f2937] dark:border-slate-600 rotate-45" />
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-white dark:bg-slate-800 border-b-3 border-r-3 border-[#1f2937] dark:border-slate-600 rotate-45" />
         </div>
       )}
 
-      {/* HIỆU ỨNG THẢ TIM KHI ĂN / BẤM VÀO */}
+      {/* HIỆU ỨNG THẢ TIM XP KHI TƯƠNG TÁC */}
       {isHearting && (
         <div 
-          className="absolute -top-8 left-1/2 -translate-x-1/2 text-rose-500 font-black text-xs animate-bounce z-50 bg-rose-100 dark:bg-rose-950 border border-rose-300 dark:border-rose-700 px-2.5 py-0.5 rounded-full shadow"
-          style={{ transform: `translate(${posX}px, ${posY - 25}px)` }}
+          className="absolute -top-10 left-1/2 -translate-x-1/2 text-rose-500 font-black text-xs animate-bounce z-50 bg-rose-100 dark:bg-rose-950 border border-rose-300 dark:border-rose-700 px-2.5 py-0.5 rounded-full shadow"
+          style={{ transform: `translate(${posX}px, ${posY - 30}px)` }}
         >
           +50 HSK XP
         </div>
       )}
 
-      {/* THÚ CƯNG TOÀN THÂN CUTE CÓ 4 CHÂN ĐI DẠO TRONG PHÒNG */}
+      {/* KHU VỰC BƯỚC ĐI CỦA THÚ CƯNG PIXEL 2D */}
       <div 
         className="flex flex-col items-center gap-1 transition-all duration-1000 ease-in-out cursor-pointer"
         style={{ transform: `translate(${posX}px, ${posY}px)` }}
       >
         <div 
           onClick={handlePetClick}
-          className={`relative group cursor-pointer transition-transform hover:scale-105 ${direction === 'left' ? '-scale-x-100' : ''}`}
-          title="Bấm vào thú cưng để trò chuyện tiếng Trung!"
+          className={`relative group cursor-pointer transition-transform hover:scale-110 ${direction === 'left' ? '-scale-x-100' : ''}`}
+          title="Bấm vào thú cưng Pixel để trò chuyện tiếng Trung!"
         >
           {currentPet === 'cat' ? (
-            /* BẢN VẼ MÈO CAM ANIME CUTE 4 CHÂN & ĐUÔI VẪY */
-            <svg viewBox="0 0 52 52" className="w-16 h-16 drop-shadow-md">
-              {/* Đuôi cong cuộn vẫy */}
-              <path d="M 38 28 C 48 20, 44 8, 38 12 C 34 16, 40 22, 34 26" fill="#f97316" stroke="#1f2937" strokeWidth="2" strokeLinecap="round" className="animate-pulse" />
+            /* CON MÈO 2D PIXEL CHIBI (RETRO PIXEL ART CAT) */
+            <svg viewBox="0 0 32 32" className="w-16 h-16 drop-shadow-lg" shapeRendering="crispEdges">
+              {/* Tail Pixel */}
+              <path d="M26,18 h2 v-4 h2 v-4 h-2 v4 h-2 z" fill="#f97316" />
               
-              {/* Thân tròn múp mạp */}
-              <ellipse cx="26" cy="32" rx="13" ry="9" fill="#fb923c" stroke="#1f2937" strokeWidth="2" />
-              <ellipse cx="24" cy="33" rx="8" ry="5" fill="#fff7ed" />
+              {/* Body Pixel */}
+              <rect x="10" y="18" width="16" height="9" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
+              <rect x="12" y="20" width="10" height="6" fill="#fff7ed" />
               
-              {/* 4 Chân xinh bước đi */}
-              <rect x="15" y="38" width="4.5" height="8" rx="2" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="21" y="38" width="4.5" height="8" rx="2" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce delay-100' : ''} />
-              <rect x="27" y="38" width="4.5" height="8" rx="2" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="33" y="38" width="4.5" height="8" rx="2" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce delay-100' : ''} />
+              {/* 4 Paws Pixel */}
+              <rect x="11" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="15" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <rect x="19" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="23" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
 
-              {/* Tai vểnh với lòng tai hồng */}
-              <polygon points="7,16 12,6 17,16" fill="#ea580c" stroke="#1f2937" strokeWidth="2" />
-              <polygon points="9,15 12,8 15,15" fill="#fca5a5" />
-              <polygon points="17,16 22,6 27,16" fill="#ea580c" stroke="#1f2937" strokeWidth="2" />
-              <polygon points="19,15 22,8 25,15" fill="#fca5a5" />
+              {/* Ears Pixel */}
+              <rect x="6" y="4" width="4" height="6" fill="#ea580c" />
+              <rect x="7" y="6" width="2" height="3" fill="#fda4af" />
+              <rect x="16" y="4" width="4" height="6" fill="#ea580c" />
+              <rect x="17" y="6" width="2" height="3" fill="#fda4af" />
 
-              {/* Đầu tròn cute */}
-              <circle cx="17" cy="22" r="11" fill="#fb923c" stroke="#1f2937" strokeWidth="2" />
+              {/* Head Pixel */}
+              <rect x="5" y="9" width="16" height="11" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
 
-              {/* Mắt to tròn lấp lánh (Sparkling Anime Eyes) */}
-              <circle cx="12" cy="21" r="3" fill="#0f172a" />
-              <circle cx="22" cy="21" r="3" fill="#0f172a" />
-              <circle cx="13" cy="20" r="1" fill="#ffffff" />
-              <circle cx="23" cy="20" r="1" fill="#ffffff" />
+              {/* Eyes Specular Pixel */}
+              <rect x="8" y="13" width="3" height="3" fill="#0f172a" />
+              <rect x="9" y="13" width="1" height="1" fill="#ffffff" />
+              <rect x="15" y="13" width="3" height="3" fill="#0f172a" />
+              <rect x="16" y="13" width="1" height="1" fill="#ffffff" />
 
-              {/* Má hồng chúm chím (Rosy Cheeks) */}
-              <ellipse cx="9" cy="24" rx="2" ry="1.2" fill="#fda4af" />
-              <ellipse cx="25" cy="24" rx="2" ry="1.2" fill="#fda4af" />
-
-              {/* Mũi & Miệng cười xù */}
-              <polygon points="16,24 18,24 17,25.5" fill="#f43f5e" />
-              <path d="M 14 26 Q 17 28 20 26" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
+              {/* Blush & Nose Pixel */}
+              <rect x="6" y="16" width="2" height="1.5" fill="#f472b6" />
+              <rect x="18" y="16" width="2" height="1.5" fill="#f472b6" />
+              <rect x="12" y="16" width="2" height="1.5" fill="#f43f5e" />
             </svg>
           ) : (
-            /* BẢN VẼ CHÓ SHIBA ANIME CUTE 4 CHÂN & ĐUÔI CONG */
-            <svg viewBox="0 0 52 52" className="w-16 h-16 drop-shadow-md">
-              {/* Đuôi cong tít Shiba */}
-              <circle cx="39" cy="22" r="4.5" fill="#d97706" stroke="#1f2937" strokeWidth="2" />
+            /* CHÚ CHÓ SHIBA 2D PIXEL CHIBI (RETRO PIXEL ART SHIBA) */
+            <svg viewBox="0 0 32 32" className="w-16 h-16 drop-shadow-lg" shapeRendering="crispEdges">
+              {/* Curled Tail Pixel */}
+              <rect x="25" y="14" width="4" height="4" fill="#d97706" />
 
-              {/* Thân tròn múp mạp */}
-              <ellipse cx="26" cy="32" rx="13" ry="9" fill="#f59e0b" stroke="#1f2937" strokeWidth="2" />
-              <ellipse cx="24" cy="33" rx="8" ry="5" fill="#ffffff" />
+              {/* Body Pixel */}
+              <rect x="10" y="18" width="16" height="9" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
+              <rect x="12" y="20" width="12" height="6" fill="#ffffff" />
 
-              {/* 4 Chân Shiba bước đi */}
-              <rect x="15" y="38" width="4.5" height="8" rx="2" fill="#d97706" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="21" y="38" width="4.5" height="8" rx="2" fill="#d97706" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce delay-100' : ''} />
-              <rect x="27" y="38" width="4.5" height="8" rx="2" fill="#d97706" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="33" y="38" width="4.5" height="8" rx="2" fill="#d97706" stroke="#1f2937" strokeWidth="1.5" className={isWalking ? 'animate-bounce delay-100' : ''} />
+              {/* 4 Paws Pixel */}
+              <rect x="11" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="15" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <rect x="19" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="23" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
 
-              {/* Tai vểnh Shiba */}
-              <polygon points="8,15 13,5 17,15" fill="#b45309" stroke="#1f2937" strokeWidth="2" />
-              <polygon points="17,15 21,5 25,15" fill="#b45309" stroke="#1f2937" strokeWidth="2" />
+              {/* Ears Pixel */}
+              <rect x="6" y="4" width="4" height="5" fill="#b45309" />
+              <rect x="16" y="4" width="4" height="5" fill="#b45309" />
 
-              {/* Đầu & Mõm trắng */}
-              <circle cx="17" cy="22" r="11" fill="#f59e0b" stroke="#1f2937" strokeWidth="2" />
-              <ellipse cx="17" cy="25" rx="5.5" ry="4" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+              {/* Head & Snout Pixel */}
+              <rect x="5" y="9" width="16" height="11" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
+              <rect x="9" y="14" width="8" height="5" fill="#ffffff" />
 
-              {/* Mắt to lấp lánh & Mũi đen */}
-              <circle cx="12" cy="20" r="2.5" fill="#0f172a" />
-              <circle cx="22" cy="20" r="2.5" fill="#0f172a" />
-              <circle cx="13" cy="19" r="0.8" fill="#ffffff" />
-              <circle cx="23" cy="19" r="0.8" fill="#ffffff" />
-              <ellipse cx="17" cy="24" rx="1.8" ry="1.2" fill="#0f172a" />
+              {/* Eyes & Nose Pixel */}
+              <rect x="8" y="12" width="3" height="3" fill="#0f172a" />
+              <rect x="9" y="12" width="1" height="1" fill="#ffffff" />
+              <rect x="15" y="12" width="3" height="3" fill="#0f172a" />
+              <rect x="16" y="12" width="1" height="1" fill="#ffffff" />
+              <rect x="12" y="15" width="2" height="2" fill="#0f172a" />
             </svg>
           )}
         </div>
 
         {/* NÚT THAO TÁC ĐỔI THÚ CƯNG & SHOP */}
-        <div className="flex gap-1.5 items-center bg-white/95 dark:bg-slate-800/95 border-2 border-[#1f2937] dark:border-slate-600 px-2 py-0.5 rounded-full shadow-[2px_2px_0px_#1f2937]">
+        <div className="flex gap-1.5 items-center bg-white/95 dark:bg-slate-800/95 border-2 border-[#1f2937] dark:border-slate-600 px-2.5 py-0.5 rounded-full shadow-[2px_2px_0px_#1f2937]">
           <button
             onClick={() => setCurrentPet(prev => prev === 'cat' ? 'dog' : 'cat')}
             className="text-[10px] font-black text-gray-800 dark:text-slate-200 hover:text-rose-500 cursor-pointer"
           >
-            {currentPet === 'cat' ? 'Đổi Chó' : 'Đổi Mèo'}
+            {currentPet === 'cat' ? 'Đổi Chó 🐶' : 'Đổi Mèo 🐱'}
           </button>
           <span className="text-gray-300">|</span>
           <button
@@ -222,9 +219,9 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         </div>
       </div>
 
-      {/* POPUP SHOP THỨC ĂN KHÔNG BAO GIỜ BỊ CHE (FIXED BACKDROP MODAL) */}
+      {/* FIX DỨT ĐIỂM POPUP CHE: MODAL CỬA HÀNG FIXED OVERLAY TRÊN MÀN HÌNH */}
       {showShop && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-[#fffaf0] dark:bg-slate-800 border-4 border-[#1f2937] dark:border-slate-600 p-5 rounded-3xl shadow-[6px_6px_0px_#1f2937] max-w-sm w-full space-y-4 text-left">
             <div className="flex justify-between items-center border-b-2 border-dashed border-[#1f2937] dark:border-slate-700 pb-2">
               <span className="text-base font-serif font-black text-rose-600 dark:text-rose-400 flex items-center gap-1.5">

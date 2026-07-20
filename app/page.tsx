@@ -30,6 +30,10 @@ const ArchitectGlossaryModal = dynamic(() => import('../components/ArchitectGlos
   loading: () => null
 });
 
+const PixelPet = dynamic(() => import('../components/PixelPet').then(m => m.PixelPet), {
+  loading: () => null
+});
+
 interface PlacedItem {
   id: string;
   itemTypeId: string;
@@ -2244,6 +2248,15 @@ export default function Home() {
           playSfx={playSfx}
         />
       )}
+
+      {/* THÚ CƯNG PIXEL 2D ĐI DẠO MÀN HÌNH BÊN NGOÀI (PAGE-LEVEL FLOATING PET) */}
+      <PixelPet 
+        coins={coins} 
+        setCoins={setCoins} 
+        onPlayTTS={handlePlayTTS} 
+        playSfx={playSfx} 
+        isDarkMode={isDarkMode} 
+      />
 
       {/* MODAL SỔ TAY THUẬT NGỮ KIẾN TRÚC & VẬT LIỆU HSK (FOR VY) */}
       <ArchitectGlossaryModal

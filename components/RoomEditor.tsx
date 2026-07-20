@@ -618,10 +618,7 @@ export default function RoomEditor({
             <div className="absolute inset-0 bg-[#0f172a]/30 pointer-events-none z-20 backdrop-brightness-95 transition-all duration-300" />
           )}
 
-          {/* VỊ TRÍ THÚ CƯNG PIXEL TƯƠNG TÁC (CATS & DOGS TOÀN THÂN CÓ 4 CHÂN BƯỚC ĐI DƯỚI SÀN) */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
-            <PixelPet coins={coins} setCoins={setCoins} onPlayTTS={onPlayTTS} playSfx={playSfx} isDarkMode={isDarkMode} />
-          </div>
+
 
           {/* Bức tường phía trên */}
           <div className={`h-1/5 border-b-4 border-[#1f2937] transition-all flex items-center justify-around relative px-4 ${wallStyles[wallpaper]}`}>

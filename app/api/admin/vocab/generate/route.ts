@@ -3,100 +3,99 @@ import { requireAdmin } from '@/lib/admin-api';
 import { getAIChatCompletion } from '@/lib/ai';
 
 function generateFallbackBalancedVocab(query: string, category: string) {
-  const q = query.trim();
   return [
     // HSK 1
     {
-      nameChinese: `${q}一`,
-      namePinyin: `${q} yī`,
-      nameVietnamese: `${q} cơ bản`,
+      nameChinese: '学习',
+      namePinyin: 'xuéxí',
+      nameVietnamese: 'Học tập',
       hskLevel: 1,
       category,
-      exampleChinese: `我们学习${q}。`,
-      examplePinyin: `Wǒmen xuéxí ${q}.`,
-      exampleVietnamese: `Chúng ta học ${q}.`
+      exampleChinese: '大家都在努力学习汉语。',
+      examplePinyin: 'Dàjiā dōu zài nǔlì xuéxí Hànyǔ.',
+      exampleVietnamese: 'Mọi người đều đang nỗ lực học tiếng Trung.'
     },
     {
-      nameChinese: `喜欢${q}`,
-      namePinyin: `xǐhuan ${q}`,
-      nameVietnamese: `Thích ${q}`,
+      nameChinese: '喜欢',
+      namePinyin: 'xǐhuan',
+      nameVietnamese: 'Thích, yêu thích',
       hskLevel: 1,
       category,
-      exampleChinese: `我很喜欢${q}。`,
-      examplePinyin: `Wǒ hěn xǐhuan ${q}.`,
-      exampleVietnamese: `Tôi rất thích ${q}.`
+      exampleChinese: '我很喜欢这个新 phòng。',
+      examplePinyin: 'Wǒ hěn xǐhuan zhè ge xīn fáng.',
+      exampleVietnamese: 'Tôi rất thích căn phòng mới này.'
     },
     {
-      nameChinese: `买${q}`,
-      namePinyin: `mǎi ${q}`,
-      nameVietnamese: `Mua ${q}`,
+      nameChinese: '朋友',
+      namePinyin: 'péngyou',
+      nameVietnamese: 'Bạn bè',
       hskLevel: 1,
       category,
-      exampleChinese: `今天我想买${q}。`,
-      examplePinyin: `Jīntiān wǒ xiǎng mǎi ${q}.`,
-      exampleVietnamese: `Hôm nay tôi muốn mua ${q}.`
+      exampleChinese: '我们都是好朋友。',
+      examplePinyin: 'Wǒmen dōu shì hǎo péngyou.',
+      exampleVietnamese: 'Chúng tôi đều là bạn tốt của nhau.'
     },
     // HSK 2
     {
-      nameChinese: `准备${q}`,
-      namePinyin: `zhǔnbèi ${q}`,
-      nameVietnamese: `Chuẩn bị ${q}`,
+      nameChinese: '准备',
+      namePinyin: 'zhǔnbèi',
+      nameVietnamese: 'Chuẩn bị',
       hskLevel: 2,
       category,
-      exampleChinese: `大家都在准备${q}。`,
-      examplePinyin: `Dàjiā dōu zài zhǔnbèi ${q}.`,
-      exampleVietnamese: `Mọi người đều đang chuẩn bị ${q}.`
+      exampleChinese: '大家都已经准备好了。',
+      examplePinyin: 'Dàjiā dōu yǐjīng zhǔnbèi hǎo le.',
+      exampleVietnamese: 'Mọi người đều đã chuẩn bị xong xuôi.'
     },
     {
-      nameChinese: `介绍${q}`,
-      namePinyin: `jièshào ${q}`,
-      nameVietnamese: `Giới thiệu ${q}`,
+      nameChinese: '介绍',
+      namePinyin: 'jièshào',
+      nameVietnamese: 'Giới thiệu',
       hskLevel: 2,
       category,
-      exampleChinese: `请给我介绍一下${q}。`,
-      examplePinyin: `Qǐng gěi wǒ jièshào yíxià ${q}.`,
-      exampleVietnamese: `Xin hãy giới thiệu một chút về ${q}.`
+      exampleChinese: '让我给你介绍一下新朋友。',
+      examplePinyin: 'Ràng wǒ gěi nǐ jièshào yíxià xīn péngyou.',
+      exampleVietnamese: 'Để tôi giới thiệu cho bạn một người bạn mới.'
     },
     {
-      nameChinese: `非常${q}`,
-      namePinyin: `fēicháng ${q}`,
-      nameVietnamese: `Vô cùng ${q}`,
+      nameChinese: '非常',
+      namePinyin: 'fēicháng',
+      nameVietnamese: 'Vô cùng, rất',
       hskLevel: 2,
       category,
-      exampleChinese: `这个${q}非常漂亮。`,
-      examplePinyin: `Zhè ge ${q} fēicháng piàoliang.`,
-      exampleVietnamese: `${q} này vô cùng đẹp.`
+      exampleChinese: '这个设计非常漂亮。',
+      examplePinyin: 'Zhè ge shèjì fēicháng piàoliang.',
+      exampleVietnamese: 'Bản thiết kế này vô cùng đẹp mắt.'
     },
     // HSK 3
     {
-      nameChinese: `选择${q}`,
-      namePinyin: `xuǎnzé ${q}`,
-      nameVietnamese: `Lựa chọn ${q}`,
+      nameChinese: '选择',
+      namePinyin: 'xuǎnzé',
+      nameVietnamese: 'Lựa chọn',
       hskLevel: 3,
       category,
-      exampleChinese: `这是最好的${q}选择。`,
-      examplePinyin: `Zhè shì zuì hǎo de ${q} xuǎnzé.`,
-      exampleVietnamese: `Đây là sự lựa chọn ${q} tốt nhất.`
+      exampleChinese: '这是最好的选择。',
+      examplePinyin: 'Zhè shì zuì hǎo de xuǎnzé.',
+      exampleVietnamese: 'Đây là sự lựa chọn tốt nhất.'
     },
     {
-      nameChinese: `影响${q}`,
-      namePinyin: `yǐngxiǎng ${q}`,
-      nameVietnamese: `Ảnh hưởng ${q}`,
+      nameChinese: '影响',
+      namePinyin: 'yǐngxiǎng',
+      nameVietnamese: 'Ảnh hưởng',
       hskLevel: 3,
       category,
-      exampleChinese: `环境对${q}有影响。`,
-      examplePinyin: `Huánjìng duì ${q} yǒu yǐngxiǎng.`,
-      exampleVietnamese: `Môi trường có ảnh hưởng tới ${q}.`
+      exampleChinese: '环境对人有很大影响。',
+      examplePinyin: 'Huánjìng duì rén yǒu hěn dà yǐngxiǎng.',
+      exampleVietnamese: 'Môi trường có ảnh hưởng rất lớn tới con người.'
     },
     {
-      nameChinese: `满意${q}`,
-      namePinyin: `mǎnyì ${q}`,
-      nameVietnamese: `Hài lòng với ${q}`,
+      nameChinese: '满意',
+      namePinyin: 'mǎnyì',
+      nameVietnamese: 'Hài lòng',
       hskLevel: 3,
       category,
-      exampleChinese: `我对这个${q}非常满意。`,
-      examplePinyin: `Wǒ duì zhège ${q} fēicháng mǎnyì.`,
-      exampleVietnamese: `Tôi vô cùng hài lòng với ${q} này.`
+      exampleChinese: '客户对我们的设计非常满意。',
+      examplePinyin: 'Kèhù duì wǒmen de shèjì fēicháng mǎnyì.',
+      exampleVietnamese: 'Khách hàng vô cùng hài lòng với thiết kế của chúng tôi.'
     }
   ];
 }

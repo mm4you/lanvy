@@ -94,7 +94,9 @@ export default function BlueprintQuiz({
   const [streak, setStreak] = useState(0);
 
   // AI custom quiz states
-  const [customTheme, setCustomTheme] = useState('');
+  const [customThemeSelect, setCustomThemeSelect] = useState('all_themes');
+  const [customManualInput, setCustomManualInput] = useState('');
+  const [customTheme, setCustomTheme] = useState('Tất cả các chủ đề HSK');
   const [customQuestions, setCustomQuestions] = useState<any[]>([]);
   const [customQuestionIndex, setCustomQuestionIndex] = useState(0);
   const [customLoading, setCustomLoading] = useState(false);
@@ -421,7 +423,7 @@ export default function BlueprintQuiz({
           onClick={() => {
             setQuizMode('furniture');
             setStreak(0);
-            playSfx('click');
+            playSfx('flip');
           }}
           className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
             quizMode === 'furniture'
@@ -435,7 +437,7 @@ export default function BlueprintQuiz({
           onClick={() => {
             setQuizMode('general');
             setStreak(0);
-            playSfx('click');
+            playSfx('flip');
           }}
           className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
             quizMode === 'general'
@@ -451,7 +453,7 @@ export default function BlueprintQuiz({
             setStreak(0);
             setCurrentQuestion(null);
             setCustomQuestions([]);
-            playSfx('click');
+            playSfx('flip');
           }}
           className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             quizMode === 'custom'
@@ -501,22 +503,64 @@ export default function BlueprintQuiz({
             {renderSparklesIcon('text-pink-500 w-5 h-5')} AI Tự Tạo Luyện Tập Theo Chủ Đề
           </h3>
           <p className="text-[11px] text-gray-500 font-bold leading-normal">
-            Vy muốn học tiếng Trung theo chủ đề gì hôm nay? Hãy điền chủ đề (ví dụ: "Đi uống trà sữa với Khang", "Đi mua sắm", "Món ăn ngọt"...), AI của game sẽ tự động soạn một bộ 5 câu hỏi trắc nghiệm tương ứng ngay lập tức để ôn tập!
+            Vy hãy chọn chủ đề tiếng Trung mong muốn ôn tập (hoặc chọn Tự động tạo tất cả chủ đề HSK), AI sẽ tự động soạn bộ câu hỏi trắc nghiệm tương ứng ngay lập tức!
           </p>
 
           <form onSubmit={startCustomQuiz} className="space-y-3">
             <div>
-              <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Chủ đề mong muốn:</label>
-              <input
-                type="text"
-                value={customTheme}
-                onChange={(e) => setCustomTheme(e.target.value)}
-                placeholder="Ví dụ: Ăn lẩu Haidilao, Đi xem phim..."
-                className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+              <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">CHỦ ĐỀ CHỌN SẴN NỔI BẬT:</label>
+              <select
+                value={customThemeSelect}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setCustomThemeSelect(val);
+                  if (val === 'all_themes') {
+                    setCustomTheme('Tất cả các chủ đề HSK');
+                  } else if (val !== 'custom_manual') {
+                    setCustomTheme(val);
+                  } else {
+                    setCustomTheme(customManualInput);
+                  }
+                }}
+                className="w-full p-2.5 border-2 border-[#1f2937] bg-[#fff5f6] rounded-lg text-xs font-black focus:outline-none cursor-pointer text-[#1f2937]"
                 disabled={customLoading}
-                required
-              />
+              >
+                <option value="all_themes">⚡ TỰ ĐỘNG TẠO TẤT CẢ CHỦ ĐỀ HSK (FULL THEMES)</option>
+                <option value="Mua sắm & Shopping">Mua sắm & Shopping</option>
+                <option value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
+                <option value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>
+                <option value="Thời tiết & Thời gian">Thời tiết & Thời gian</option>
+                <option value="Gia đình & Nhà cửa">Gia đình & Nhà cửa</option>
+                <option value="Phương hướng & Vị trí">Phương hướng & Vị trí</option>
+                <option value="Sở thích & Hẹn hò">Sở thích & Hẹn hò</option>
+                <option value="Động vật & Thú cưng">Động vật & Thú cưng</option>
+                <option value="Học tập & Trường học">Học tập & Trường học</option>
+                <option value="Công việc & Văn phòng">Công việc & Văn phòng</option>
+                <option value="Giao thông & Du lịch">Giao thông & Du lịch</option>
+                <option value="Kiến trúc & Nội thất">Kiến trúc & Nội thất</option>
+                <option value="Cảm xúc & Mô tả">Cảm xúc & Mô tả</option>
+                <option value="Giải trí & Thể thao">Giải trí & Thể thao</option>
+                <option value="custom_manual">Tùy chọn chủ đề tự nhập tay...</option>
+              </select>
             </div>
+
+            {customThemeSelect === 'custom_manual' && (
+              <div>
+                <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">CHỦ ĐỀ TỰ NHẬP TAY:</label>
+                <input
+                  type="text"
+                  value={customManualInput}
+                  onChange={(e) => {
+                    setCustomManualInput(e.target.value);
+                    setCustomTheme(e.target.value);
+                  }}
+                  placeholder="Ví dụ: Ăn lẩu Haidilao, Đi xem phim..."
+                  className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+                  disabled={customLoading}
+                  required
+                />
+              </div>
+            )}
 
             {customError && (
               <div className="text-[11px] text-red-600 font-bold bg-red-50 p-2 border border-red-200 rounded-lg">

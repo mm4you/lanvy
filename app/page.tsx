@@ -271,6 +271,33 @@ export default function Home() {
   const [floorType, setFloorType] = useState<string>('cozy_wood');
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // PWA install prompt state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallPWA = async () => {
+    playSfx('click');
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      alert('Để thêm ứng dụng vào Màn hình chính:\n\n- Trên Android / Chrome: Bấm nút (...) trên góc trình duyệt -> Chọn "Thêm vào màn hình chính" (Add to Home screen).\n- Trên iPhone / Safari: Bấm nút Chia sẻ (Share) -> Chọn "Thêm vào Màn hình chính" (Add to Home Screen).');
+    }
+  };
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('boba_game_theme');
     if (savedTheme === 'dark') {
@@ -1088,6 +1115,16 @@ export default function Home() {
                 title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
               >
                 {isDarkMode ? 'Ban Ngày' : 'Ban Đêm'}
+              </button>
+              <button
+                onClick={handleInstallPWA}
+                className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] text-xs font-serif font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
+                title="Thêm ứng dụng vào màn hình chính điện thoại / máy tính"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Cài App
               </button>
               <button
                 onClick={() => {

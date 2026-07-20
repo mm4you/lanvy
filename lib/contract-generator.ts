@@ -20,6 +20,34 @@ const TITLE_TEMPLATES = [
   'Góc nghỉ ngơi lãng mạn'
 ];
 
+const DYNAMIC_VOUCHER_TEMPLATES = [
+  {
+    title: 'VOUCHER GIẢM 20% XU ĐỒ NỘI THẤT',
+    description: 'Ưu đãi đặc quyền giảm 20% Xu sắm vật liệu bàn ghế & trang trí phòng.',
+    codePrefix: 'HSK-DECOR-20'
+  },
+  {
+    title: 'THẺ QUÀ TẶNG THÂM NIÊN KIẾN TRÚC SƯ',
+    description: 'Thẻ danh dự công nhận nhà thiết kế xuất sắc, tặng kèm 200 Xu kho quà.',
+    codePrefix: 'ARCHITECT-VIP'
+  },
+  {
+    title: 'VOUCHER KHÔNG GIAN SỐNG XANH',
+    description: 'Mở khóa miễn phí bộ trang trí cây cảnh & thảm trải sàn pixel cao cấp.',
+    codePrefix: 'GREEN-LIVING'
+  },
+  {
+    title: 'THẺ ƯU ĐÃI THỞ TRÀ TRUNG HOA',
+    description: 'Nhận ngay phần thưởng kinh nghiệm +150 điểm HSK và voucher thưởng trà.',
+    codePrefix: 'TEA-EXPERIENCE'
+  },
+  {
+    title: 'HUY HIỆU NHÀ THIẾT KẾ XUẤT SẮC',
+    description: 'Huy hiệu thành tựu tay nghề thiết kế phòng HSK đỉnh cao.',
+    codePrefix: 'PRO-DESIGNER'
+  }
+];
+
 /**
  * Hàm sinh tự động hợp đồng thiết kế mới dựa trên bộ từ vựng HSK
  */
@@ -84,6 +112,18 @@ export function generateDynamicContract(customId?: number, levelMultiplier: numb
 
   const description = `${clientName} cần thiết kế một không gian nhỏ thích hợp. ${clientName} muốn có: ${itemNamesVn.join(', ')}.`;
 
+  // Dynamic voucher reward generation (70% probability)
+  let voucherReward = undefined;
+  if (Math.random() < 0.7) {
+    const vTemplate = DYNAMIC_VOUCHER_TEMPLATES[Math.floor(Math.random() * DYNAMIC_VOUCHER_TEMPLATES.length)];
+    const randomCode = `${vTemplate.codePrefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+    voucherReward = {
+      title: vTemplate.title,
+      description: vTemplate.description,
+      code: randomCode
+    };
+  }
+
   return {
     id: contractId,
     level,
@@ -96,6 +136,7 @@ export function generateDynamicContract(customId?: number, levelMultiplier: numb
     promptVietnamese,
     targetRequirements,
     rewardCoins,
-    rewardScore
+    rewardScore,
+    voucherReward
   };
 }

@@ -102,7 +102,7 @@ export const DESIGN_CONTRACTS: DesignContract[] = [
     rewardScore: 100,
     voucherReward: {
       title: 'CHỨNG CHỈ KIẾN TRÚC SƯ TẬP SỰ',
-      description: 'Hoàn thành bản thiết kế đầu tiên! Vy được nhận ngay mã quà tặng khởi đầu này.',
+      description: 'Hoàn thành bản thiết kế đầu tiên! Bạn nhận được ngay mã quà tặng khởi đầu này.',
       code: 'ATELIER-START-100'
     }
   },
@@ -118,7 +118,12 @@ export const DESIGN_CONTRACTS: DesignContract[] = [
     promptVietnamese: 'Tôi cần một chiếc kệ sách và một chậu cây cảnh.',
     targetRequirements: ['bookshelf', 'potted_plant'],
     rewardCoins: 120,
-    rewardScore: 150
+    rewardScore: 150,
+    voucherReward: {
+      title: 'VOUCHER KHUYẾN MÃI NỘI THẤT HSK',
+      description: 'Mở khóa ưu đãi giảm 20% Xu sắm kệ sách & cây cảnh trang trí phòng đọc.',
+      code: 'HSK-DECOR-DISCOUNT-20'
+    }
   },
 
   // CẤP ĐỘ 2: Nhiệm vụ nâng cao
@@ -134,7 +139,12 @@ export const DESIGN_CONTRACTS: DesignContract[] = [
     promptVietnamese: 'Xin hãy cho tôi một chiếc bàn gỗ, một chiếc ghế bành và một chiếc đèn đứng.',
     targetRequirements: ['wood_table', 'armchair', 'floor_lamp'],
     rewardCoins: 180,
-    rewardScore: 250
+    rewardScore: 250,
+    voucherReward: {
+      title: 'VOUCHER KHÔNG GIAN SỐNG XANH',
+      description: 'Mở khóa bộ cây cảnh và thảm pixel cao cấp cho mọi căn phòng.',
+      code: 'GREEN-LIVING-DECOR-FREE'
+    }
   },
   {
     id: 4,
@@ -148,7 +158,12 @@ export const DESIGN_CONTRACTS: DesignContract[] = [
     promptVietnamese: 'Tôi muốn có một chiếc bàn học, một chiếc ghế văn phòng và một cây xương rồng.',
     targetRequirements: ['study_desk', 'office_chair', 'cactus'],
     rewardCoins: 200,
-    rewardScore: 300
+    rewardScore: 300,
+    voucherReward: {
+      title: 'HUY HIỆU NHÀ THIẾT KẾ XUẤT SẮC',
+      description: 'Huy hiệu thành tựu công nhận tay nghề thiết kế phòng làm việc HSK đỉnh cao.',
+      code: 'MASTER-DESIGNER-BADGE'
+    }
   },
 
   // CẤP ĐỘ 3: Hợp đồng đặc biệt từ Khang dành cho Vy

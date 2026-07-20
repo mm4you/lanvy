@@ -1205,7 +1205,7 @@ export default function Home() {
                   ) : (
                     <>Chủ tiệm: <span className="text-rose-600 dark:text-rose-400">{user.username}</span></>
                   )}{' '}
-                  // Chào mừng trở lại!
+                  | Chào mừng trở lại!
                 </p>
               </div>
             </div>
@@ -1552,7 +1552,7 @@ export default function Home() {
                       {/* BUTTON NỘP HỢP ĐỒNG */}
                       <div className="pt-4 border-t border-dashed border-[#1f2937] flex justify-between items-center">
                         <div className="text-xs font-black text-gray-600 text-left">
-                          Phần thưởng: <span className="text-amber-600">{currentContract.rewardCoins} Xu</span> // <span className="text-blue-600">{currentContract.rewardScore} Điểm</span>
+                          Phần thưởng: <span className="text-amber-600">{currentContract.rewardCoins} Xu</span> • <span className="text-blue-600">{currentContract.rewardScore} Điểm</span>
                         </div>
                         {!completedContracts.includes(currentContract.id) && (
                           <button

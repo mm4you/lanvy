@@ -1161,39 +1161,39 @@ export default function Home() {
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN (COPY 100% IELTS VOCAB DASHBOARD) */
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
         <div className="max-w-6xl mx-auto space-y-6">
-          {/* HEADER TRANG CHỦ CHUẨN IELTS VOCAB (MODERN & FLEXIBLE ON MOBILE & DESKTOP) */}
-          <header className={`border-2 sm:border-3 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-all duration-300 ${
+          {/* HEADER TRANG CHỦ CHUẨN 100% NEO-BRUTALISM IELTS VOCAB */}
+          <header className={`border-4 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-all duration-300 ${
             isDarkMode 
-              ? 'bg-[#1e293b]/95 text-slate-100 border-slate-700 shadow-xl backdrop-blur-md' 
-              : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937] shadow-[3px_3px_0px_#1f2937]'
+              ? 'bg-slate-900 text-slate-100 border-slate-700 shadow-[4px_4px_0_#020617]' 
+              : 'bg-white text-black border-black shadow-[4px_4px_0_#000]'
           }`}>
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 bg-rose-100 dark:bg-rose-950/80 border-2 border-[#1f2937] dark:border-rose-700 rounded-2xl overflow-hidden flex items-center justify-center text-rose-500 shrink-0 shadow-sm">
+              <div className="w-12 h-12 bg-amber-400 border-4 border-black dark:border-slate-600 rounded-lg overflow-hidden flex items-center justify-center text-rose-600 shrink-0 shadow-[2px_2px_0_#000]">
                 {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                  renderClientAvatar('lan_vy', 'w-9 h-9 sm:w-10 sm:h-10')
+                  renderClientAvatar('lan_vy', 'w-10 h-10')
                 ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                  renderClientAvatar('khang', 'w-9 h-9 sm:w-10 sm:h-10')
+                  renderClientAvatar('khang', 'w-10 h-10')
                 ) : (
-                  renderPaletteIcon('w-6 h-6 sm:w-7 sm:h-7')
+                  renderPaletteIcon('w-7 h-7')
                 )}
               </div>
               <div>
-                <h1 className={`text-base sm:text-lg font-serif font-black flex items-center gap-2 ${
-                  isDarkMode ? 'text-slate-100' : 'text-[#1f2937]'
+                <h1 className={`text-lg sm:text-xl font-serif font-black flex items-center gap-2 ${
+                  isDarkMode ? 'text-slate-100' : 'text-black'
                 }`}>
                   Atelier Thiết Kế HSK
                   {user.email?.toLowerCase() === LOVE_EMAIL && (
-                    <span className="text-[10px] bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-700 px-2 py-0.5 rounded-full font-sans uppercase font-black tracking-wider flex items-center gap-1">
+                    <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-2 border-black dark:border-rose-700 px-2 py-0.5 rounded font-mono font-black uppercase tracking-wider flex items-center gap-1 shadow-[1px_1px_0_#000]">
                       {renderHeartIcon('w-3 h-3 text-rose-500 fill-current')} Vy Của Khang
                     </span>
                   )}
                   {user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
-                    <span className="text-[10px] bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700 px-2 py-0.5 rounded-full font-sans uppercase font-black tracking-wider flex items-center gap-1">
+                    <span className="text-[10px] bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-2 border-black dark:border-blue-700 px-2 py-0.5 rounded font-mono font-black uppercase tracking-wider flex items-center gap-1 shadow-[1px_1px_0_#000]">
                       Khang Của Vy
                     </span>
                   )}
                 </h1>
-                <p className="text-xs text-gray-500 dark:text-slate-400 font-bold">
+                <p className="text-xs text-gray-600 dark:text-slate-400 font-mono font-bold">
                   {user.email?.toLowerCase() === LOVE_EMAIL ? (
                     <>Bà chủ: <span className="text-rose-600 dark:text-rose-400">Lan Vy</span></>
                   ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
@@ -1206,41 +1206,43 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Chỉ số tài khoản & Thao tác */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5">
+            {/* Chỉ số tài khoản & Thao tác Neo-Brutalist */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               {/* Chỉ số Xu & Điểm */}
               <div className="flex items-center gap-2">
-                <div className="bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 border-2 border-[#1f2937] dark:border-amber-700 px-3 py-1.5 rounded-xl text-xs font-black font-mono flex items-center shadow-[2px_2px_0px_#1f2937]">
+                <div className="bg-amber-400 text-black border-4 border-black dark:border-slate-600 px-3 py-1.5 rounded-lg text-xs font-black font-mono shadow-[2px_2px_0_#000] flex items-center">
                   {renderCoinIcon()} Xu: {coins}
                 </div>
-                <div className="bg-blue-100 dark:bg-blue-950/80 text-blue-900 dark:text-blue-200 border-2 border-[#1f2937] dark:border-blue-700 px-3 py-1.5 rounded-xl text-xs font-black font-mono flex items-center shadow-[2px_2px_0px_#1f2937]">
-                  {renderAwardIcon('w-4 h-4 text-blue-600 inline mr-1')} Điểm: {score}
+                <div className="bg-blue-600 text-white border-4 border-black dark:border-slate-600 px-3 py-1.5 rounded-lg text-xs font-black font-mono shadow-[2px_2px_0_#000] flex items-center">
+                  {renderAwardIcon('w-4 h-4 text-white inline mr-1')} Điểm: {score}
                 </div>
               </div>
 
-              {/* Các nút thao tác */}
+              {/* Các nút thao tác Neo-Brutalist */}
               <div className="flex items-center gap-2">
+                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI NEO-BRUTALIST */}
                 <button
                   onClick={toggleDarkMode}
-                  className={`p-2 border-2 border-[#1f2937] dark:border-slate-600 rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center justify-center cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
-                    isDarkMode ? 'bg-slate-800 text-amber-400 border-slate-600' : 'bg-amber-100 text-indigo-600 border-amber-300'
+                  className={`p-2.5 border-4 border-black dark:border-slate-600 rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center justify-center cursor-pointer hover:scale-105 active:translate-y-0.5 transition-all ${
+                    isDarkMode ? 'bg-slate-800 text-amber-300' : 'bg-white text-indigo-600 hover:bg-amber-100'
                   }`}
                   title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
                 >
-                  {isDarkMode ? renderSunIcon('w-4 h-4 text-amber-400') : renderMoonIcon('w-4 h-4 text-indigo-600')}
+                  {isDarkMode ? renderSunIcon('w-4 h-4 text-amber-300') : renderMoonIcon('w-4 h-4 text-indigo-600')}
                 </button>
+
                 <button
                   onClick={() => {
                     setShowArchitectModal(true);
                     playSfx('click');
                   }}
-                  className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-[#1f2937] border-2 border-[#1f2937] dark:border-slate-600 text-xs font-serif font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
+                  className="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-black border-4 border-black dark:border-slate-600 text-xs font-mono font-black rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 transition-all"
                 >
                   Sổ Tay Specs
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border-2 border-[#1f2937] dark:border-slate-600 text-xs font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer text-[#1f2937]"
+                  className="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white border-4 border-black dark:border-slate-600 text-xs font-mono font-black rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 transition-all"
                 >
                   {renderSignoutIcon()} Đăng Xuất
                 </button>
@@ -1248,78 +1250,74 @@ export default function Home() {
             </div>
           </header>
 
-          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (STICKY NAVBAR CHUẨN MOBILE & DESKTOP IELTS VOCAB) */}
-          <nav className="sticky top-2 z-30 w-full flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 pt-0.5 px-1 scrollbar-none snap-x shrink-0 bg-[#fff0f3]/90 dark:bg-[#0f172a]/90 backdrop-blur-md rounded-2xl border border-rose-200/50 dark:border-slate-800">
+          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (STICKY NAVBAR CHUẨN 100% NEO-BRUTALISM IELTS VOCAB) */}
+          <nav className="sticky top-2 z-30 w-full flex items-center gap-2 overflow-x-auto pb-2 pt-1 px-1 scrollbar-none snap-x shrink-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-xl border-4 border-black dark:border-slate-700 shadow-[4px_4px_0_#000] dark:shadow-[4px_4px_0_#020617]">
             <button
               onClick={() => { setActiveTab('studio'); playSfx('click'); }}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
+              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
                 activeTab === 'studio'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
-                  : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
               }`}
             >
-              {renderAwardIcon(activeTab === 'studio' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
+              {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
               <span>Studio</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
+              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
                 activeTab === 'quiz'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
-                  : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
               }`}
             >
-              {renderBookIcon(activeTab === 'quiz' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
+              {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
               <span>Quiz HSK</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('room'); playSfx('click'); }}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
+              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
                 activeTab === 'room'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
-                  : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
               }`}
             >
-              {renderHomeIcon(activeTab === 'room' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
+              {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
               <span>{isVy ? 'Phòng Vy' : `Phòng ${user?.username || 'Của Bạn'}`}</span>
             </button>
 
-            {/* NÚT CỬA HÀNG TRÊN NGAO DIỆN MENU (IELTS VOCAB STYLE) */}
+            {/* NÚT CỬA HÀNG TRÊN NGAO DIỆN MENU (NEO-BRUTALISM IELTS VOCAB) */}
             <button
               onClick={() => { setShowPetShopModal(true); playSfx('click'); }}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
-                isDarkMode 
-                  ? 'bg-amber-950/90 text-amber-300 border-amber-700 hover:bg-amber-900' 
-                  : 'bg-amber-100 text-amber-950 border-amber-300 hover:bg-amber-200'
-              }`}
+              className="px-4 py-2.5 border-4 border-black dark:border-slate-700 bg-amber-400 hover:bg-amber-500 text-black font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start"
             >
-              {renderShoppingBagIcon('w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400')}
+              {renderShoppingBagIcon('w-4 h-4 text-black')}
               <span>Cửa Hàng</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('love'); playSfx('click'); }}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
+              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
                 activeTab === 'love'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
-                  : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
               }`}
             >
-              {renderVoucherIcon(activeTab === 'love' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
+              {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
               <span>{isVy ? 'Thư Tình' : 'Ví Voucher'}</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('library'); playSfx('click'); }}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
+              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
                 activeTab === 'library'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
-                  : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
               }`}
             >
-              {renderBookIcon(activeTab === 'library' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
+              {renderBookIcon(activeTab === 'library' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
               <span>Thư Viện</span>
             </button>
 

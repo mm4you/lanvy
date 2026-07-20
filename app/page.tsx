@@ -407,6 +407,73 @@ export default function Home() {
   const [vocabBotLoading, setVocabBotLoading] = useState(false);
   const [vocabBotMsg, setVocabBotMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Forgot Password modal state
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotStep, setForgotStep] = useState<'request' | 'verify' | 'reset'>('request');
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOtp, setForgotOtp] = useState('');
+  const [forgotNewPass, setForgotNewPass] = useState('');
+  const [forgotMsg, setForgotMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [forgotLoading, setForgotLoading] = useState(false);
+
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotMsg(null);
+
+    try {
+      if (forgotStep === 'request') {
+        const res = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'send_code', email: forgotEmail }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setForgotMsg({ type: 'success', text: data.message });
+          setForgotStep('verify');
+        } else {
+          setForgotMsg({ type: 'error', text: data.error || 'Lỗi gửi yêu cầu OTP.' });
+        }
+      } else if (forgotStep === 'verify') {
+        const res = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verify_code', email: forgotEmail, code: forgotOtp }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setForgotMsg({ type: 'success', text: 'Mã OTP chính xác! Nhập mật khẩu mới bên dưới.' });
+          setForgotStep('reset');
+        } else {
+          setForgotMsg({ type: 'error', text: data.error || 'Mã OTP không đúng.' });
+        }
+      } else if (forgotStep === 'reset') {
+        const res = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'reset_password', email: forgotEmail, code: forgotOtp, password: forgotNewPass }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('Đặt lại mật khẩu thành công! Bạn có thể đăng nhập ngay.');
+          setShowForgotModal(false);
+          setForgotStep('request');
+          setForgotEmail('');
+          setForgotOtp('');
+          setForgotNewPass('');
+          setAuthMode('login');
+        } else {
+          setForgotMsg({ type: 'error', text: data.error || 'Đặt lại mật khẩu thất bại.' });
+        }
+      }
+    } catch (e: any) {
+      setForgotMsg({ type: 'error', text: 'Lỗi kết nối máy chủ.' });
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   const fetchCustomVocabs = async () => {
     try {
       const res = await fetch('/api/vocab/list');
@@ -1141,7 +1208,18 @@ export default function Home() {
                 )}
 
                 <div className="flex flex-col gap-1">
-                  <label className="font-mono text-xs font-bold text-black uppercase">Mật khẩu</label>
+                  <div className="flex justify-between items-center">
+                    <label className="font-mono text-xs font-bold text-black uppercase">Mật khẩu</label>
+                    {authMode === 'login' && (
+                      <button
+                        type="button"
+                        onClick={() => { setShowForgotModal(true); setForgotStep('request'); setForgotMsg(null); playSfx('click'); }}
+                        className="text-xs font-mono font-bold text-blue-600 hover:text-blue-800 underline cursor-pointer"
+                      >
+                        Quên mật khẩu?
+                      </button>
+                    )}
+                  </div>
                   <input
                     type="password"
                     required
@@ -1187,6 +1265,111 @@ export default function Home() {
               </a>
             </div>
           </div>
+
+          {/* MODAL KHÔI PHỤC MẬT KHẨU OTP (NEO-BRUTALISM) */}
+          {showForgotModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+              <div className="bg-[#fffdf8] border-4 border-black p-6 rounded-2xl shadow-[6px_6px_0_#000] max-w-md w-full space-y-4 text-black text-left relative">
+                <div className="flex justify-between items-center border-b-4 border-black pb-3">
+                  <h3 className="font-serif font-black text-xl flex items-center gap-2">
+                    Khôi Phục Mật Khẩu
+                  </h3>
+                  <button
+                    onClick={() => { setShowForgotModal(false); playSfx('click'); }}
+                    className="w-8 h-8 bg-rose-500 hover:bg-rose-600 text-white font-mono font-black border-2 border-black rounded-lg shadow-[2px_2px_0_#000] flex items-center justify-center cursor-pointer"
+                  >
+                    X
+                  </button>
+                </div>
+
+                <form onSubmit={handleForgotSubmit} className="space-y-4">
+                  {forgotStep === 'request' && (
+                    <div className="space-y-3">
+                      <p className="text-xs font-bold text-gray-700 leading-relaxed">
+                        Nhập địa chỉ Email hoặc Tên tài khoản của bạn để nhận mã xác minh OTP qua Email (Studio Vocab Support):
+                      </p>
+                      <div className="flex flex-col gap-1">
+                        <label className="font-mono text-xs font-bold uppercase">Email / Tên tài khoản</label>
+                        <input
+                          type="text"
+                          required
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                          placeholder="email@example.com hoặc username"
+                          className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none focus:bg-amber-50 shadow-[2px_2px_0_#000]"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {forgotStep === 'verify' && (
+                    <div className="space-y-3">
+                      <p className="text-xs font-bold text-gray-700 leading-relaxed">
+                        Mã OTP 6 số đã được gửi tới email của bạn. Vui lòng kiểm tra Hòm Thư (Inbox/Spam) và nhập bên dưới:
+                      </p>
+                      <div className="flex flex-col gap-1">
+                        <label className="font-mono text-xs font-bold uppercase">Mã Xác Minh OTP (6 số)</label>
+                        <input
+                          type="text"
+                          required
+                          maxLength={6}
+                          value={forgotOtp}
+                          onChange={(e) => setForgotOtp(e.target.value)}
+                          placeholder="123456"
+                          className="w-full border-4 border-black p-3 font-mono font-black text-center text-xl tracking-widest rounded bg-amber-50 text-black focus:outline-none shadow-[2px_2px_0_#000]"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {forgotStep === 'reset' && (
+                    <div className="space-y-3">
+                      <p className="text-xs font-bold text-gray-700 leading-relaxed">
+                        Xác minh OTP thành công! Vui lòng nhập mật khẩu mới cho tài khoản:
+                      </p>
+                      <div className="flex flex-col gap-1">
+                        <label className="font-mono text-xs font-bold uppercase">Mật khẩu mới</label>
+                        <input
+                          type="password"
+                          required
+                          minLength={6}
+                          value={forgotNewPass}
+                          onChange={(e) => setForgotNewPass(e.target.value)}
+                          placeholder="Mật khẩu mới (ít nhất 6 ký tự)..."
+                          className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none shadow-[2px_2px_0_#000]"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {forgotMsg && (
+                    <div className={`p-2.5 border-2 border-black rounded text-xs font-mono font-bold ${
+                      forgotMsg.type === 'success' ? 'bg-green-100 text-green-800 border-green-700' : 'bg-rose-100 text-rose-800 border-rose-700'
+                    }`}>
+                      {forgotMsg.text}
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotModal(false)}
+                      className="flex-1 py-2.5 bg-gray-200 hover:bg-gray-300 text-black font-mono font-bold text-xs uppercase border-3 border-black rounded shadow-[2px_2px_0_#000] cursor-pointer"
+                    >
+                      Hủy
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={forgotLoading}
+                      className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-mono font-bold text-xs uppercase border-3 border-black rounded shadow-[2px_2px_0_#000] cursor-pointer"
+                    >
+                      {forgotLoading ? 'Đang gửi...' : forgotStep === 'request' ? 'Gửi Mã OTP' : forgotStep === 'verify' ? 'Xác Nhận OTP' : 'Đổi Mật Khẩu'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN (COPY 100% IELTS VOCAB DASHBOARD) */

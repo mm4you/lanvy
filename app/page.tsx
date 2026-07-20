@@ -1056,15 +1056,15 @@ export default function Home() {
             </div>
             <div className="z-10 my-auto flex flex-col gap-6 max-w-md">
               <div className="mb-2">
-                <div className="w-28 h-28 bg-white border-4 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0_#000] text-rose-500">
-                  {renderPaletteIcon('w-16 h-16')}
+                <div className="w-28 h-28 bg-white border-4 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0_#000]">
+                  <img src="/logo.svg" alt="Game Logo" className="w-22 h-22 drop-shadow-md hover:scale-105 transition-transform" />
                 </div>
               </div>
               <h2 className="text-4xl lg:text-5xl font-serif font-black text-black leading-tight">
-                Tiệm Thiết Kế Của Vy
+                Tiệm Thiết Kế HSK
               </h2>
               <p className="text-black font-bold leading-relaxed border-l-4 border-black pl-4">
-                Học từ vựng HSK 1-3 thông minh qua phương pháp sắp xếp nội thất pixel, lặp lại ngắt quãng tối ưu và rèn luyện phản xạ phát âm cùng chiến thần AI mỏ hỗn.
+                Học từ vựng HSK 1-3 thông minh qua phương pháp sắp xếp nội thất pixel, lặp lại ngắt quãng tối ưu và rèn luyện phản xạ phát âm cùng thú cưng 2D.
               </p>
             </div>
             <div className="z-10 pt-6 border-t-4 border-black border-dashed">
@@ -1084,7 +1084,7 @@ export default function Home() {
                 Atelier HSK
               </h1>
               <p className="text-gray-600 text-xs sm:text-sm font-bold text-center mb-6">
-                Hệ thống yêu cầu đăng nhập để cá nhân hóa tiến trình học tập của Vy.
+                Hệ thống yêu cầu đăng nhập để cá nhân hóa tiến trình học tập tiếng Trung HSK của bạn.
               </p>
 
               {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ CHUẨN IELTS VOCAB */}

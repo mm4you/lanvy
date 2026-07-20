@@ -19,6 +19,7 @@ interface LoveInboxProps {
   unlockedVouchers: any[];
   onUnlockVoucher: (contract: DesignContract) => void;
   playSfx: (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => void;
+  isDarkMode?: boolean;
 }
 
 // Icons bổ trợ thay thế cho Emojis
@@ -92,7 +93,8 @@ export default function LoveInbox({
   placedItems,
   unlockedVouchers,
   onUnlockVoucher,
-  playSfx
+  playSfx,
+  isDarkMode
 }: LoveInboxProps) {
   const userName = user?.username || 'Bạn';
   const [activeTab, setActiveTab] = useState<'contracts' | 'chat' | 'wallet'>(isVy ? 'contracts' : 'wallet');
@@ -272,7 +274,9 @@ export default function LoveInbox({
   };
 
   return (
-    <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 sm:p-6 max-w-2xl mx-auto my-4">
+    <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 sm:p-6 max-w-2xl mx-auto my-4 transition-colors ${
+      isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fff0f3] text-[#1f2937] border-[#1f2937]'
+    }`}>
       {/* TABS HỘM THƯ */}
       <div className="flex border-b-2 border-[#1f2937] mb-6">
         {isVy && (

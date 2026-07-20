@@ -60,6 +60,14 @@ function renderMailIcon(className = 'w-5 h-5') {
   );
 }
 
+function renderVoucherIcon(className = 'w-5 h-5') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v12m-9-12v12M3 9a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 000-4V9z" />
+    </svg>
+  );
+}
+
 function renderHomeIcon(className = 'w-5 h-5') {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1026,7 +1034,7 @@ export default function Home() {
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-6 pb-20 md:pb-0">
+        <div className="max-w-6xl mx-auto space-y-6">
           {/* HEADER TRANG CHỦ */}
           <header className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors ${
             isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
@@ -1105,122 +1113,68 @@ export default function Home() {
             </div>
           </header>
 
-          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (Tối ưu cho Máy tính Desktop) */}
-          <nav className="hidden md:flex md:flex-wrap gap-2 w-full">
-            <button
-              onClick={() => {
-                setActiveTab('studio');
-                playSfx('click');
-              }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'studio' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
-              }`}
-            >
-              {activeTab === 'studio' ? renderAwardIcon('w-4 h-4 text-white') : renderAwardIcon('w-4 h-4 text-[#1f2937]')}
-              <span className="truncate">Studio</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('quiz');
-                playSfx('click');
-              }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'quiz' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
-              }`}
-            >
-              {activeTab === 'quiz' ? renderBookIcon('w-4 h-4 text-white') : renderBookIcon('w-4 h-4 text-[#1f2937]')}
-              <span className="truncate">Quiz HSK</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('room');
-                playSfx('click');
-              }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'room' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
-              }`}
-            >
-              {activeTab === 'room' ? renderHomeIcon('w-4 h-4 text-white') : renderHomeIcon('w-4 h-4 text-[#1f2937]')}
-              <span className="truncate">{isVy ? 'Phòng Vy' : `Phòng ${user?.username || 'Của Bạn'}`}</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('love');
-                playSfx('click');
-              }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'love' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
-              }`}
-            >
-              {activeTab === 'love' ? renderMailIcon('w-4 h-4 text-white') : renderMailIcon('w-4 h-4 text-[#1f2937]')}
-              <span className="truncate">{isVy ? 'Thư Tình' : 'Ví Voucher'}</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('library');
-                playSfx('click');
-              }}
-              className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'library' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
-              }`}
-            >
-              {activeTab === 'library' ? renderBookIcon('w-4 h-4 text-white') : renderBookIcon('w-4 h-4 text-[#1f2937]')}
-              <span className="truncate">Thư Viện</span>
-            </button>
-            {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
-              <button
-                onClick={() => {
-                  setActiveTab('admin');
-                  fetchAdminLogs();
-                  playSfx('click');
-                }}
-                className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 ${
-                  activeTab === 'admin' ? 'bg-purple-600 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
-                }`}
-              >
-                {activeTab === 'admin' ? renderAIIcon('w-4 h-4 text-white') : renderAIIcon('w-4 h-4 text-[#1f2937]')}
-                <span className="truncate">Admin</span>
-              </button>
-            )}
-          </nav>
-
-          {/* STICKY BOTTOM NAVIGATION BAR CHO MOBILE (< 768px) */}
-          <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur border-t-4 border-[#1f2937] px-2 py-1.5 flex justify-around items-center md:hidden shadow-lg">
+          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (Pill-Tabs Cuộn Ngang - Chuẩn IELTS Vocab trên cả Mobile & Desktop) */}
+          <nav className="w-full flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none shrink-0">
             <button
               onClick={() => { setActiveTab('studio'); playSfx('click'); }}
-              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'studio' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+                activeTab === 'studio'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+              }`}
             >
-              {renderAwardIcon('w-5 h-5')}
-              <span className="text-[10px] mt-0.5">Studio</span>
+              {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              <span>Studio</span>
             </button>
+
             <button
               onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
-              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'quiz' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+                activeTab === 'quiz'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+              }`}
             >
-              {renderBookIcon('w-5 h-5')}
-              <span className="text-[10px] mt-0.5">Quiz</span>
+              {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              <span>Quiz HSK</span>
             </button>
+
             <button
               onClick={() => { setActiveTab('room'); playSfx('click'); }}
-              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'room' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+                activeTab === 'room'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+              }`}
             >
-              {renderHomeIcon('w-5 h-5')}
-              <span className="text-[10px] mt-0.5">Phòng</span>
+              {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              <span>{isVy ? 'Phòng Vy' : `Phòng ${user?.username || 'Của Bạn'}`}</span>
             </button>
+
             <button
               onClick={() => { setActiveTab('love'); playSfx('click'); }}
-              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'love' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+                activeTab === 'love'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+              }`}
             >
-              {renderMailIcon('w-5 h-5')}
-              <span className="text-[10px] mt-0.5">{isVy ? 'Thư Tình' : 'Voucher'}</span>
+              {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              <span>{isVy ? 'Thư Tình' : 'Ví Voucher'}</span>
             </button>
+
             <button
               onClick={() => { setActiveTab('library'); playSfx('click'); }}
-              className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'library' ? 'text-pink-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+                activeTab === 'library'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  : isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
+              }`}
             >
-              {renderBookIcon('w-5 h-5')}
-              <span className="text-[10px] mt-0.5">Thư Viện</span>
+              {renderBookIcon(activeTab === 'library' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              <span>Thư Viện</span>
             </button>
+
             {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
               <button
                 onClick={() => { setActiveTab('admin'); fetchAdminLogs(); playSfx('click'); }}
@@ -1522,13 +1476,18 @@ export default function Home() {
                 unlockedVouchers={unlockedVouchers}
                 onUnlockVoucher={handleUnlockLoveVoucher}
                 playSfx={playSfx}
+                isDarkMode={isDarkMode}
               />
             )}
 
             {/* TAB 5: TỪ ĐIỂN VẬT LIỆU HSK (MATERIALS DICTIONARY) */}
             {activeTab === 'library' && (
-              <div className="bg-[#fff5f6] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6">
-                <h2 className="text-xl font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 flex items-center justify-between">
+              <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6 transition-colors ${
+                isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fff5f6] text-[#1f2937] border-[#1f2937]'
+              }`}>
+                <h2 className={`text-xl font-serif font-black border-b-2 border-dashed pb-3 flex items-center justify-between ${
+                  isDarkMode ? 'border-slate-700 text-slate-100' : 'border-[#1f2937] text-[#1f2937]'
+                }`}>
                   <span>Từ Điển Vật Liệu & Ngữ Pháp HSK 1-2-3</span>
                 </h2>
 
@@ -1822,8 +1781,12 @@ export default function Home() {
             )}
 
             {activeTab === 'admin' && ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
-              <div className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6">
-                <h2 className="text-xl font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 flex justify-between items-center">
+              <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6 transition-colors ${
+                isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
+              }`}>
+                <h2 className={`text-xl font-serif font-black border-b-2 border-dashed pb-3 flex justify-between items-center ${
+                  isDarkMode ? 'border-slate-700 text-slate-100' : 'border-[#1f2937] text-[#1f2937]'
+                }`}>
                   <span>Bảng Điều Khiển Admin (Khang & Vy)</span>
                   <button
                     onClick={fetchAdminLogs}

@@ -1926,6 +1926,7 @@ export default function Home() {
                               onChange={(e) => setVocabTheme(e.target.value)}
                               className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
                             >
+                              <option value="all_themes">⚡ TỰ ĐỘNG BƠM TẤT CẢ 14+ CHỦ ĐỀ (FULL THEMES)</option>
                               <option value="Mua sắm & Shopping">Mua sắm & Shopping</option>
                               <option value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
                               <option value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>
@@ -1933,7 +1934,13 @@ export default function Home() {
                               <option value="Gia đình & Nhà cửa">Gia đình & Nhà cửa</option>
                               <option value="Phương hướng & Vị trí">Phương hướng & Vị trí</option>
                               <option value="Sở thích & Hẹn hò">Sở thích & Hẹn hò</option>
-                              <option value="Động vật">Động vật & Thú cưng</option>
+                              <option value="Động vật & Thú cưng">Động vật & Thú cưng</option>
+                              <option value="Học tập & Trường học">Học tập & Trường học</option>
+                              <option value="Công việc & Văn phòng">Công việc & Văn phòng</option>
+                              <option value="Giao thông & Du lịch">Giao thông & Du lịch</option>
+                              <option value="Kiến trúc & Nội thất">Kiến trúc & Nội thất</option>
+                              <option value="Cảm xúc & Mô tả">Cảm xúc & Mô tả</option>
+                              <option value="Giải trí & Thể thao">Giải trí & Thể thao</option>
                               <option value="custom">Chủ đề tùy chọn tự nhập...</option>
                             </select>
                           </div>

@@ -1199,78 +1199,78 @@ export default function Home() {
             </div>
           </header>
 
-          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (Pill-Tabs Cuộn Ngang Chuẩn IELTS Vocab + Nút Cửa Hàng Menu) */}
-          <nav className="w-full flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none shrink-0">
+          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (STICKY NAVBAR CHUẨN MOBILE & DESKTOP IELTS VOCAB) */}
+          <nav className="sticky top-2 z-30 w-full flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 pt-0.5 px-1 scrollbar-none snap-x shrink-0 bg-[#fff0f3]/90 dark:bg-[#0f172a]/90 backdrop-blur-md rounded-2xl border border-rose-200/50 dark:border-slate-800">
             <button
               onClick={() => { setActiveTab('studio'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
                 activeTab === 'studio'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
                   : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              {renderAwardIcon(activeTab === 'studio' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
               <span>Studio</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
                 activeTab === 'quiz'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
                   : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              {renderBookIcon(activeTab === 'quiz' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
               <span>Quiz HSK</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('room'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
                 activeTab === 'room'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
                   : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              {renderHomeIcon(activeTab === 'room' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
               <span>{isVy ? 'Phòng Vy' : `Phòng ${user?.username || 'Của Bạn'}`}</span>
             </button>
 
             {/* NÚT CỬA HÀNG TRÊN NGAO DIỆN MENU (IELTS VOCAB STYLE) */}
             <button
               onClick={() => { setShowPetShopModal(true); playSfx('click'); }}
-              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
                 isDarkMode 
-                  ? 'bg-amber-950/80 text-amber-300 border-amber-700 hover:bg-amber-900' 
+                  ? 'bg-amber-950/90 text-amber-300 border-amber-700 hover:bg-amber-900' 
                   : 'bg-amber-100 text-amber-950 border-amber-300 hover:bg-amber-200'
               }`}
             >
-              {renderShoppingBagIcon('w-4 h-4 text-amber-600 dark:text-amber-400')}
+              {renderShoppingBagIcon('w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400')}
               <span>Cửa Hàng</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('love'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
                 activeTab === 'love'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
                   : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              {renderVoucherIcon(activeTab === 'love' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
               <span>{isVy ? 'Thư Tình' : 'Ví Voucher'}</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('library'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 border-2 border-[#1f2937] dark:border-slate-700 font-serif font-black text-[11px] sm:text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 snap-start ${
                 activeTab === 'library'
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5 border-pink-700'
                   : isDarkMode ? 'bg-slate-800/90 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937]'
               }`}
             >
-              {renderBookIcon(activeTab === 'library' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+              {renderBookIcon(activeTab === 'library' ? 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-white' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500')}
               <span>Thư Viện</span>
             </button>
 

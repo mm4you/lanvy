@@ -1012,104 +1012,153 @@ export default function Home() {
   });
 
   return (
-    <main className={`min-h-screen font-sans antialiased p-4 transition-colors duration-300 ${
-      isDarkMode ? 'bg-[#0f172a] text-[#f8fafc]' : 'bg-[#fff0f3] text-[#1f2937]'
+    <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
+      isDarkMode ? 'bg-[#0f172a] text-[#f8fafc]' : 'bg-[#fffdf8] text-[#1f2937]'
     }`}>
-      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ */}
+      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ (COPY 100% GIAO DIỆN IELTS VOCAB HTTPS://IELTS.VOCAB.UMTERS.CLUB/) */}
       {!user ? (
-        <div className="max-w-md mx-auto my-16 bg-[#fffaf0] border-4 border-[#1f2937] rounded-3xl shadow-[4px_4px_0px_#1f2937] overflow-hidden p-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-rose-100 border-4 border-[#1f2937] rounded-2xl mx-auto flex items-center justify-center text-rose-500">
-              {renderPaletteIcon('w-10 h-10')}
-            </div>
-            <h1 className="text-2xl font-serif font-black text-[#1f2937] mt-3">Tiệm Thiết Kế Của Vy</h1>
-            <p className="text-xs text-gray-500 font-bold mt-1">
-              {authMode === 'login' ? 'Đăng nhập để vào thế giới thiết kế nội thất HSK' : 'Tạo tài khoản học tiếng Trung cùng Vy'}
-            </p>
-          </div>
-
-          <form onSubmit={handleAuth} className="space-y-4">
-            <div>
-              <label className="block text-xs font-black uppercase text-gray-600 mb-1">Tên tài khoản:</label>
-              <input
-                type="text"
-                value={usernameInput}
-                onChange={(e) => setUsernameInput(e.target.value)}
-                className="w-full p-2.5 border-2 border-[#1f2937] bg-white rounded-lg focus:outline-none text-sm font-bold shadow-[2px_2px_0px_#1f2937]"
-                placeholder="Nhập username..."
-              />
-            </div>
-
-            {authMode === 'register' && (
-              <div>
-                <label className="block text-xs font-black uppercase text-gray-600 mb-1">Địa chỉ Email:</label>
-                <input
-                  type="email"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  className="w-full p-2.5 border-2 border-[#1f2937] bg-white rounded-lg focus:outline-none text-sm font-bold shadow-[2px_2px_0px_#1f2937]"
-                  placeholder="Nhập email..."
-                />
+        <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden">
+          {/* CỘT TRÁI TRÊN DESKTOP: LÒ LUYỆN TỪ VỰNG HSK */}
+          <div className="hidden md:flex md:w-1/2 bg-amber-400 border-r-4 border-black flex-col justify-between p-12 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1.5px,transparent_1.5px)] [background-size:24px_24px]" />
+            <div className="z-10">
+              <div className="inline-block border-4 border-black bg-white rounded-lg px-3 py-1.5 font-mono font-black text-xs uppercase shadow-[2px_2px_0_#000] text-black">
+                Chinese HSK Vocabulary Studio
               </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-black uppercase text-gray-600 mb-1">Mật khẩu:</label>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                className="w-full p-2.5 border-2 border-[#1f2937] bg-white rounded-lg focus:outline-none text-sm font-bold shadow-[2px_2px_0px_#1f2937]"
-                placeholder="Nhập mật khẩu..."
-              />
             </div>
-
-            {authError && (
-              <p className="text-xs text-red-500 font-bold text-center bg-red-50 border border-red-200 p-2 rounded-lg">
-                {authError}
+            <div className="z-10 my-auto flex flex-col gap-6 max-w-md">
+              <div className="mb-2">
+                <div className="w-28 h-28 bg-white border-4 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0_#000] text-rose-500">
+                  {renderPaletteIcon('w-16 h-16')}
+                </div>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-serif font-black text-black leading-tight">
+                Tiệm Thiết Kế Của Vy
+              </h2>
+              <p className="text-black font-bold leading-relaxed border-l-4 border-black pl-4">
+                Học từ vựng HSK 1-3 thông minh qua phương pháp sắp xếp nội thất pixel, lặp lại ngắt quãng tối ưu và rèn luyện phản xạ phát âm cùng chiến thần AI mỏ hỗn.
               </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={authLoading}
-              className="w-full py-3 bg-rose-500 hover:bg-rose-600 disabled:bg-gray-200 disabled:text-gray-400 text-white border-2 border-[#1f2937] rounded-xl font-black text-xs uppercase tracking-wider shadow-[3px_3px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
-            >
-              {authLoading ? 'Đang Xử Lý...' : authMode === 'login' ? 'Vào Atelier' : 'Đăng Ký Tài Khoản'}
-            </button>
-          </form>
-
-          {/* GOOGLE LOGIN BUTTON */}
-          <div className="mt-3">
-            <a
-              href="/api/auth/google/start"
-              onClick={() => playSfx('click')}
-              className="w-full py-3 bg-white hover:bg-gray-50 text-[#1f2937] border-2 border-[#1f2937] rounded-xl font-black text-xs uppercase tracking-wider shadow-[3px_3px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-              </svg>
-              Đăng nhập bằng Google
-            </a>
+            </div>
+            <div className="z-10 pt-6 border-t-4 border-black border-dashed">
+              <p className="text-xs font-mono font-black text-black uppercase tracking-wider">
+                © 2026 CHINESE HSK VOCABULARY STUDIO. ALL RIGHTS RESERVED.
+              </p>
+            </div>
           </div>
 
-          <div className="text-center mt-6 pt-4 border-t border-dashed border-gray-300">
-            <button
-              onClick={() => {
-                setAuthMode(authMode === 'login' ? 'register' : 'login');
-                setAuthError('');
-                playSfx('click');
-              }}
-              className="text-xs font-black text-rose-600 hover:underline cursor-pointer"
-            >
-              {authMode === 'login' ? 'Chưa có tài khoản? Đăng ký ngay' : 'Đã có tài khoản? Đăng nhập'}
-            </button>
+          {/* CỘT PHẢI: FORM ĐĂNG NHẬP / ĐĂNG KÝ CHUẨN IELTS VOCAB */}
+          <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10 min-h-screen">
+            <div className="max-w-md w-full relative z-10 flex flex-col p-8 md:p-10 bg-white border-4 border-black rounded-2xl shadow-[6px_6px_0_#000] text-black">
+              <h1 className="text-3xl md:text-4xl font-serif font-black text-black text-center mb-2">
+                Atelier HSK
+              </h1>
+              <p className="text-gray-600 text-xs sm:text-sm font-bold text-center mb-6">
+                Hệ thống yêu cầu đăng nhập để cá nhân hóa tiến trình học tập của Vy.
+              </p>
+
+              {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ CHUẨN IELTS VOCAB */}
+              <div className="flex border-4 border-black rounded-lg overflow-hidden mb-6 shadow-[2px_2px_0_#000]">
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('login'); setAuthError(''); playSfx('click'); }}
+                  className={`flex-1 py-2 font-mono font-bold text-sm uppercase transition-colors cursor-pointer ${
+                    authMode === 'login'
+                      ? 'bg-blue-600 text-white border-r-4 border-black'
+                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Đăng nhập
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('register'); setAuthError(''); playSfx('click'); }}
+                  className={`flex-1 py-2 font-mono font-bold text-sm uppercase transition-colors cursor-pointer ${
+                    authMode === 'register'
+                      ? 'bg-blue-600 text-white border-l-4 border-black'
+                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Đăng ký
+                </button>
+              </div>
+
+              <form onSubmit={handleAuth} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="font-mono text-xs font-bold text-black uppercase">Tên tài khoản</label>
+                  <input
+                    type="text"
+                    required
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    placeholder="Nhập tên tài khoản..."
+                    className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none focus:bg-amber-50 shadow-[2px_2px_0_#000] focus:shadow-[4px_4px_0_#000] transition-all"
+                  />
+                </div>
+
+                {authMode === 'register' && (
+                  <div className="flex flex-col gap-1">
+                    <label className="font-mono text-xs font-bold text-black uppercase">Địa chỉ Email</label>
+                    <input
+                      type="email"
+                      required
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      placeholder="email@example.com"
+                      className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none focus:bg-amber-50 shadow-[2px_2px_0_#000] focus:shadow-[4px_4px_0_#000] transition-all"
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-1">
+                  <label className="font-mono text-xs font-bold text-black uppercase">Mật khẩu</label>
+                  <input
+                    type="password"
+                    required
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    placeholder="******"
+                    className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none focus:bg-amber-50 shadow-[2px_2px_0_#000] focus:shadow-[4px_4px_0_#000] transition-all"
+                  />
+                </div>
+
+                {authError && (
+                  <p className="text-xs font-mono font-bold text-rose-600 bg-rose-50 border-2 border-rose-400 p-2 rounded text-center">
+                    {authError}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={authLoading}
+                  className="mt-2 bg-emerald-500 hover:bg-emerald-600 text-white py-3 font-mono font-bold text-sm uppercase rounded w-full flex items-center justify-center gap-2 border-4 border-black shadow-[3px_3px_0_#000] active:translate-y-0.5 transition-all cursor-pointer"
+                >
+                  {authLoading ? 'Đang Xử Lý...' : authMode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'}
+                </button>
+              </form>
+
+              <div className="border-t-2 border-dashed border-gray-300 w-full my-5 relative flex items-center justify-center">
+                <span className="bg-white px-3 text-xs font-mono font-bold text-gray-400 uppercase absolute">Hoặc</span>
+              </div>
+
+              {/* GOOGLE LOGIN BUTTON CHUẨN IELTS VOCAB */}
+              <a
+                href="/api/auth/google/start"
+                onClick={() => playSfx('click')}
+                className="bg-white hover:bg-amber-100 text-black w-full py-3 text-sm uppercase font-mono font-bold flex items-center justify-center gap-3 transition-colors duration-300 shadow-[3px_3px_0_#000] border-4 border-black rounded cursor-pointer"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                Đăng nhập bằng Google
+              </a>
+            </div>
           </div>
         </div>
       ) : (
+        /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN (COPY 100% IELTS VOCAB DASHBOARD) */
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
         <div className="max-w-6xl mx-auto space-y-6">
           {/* HEADER TRANG CHỦ CHUẨN IELTS VOCAB (MODERN & FLEXIBLE ON MOBILE & DESKTOP) */}

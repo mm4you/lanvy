@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   title: "Tiệm Thiết Kế Của Vy - Học Tiếng Trung HSK",
   description: "Atelier thiết kế nội thất pixel và học tiếng Trung HSK 1-3 ngọt ngào dành riêng cho Vy.",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/logo.svg",
+    apple: "/logo.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

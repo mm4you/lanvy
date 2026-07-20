@@ -587,7 +587,7 @@ export default function Home() {
   };
 
   // Sound effects synthesizer
-  const playSfx = (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => {
+  const playSfx = (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip' | 'meow' | 'bark' | 'squeak' | 'grunt') => {
     if (typeof window === 'undefined') return;
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
@@ -613,6 +613,34 @@ export default function Home() {
       } else if (type === 'flip') {
         playTone(300, now, 0.04, 0.06, 'sine');
         playTone(600, now + 0.04, 0.08, 0.06, 'sine');
+      } else if (type === 'meow') {
+        // Tiếng mèo kêu meo meo nũng nịu
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(750, now);
+        osc.frequency.exponentialRampToValueAtTime(950, now + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(550, now + 0.35);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.38);
+      } else if (type === 'bark') {
+        // Tiếng chó sủa gâu gâu vui mừng
+        playTone(380, now, 0.08, 0.15, 'square');
+        playTone(200, now + 0.04, 0.08, 0.12, 'triangle');
+        playTone(420, now + 0.14, 0.08, 0.15, 'square');
+        playTone(220, now + 0.18, 0.08, 0.12, 'triangle');
+      } else if (type === 'squeak') {
+        // Tiếng thỏ chíp chíp nhút nhát
+        playTone(1200, now, 0.06, 0.09, 'sine');
+        playTone(1600, now + 0.06, 0.08, 0.09, 'sine');
+      } else if (type === 'grunt') {
+        // Tiếng gấu trúc nhai lá măng khịt khịt
+        playTone(180, now, 0.1, 0.12, 'triangle');
+        playTone(140, now + 0.08, 0.12, 0.12, 'triangle');
       } else if (type === 'success') {
         playTone(523.25, now, 0.1, 0.08, 'square');
         playTone(659.25, now + 0.08, 0.1, 0.08, 'square');

@@ -108,7 +108,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [isWalking, setIsWalking] = useState(false);
 
-  // Tự động cho thú cưng bước đi dạo mượt mà & cử chỉ ngủ Zzz khi nghỉ ngơi
+  // Tự động cho thú cưng bước đi dạo mượt mà & cử chỉ ngủ Zzz khi nghỉ ngơi (giới hạn posX an toàn)
   useEffect(() => {
     if (showShop) return;
 
@@ -123,8 +123,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
       setIsSleeping(false);
       setPosX(prev => {
-        const nextTarget = prev > 0 ? -120 : 20;
-        setDirection(nextTarget > prev ? 'right' : 'left');
+        const nextTarget = prev > -30 ? -80 : 0;
+        setDirection(nextTarget < prev ? 'left' : 'right');
         setIsWalking(true);
         setTimeout(() => setIsWalking(false), 2500);
         return nextTarget;
@@ -134,8 +134,17 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     return () => clearInterval(interval);
   }, [showShop, isJumping, isEating]);
 
+  const triggerPetSound = () => {
+    if (!playSfx) return;
+    if (currentPet === 'cat') playSfx('meow');
+    else if (currentPet === 'dog') playSfx('bark');
+    else if (currentPet === 'rabbit') playSfx('squeak');
+    else if (currentPet === 'panda') playSfx('grunt');
+    else playSfx('perfect');
+  };
+
   const handlePetClick = () => {
-    if (playSfx) playSfx('perfect');
+    triggerPetSound();
 
     // Kích hoạt animation nhảy cẫng vui sướng
     setIsSleeping(false);
@@ -148,7 +157,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     setIsHearting(true);
 
     setTimeout(() => setIsHearting(false), 1500);
-    setTimeout(() => setActiveSpeech(null), 3000);
+    setTimeout(() => setActiveSpeech(null), 3500);
   };
 
   const handleFeedPet = (food: typeof PET_FOODS[0]) => {
@@ -159,7 +168,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     }
 
     if (setCoins) setCoins(coins - food.price);
-    if (playSfx) playSfx('levelUp');
+    triggerPetSound();
 
     setIsSleeping(false);
     setIsEating(true);
@@ -178,7 +187,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const handleUnlockPet = (pet: typeof PET_CATALOG[0]) => {
     if (unlockedPets.includes(pet.id)) {
       setCurrentPet(pet.id);
-      if (playSfx) playSfx('click');
+      triggerPetSound();
       return;
     }
 
@@ -192,6 +201,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     if (playSfx) playSfx('levelUp');
     setUnlockedPets(prev => [...prev, pet.id]);
     setCurrentPet(pet.id);
+    triggerPetSound();
     alert(`Chúc mừng Vy đã mở khóa thú cưng ${pet.name}!`);
   };
 
@@ -208,28 +218,41 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     alert(`Chúc mừng Vy đã đổi thành công: ${v.name}!`);
   };
 
+  // Tính toán vị trí căn lề an toàn chống trượt khỏi viền màn hình
+  const safeSpeechX = Math.max(-80, Math.min(0, posX));
+
   return (
-    <div className="fixed bottom-3 right-4 sm:bottom-4 sm:right-6 z-40 select-none pointer-events-auto">
-      {/* POPUP TRÒ CHUYỆN PIXEL 2D SẮC NÉT (SPEECH BUBBLE) */}
+    <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-6 z-40 select-none pointer-events-auto max-w-[95vw]">
+      {/* POPUP TRÒ CHUYỆN PIXEL 2D SẮC NÉT (BONG BÓNG LỜI THOẠI CHỐNG TRÀN VIỀN) */}
       {activeSpeech && (
         <div 
-          className="absolute -top-28 left-1/2 -translate-x-1/2 z-50 w-48 sm:w-56 bg-white dark:bg-slate-800 border-3 border-[#1f2937] dark:border-slate-600 p-2.5 rounded-2xl shadow-[4px_4px_0px_#1f2937] text-center space-y-1 animate-in fade-in zoom-in-95 duration-200"
-          style={{ transform: `translate(${posX}px, ${posY - 50}px)` }}
+          className="absolute -top-28 sm:-top-32 right-0 z-50 w-52 sm:w-60 max-w-[85vw] bg-white dark:bg-slate-900 border-4 border-[#1f2937] dark:border-slate-700 p-2.5 rounded-2xl shadow-[4px_4px_0px_#1f2937] text-center space-y-1 animate-in fade-in zoom-in-95 duration-200"
+          style={{ transform: `translate(${safeSpeechX}px, ${posY - 40}px)` }}
         >
-          <p className="text-xs font-serif font-black text-rose-600 dark:text-rose-400">{activeSpeech.text}</p>
-          <p className="text-[10px] font-mono text-gray-500 dark:text-slate-400">{activeSpeech.pinyin}</p>
-          <p className="text-[10px] font-bold text-gray-800 dark:text-slate-200">&gt; {activeSpeech.translation}</p>
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-slate-800 border-b-3 border-r-3 border-[#1f2937] dark:border-slate-600 rotate-45" />
+          <p className="text-xs font-mono font-black text-rose-600 dark:text-rose-400">{activeSpeech.text}</p>
+          <p className="text-[10px] font-mono font-bold text-gray-500 dark:text-slate-400">{activeSpeech.pinyin}</p>
+          <p className="text-[10px] font-bold text-gray-800 dark:text-slate-200 leading-tight">{activeSpeech.translation}</p>
+          <div className="absolute -bottom-2 right-6 w-3.5 h-3.5 bg-white dark:bg-slate-900 border-b-4 border-r-4 border-[#1f2937] dark:border-slate-700 rotate-45" />
         </div>
       )}
 
       {/* HIỆU ỨNG THẢ TIM XP KHI TƯƠNG TÁC */}
       {isHearting && (
         <div 
-          className="absolute -top-8 left-1/2 -translate-x-1/2 text-rose-500 font-black text-[10px] sm:text-xs animate-bounce z-50 bg-rose-100 dark:bg-rose-950 border border-rose-300 dark:border-rose-700 px-2 py-0.5 rounded-full shadow"
-          style={{ transform: `translate(${posX}px, ${posY - 25}px)` }}
+          className="absolute -top-8 right-2 text-rose-600 font-mono font-black text-[10px] sm:text-xs animate-bounce z-50 bg-rose-100 dark:bg-rose-950 border-2 border-rose-400 dark:border-rose-700 px-2 py-0.5 rounded-full shadow"
+          style={{ transform: `translate(${safeSpeechX}px, ${posY - 20}px)` }}
         >
           +50 HSK XP
+        </div>
+      )}
+
+      {/* HIỆU ỨNG NGỦ Zzz KHI PET ĐANG NGHỈ NGƠI */}
+      {isSleeping && !activeSpeech && (
+        <div 
+          className="absolute -top-9 right-1 text-indigo-600 dark:text-indigo-400 font-mono font-black text-xs animate-pulse z-50 bg-indigo-50 dark:bg-indigo-950 border-2 border-indigo-300 dark:border-indigo-800 px-2 py-0.5 rounded-full shadow"
+          style={{ transform: `translate(${safeSpeechX}px, ${posY - 20}px)` }}
+        >
+          Zzz... (Đang ngủ)
         </div>
       )}
 

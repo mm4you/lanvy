@@ -529,7 +529,7 @@ export default function BlueprintQuiz({
                 className="w-full p-2.5 border-2 border-[#1f2937] bg-[#fff5f6] rounded-lg text-xs font-black focus:outline-none cursor-pointer text-[#1f2937]"
                 disabled={customLoading}
               >
-                <option value="all_themes">⚡ TỰ ĐỘNG TẠO TẤT CẢ CHỦ ĐỀ HSK (FULL THEMES)</option>
+                <option value="all_themes">TỰ ĐỘNG TẠO TẤT CẢ CHỦ ĐỀ HSK (FULL THEMES)</option>
                 <option value="Mua sắm & Shopping">Mua sắm & Shopping</option>
                 <option value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
                 <option value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>

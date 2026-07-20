@@ -53,7 +53,7 @@ export const ArchitectGlossaryModal: React.FC<ArchitectGlossaryModalProps> = ({
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-serif font-black text-[#1f2937] flex items-center gap-2">
-                📐 Sổ Tay Thuật Ngữ Kiến Trúc & Vật Liệu HSK
+                Sổ Tay Thuật Ngữ Kiến Trúc & Vật Liệu HSK
                 <span className="text-[10px] bg-rose-500 text-white px-2 py-0.5 rounded-full font-sans uppercase">Pro Designer</span>
               </h2>
               <p className="text-xs text-gray-600 font-bold">

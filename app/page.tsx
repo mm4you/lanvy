@@ -1079,7 +1079,7 @@ export default function Home() {
                 }`}
                 title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
               >
-                {isDarkMode ? '☀️ Ban Ngày' : '🌙 Ban Đêm'}
+                {isDarkMode ? 'Ban Ngày' : 'Ban Đêm'}
               </button>
               <button
                 onClick={() => {
@@ -1088,7 +1088,7 @@ export default function Home() {
                 }}
                 className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-[#1f2937] border-2 border-[#1f2937] text-xs font-serif font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
               >
-                📐 Sổ Tay Kiến Trúc HSK
+                Sổ Tay Kiến Trúc HSK
               </button>
               <div className="bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono flex items-center">
                 {renderCoinIcon()} Xu: {coins}
@@ -1991,7 +1991,7 @@ export default function Home() {
                               onChange={(e) => setVocabTheme(e.target.value)}
                               className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
                             >
-                              <option value="all_themes">⚡ TỰ ĐỘNG BƠM TẤT CẢ 14+ CHỦ ĐỀ (FULL THEMES)</option>
+                              <option value="all_themes">TỰ ĐỘNG BƠM TẤT CẢ 14+ CHỦ ĐỀ (FULL THEMES)</option>
                               <option value="Mua sắm & Shopping">Mua sắm & Shopping</option>
                               <option value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
                               <option value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>

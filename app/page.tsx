@@ -476,7 +476,7 @@ export default function Home() {
 
   const fetchCustomVocabs = async () => {
     try {
-      const res = await fetch('/api/vocab/list');
+      const res = await fetch('/api/vocab/list?limit=10000');
       const data = await res.json();
       if (data.success) {
         setCustomVocabs(data.list || []);
@@ -485,6 +485,12 @@ export default function Home() {
       console.error("Failed to fetch custom vocabs", e);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      fetchCustomVocabs();
+    }
+  }, [user]);
 
   const handleGenerateVocab = async () => {
     setVocabBotLoading(true);

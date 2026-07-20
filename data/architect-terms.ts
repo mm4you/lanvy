@@ -11,6 +11,14 @@ export interface ArchitectTerm {
   exampleVietnamese: string;
 }
 
+export const ARCHITECT_CATEGORIES = [
+  { id: 'wood', label: 'Gỗ & Vật Liệu Gỗ (木材)' },
+  { id: 'stone', label: 'Đá & Gạch (石材/瓷砖)' },
+  { id: 'glass_metal', label: 'Kính & Kim Loại (玻璃/金属)' },
+  { id: 'fabric_leather', label: 'Vải & Da (布艺/皮革)' },
+  { id: 'lighting_cad', label: 'Chiếu Sáng & Bản Vẽ (灯光/图纸)' },
+];
+
 export const ARCHITECT_TERMS: ArchitectTerm[] = [
   // --- GỖ (木材) ---
   {

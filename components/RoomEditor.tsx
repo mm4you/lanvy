@@ -613,16 +613,16 @@ export default function RoomEditor({
 
         {/* CĂN PHÒNG CHÍNH */}
         <div className="w-full max-w-[420px] aspect-square flex flex-col border-4 border-[#1f2937] rounded-xl overflow-hidden shadow-[4px_4px_0px_#1f2937] relative">
-          {/* HIỆU ỨNG ÁNH SÁNG BAN ĐÊM (NIGHT LIGHTING OVERLAY) */}
+          {/* HIỆU ỨNG ÁNH SÁNG BAN ĐÊM SÂU ẤM CÚNG (DEEP NIGHT AMBIENT LIGHTING) */}
           {isDarkMode && (
-            <div className="absolute inset-0 bg-[#0f172a]/30 pointer-events-none z-20 backdrop-brightness-95 transition-all duration-300" />
+            <div className="absolute inset-0 pointer-events-none z-20 bg-gradient-to-b from-indigo-950/40 via-transparent to-amber-500/10 transition-all duration-500" />
           )}
 
-
-
           {/* Bức tường phía trên */}
-          <div className={`h-1/5 border-b-4 border-[#1f2937] transition-all flex items-center justify-around relative px-4 ${wallStyles[wallpaper]}`}>
-            {wallpaper === 'cute_pink' && (
+          <div className={`h-1/5 border-b-4 border-[#1f2937] transition-all flex items-center justify-around relative px-4 ${
+            isDarkMode ? 'bg-[#0f172a] text-slate-100 border-slate-700' : wallStyles[wallpaper]
+          }`}>
+            {!isDarkMode && wallpaper === 'cute_pink' && (
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#fbcfe8_12%,_transparent_12%)] bg-[size:12px_12px] opacity-50" />
             )}
             {renderPaintingIconSVG()}
@@ -632,14 +632,16 @@ export default function RoomEditor({
 
           {/* Ô lưới mặt sàn phòng (8x8) */}
           <div
-            className="flex-1 grid grid-cols-8 grid-rows-8 relative"
+            className="flex-1 grid grid-cols-8 grid-rows-8 relative transition-colors duration-300"
             style={{
-              backgroundColor: floorType === 'cozy_wood' ? '#eed9b3' : floorType === 'marble_tile' ? '#f1f5f9' : '#e2e8f0',
+              backgroundColor: isDarkMode
+                ? (floorType === 'cozy_wood' ? '#271911' : floorType === 'marble_tile' ? '#1e293b' : '#0f172a')
+                : (floorType === 'cozy_wood' ? '#eed9b3' : floorType === 'marble_tile' ? '#f1f5f9' : '#e2e8f0'),
               backgroundImage:
                 floorType === 'cozy_wood'
-                  ? 'linear-gradient(90deg, transparent 50%, rgba(120,53,15,0.06) 50%), linear-gradient(rgba(120,53,15,0.06) 50%, transparent 50%)'
+                  ? `linear-gradient(90deg, transparent 50%, ${isDarkMode ? 'rgba(0,0,0,0.25)' : 'rgba(120,53,15,0.06)'} 50%), linear-gradient(${isDarkMode ? 'rgba(0,0,0,0.25)' : 'rgba(120,53,15,0.06)'} 50%, transparent 50%)`
                   : floorType === 'marble_tile'
-                  ? 'linear-gradient(90deg, #cbd5e1 1px, transparent 1px), linear-gradient(#cbd5e1 1px, transparent 1px)'
+                  ? `linear-gradient(90deg, ${isDarkMode ? '#334155' : '#cbd5e1'} 1px, transparent 1px), linear-gradient(${isDarkMode ? '#334155' : '#cbd5e1'} 1px, transparent 1px)`
                   : 'none',
               backgroundSize: floorType === 'marble_tile' ? '12.5% 12.5%' : '24px 24px',
             }}

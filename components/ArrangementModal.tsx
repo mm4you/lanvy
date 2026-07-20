@@ -204,14 +204,14 @@ export function ArrangementModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-[#fffbeb] border-4 border-[#1f2937] rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative overflow-hidden">
+      <div className="bg-[#fffbeb] dark:bg-slate-900 border-4 border-[#1f2937] dark:border-slate-700 rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative overflow-hidden text-[#1f2937] dark:text-slate-100">
         {/* Header Modal */}
-        <div className="flex items-center justify-between border-b-2 border-amber-200 pb-3 mb-4">
+        <div className="flex items-center justify-between border-b-2 border-amber-200 dark:border-slate-700 pb-3 mb-4">
           <div>
             <span className="bg-amber-400 text-amber-950 font-black text-xs px-2.5 py-1 rounded-full uppercase tracking-wider">
               Bản vẽ phác thảo 2D
             </span>
-            <h2 className="text-lg font-serif font-black text-[#1f2937] mt-1">
+            <h2 className="text-lg font-serif font-black text-[#1f2937] dark:text-slate-100 mt-1">
               Sắp Xếp Nội Thất Cho Khách Hàng {contract.clientName}
             </h2>
           </div>

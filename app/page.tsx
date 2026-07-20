@@ -1028,7 +1028,9 @@ export default function Home() {
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
         <div className="max-w-6xl mx-auto space-y-6 pb-20 md:pb-0">
           {/* HEADER TRANG CHỦ */}
-          <header className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <header className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors ${
+            isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
+          }`}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-rose-100 border-2 border-[#1f2937] rounded-full overflow-hidden flex items-center justify-center text-rose-500 shrink-0">
                 {user.email?.toLowerCase() === LOVE_EMAIL ? (
@@ -1040,7 +1042,9 @@ export default function Home() {
                 )}
               </div>
               <div>
-                <h1 className="text-lg font-serif font-black text-[#1f2937] flex items-center gap-2">
+                <h1 className={`text-lg font-serif font-black flex items-center gap-2 ${
+                  isDarkMode ? 'text-slate-100' : 'text-[#1f2937]'
+                }`}>
                   Atelier Thiết Kế HSK
                   {user.email?.toLowerCase() === LOVE_EMAIL && (
                     <span className="text-[10px] bg-rose-100 text-rose-700 border border-rose-300 px-2 py-0.5 rounded-full font-sans uppercase font-black tracking-wider flex items-center gap-1">
@@ -1233,17 +1237,23 @@ export default function Home() {
             {/* TAB 1: STUDIO HỢP ĐỒNG THIẾT KẾ CỦA KHÁCH HÀNG (NPC) */}
             {activeTab === 'studio' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-4 bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 h-[460px] flex flex-col">
-                  <div className="flex items-center justify-between border-b-2 border-dashed border-[#1f2937] pb-3 mb-3">
-                    <h2 className="text-base font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                <div className={`lg:col-span-4 border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 h-[460px] flex flex-col ${
+                  isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
+                }`}>
+                  <div className={`flex items-center justify-between border-b-2 border-dashed pb-3 mb-3 ${
+                    isDarkMode ? 'border-slate-700' : 'border-[#1f2937]'
+                  }`}>
+                    <h2 className={`text-base font-serif font-black flex items-center gap-1.5 ${
+                      isDarkMode ? 'text-slate-100' : 'text-[#1f2937]'
+                    }`}>
                       {renderClipboardIcon()} Danh Sách Hợp Đồng
                     </h2>
                     <button
                       onClick={handleCreateNewContract}
-                      className="bg-amber-400 hover:bg-amber-500 text-amber-950 border-2 border-[#1f2937] text-[10px] font-black px-2 py-1 rounded-lg shadow-[1px_1px_0px_#1f2937] active:translate-y-0.5 transition flex items-center gap-1 shrink-0"
+                      className="bg-amber-400 hover:bg-amber-500 text-amber-950 border-2 border-[#1f2937] text-[10px] font-black px-2 py-1 rounded-lg shadow-[1px_1px_0px_#1f2937] active:translate-y-0.5 transition flex items-center gap-1 shrink-0 cursor-pointer"
                       title="Tự động sinh hợp đồng mới từ khách hàng mới"
                     >
-                      <span>➕</span> Hợp đồng mới
+                      Hợp đồng mới
                     </button>
                   </div>
                   <div className="flex-1 overflow-y-auto space-y-3 pr-1">
@@ -1257,18 +1267,18 @@ export default function Home() {
                           setShowStudioHint(false);
                           playSfx('click');
                         }}
-                        className={`p-3 border-2 border-[#1f2937] rounded-xl flex items-center gap-3 cursor-pointer transition-all relative ${
+                        className={`p-3 border-2 rounded-xl flex items-center gap-3 cursor-pointer transition-all relative ${
                           currentContract?.id === contract.id
-                            ? 'bg-rose-100 shadow-none translate-y-0.5'
-                            : 'bg-white shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1f2937]'
+                            ? 'bg-rose-500 text-white border-rose-600 shadow-none translate-y-0.5'
+                            : isDarkMode ? 'bg-slate-800 text-slate-100 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937] border-[#1f2937] shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5'
                         }`}
                       >
-                        <div className="shrink-0 bg-[#fffaf0] border-2 border-[#1f2937] w-12 h-12 rounded-xl flex items-center justify-center">
+                        <div className="shrink-0 bg-white border-2 border-[#1f2937] w-12 h-12 rounded-xl flex items-center justify-center">
                           {renderClientAvatar(contract.clientSprite)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-xs font-serif font-black text-[#1f2937] truncate">{contract.title}</h3>
-                          <p className="text-[10px] text-gray-500 font-bold mt-0.5">Khách hàng: {contract.clientName}</p>
+                          <h3 className="text-xs font-serif font-black truncate">{contract.title}</h3>
+                          <p className="text-[10px] opacity-80 font-bold mt-0.5">Khách hàng: {contract.clientName}</p>
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.2 rounded font-black font-sans">
                               HSK Cấp {contract.level}
@@ -1288,24 +1298,30 @@ export default function Home() {
                 {/* CHI TIẾT HỢP ĐỒNG ĐÃ CHỌN */}
                 <div className="lg:col-span-8">
                   {currentContract ? (
-                    <div className="bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-5">
-                      <div className="flex items-center gap-3 border-b-2 border-dashed border-[#1f2937] pb-3">
+                    <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-5 ${
+                      isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
+                    }`}>
+                      <div className={`flex items-center gap-3 border-b-2 border-dashed pb-3 ${
+                        isDarkMode ? 'border-slate-700' : 'border-[#1f2937]'
+                      }`}>
                         <div className="w-12 h-12 bg-white border-2 border-[#1f2937] rounded-xl flex items-center justify-center shrink-0">
                           {renderClientAvatar(currentContract.clientSprite)}
                         </div>
                         <div>
-                          <h3 className="text-base font-serif font-black text-[#1f2937]">Hợp đồng thiết kế từ: {currentContract.clientName}</h3>
-                          <p className="text-xs text-gray-500 font-bold">Cấp độ yêu cầu: HSK Cấp {currentContract.level}</p>
+                          <h3 className="text-base font-serif font-black">Hợp đồng thiết kế từ: {currentContract.clientName}</h3>
+                          <p className="text-xs opacity-70 font-bold">Cấp độ yêu cầu: HSK Cấp {currentContract.level}</p>
                         </div>
                       </div>
 
                       <div className="space-y-1 text-left">
                         <h4 className="text-lg font-serif font-black text-rose-500">{currentContract.title}</h4>
-                        <p className="text-xs text-gray-600 font-bold leading-relaxed">{currentContract.description}</p>
+                        <p className="text-xs opacity-90 font-bold leading-relaxed">{currentContract.description}</p>
                       </div>
 
                       {/* KHU VỰC THƯ TỪ KHÁCH HÀNG BẰNG TIẾNG TRUNG */}
-                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-2 text-left">
+                      <div className={`p-4 border rounded-xl space-y-2 text-left ${
+                        isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-amber-50 border-amber-200 text-[#1f2937]'
+                      }`}>
                         <div className="flex justify-between items-center">
                           <span className="text-[9px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-black uppercase font-sans">
                             Yêu cầu từ khách hàng (Tiếng Trung):
@@ -1472,6 +1488,7 @@ export default function Home() {
                 playSfx={playSfx}
                 onExplainWord={handleExplainWord}
                 customVocabs={customVocabs}
+                isDarkMode={isDarkMode}
               />
             )}
 

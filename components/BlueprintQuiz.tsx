@@ -12,6 +12,7 @@ interface BlueprintQuizProps {
   playSfx: (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => void;
   onExplainWord: (word: string) => void;
   customVocabs?: any[];
+  isDarkMode?: boolean;
 }
 
 interface Question {
@@ -83,7 +84,8 @@ export default function BlueprintQuiz({
   setCoins,
   playSfx,
   onExplainWord,
-  customVocabs
+  customVocabs,
+  isDarkMode
 }: BlueprintQuizProps) {
   const [quizMode, setQuizMode] = useState<'furniture' | 'general' | 'custom'>('furniture');
   const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all'>('all');
@@ -416,7 +418,9 @@ export default function BlueprintQuiz({
   };
 
   return (
-    <div className="bg-[#fff0f3] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 sm:p-6 max-w-2xl mx-auto my-4">
+    <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 sm:p-6 max-w-2xl mx-auto my-4 transition-colors ${
+      isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fff0f3] text-[#1f2937] border-[#1f2937]'
+    }`}>
       {/* CHUYỂN ĐỔI CHẾ ĐỘ CHƠI */}
       <div className="flex justify-center gap-3 mb-6 flex-wrap sm:flex-nowrap">
         <button

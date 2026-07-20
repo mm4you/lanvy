@@ -531,16 +531,22 @@ export default function RoomEditor({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4">
       {/* KHU VỰC THIẾT KẾ PHÒNG (Bên trái) */}
-      <div className={`bg-[#fff5f6] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] overflow-hidden flex flex-col items-center p-6 relative transition-all ${
+      <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] overflow-hidden flex flex-col items-center p-6 relative transition-all ${
+        isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fff5f6] text-[#1f2937] border-[#1f2937]'
+      } ${
         isPreviewMode ? 'lg:col-span-12 w-full' : 'lg:col-span-8'
       }`}>
-        <h2 className="text-xl font-serif font-black text-[#1f2937] mb-4 flex items-center gap-2">
+        <h2 className={`text-xl font-serif font-black mb-4 flex items-center gap-2 ${
+          isDarkMode ? 'text-pink-400' : 'text-[#1f2937]'
+        }`}>
           {renderPaletteIcon('w-6 h-6 text-pink-500')} Tiệm Thiết Kế Màu Hồng của Vy
         </h2>
 
         {/* GỢI Ý THIẾT KẾ PHÒNG TỰ DO */}
-        <div className="w-full bg-[#fffaf0] border-2 border-[#1f2937] rounded-xl p-3 mb-4 shadow-[2px_2px_0px_#1f2937] text-xs font-bold text-[#1f2937] flex items-center justify-center gap-2">
-          {renderPaletteIcon('w-4 h-4 shrink-0 text-pink-600')}
+        <div className={`w-full border-2 rounded-xl p-3 mb-4 shadow-[2px_2px_0px_#1f2937] text-xs font-bold flex items-center justify-center gap-2 ${
+          isDarkMode ? 'bg-slate-800 text-amber-200 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
+        }`}>
+          {renderPaletteIcon('w-4 h-4 shrink-0 text-pink-500')}
           <span>Góc Thiết Kế Tự Do: Vy hãy mở khóa các đồ nội thất bằng cách làm Quiz HSK ở tab "Bản Vẽ HSK", sau đó tự do trang trí căn phòng của riêng mình nhé!</span>
         </div>
 
@@ -612,9 +618,9 @@ export default function RoomEditor({
             <div className="absolute inset-0 bg-[#0f172a]/30 pointer-events-none z-20 backdrop-brightness-95 transition-all duration-300" />
           )}
 
-          {/* VỊ TRÍ THÚ CƯNG PIXEL TƯƠNG TÁC (CATS & DOGS) */}
-          <div className="absolute top-2 right-2 z-30">
-            <PixelPet coins={coins} setCoins={setCoins} onPlayTTS={onPlayTTS} playSfx={playSfx} />
+          {/* VỊ TRÍ THÚ CƯNG PIXEL TƯƠNG TÁC (CATS & DOGS TOÀN THÂN CÓ 4 CHÂN BƯỚC ĐI DƯỚI SÀN) */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+            <PixelPet coins={coins} setCoins={setCoins} onPlayTTS={onPlayTTS} playSfx={playSfx} isDarkMode={isDarkMode} />
           </div>
 
           {/* Bức tường phía trên */}
@@ -716,8 +722,10 @@ export default function RoomEditor({
 
         {/* Tùy chọn nền tường và sàn */}
         {!isPreviewMode && (
-          <div className="mt-6 w-full max-w-[420px] bg-white border-2 border-[#1f2937] p-3 rounded-xl shadow-[2px_2px_0px_#1f2937]">
-            <h3 className="text-xs font-black uppercase text-gray-500 mb-2">Tùy chỉnh phòng nền:</h3>
+          <div className={`mt-6 w-full max-w-[420px] border-2 p-3 rounded-xl shadow-[2px_2px_0px_#1f2937] ${
+            isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-[#1f2937] text-[#1f2937]'
+          }`}>
+            <h3 className="text-xs font-black uppercase opacity-70 mb-2">Tùy chỉnh phòng nền:</h3>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-black mb-1">Màu sơn tường:</label>
@@ -727,7 +735,9 @@ export default function RoomEditor({
                     setWallpaper(e.target.value);
                     playSfx('click');
                   }}
-                  className="w-full p-1.5 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                  className={`w-full p-1.5 border-2 rounded-lg text-xs font-black focus:outline-none cursor-pointer ${
+                    isDarkMode ? 'bg-slate-900 border-slate-600 text-slate-100' : 'bg-[#fff5f6] border-[#1f2937] text-[#1f2937]'
+                  }`}
                 >
                   <option value="cute_pink">Hồng kẹo ngọt</option>
                   <option value="cream_white">Trắng kem ấm áp</option>
@@ -743,7 +753,9 @@ export default function RoomEditor({
                     setFloorType(e.target.value);
                     playSfx('click');
                   }}
-                  className="w-full p-1.5 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                  className={`w-full p-1.5 border-2 rounded-lg text-xs font-black focus:outline-none cursor-pointer ${
+                    isDarkMode ? 'bg-slate-900 border-slate-600 text-slate-100' : 'bg-[#fff5f6] border-[#1f2937] text-[#1f2937]'
+                  }`}
                 >
                   <option value="cozy_wood">Gỗ sồi mộc mạc</option>
                   <option value="marble_tile">Đá cẩm thạch sang trọng</option>
@@ -757,8 +769,12 @@ export default function RoomEditor({
 
       {/* TỦ ĐỒ CỦA VY / SHOP NỘI THẤT (Bên phải) */}
       {!isPreviewMode && (
-        <div className="lg:col-span-4 bg-[#fff5f6] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 flex flex-col h-[520px]">
-          <h2 className="text-base font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 mb-3 flex items-center justify-between">
+        <div className={`lg:col-span-4 border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-4 flex flex-col h-[520px] ${
+          isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fff5f6] text-[#1f2937] border-[#1f2937]'
+        }`}>
+          <h2 className={`text-base font-serif font-black border-b-2 border-dashed pb-3 mb-3 flex items-center justify-between ${
+            isDarkMode ? 'border-slate-700 text-slate-100' : 'border-[#1f2937] text-[#1f2937]'
+          }`}>
             <span className="flex items-center gap-1.5">{renderBoxIcon('text-pink-500')} Kho Nội Thất & Shop</span>
             <span className="text-xs bg-pink-100 text-pink-800 border border-pink-300 px-2 py-0.5 rounded-full font-black">
               {coins} Xu

@@ -1,30 +1,66 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" shape-rendering="crispEdges">
+  <defs>
+    {/* Gradient Vàng Kim Sơn Son */}
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+    {/* Gradient Đỏ Son Hoàng Gia */}
+    <linearGradient id="stampGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+  </defs>
+
   {/* Nền Thẻ Neo-Brutalism Bo Góc Vàng Hổ Phách */}
   <rect x="16" y="16" width="480" height="480" rx="64" fill="#fbbf24" stroke="#1f2937" stroke-width="24" />
   
-  {/* Viền Trong Nền Trắng Kem */}
+  {/* Viền Trong Nền Trắng Kem Nổi Bật */}
   <rect x="44" y="44" width="424" height="424" rx="48" fill="#fffaf0" stroke="#1f2937" stroke-width="16" />
 
-  {/* DẤU ẤN ĐỎ HOÀNG GIA (IMPERIAL SEAL STAMP) */}
-  <rect x="96" y="96" width="320" height="320" rx="36" fill="#e11d48" stroke="#1f2937" stroke-width="20" />
-  {/* Viền Nối Đôi Cổ Phong */}
-  <rect x="116" y="116" width="280" height="280" rx="24" fill="none" stroke="#fef2f2" stroke-width="10" stroke-dasharray="24,12" />
+  {/* DẤU ẤN ĐỎ SON HOÀNG GIA (IMPERIAL SEAL STAMP) */}
+  <rect x="96" y="96" width="320" height="320" rx="40" fill="url(#stampGrad)" stroke="#1f2937" stroke-width="20" />
+  
+  {/* Viền Trong Đôi Nối Nét Khắc Hoa Văn */}
+  <rect x="118" y="118" width="276" height="276" rx="28" fill="none" stroke="#fef2f2" stroke-width="8" stroke-dasharray="20,10" />
 
-  {/* DÒNG CHỮ TIẾNG VIỆT TO RÕ: LAN VY (NEO-BRUTALIST PIXEL ART) */}
-  <g fill="#ffffff" stroke="#1f2937" stroke-width="10" paint-order="stroke fill">
-    {/* Chữ LAN */}
-    <text x="256" y="215" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="64" text-anchor="middle" letter-spacing="4">LAN</text>
-    {/* Chữ VY */}
-    <text x="256" y="285" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="72" fill="#fef08a" text-anchor="middle" letter-spacing="6">VY</text>
+  {/* HỌA TIẾT MÂY TƯỜNG VÂN CỔ PHONG PIXEL (4 GÓC CON DẤU) */}
+  <path d="M128 140 h20 v-12 h12 v20 h-32 z" fill="#fef2f2" opacity="0.8" />
+  <path d="M384 140 h-20 v-12 h-12 v20 h32 z" fill="#fef2f2" opacity="0.8" />
+  <path d="M128 372 h20 v12 h12 v-20 h-32 z" fill="#fef2f2" opacity="0.8" />
+  <path d="M384 372 h-20 v12 h-12 v-20 h32 z" fill="#fef2f2" opacity="0.8" />
+
+  {/* CÁCH ĐIỆU NGHỆ THUẬT: CHỮ "LAN VY" PHONG CÁCH ẤN CHƯƠNG TÍCH HỢP PIXEL */}
+  
+  {/* NỬA TRÊN: CÁCH ĐIỆU CHỮ LAN */}
+  <g stroke="#1f2937" stroke-width="10" paint-order="stroke fill">
+    {/* Nét Chữ L (Mái Cổ Phong) */}
+    <path d="M150 160 v80 h50" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+    
+    {/* Nét Chữ A (Có Trái Tim Pixel Ở Giữa) */}
+    <path d="M215 240 L240 160 L265 240 M224 215 h32" fill="none" stroke="url(#goldGrad)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+    
+    {/* Nét Chữ N (Tường Vân Uốn Nét) */}
+    <path d="M285 240 V160 L335 240 V160" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
   </g>
 
-  {/* TRÁI TIM PIXEL TÌNH YÊU NỔI BẬT GIỮA CHỮ */}
-  <path d="M256 125 C246 110, 224 110, 224 125 C224 140, 256 160, 256 160 C256 160, 288 140, 288 125 C288 110, 266 110, 256 125 Z" fill="#f43f5e" stroke="#1f2937" stroke-width="8" />
+  {/* TRÁI TIM PIXEL ĐỎ DÂU Ở TÂM CHỮ A */}
+  <path d="M240 190 C235 180, 222 180, 222 190 C222 200, 240 212, 240 212 C240 212, 258 200, 258 190 C258 180, 245 180, 240 190 Z" fill="#f43f5e" stroke="#1f2937" stroke-width="6" />
 
-  {/* BANNER DẤU ẤN HSK ATELIER (VIỆT NAM) */}
-  <rect x="136" y="324" width="240" height="50" rx="14" fill="#fbbf24" stroke="#1f2937" stroke-width="12" />
-  <text x="256" y="357" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="20" fill="#1f2937" text-anchor="middle" letter-spacing="2">DẤU ẤN HSK</text>
+  {/* NỬA DƯỚI: CÁCH ĐIỆU CHỮ VY TẠO HÌNH VƯƠNG MIỆN & HOA SEN PIXEL */}
+  <g stroke="#1f2937" stroke-width="10" paint-order="stroke fill">
+    {/* Chữ V (Tạo hình Cánh Thập Hoa) */}
+    <path d="M175 270 L210 335 L245 270" fill="none" stroke="url(#goldGrad)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+    
+    {/* Chữ Y (Vươn Nét Cao Đẹp) */}
+    <path d="M275 270 L305 305 V338 M335 270 L305 305" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+
+  {/* BANNER NỔI BẬT: DẤU ẤN LAN VY • HSK ATELIER */}
+  <rect x="130" y="348" width="252" height="44" rx="14" fill="#fbbf24" stroke="#1f2937" stroke-width="10" />
+  <text x="256" y="377" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="17" fill="#1f2937" text-anchor="middle" letter-spacing="2">LAN VY • HSK ATELIER</text>
 
   {/* NGÔI SAO LẤP LÁNH NEO-BRUTALISM */}
-  <polygon points="420,70 432,98 460,102 438,120 444,148 420,132 396,148 402,120 380,102 408,98" fill="#facc15" stroke="#1f2937" stroke-width="10" />
+  <polygon points="420,70 432,98 460,102 438,120 444,148 420,132 396,148 402,120 380,102 408,98" fill="url(#goldGrad)" stroke="#1f2937" stroke-width="10" />
 </svg>

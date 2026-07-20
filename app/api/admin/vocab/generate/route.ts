@@ -146,8 +146,17 @@ Yêu cầu BẮT BUỘC:
       if (jsonStart !== -1 && jsonEnd > jsonStart) {
         const cleanJson = content.slice(jsonStart, jsonEnd);
         const vocabList = JSON.parse(cleanJson);
-        if (Array.isArray(vocabList) && vocabList.length > 0) {
-          return NextResponse.json({ success: true, vocabList });
+        // Clean up nameVietnamese to remove any accidental category prefix
+        const cleanedVocabList = vocabList.map((item: any) => {
+          if (typeof item.nameVietnamese === 'string' && typeof category === 'string') {
+            const catPattern = new RegExp(`^\\s*${category}\\s*[-:：]?\\s*`, 'i');
+            const cleaned = item.nameVietnamese.replace(catPattern, '').trim();
+            return { ...item, nameVietnamese: cleaned };
+          }
+          return item;
+        });
+        if (Array.isArray(cleanedVocabList) && cleanedVocabList.length > 0) {
+          return NextResponse.json({ success: true, vocabList: cleanedVocabList });
         }
       }
     } catch (aiErr: any) {

@@ -2,13 +2,33 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { FURNITURE_ITEMS, MATERIAL_ITEMS, DESIGN_CONTRACTS, FurnitureItem, MaterialItem, DesignContract, HSK_GRAMMAR_RULES, GENERAL_VOCAB_ITEMS } from '../data/vocabulary';
-import RoomEditor, { renderFurnitureSVG } from '../components/RoomEditor';
-import BlueprintQuiz from '../components/BlueprintQuiz';
-import LoveInbox from '../components/LoveInbox';
+import dynamic from 'next/dynamic';
+import { renderFurnitureSVG } from '../components/RoomEditor';
 import { generateDynamicContract } from '../lib/contract-generator';
-import { ArrangementModal } from '../components/ArrangementModal';
-import { VoiceRoastModal } from '../components/VoiceRoastModal';
-import { ArchitectGlossaryModal } from '../components/ArchitectGlossaryModal';
+
+const RoomEditor = dynamic(() => import('../components/RoomEditor'), {
+  loading: () => <div className="py-16 text-center text-xs font-black font-serif opacity-70 animate-pulse">Đang tải Tiệm Thiết Kế...</div>
+});
+
+const BlueprintQuiz = dynamic(() => import('../components/BlueprintQuiz'), {
+  loading: () => <div className="py-16 text-center text-xs font-black font-serif opacity-70 animate-pulse">Đang tải Bản Vẽ HSK...</div>
+});
+
+const LoveInbox = dynamic(() => import('../components/LoveInbox'), {
+  loading: () => <div className="py-16 text-center text-xs font-black font-serif opacity-70 animate-pulse">Đang tải Ví Voucher & Thư Tình...</div>
+});
+
+const ArrangementModal = dynamic(() => import('../components/ArrangementModal').then(m => m.ArrangementModal), {
+  loading: () => null
+});
+
+const VoiceRoastModal = dynamic(() => import('../components/VoiceRoastModal').then(m => m.VoiceRoastModal), {
+  loading: () => null
+});
+
+const ArchitectGlossaryModal = dynamic(() => import('../components/ArchitectGlossaryModal').then(m => m.ArchitectGlossaryModal), {
+  loading: () => null
+});
 
 interface PlacedItem {
   id: string;

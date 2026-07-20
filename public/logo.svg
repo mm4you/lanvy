@@ -1,33 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" shape-rendering="crispEdges">
-  <!-- THẺ NỀN ATELIER HSK NEO-BRUTALIST TỐI GIẢN (CHUẨN PHONG CÁCH TẤT CẢ THẺ GAME) -->
-  <rect x="24" y="24" width="464" height="464" rx="56" fill="#fffaf0" stroke="#1f2937" stroke-width="20" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- KHÔNG ĐÓNG KHUNG NỀN - THIẾT KẾ KHÔNG VIỀN TỐI GIẢN HIỆN ĐẠI -->
   
-  <!-- KHUNG THẺ NỘI THẤT HSK HỒNG DÂU & VÀNG (ATELIER CARD TILE) -->
-  <rect x="56" y="56" width="400" height="400" rx="40" fill="#fef08a" stroke="#1f2937" stroke-width="14" />
-
-  <!-- ĐẶC TRƯNG TIỆM THIẾT KẾ: CHIẾC GHẾ SOFA PIXEL 2D SANG TRỌNG -->
-  <!-- Thân Ghế Sofa Đỏ Thắm -->
-  <rect x="116" y="210" width="280" height="150" rx="16" fill="#e11d48" stroke="#1f2937" stroke-width="12" />
-  <!-- Nệm Ghế Ngồi Pink Rose -->
-  <rect x="136" y="230" width="115" height="100" rx="12" fill="#f43f5e" stroke="#1f2937" stroke-width="8" />
-  <rect x="261" y="230" width="115" height="100" rx="12" fill="#f43f5e" stroke="#1f2937" stroke-width="8" />
-  <!-- 2 Tay Vịn Sofa Vàng Gold -->
-  <rect x="96" y="230" width="44" height="110" rx="12" fill="#facc15" stroke="#1f2937" stroke-width="10" />
-  <rect x="372" y="230" width="44" height="110" rx="12" fill="#facc15" stroke="#1f2937" stroke-width="10" />
-  <!-- 4 Chân Ghế Gỗ Nâu Pixel -->
-  <rect x="136" y="360" width="24" height="32" fill="#78350f" stroke="#1f2937" stroke-width="6" />
-  <rect x="352" y="360" width="24" height="32" fill="#78350f" stroke="#1f2937" stroke-width="6" />
-
-  <!-- ĐẶC TRƯNG HỌC TIẾNG TRUNG: HUY HIỆU TỪ VỰNG "漢 HSK" TRÊN GỐI SOFA -->
-  <g fill="#1f2937">
-    <rect x="216" y="116" width="80" height="80" rx="16" fill="#ffffff" stroke="#1f2937" stroke-width="10" />
-    <text x="256" y="172" font-family="'Space Grotesk', serif" font-weight="900" font-size="44" text-anchor="middle">漢</text>
+  <!-- BIỂU TƯỢNG CHỮ HÁN "漢" HIỆN ĐẠI & THÉP VÀNG -->
+  <g transform="translate(128, 115)">
+    <!-- Chữ Hán HSK màu đen thẫm sang trọng -->
+    <text x="0" y="38" font-family="'Space Grotesk', 'Fraunces', serif" font-weight="900" font-size="120" fill="#1f2937" text-anchor="middle">漢</text>
   </g>
 
-  <!-- TRÁI TIM PIXEL TÌNH YÊU TRÊN GHẾ -->
-  <path d="M256 265 C248 253, 230 253, 230 265 C230 277, 256 295, 256 295 C256 295, 282 277, 282 265 C282 253, 264 253, 256 265 Z" fill="#ffffff" stroke="#1f2937" stroke-width="6" />
+  <!-- TRÁI TIM PIXEL & NGÔI SAO LẤP LÁNH HIỆN ĐẠI GÓC TRÊN -->
+  <path d="M185 40 C177 28, 160 28, 160 40 C160 52, 185 70, 185 70 C185 70, 210 52, 210 40 C210 28, 193 28, 185 40 Z" fill="#f43f5e" />
+  
+  <!-- ĐẤU CHẤM VÀNG KIM TINH TẾ -->
+  <circle cx="215" cy="180" r="14" fill="#facc15" />
 
-  <!-- TAG BẢNG TÊN "ATELIER" GÓC TRÊN -->
-  <rect x="96" y="90" width="100" height="32" rx="8" fill="#3b82f6" stroke="#1f2937" stroke-width="6" />
-  <text x="146" y="112" font-family="monospace" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1">ATELIER</text>
+  <!-- DÒNG CHỮ PHỤ ATELIER HSK KHÔNG KHUNG -->
+  <text x="128" y="228" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="22" fill="#1f2937" text-anchor="middle" letter-spacing="3">ATELIER HSK</text>
 </svg>

@@ -52,19 +52,18 @@ function renderCoinIcon(className = 'w-4 h-4 text-amber-500 inline mr-1') {
   );
 }
 
-function renderSunIcon(className = 'w-5 h-5 text-amber-400') {
+function renderSunIcon(className = 'w-5 h-5 text-yellow-400') {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <circle cx="12" cy="12" r="5" fill="#facc15" />
-      <path stroke="#facc15" strokeWidth="2.5" strokeLinecap="round" d="M12 2v2.5m0 15V22M4.93 4.93l1.77 1.77m10.6 10.6l1.77 1.77M2 12h2.5m15 0H22M4.93 19.07l1.77-1.77m10.6-10.6l1.77-1.77" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
     </svg>
   );
 }
 
-function renderMoonIcon(className = 'w-5 h-5 text-slate-700') {
+function renderMoonIcon(className = 'w-5 h-5 text-gray-600') {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
     </svg>
   );
 }
@@ -1503,10 +1502,10 @@ export default function Home() {
                 {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CHUẨN 100% IELTS VOCAB */}
                 <button
                   onClick={toggleDarkMode}
-                  className="p-2 sm:p-2.5 border-4 border-black dark:border-slate-600 rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center justify-center cursor-pointer hover:scale-105 active:translate-y-0.5 transition-all bg-white dark:bg-slate-800"
+                  className="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center border-r-2 border-dashed border-gray-300 dark:border-slate-700 pr-3 mr-1"
                   title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
                 >
-                  {isDarkMode ? renderSunIcon('w-5 h-5 text-amber-400') : renderMoonIcon('w-5 h-5 text-slate-700')}
+                  {isDarkMode ? renderSunIcon('w-5 h-5 text-yellow-400') : renderMoonIcon('w-5 h-5 text-gray-600')}
                 </button>
 
                 <button

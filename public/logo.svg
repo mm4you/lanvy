@@ -1,63 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" shape-rendering="crispEdges">
-  <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fbbf24" />
-      <stop offset="100%" stop-color="#f59e0b" />
-    </linearGradient>
-    <linearGradient id="stampGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f43f5e" />
-      <stop offset="100%" stop-color="#e11d48" />
-    </linearGradient>
-  </defs>
+  <!-- THẺ XANH DƯƠNG PHÍA SAU (BACK FLASHCARD TILE) -->
+  <rect x="72" y="72" width="310" height="310" rx="48" fill="#3b82f6" stroke="#1f2937" stroke-width="20" />
+  
+  <!-- THẺ VÀNG HỔ PHÁCH PHÍA TRƯỚC (FRONT FLASHCARD TILE) -->
+  <rect x="130" y="130" width="310" height="310" rx="48" fill="#fbbf24" stroke="#1f2937" stroke-width="20" />
 
-  <!-- NEN THE NEO-BRUTALISM HOANG GIA VANG HOB PHACH -->
-  <rect x="16" y="16" width="480" height="480" rx="64" fill="url(#bgGrad)" stroke="#1f2937" stroke-width="20" />
-  <rect x="36" y="36" width="440" height="440" rx="48" fill="#fffaf0" stroke="#1f2937" stroke-width="12" />
-
-  <!-- DASHBOARD KHUNG PIXEL LOGO -->
-  <!-- BIỂU TƯỢNG CON MÈO 2D PIXEL CHIBI NỔI NÉT ĐÁNG YÊU -->
-  <g transform="translate(146, 80)">
-    <!-- Tai Mèo Trái & Phải -->
-    <rect x="16" y="8" width="40" height="40" fill="#ea580c" stroke="#1f2937" stroke-width="8" />
-    <rect x="28" y="20" width="16" height="16" fill="#fca5a5" />
-    <rect x="164" y="8" width="40" height="40" fill="#ea580c" stroke="#1f2937" stroke-width="8" />
-    <rect x="176" y="20" width="16" height="16" fill="#fca5a5" />
-
-    <!-- Đầu Mèo Cam Pixel -->
-    <rect x="16" y="36" width="188" height="130" rx="20" fill="#f97316" stroke="#1f2937" stroke-width="10" />
-    <!-- Má Mèo Trắng -->
-    <rect x="36" y="90" width="148" height="66" rx="12" fill="#ffffff" stroke="#1f2937" stroke-width="6" />
-
-    <!-- Mắt Pixel Long Lanh -->
-    <rect x="52" y="76" width="28" height="28" fill="#0f172a" />
-    <rect x="68" y="76" width="10" height="10" fill="#ffffff" />
-    <rect x="140" y="76" width="28" height="28" fill="#0f172a" />
-    <rect x="156" y="76" width="10" height="10" fill="#ffffff" />
-
-    <!-- Mũi & Miệng Mèo Cười -->
-    <polygon points="110,106 118,118 102,118" fill="#f43f5e" />
-    <path d="M96 122 Q108 132 110 122 Q112 132 124 122" fill="none" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
-
-    <!-- Râu Mèo Pixel -->
-    <line x1="8" y1="96" x2="36" y2="102" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
-    <line x1="8" y1="116" x2="36" y2="114" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
-    <line x1="212" y1="96" x2="184" y2="102" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
-    <line x1="212" y1="116" x2="184" y2="114" stroke="#1f2937" stroke-width="6" stroke-linecap="round" />
+  <!-- NỘI DUNG THẺ TRUNG TÂM: CHỮ HÁN "漢" VÀ CHỮ "HSK" TO RÕ MINIMALIST -->
+  <g fill="#1f2937">
+    <!-- CHỮ HÁN "漢" (HÀN - HSK) CHUẨN MINIMALIST -->
+    <text x="285" y="305" font-family="'Fraunces', 'Space Grotesk', serif" font-weight="900" font-size="140" text-anchor="middle">漢</text>
   </g>
 
-  <!-- BANNER CON DẤU ĐỎ THẮM "ATELIER HSK" -->
-  <g transform="translate(76, 270)">
-    <rect x="0" y="0" width="360" height="84" rx="24" fill="url(#stampGrad)" stroke="#1f2937" stroke-width="12" />
-    <text x="180" y="56" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="4" stroke="#1f2937" stroke-width="4" paint-order="stroke fill">ATELIER HSK</text>
-  </g>
+  <!-- TRÁI TIM PIXEL NHỎ XINH Ở GÓC THẺ -->
+  <path d="M380 170 C370 155, 348 155, 348 170 C348 185, 380 205, 380 205 C380 205, 412 185, 412 170 C412 155, 390 155, 380 170 Z" fill="#ef4444" stroke="#1f2937" stroke-width="6" />
 
-  <!-- BANNER CON DẤU VÀNG "DẤU ẤN LAN VY" -->
-  <g transform="translate(116, 372)">
-    <rect x="0" y="0" width="280" height="56" rx="16" fill="#fbbf24" stroke="#1f2937" stroke-width="10" />
-    <text x="140" y="38" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="22" fill="#1f2937" text-anchor="middle" letter-spacing="2">DẤU ẤN LAN VY</text>
-  </g>
-
-  <!-- NGÔI SAO LẤP LÁNH & TRÁI TIM NEO-BRUTALISM -->
-  <polygon points="430,64 442,92 470,96 448,114 454,142 430,126 406,142 412,114 390,96 418,92" fill="#fbbf24" stroke="#1f2937" stroke-width="8" />
-  <path d="M80 80 C70 65, 48 65, 48 80 C48 95, 80 115, 80 115 C80 115, 112 95, 112 80 C112 65, 90 65, 80 80 Z" fill="#f43f5e" stroke="#1f2937" stroke-width="6" />
+  <!-- DECORATIVE DOTS NEO-BRUTALISM -->
+  <circle cx="170" cy="170" r="10" fill="#1f2937" />
 </svg>

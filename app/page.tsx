@@ -52,19 +52,19 @@ function renderCoinIcon(className = 'w-4 h-4 text-amber-500 inline mr-1') {
   );
 }
 
-function renderSunIcon(className = 'w-4 h-4 text-amber-400 fill-current') {
+function renderSunIcon(className = 'w-5 h-5 text-amber-400') {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-      <circle cx="12" cy="12" r="4" fill="currentColor" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 16v2m10-10h-2M4 12H2m16.95-6.95l-1.414 1.414M6.464 17.536l-1.414 1.414m14.14 0l-1.414-1.414M6.464 6.464L5.05 5.05" />
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="12" cy="12" r="5" fill="#facc15" />
+      <path stroke="#facc15" strokeWidth="2.5" strokeLinecap="round" d="M12 2v2.5m0 15V22M4.93 4.93l1.77 1.77m10.6 10.6l1.77 1.77M2 12h2.5m15 0H22M4.93 19.07l1.77-1.77m10.6-10.6l1.77-1.77" />
     </svg>
   );
 }
 
-function renderMoonIcon(className = 'w-4 h-4 text-indigo-300 fill-current') {
+function renderMoonIcon(className = 'w-5 h-5 text-slate-700') {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z" />
     </svg>
   );
 }
@@ -718,31 +718,61 @@ export default function Home() {
         playTone(300, now, 0.04, 0.06, 'sine');
         playTone(600, now + 0.04, 0.08, 0.06, 'sine');
       } else if (type === 'meow') {
-        // Tiếng mèo kêu meo meo nũng nịu êm ái
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, now);
-        osc.frequency.exponentialRampToValueAtTime(820, now + 0.1);
-        osc.frequency.exponentialRampToValueAtTime(480, now + 0.28);
-        gain.gain.setValueAtTime(0.07, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.3);
+        // Tiếng mèo kêu Meow Meow tự nhiên qua SpeechSynthesis
+        try {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance('Meow, meow');
+            u.pitch = 1.8;
+            u.rate = 1.3;
+            u.volume = 0.7;
+            window.speechSynthesis.speak(u);
+            return;
+          }
+        } catch (e) {}
+        playTone(600, now, 0.08, 0.05, 'sine');
       } else if (type === 'bark') {
-        // Tiếng chó sủa gâu gâu vui mừng mượt mà
-        playTone(380, now, 0.06, 0.08, 'triangle');
-        playTone(420, now + 0.09, 0.06, 0.08, 'triangle');
+        // Tiếng chó sủa Woof Woof tự nhiên
+        try {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance('Woof woof');
+            u.pitch = 0.9;
+            u.rate = 1.4;
+            u.volume = 0.7;
+            window.speechSynthesis.speak(u);
+            return;
+          }
+        } catch (e) {}
+        playTone(350, now, 0.06, 0.05, 'triangle');
       } else if (type === 'squeak') {
-        // Tiếng thỏ chíp chíp nhút nhát
+        // Tiếng thỏ chíp chíp
+        try {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance('Chirp chirp');
+            u.pitch = 2.0;
+            u.rate = 1.5;
+            u.volume = 0.6;
+            window.speechSynthesis.speak(u);
+            return;
+          }
+        } catch (e) {}
         playTone(1300, now, 0.05, 0.05, 'sine');
-        playTone(1700, now + 0.05, 0.06, 0.05, 'sine');
       } else if (type === 'grunt') {
-        // Tiếng gấu trúc nhai lá măng khịt khịt
+        // Tiếng gấu trúc nhai lá măng
+        try {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance('Yum yum');
+            u.pitch = 0.8;
+            u.rate = 1.2;
+            u.volume = 0.6;
+            window.speechSynthesis.speak(u);
+            return;
+          }
+        } catch (e) {}
         playTone(160, now, 0.08, 0.07, 'triangle');
-        playTone(130, now + 0.07, 0.09, 0.07, 'triangle');
       } else if (type === 'success') {
         playTone(523.25, now, 0.1, 0.08, 'square');
         playTone(659.25, now + 0.08, 0.1, 0.08, 'square');
@@ -1470,15 +1500,13 @@ export default function Home() {
 
               {/* Các nút thao tác Neo-Brutalist */}
               <div className="flex items-center gap-2">
-                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI NEO-BRUTALIST */}
+                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CHUẨN 100% IELTS VOCAB */}
                 <button
                   onClick={toggleDarkMode}
-                  className={`p-2.5 border-4 border-black dark:border-slate-600 rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center justify-center cursor-pointer hover:scale-105 active:translate-y-0.5 transition-all ${
-                    isDarkMode ? 'bg-slate-800 text-amber-300' : 'bg-white text-indigo-600 hover:bg-amber-100'
-                  }`}
+                  className="p-2 sm:p-2.5 border-4 border-black dark:border-slate-600 rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center justify-center cursor-pointer hover:scale-105 active:translate-y-0.5 transition-all bg-white dark:bg-slate-800"
                   title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
                 >
-                  {isDarkMode ? renderSunIcon('w-4 h-4 text-amber-300') : renderMoonIcon('w-4 h-4 text-indigo-600')}
+                  {isDarkMode ? renderSunIcon('w-5 h-5 text-amber-400') : renderMoonIcon('w-5 h-5 text-slate-700')}
                 </button>
 
                 <button

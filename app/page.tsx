@@ -5,6 +5,8 @@ import { FURNITURE_ITEMS, MATERIAL_ITEMS, DESIGN_CONTRACTS, FurnitureItem, Mater
 import RoomEditor, { renderFurnitureSVG } from '../components/RoomEditor';
 import BlueprintQuiz from '../components/BlueprintQuiz';
 import LoveInbox from '../components/LoveInbox';
+import { generateDynamicContract } from '../lib/contract-generator';
+import { ArrangementModal } from '../components/ArrangementModal';
 
 interface PlacedItem {
   id: string;
@@ -272,10 +274,15 @@ export default function Home() {
   const [completedContracts, setCompletedContracts] = useState<number[]>([]);
   const [contractSelectedItems, setContractSelectedItems] = useState<string[]>([]);
   const [showStudioHint, setShowStudioHint] = useState(false);
+  const [dynamicContracts, setDynamicContracts] = useState<DesignContract[]>([]);
+  const [showArrangementModal, setShowArrangementModal] = useState<boolean>(false);
+
+  const allContracts = [...DESIGN_CONTRACTS, ...dynamicContracts];
 
   // Library subtab state
   const [librarySubTab, setLibrarySubTab] = useState<'furniture' | 'vocab' | 'grammar'>('furniture');
   const [selectedLibraryTheme, setSelectedLibraryTheme] = useState<string>('all');
+  const isVy = user?.username.toLowerCase().includes('vy') || user?.email.toLowerCase() === 'nguyenthilanvy12a2@gmail.com';
 
   // Admin state & functions
   const ADMIN_EMAILS = ['ungnhutkhang53@gmail.com'];
@@ -544,13 +551,50 @@ export default function Home() {
       if (savedFloor) setFloorType(savedFloor);
 
       const savedCompleted = localStorage.getItem(`room_completed_contracts_${user.id}`);
+      let currentCompletedList: number[] = [];
       if (savedCompleted) {
         try {
-          setCompletedContracts(JSON.parse(savedCompleted));
+          currentCompletedList = JSON.parse(savedCompleted);
+          setCompletedContracts(currentCompletedList);
         } catch (e) {}
+      }
+
+      const savedDynamic = localStorage.getItem(`room_dynamic_contracts_${user.id}`);
+      let loadedDynamic: DesignContract[] = [];
+      if (savedDynamic) {
+        try {
+          loadedDynamic = JSON.parse(savedDynamic);
+          setDynamicContracts(loadedDynamic);
+        } catch (e) {}
+      }
+
+      // Tự động sinh 2 hợp đồng động nếu tất cả hợp đồng tĩnh đã hoàn thành
+      const totalAvailable = [...DESIGN_CONTRACTS, ...loadedDynamic].filter(c => !c.isLoveContract);
+      const isAllDone = totalAvailable.length > 0 && totalAvailable.every(c => currentCompletedList.includes(c.id));
+      if (isAllDone || loadedDynamic.length === 0) {
+        const gen1 = generateDynamicContract(Date.now(), 2);
+        const gen2 = generateDynamicContract(Date.now() + 1, 2);
+        const newDynamic = [...loadedDynamic, gen1, gen2];
+        setDynamicContracts(newDynamic);
+        localStorage.setItem(`room_dynamic_contracts_${user.id}`, JSON.stringify(newDynamic));
       }
     }
   }, [user]);
+
+  const handleCreateNewContract = () => {
+    playSfx('click');
+    const newContract = generateDynamicContract(Date.now(), 2);
+    const updatedDynamic = [...dynamicContracts, newContract];
+    setDynamicContracts(updatedDynamic);
+    if (user) {
+      localStorage.setItem(`room_dynamic_contracts_${user.id}`, JSON.stringify(updatedDynamic));
+    }
+    setCurrentContract(newContract);
+    setContractSubmitMsg({
+      type: 'success',
+      text: `Khách hàng mới (${newContract.clientName}) vừa gửi hợp đồng thiết kế "${newContract.title}"!`
+    });
+  };
 
   const saveCompletedContracts = (newCompleted: number[]) => {
     if (user) {
@@ -713,35 +757,8 @@ export default function Home() {
     const completed = checkContractCompletion(contract);
 
     if (completed) {
-      const newScore = score + contract.rewardScore;
-      const newCoins = coins + contract.rewardCoins;
-      
-      setScore(newScore);
-      setCoins(newCoins);
-      playSfx('success');
-
-      // Tự động lưu vào completed list
-      const newCompleted = [...completedContracts, contract.id];
-      saveCompletedContracts(newCompleted);
-
-      // Tự động mở khóa voucher thưởng nếu có
-      let nextVoucher = null;
-      if (contract.voucherReward) {
-        nextVoucher = {
-          title: contract.voucherReward.title,
-          description: contract.voucherReward.description,
-          code: contract.voucherReward.code
-        };
-        playSfx('levelUp');
-      }
-
-      saveProgress(newScore, newCoins, level, nextVoucher);
-
-      setContractSubmitMsg({
-        type: 'success',
-        text: `Tuyệt vời! Bản vẽ phòng của bạn đã chính xác và làm hài lòng khách hàng ${contract.clientName}! Bạn nhận được +${contract.rewardCoins} Xu, +${contract.rewardScore} Điểm!`
-      });
-      setContractSelectedItems([]);
+      // Mở modal sắp xếp nội thất & đánh giá thẩm mỹ từ khách hàng
+      setShowArrangementModal(true);
     } else {
       const missing = contract.targetRequirements
         .filter(reqId => !contractSelectedItems.includes(reqId))
@@ -764,6 +781,65 @@ export default function Home() {
         text: errorText
       });
       playSfx('error');
+    }
+  };
+
+  // Hoàn tất sắp xếp trong ArrangementModal và nhận thưởng (kèm bonus thẩm mỹ)
+  const handleCompleteArrangement = (
+    stars: number,
+    bonusCoins: number,
+    bonusScore: number,
+    feedbackMsg: string
+  ) => {
+    if (!currentContract) return;
+
+    const totalCoins = currentContract.rewardCoins + bonusCoins;
+    const totalScore = currentContract.rewardScore + bonusScore;
+
+    const newScore = score + totalScore;
+    const newCoins = coins + totalCoins;
+
+    setScore(newScore);
+    setCoins(newCoins);
+
+    // Lưu vào completed list
+    const newCompleted = [...completedContracts, currentContract.id];
+    saveCompletedContracts(newCompleted);
+
+    // Mở khóa voucher thưởng nếu có
+    let nextVoucher = null;
+    if (currentContract.voucherReward) {
+      nextVoucher = {
+        title: currentContract.voucherReward.title,
+        description: currentContract.voucherReward.description,
+        code: currentContract.voucherReward.code
+      };
+      playSfx('levelUp');
+    }
+
+    saveProgress(newScore, newCoins, level, nextVoucher);
+
+    const starsText = stars === 3 ? '⭐⭐⭐' : stars === 2 ? '⭐⭐' : '⭐';
+    setContractSubmitMsg({
+      type: 'success',
+      text: `${feedbackMsg} Vy nhận được tổng cộng +${totalCoins} Xu (+${bonusCoins} Xu Bonus Thẩm Mỹ ${starsText}) và +${totalScore} Điểm!`
+    });
+
+    setContractSelectedItems([]);
+    setShowArrangementModal(false);
+
+    // Tự động kiểm tra nếu hoàn thành hết hợp đồng hiện có -> Tự động sinh hợp đồng mới
+    const remaining = [...DESIGN_CONTRACTS, ...dynamicContracts].filter(
+      c => !c.isLoveContract && !newCompleted.includes(c.id)
+    );
+
+    if (remaining.length === 0) {
+      const autoGen = generateDynamicContract(Date.now(), 2);
+      const updated = [...dynamicContracts, autoGen];
+      setDynamicContracts(updated);
+      if (user) {
+        localStorage.setItem(`room_dynamic_contracts_${user.id}`, JSON.stringify(updated));
+      }
     }
   };
 
@@ -1034,11 +1110,20 @@ export default function Home() {
             {activeTab === 'studio' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-4 bg-[#fffaf0] border-4 border-[#1f2937] rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 h-[460px] flex flex-col">
-                  <h2 className="text-base font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-3 mb-3 flex items-center">
-                    {renderClipboardIcon()} Danh Sách Hợp Đồng
-                  </h2>
+                  <div className="flex items-center justify-between border-b-2 border-dashed border-[#1f2937] pb-3 mb-3">
+                    <h2 className="text-base font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                      {renderClipboardIcon()} Danh Sách Hợp Đồng
+                    </h2>
+                    <button
+                      onClick={handleCreateNewContract}
+                      className="bg-amber-400 hover:bg-amber-500 text-amber-950 border-2 border-[#1f2937] text-[10px] font-black px-2 py-1 rounded-lg shadow-[1px_1px_0px_#1f2937] active:translate-y-0.5 transition flex items-center gap-1 shrink-0"
+                      title="Tự động sinh hợp đồng mới từ khách hàng mới"
+                    >
+                      <span>➕</span> Hợp đồng mới
+                    </button>
+                  </div>
                   <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-                    {DESIGN_CONTRACTS.filter(c => !c.isLoveContract).map((contract) => (
+                    {allContracts.filter(c => !c.isLoveContract).map((contract) => (
                       <div
                         key={contract.id}
                         onClick={() => {
@@ -1914,6 +1999,17 @@ export default function Home() {
             )}
           </div>
         </div>
+      )}
+
+      {/* MODAL SẮP XẾP NỘI THẤT 2D & ĐÁNH GIÁ THẨM MỸ */}
+      {showArrangementModal && currentContract && (
+        <ArrangementModal
+          contract={currentContract}
+          selectedItemIds={contractSelectedItems}
+          onClose={() => setShowArrangementModal(false)}
+          onComplete={handleCompleteArrangement}
+          playSfx={playSfx}
+        />
       )}
 
       {/* Retro CSS animations style tag */}

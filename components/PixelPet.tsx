@@ -9,6 +9,7 @@ interface PixelPetProps {
   externalShowShop?: boolean;
   onToggleShop?: (show: boolean) => void;
   isVy?: boolean;
+  isKhang?: boolean;
 }
 
 type PetType = 'cat' | 'dog' | 'rabbit' | 'panda';
@@ -59,6 +60,12 @@ const VOUCHER_ITEMS_KHANG = [
   { id: 'v_dish', name: 'Voucher Miễn Phạt Rửa Bát', price: 100, desc: 'Khang được miễn làm việc nhà 1 ngày' }
 ];
 
+const VOUCHER_ITEMS_GENERAL = [
+  { id: 'v_x2xp', name: 'Voucher Nhân Đôi HSK XP', price: 30, desc: 'Nhận gấp đôi điểm kinh nghiệm cho 5 bài Quiz HSK' },
+  { id: 'v_discount', name: 'Voucher Giảm Giá Nội Thất 50%', price: 50, desc: 'Giảm 50% giá mở khóa toàn bộ nội thất' },
+  { id: 'v_giftbox', name: 'Voucher Hộp Quà Bí Mật HSK', price: 100, desc: 'Thưởng ngẫu nhiên 200 Xu & 3 Thức ăn Thú cưng' }
+];
+
 export const PixelPet: React.FC<PixelPetProps> = ({
   coins = 100,
   setCoins,
@@ -67,7 +74,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   isDarkMode = false,
   externalShowShop,
   onToggleShop,
-  isVy = true
+  isVy = false,
+  isKhang = false
 }) => {
   const [currentPet, setCurrentPet] = useState<PetType>('cat');
   const [unlockedPets, setUnlockedPets] = useState<PetType[]>(['cat', 'dog']);
@@ -85,7 +93,17 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [shopTab, setShopTab] = useState<'food' | 'pet' | 'voucher'>('food');
   const [purchasedVouchers, setPurchasedVouchers] = useState<string[]>([]);
 
-  const activeVoucherList = isVy ? VOUCHER_ITEMS_VY : VOUCHER_ITEMS_KHANG;
+  const activeVoucherList = isVy 
+    ? VOUCHER_ITEMS_VY 
+    : isKhang 
+    ? VOUCHER_ITEMS_KHANG 
+    : VOUCHER_ITEMS_GENERAL;
+
+  const voucherTabTitle = isVy 
+    ? 'Voucher Vy' 
+    : isKhang 
+    ? 'Voucher Khang' 
+    : 'Voucher HSK';
 
   const [posX, setPosX] = useState(0);
   const [posY, setPosY] = useState(0);
@@ -402,7 +420,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                   shopTab === 'voucher' ? 'bg-indigo-600 text-white shadow' : 'text-gray-700 dark:text-slate-300'
                 }`}
               >
-                {isVy ? 'Voucher Vy' : 'Ví Voucher'}
+                {voucherTabTitle}
               </button>
             </div>
 

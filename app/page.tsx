@@ -2335,6 +2335,7 @@ export default function Home() {
           externalShowShop={showPetShopModal}
           onToggleShop={setShowPetShopModal}
           isVy={isVy}
+          isKhang={user?.email?.toLowerCase() === 'ungnhutkhang53@gmail.com'}
         />
       )}
 

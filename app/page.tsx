@@ -401,6 +401,7 @@ export default function Home() {
   const [vocabTheme, setVocabTheme] = useState('Mua sắm & Shopping');
   const [vocabCustomTheme, setVocabCustomTheme] = useState('');
   const [librarySearchQuery, setLibrarySearchQuery] = useState('');
+  const [libraryPage, setLibraryPage] = useState(1);
   const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
   const [showArchitectModal, setShowArchitectModal] = useState(false);
   const [vocabBotLoading, setVocabBotLoading] = useState(false);
@@ -2039,8 +2040,15 @@ export default function Home() {
                     ? searchFiltered
                     : searchFiltered.filter(item => getVocabCategory(item) === selectedLibraryTheme);
 
+                  const ITEMS_PER_PAGE = 30;
+                  const totalCount = filteredVocabs.length;
+                  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1;
+                  const safePage = Math.min(libraryPage, totalPages);
+
+                  const paginatedVocabs = filteredVocabs.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
+
                   const groupedVocabs: { [key: string]: any[] } = {};
-                  filteredVocabs.forEach((item) => {
+                  paginatedVocabs.forEach((item) => {
                     const cat = getVocabCategory(item);
                     if (!groupedVocabs[cat]) {
                       groupedVocabs[cat] = [];
@@ -2060,12 +2068,15 @@ export default function Home() {
                           <input
                             type="text"
                             value={librarySearchQuery}
-                            onChange={(e) => setLibrarySearchQuery(e.target.value)}
+                            onChange={(e) => {
+                              setLibrarySearchQuery(e.target.value);
+                              setLibraryPage(1);
+                            }}
                             placeholder="Tra cứu từ vựng chữ Hán, Pinyin hoặc nghĩa tiếng Việt..."
                             className="w-full text-xs font-bold bg-transparent focus:outline-none"
                           />
                           {librarySearchQuery && (
-                            <button onClick={() => setLibrarySearchQuery('')} className="text-xs text-gray-400 font-bold hover:text-gray-600 px-1 cursor-pointer">
+                            <button onClick={() => { setLibrarySearchQuery(''); setLibraryPage(1); }} className="text-xs text-gray-400 font-bold hover:text-gray-600 px-1 cursor-pointer">
                               ✕
                             </button>
                           )}
@@ -2095,6 +2106,7 @@ export default function Home() {
                         <button
                           onClick={() => {
                             setSelectedLibraryTheme('all');
+                            setLibraryPage(1);
                             playSfx('click');
                           }}
                           className={`px-3 py-1 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
@@ -2112,6 +2124,7 @@ export default function Home() {
                               key={cat}
                               onClick={() => {
                                 setSelectedLibraryTheme(cat);
+                                setLibraryPage(1);
                                 playSfx('click');
                               }}
                               className={`px-3 py-1 border-2 border-[#1f2937] font-black text-[10px] uppercase rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
@@ -2179,6 +2192,72 @@ export default function Home() {
                           </div>
                         </div>
                       ))}
+
+                      {/* THANH PHÂN TRANG CHUẨN 100% IELTS VOCAB */}
+                      {totalPages > 1 && (
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8 bg-white dark:bg-slate-900 p-4 border-3 border-[#1f2937] dark:border-slate-700 shadow-[4px_4px_0_#000] dark:shadow-[4px_4px_0_#020617] rounded-2xl w-full text-black dark:text-slate-100">
+                          <p className="text-xs font-mono font-bold text-gray-600 dark:text-slate-400">
+                            Hiển thị từ <span className="font-black text-black dark:text-white">{(safePage - 1) * ITEMS_PER_PAGE + 1}</span> - <span className="font-black text-black dark:text-white">{Math.min(safePage * ITEMS_PER_PAGE, totalCount)}</span> trên <span className="font-black text-black dark:text-white">{totalCount}</span> từ vựng
+                          </p>
+
+                          <div className="flex items-center gap-1.5 flex-wrap justify-center">
+                            {/* Prev Button */}
+                            <button
+                              disabled={safePage === 1}
+                              onClick={() => {
+                                setLibraryPage((prev) => Math.max(prev - 1, 1));
+                                playSfx('click');
+                              }}
+                              className="w-9 h-9 flex items-center justify-center border-2 border-[#1f2937] dark:border-slate-600 rounded-lg font-mono font-black text-xs bg-gray-100 dark:bg-slate-800 text-black dark:text-white shadow-[2px_2px_0_#000] disabled:opacity-40 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                              title="Trang trước"
+                            >
+                              &lt;
+                            </button>
+
+                            {/* Page Numbers */}
+                            {getLibraryPageNumbers(safePage, totalPages).map((p, idx) => {
+                              if (p === '...') {
+                                return (
+                                  <span key={`dots-${idx}`} className="w-8 h-9 flex items-center justify-center font-mono font-bold text-gray-400">
+                                    ...
+                                  </span>
+                                );
+                              }
+
+                              const isCurrent = p === safePage;
+                              return (
+                                <button
+                                  key={`page-${p}`}
+                                  onClick={() => {
+                                    setLibraryPage(p as number);
+                                    playSfx('click');
+                                  }}
+                                  className={`w-9 h-9 flex items-center justify-center border-2 border-[#1f2937] dark:border-slate-600 rounded-lg font-mono font-black text-xs transition-all cursor-pointer ${
+                                    isCurrent
+                                      ? 'bg-sky-500 text-white shadow-[2px_2px_0_#000]'
+                                      : 'bg-white dark:bg-slate-800 text-black dark:text-slate-100 shadow-[2px_2px_0_#000] hover:bg-amber-100 dark:hover:bg-slate-700'
+                                  }`}
+                                >
+                                  {p}
+                                </button>
+                              );
+                            })}
+
+                            {/* Next Button */}
+                            <button
+                              disabled={safePage === totalPages}
+                              onClick={() => {
+                                setLibraryPage((prev) => Math.min(prev + 1, totalPages));
+                                playSfx('click');
+                              }}
+                              className="w-9 h-9 flex items-center justify-center border-2 border-[#1f2937] dark:border-slate-600 rounded-lg font-mono font-black text-xs bg-gray-100 dark:bg-slate-800 text-black dark:text-white shadow-[2px_2px_0_#000] disabled:opacity-40 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                              title="Trang sau"
+                            >
+                              &gt;
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
@@ -2738,4 +2817,22 @@ function renderPaletteIcon(className = 'w-5 h-5') {
       <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
     </svg>
   );
+}
+
+// Hàm phân trang chuẩn 100% IELTS Vocab
+function getLibraryPageNumbers(current: number, total: number) {
+  const pages: (number | string)[] = [];
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    const start = Math.max(2, current - 2);
+    const end = Math.min(total - 1, current + 2);
+
+    if (start > 2) pages.push('...');
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (end < total - 1) pages.push('...');
+    pages.push(total);
+  }
+  return pages;
 }

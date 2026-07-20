@@ -8,6 +8,7 @@ import LoveInbox from '../components/LoveInbox';
 import { generateDynamicContract } from '../lib/contract-generator';
 import { ArrangementModal } from '../components/ArrangementModal';
 import { VoiceRoastModal } from '../components/VoiceRoastModal';
+import { ArchitectGlossaryModal } from '../components/ArchitectGlossaryModal';
 
 interface PlacedItem {
   id: string;
@@ -302,6 +303,7 @@ export default function Home() {
   const [vocabCustomTheme, setVocabCustomTheme] = useState('');
   const [librarySearchQuery, setLibrarySearchQuery] = useState('');
   const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
+  const [showArchitectModal, setShowArchitectModal] = useState(false);
   const [vocabBotLoading, setVocabBotLoading] = useState(false);
   const [vocabBotMsg, setVocabBotMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -318,27 +320,67 @@ export default function Home() {
   };
 
   const handleGenerateVocab = async () => {
-    const finalTheme = vocabTheme === 'custom' ? vocabCustomTheme : vocabTheme;
-    if (!finalTheme.trim()) {
-      setVocabBotMsg({ type: 'error', text: 'Vui lòng chọn hoặc nhập chủ đề từ vựng.' });
-      return;
-    }
     setVocabBotLoading(true);
     setVocabBotMsg(null);
     try {
-      const res = await fetch('/api/admin/vocab/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          query: finalTheme, 
-          category: finalTheme 
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setGeneratedVocab(data.vocabList.map((item: any) => ({ ...item, selected: true })));
+      if (vocabTheme === 'all_themes') {
+        const ALL_THEMES = [
+          'Mua sắm & Shopping',
+          'Ẩm thực & Đi ăn tiệm',
+          'Màu sắc & Thiết kế',
+          'Thời tiết & Thời gian',
+          'Gia đình & Nhà cửa',
+          'Phương hướng & Vị trí',
+          'Sở thích & Hẹn hò',
+          'Động vật & Thú cưng',
+          'Học tập & Trường học',
+          'Công việc & Văn phòng',
+          'Giao thông & Du lịch',
+          'Kiến trúc & Nội thất',
+          'Cảm xúc & Mô tả',
+          'Giải trí & Thể thao'
+        ];
+
+        let combined: any[] = [];
+        for (const th of ALL_THEMES) {
+          try {
+            const res = await fetch('/api/admin/vocab/generate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query: th, category: th })
+            });
+            const data = await res.json();
+            if (data.success && Array.isArray(data.vocabList)) {
+              combined = [...combined, ...data.vocabList];
+            }
+          } catch (e) {
+            console.error(`Error generating theme ${th}:`, e);
+          }
+        }
+        if (combined.length > 0) {
+          setGeneratedVocab(combined.map((item: any) => ({ ...item, selected: true })));
+          setVocabBotMsg({ type: 'success', text: `Đã tự động bơm thành công ${combined.length} từ vựng phủ kín 14 chủ đề!` });
+        } else {
+          setVocabBotMsg({ type: 'error', text: 'Lỗi khi tạo từ vựng tổng hợp.' });
+        }
       } else {
-        setVocabBotMsg({ type: 'error', text: data.error || 'Lỗi khi tạo từ vựng.' });
+        const finalTheme = vocabTheme === 'custom' ? vocabCustomTheme : vocabTheme;
+        if (!finalTheme.trim()) {
+          setVocabBotMsg({ type: 'error', text: 'Vui lòng chọn hoặc nhập chủ đề từ vựng.' });
+          setVocabBotLoading(false);
+          return;
+        }
+        const res = await fetch('/api/admin/vocab/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: finalTheme, category: finalTheme })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setGeneratedVocab(data.vocabList.map((item: any) => ({ ...item, selected: true })));
+        } else {
+          setVocabBotMsg({ type: 'error', text: data.error || 'Lỗi khi tạo từ vựng.' });
+        }
       }
     } catch (e) {
       setVocabBotMsg({ type: 'error', text: 'Lỗi kết nối máy chủ.' });
@@ -1009,6 +1051,15 @@ export default function Home() {
 
             {/* Chỉ số tài khoản */}
             <div className="flex items-center gap-3 flex-wrap">
+              <button
+                onClick={() => {
+                  setShowArchitectModal(true);
+                  playSfx('click');
+                }}
+                className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-[#1f2937] border-2 border-[#1f2937] text-xs font-serif font-black rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
+              >
+                📐 Sổ Tay Kiến Trúc HSK
+              </button>
               <div className="bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-black font-mono flex items-center">
                 {renderCoinIcon()} Xu: {coins}
               </div>
@@ -2059,6 +2110,13 @@ export default function Home() {
           playSfx={playSfx}
         />
       )}
+
+      {/* MODAL SỔ TAY THUẬT NGỮ KIẾN TRÚC & VẬT LIỆU HSK (FOR VY) */}
+      <ArchitectGlossaryModal
+        isOpen={showArchitectModal}
+        onClose={() => setShowArchitectModal(false)}
+        onPlayTTS={handlePlayTTS}
+      />
 
       {/* Retro CSS animations style tag */}
       <style>{`

@@ -342,45 +342,71 @@ export function ArrangementModal({
           </button>
         </div>
 
-        {/* Overlay Kết Quả Đánh Giá Thẩm Mỹ */}
+        {/* Overlay Kết Quả Đánh Giá Thẩm Mỹ & Phong Thủy Nội Thất AI */}
         {evalResult && (
-          <div className="absolute inset-0 bg-amber-950/80 backdrop-blur-md flex items-center justify-center p-6 z-50 animate-pop-in">
-            <div className="bg-[#fffbeb] border-4 border-amber-400 rounded-3xl p-6 max-w-md w-full text-center shadow-2xl">
-              <div className="flex justify-center items-center gap-1 mb-2">
+          <div className="absolute inset-0 bg-amber-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-pop-in overflow-y-auto">
+            <div className="bg-[#fffbeb] border-4 border-amber-400 rounded-3xl p-5 max-w-lg w-full text-center shadow-2xl space-y-3 my-auto">
+              <div className="flex justify-center items-center gap-1">
                 {Array.from({ length: evalResult.stars }).map((_, i) => (
                   <span key={i} className="inline-block animate-bounce" style={{ animationDelay: `${i * 150}ms` }}>
-                    {renderStarSVG('w-8 h-8 text-amber-400 fill-current')}
+                    {renderStarSVG('w-7 h-7 text-amber-400 fill-current')}
                   </span>
                 ))}
               </div>
 
-              <h3 className="text-xl font-serif font-black text-[#1f2937] mb-2">
+              <h3 className="text-lg font-serif font-black text-[#1f2937]">
                 {evalResult.stars === 3
-                  ? 'Tuyệt Đẹp! Thẩm Mỹ Xuất Sắc!'
+                  ? 'Tuyệt Đẹp! Thẩm Mỹ Kiến Trúc Xuất Sắc!'
                   : evalResult.stars === 2
-                  ? 'Bố Trí Rất Đẹp Mắt!'
-                  : 'Hoàn Thành Thiết Kế!'}
+                  ? 'Bố Trí Hài Hòa & Đẹp Mắt!'
+                  : 'Bàn Giao Bản Thiết Kế Thành Công!'}
               </h3>
 
-              <p className="text-xs text-amber-900 font-medium mb-4 bg-amber-100 p-3 rounded-2xl border border-amber-300">
-                "{evalResult.feedbackMsg}"
-              </p>
+              {/* 1. ĐÁNH GIÁ PHONG CÁCH & PHONG THỦY NỘI THẤT */}
+              <div className="bg-white p-3 rounded-2xl border-2 border-amber-300 text-left space-y-2 text-xs">
+                <div className="flex items-center justify-between border-b border-dashed border-amber-200 pb-1.5">
+                  <span className="font-black text-rose-600 flex items-center gap-1">
+                    🎨 Phong Cách Thiết Kế:
+                  </span>
+                  <span className="font-serif font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
+                    {placedItems.length >= 3 ? 'Bắc Âu Minimalist (极简风)' : 'Tối Giản Hiện Đại (现代风)'}
+                  </span>
+                </div>
 
-              <div className="bg-white p-3 rounded-2xl border-2 border-amber-200 mb-5 text-xs text-left space-y-1.5 font-bold">
-                <div className="flex justify-between text-gray-700">
-                  <span>Xu hợp đồng cơ bản:</span>
-                  <span>+{contract.rewardCoins} Xu</span>
-                </div>
-                {evalResult.bonusCoins > 0 && (
-                  <div className="flex justify-between text-emerald-600 font-black items-center">
-                    <span>Bonus Thẩm Mỹ ({evalResult.stars === 3 ? '+50%' : '+25%'}):</span>
-                    <span className="flex items-center gap-1">+{evalResult.bonusCoins} Xu {renderStarSVG('w-3.5 h-3.5 text-amber-400 fill-current')}</span>
+                <div className="space-y-1">
+                  <div className="font-black text-emerald-800 flex items-center gap-1">
+                    🌿 Đánh Giá Phong Thủy & Ánh Sáng (风水与采光):
                   </div>
-                )}
-                <div className="border-t border-gray-200 pt-1.5 flex justify-between text-amber-900 font-black text-sm">
-                  <span>Tổng Xu nhận được:</span>
-                  <span className="text-amber-600 font-serif">+{contract.rewardCoins + evalResult.bonusCoins} Xu</span>
+                  <p className="text-[11px] text-gray-700 font-bold bg-emerald-50 p-2 rounded-xl border border-emerald-200">
+                    "Bố trí không gian lưu thông mạch lạc, đồ đạc kê tựa tường chắc chắn mang lại vận khí tốt (吉利 - Jílì) và tài lộc cho chủ nhà {contract.clientName}!"
+                  </p>
                 </div>
+              </div>
+
+              {/* 2. BẢNG BÁO GIÁ THI CÔNG HSK (BILL OF QUANTITIES - BOQ) */}
+              <div className="bg-white p-3 rounded-2xl border-2 border-amber-300 text-left text-xs space-y-2">
+                <div className="font-black text-amber-900 border-b border-dashed border-amber-200 pb-1 flex justify-between items-center">
+                  <span>📊 Bảng Báo Giá Thi Công HSK (工程预算表):</span>
+                  <span className="text-[10px] text-gray-500 font-mono">BOQ #{contract.id}</span>
+                </div>
+                <div className="space-y-1 max-h-28 overflow-y-auto text-[11px]">
+                  {placedItems.map((item, idx) => {
+                    const def = FURNITURE_ITEMS.find(f => f.id === item.itemTypeId);
+                    const unitPrice = def?.cost || 100;
+                    return (
+                      <div key={idx} className="flex justify-between items-center text-gray-700 font-medium border-b border-gray-100 pb-1">
+                        <span className="font-bold">{def?.nameChinese} ({def?.nameVietnamese})</span>
+                        <span className="font-mono text-amber-900 font-bold">1 bộ x {unitPrice} Xu</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* KẾT QUẢ VÀ THƯỞNG XU */}
+              <div className="bg-amber-100 p-3 rounded-2xl border border-amber-300 text-xs font-bold flex justify-between items-center">
+                <span>Tổng thưởng nhận được:</span>
+                <span className="text-amber-700 font-serif font-black text-sm">+{contract.rewardCoins + evalResult.bonusCoins} Xu</span>
               </div>
 
               <button
@@ -392,9 +418,9 @@ export function ArrangementModal({
                     evalResult.feedbackMsg
                   );
                 }}
-                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-sm uppercase tracking-wider rounded-2xl border-2 border-amber-700 shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl border-2 border-amber-700 shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                {renderCheckSVG()} Nhận Thưởng & Đóng
+                {renderCheckSVG()} Ký Hợp Đồng & Nhận Thưởng
               </button>
             </div>
           </div>

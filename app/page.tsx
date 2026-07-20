@@ -300,8 +300,7 @@ export default function Home() {
   const [customVocabs, setCustomVocabs] = useState<any[]>([]);
   const [vocabTheme, setVocabTheme] = useState('Mua sắm & Shopping');
   const [vocabCustomTheme, setVocabCustomTheme] = useState('');
-  const [vocabHskLevel, setVocabHskLevel] = useState<number>(1);
-  const [vocabTone, setVocabTone] = useState<'roast' | 'sweet' | 'academic'>('roast');
+  const [librarySearchQuery, setLibrarySearchQuery] = useState('');
   const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
   const [vocabBotLoading, setVocabBotLoading] = useState(false);
   const [vocabBotMsg, setVocabBotMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -332,8 +331,6 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: finalTheme, 
-          hskLevel: vocabHskLevel, 
-          tone: vocabTone, 
           category: finalTheme 
         })
       });
@@ -1483,11 +1480,23 @@ export default function Home() {
 
                 {librarySubTab === 'vocab' && (() => {
                   const allVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
-                  const uniqueCategories = Array.from(new Set(allVocabs.map(item => getVocabCategory(item))));
+                  const searchLower = librarySearchQuery.trim().toLowerCase();
+
+                  const searchFiltered = allVocabs.filter(item => {
+                    if (!searchLower) return true;
+                    return (
+                      item.nameChinese.toLowerCase().includes(searchLower) ||
+                      item.namePinyin.toLowerCase().includes(searchLower) ||
+                      item.nameVietnamese.toLowerCase().includes(searchLower) ||
+                      (item.theme && item.theme.toLowerCase().includes(searchLower))
+                    );
+                  });
+
+                  const uniqueCategories = Array.from(new Set(searchFiltered.map(item => getVocabCategory(item))));
 
                   const filteredVocabs = selectedLibraryTheme === 'all'
-                    ? allVocabs
-                    : allVocabs.filter(item => getVocabCategory(item) === selectedLibraryTheme);
+                    ? searchFiltered
+                    : searchFiltered.filter(item => getVocabCategory(item) === selectedLibraryTheme);
 
                   const groupedVocabs: { [key: string]: any[] } = {};
                   filteredVocabs.forEach((item) => {
@@ -1499,7 +1508,47 @@ export default function Home() {
                   });
 
                   return (
-                    <div className="space-y-6">
+                    <div className="space-y-4">
+                      {/* BẢNG CHỦ ĐỀ & CHẾ ĐỘ AI CHẤM ĐIỂM ĐỘC LẬP & TRA CỨU */}
+                      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between bg-white p-3 rounded-2xl border-2 border-[#1f2937] shadow-[2px_2px_0px_#1f2937]">
+                        {/* 1. Ô TRA CỨU TỪ VỰNG */}
+                        <div className="flex-1 flex gap-2 items-center bg-[#fff5f6] px-3 py-2 rounded-xl border border-[#1f2937]">
+                          <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                          <input
+                            type="text"
+                            value={librarySearchQuery}
+                            onChange={(e) => setLibrarySearchQuery(e.target.value)}
+                            placeholder="Tra cứu từ vựng chữ Hán, Pinyin hoặc nghĩa tiếng Việt..."
+                            className="w-full text-xs font-bold bg-transparent focus:outline-none"
+                          />
+                          {librarySearchQuery && (
+                            <button onClick={() => setLibrarySearchQuery('')} className="text-xs text-gray-400 font-bold hover:text-gray-600 px-1 cursor-pointer">
+                              ✕
+                            </button>
+                          )}
+                        </div>
+
+                        {/* 2. NÚT AI MỎ HỖN LUYỆN PHÁT ÂM ĐỘC LẬP */}
+                        <button
+                          onClick={() => {
+                            playSfx('click');
+                            setSelectedVoiceWord({
+                              wordChinese: '室内设计',
+                              wordPinyin: 'shìnèi shèjì',
+                              wordVietnamese: 'Thiết kế nội thất'
+                            });
+                          }}
+                          className="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white font-serif font-black text-xs uppercase rounded-xl border-2 border-[#1f2937] shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                        >
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                          </svg>
+                          AI Mỏ Hỗn Luyện Phát Âm (Độc Lập)
+                        </button>
+                      </div>
+
                       {/* BỘ LỌC CHỦ ĐỀ THƯ VIỆN */}
                       <div className="flex gap-1.5 flex-wrap pb-3 border-b-2 border-dashed border-pink-200">
                         <button
@@ -1513,10 +1562,10 @@ export default function Home() {
                               : 'bg-white text-[#1f2937]'
                           }`}
                         >
-                          Tất cả ({allVocabs.length})
+                          Tất cả ({searchFiltered.length})
                         </button>
                         {uniqueCategories.map((cat) => {
-                          const count = allVocabs.filter(item => getVocabCategory(item) === cat).length;
+                          const count = searchFiltered.filter(item => getVocabCategory(item) === cat).length;
                           return (
                             <button
                               key={cat}
@@ -1787,30 +1836,8 @@ export default function Home() {
                         </p>
 
                         <div className="space-y-3">
-                          <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Cấp độ HSK:</label>
-                            <select
-                              value={vocabHskLevel}
-                              onChange={(e) => setVocabHskLevel(Number(e.target.value))}
-                              className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
-                            >
-                              <option value={1}>HSK 1</option>
-                              <option value={2}>HSK 2</option>
-                              <option value={3}>HSK 3</option>
-                            </select>
-                          </div>
-
-                          <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Giọng điệu ví dụ của AI:</label>
-                            <select
-                              value={vocabTone}
-                              onChange={(e: any) => setVocabTone(e.target.value)}
-                              className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
-                            >
-                              <option value="roast">Cà khịa mỏ hỗn Gen Z (Beta)</option>
-                              <option value="sweet">Ngọt ngào cưng chiều Vy (Love)</option>
-                              <option value="academic">Nghiêm túc, chuẩn học thuật</option>
-                            </select>
+                          <div className="p-2.5 bg-pink-50 border border-pink-200 rounded-lg text-xs font-bold text-pink-900">
+                            <b>Tự động cân bằng HSK 1-2-3 (Giống IELTS):</b> Bot AI sẽ tự động tạo bộ 9 từ vựng thuộc chủ đề được chọn (cân bằng đều 3 từ HSK 1, 3 từ HSK 2 và 3 từ HSK 3).
                           </div>
 
                           <div>

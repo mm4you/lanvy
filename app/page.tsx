@@ -1049,6 +1049,9 @@ export default function Home() {
           {/* CỘT PHẢI: FORM ĐĂNG NHẬP / ĐĂNG KÝ CHUẨN IELTS VOCAB */}
           <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10 min-h-screen">
             <div className="max-w-md w-full relative z-10 flex flex-col p-8 md:p-10 bg-white border-4 border-black rounded-2xl shadow-[6px_6px_0_#000] text-black">
+              <div className="flex justify-center mb-3">
+                <img src="/logo.svg" alt="Game Logo" className="w-20 h-20 drop-shadow-md hover:scale-105 transition-transform" />
+              </div>
               <h1 className="text-3xl md:text-4xl font-serif font-black text-black text-center mb-2">
                 Atelier HSK
               </h1>
@@ -1181,6 +1184,7 @@ export default function Home() {
                 <h1 className={`text-lg sm:text-xl font-serif font-black flex items-center gap-2 ${
                   isDarkMode ? 'text-slate-100' : 'text-black'
                 }`}>
+                  <img src="/logo.svg" alt="Logo" className="w-7 h-7 inline-block rounded-md border border-black shadow-[1px_1px_0_#000]" />
                   Atelier Thiết Kế HSK
                   {user.email?.toLowerCase() === LOVE_EMAIL && (
                     <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-2 border-black dark:border-rose-700 px-2 py-0.5 rounded font-mono font-black uppercase tracking-wider flex items-center gap-1 shadow-[1px_1px_0_#000]">

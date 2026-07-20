@@ -425,48 +425,31 @@ export default function BlueprintQuiz({
       <div className="flex justify-center gap-3 mb-6 flex-wrap sm:flex-nowrap">
         <button
           onClick={() => {
-            setQuizMode('furniture');
-            setStreak(0);
-            playSfx('flip');
-          }}
-          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
-            quizMode === 'furniture'
-              ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
-              : 'bg-white text-[#1f2937]'
-          }`}
-        >
-          Thiết kế Nội thất
-        </button>
-        <button
-          onClick={() => {
             setQuizMode('general');
             setStreak(0);
             playSfx('flip');
           }}
-          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-mono font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
             quizMode === 'general'
-              ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+              ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
               : 'bg-white text-[#1f2937]'
           }`}
         >
-          Từ vựng HSK 1-2-3
+          Từ Vựng HSK 1-2-3 (Database Khép Kín)
         </button>
         <button
           onClick={() => {
-            setQuizMode('custom');
+            setQuizMode('furniture');
             setStreak(0);
-            setCurrentQuestion(null);
-            setCustomQuestions([]);
             playSfx('flip');
           }}
-          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-serif font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            quizMode === 'custom'
-              ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+          className={`flex-1 py-2.5 border-2 border-[#1f2937] font-mono font-black text-xs uppercase rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
+            quizMode === 'furniture'
+              ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
               : 'bg-white text-[#1f2937]'
           }`}
         >
-          {renderSparklesIcon('w-4 h-4')}
-          AI Tự Tạo Luyện Tập (Beta)
+          Nội Thất Pixel HSK
         </button>
       </div>
 
@@ -501,97 +484,6 @@ export default function BlueprintQuiz({
         </div>
       )}
 
-      {quizMode === 'custom' && !currentQuestion && (
-        <div className="bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-4 text-left">
-          <h3 className="text-sm font-serif font-black text-[#1f2937] flex items-center gap-1.5">
-            {renderSparklesIcon('text-pink-500 w-5 h-5')} AI Tự Tạo Luyện Tập Theo Chủ Đề
-          </h3>
-          <p className="text-[11px] text-gray-500 font-bold leading-normal">
-            Vy hãy chọn chủ đề tiếng Trung mong muốn ôn tập (hoặc chọn Tự động tạo tất cả chủ đề HSK), AI sẽ tự động soạn bộ câu hỏi trắc nghiệm tương ứng ngay lập tức!
-          </p>
-
-          <form onSubmit={startCustomQuiz} className="space-y-3">
-            <div>
-              <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">CHỦ ĐỀ CHỌN SẴN NỔI BẬT:</label>
-              <select
-                value={customThemeSelect}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setCustomThemeSelect(val);
-                  if (val === 'all_themes') {
-                    setCustomTheme('Tất cả các chủ đề HSK');
-                  } else if (val !== 'custom_manual') {
-                    setCustomTheme(val);
-                  } else {
-                    setCustomTheme(customManualInput);
-                  }
-                }}
-                className="w-full p-2.5 border-2 border-[#1f2937] bg-[#fff5f6] rounded-lg text-xs font-black focus:outline-none cursor-pointer text-[#1f2937]"
-                disabled={customLoading}
-              >
-                <option value="all_themes">TỰ ĐỘNG TẠO TẤT CẢ CHỦ ĐỀ HSK (FULL THEMES)</option>
-                <option value="Mua sắm & Shopping">Mua sắm & Shopping</option>
-                <option value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
-                <option value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>
-                <option value="Thời tiết & Thời gian">Thời tiết & Thời gian</option>
-                <option value="Gia đình & Nhà cửa">Gia đình & Nhà cửa</option>
-                <option value="Phương hướng & Vị trí">Phương hướng & Vị trí</option>
-                <option value="Sở thích & Hẹn hò">Sở thích & Hẹn hò</option>
-                <option value="Động vật & Thú cưng">Động vật & Thú cưng</option>
-                <option value="Học tập & Trường học">Học tập & Trường học</option>
-                <option value="Công việc & Văn phòng">Công việc & Văn phòng</option>
-                <option value="Giao thông & Du lịch">Giao thông & Du lịch</option>
-                <option value="Kiến trúc & Nội thất">Kiến trúc & Nội thất</option>
-                <option value="Cảm xúc & Mô tả">Cảm xúc & Mô tả</option>
-                <option value="Giải trí & Thể thao">Giải trí & Thể thao</option>
-                <option value="custom_manual">Tùy chọn chủ đề tự nhập tay...</option>
-              </select>
-            </div>
-
-            {customThemeSelect === 'custom_manual' && (
-              <div>
-                <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">CHỦ ĐỀ TỰ NHẬP TAY:</label>
-                <input
-                  type="text"
-                  value={customManualInput}
-                  onChange={(e) => {
-                    setCustomManualInput(e.target.value);
-                    setCustomTheme(e.target.value);
-                  }}
-                  placeholder="Ví dụ: Ăn lẩu Haidilao, Đi xem phim..."
-                  className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
-                  disabled={customLoading}
-                  required
-                />
-              </div>
-            )}
-
-            {customError && (
-              <div className="text-[11px] text-red-600 font-bold bg-red-50 p-2 border border-red-200 rounded-lg">
-                {customError}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={customLoading || !customTheme.trim()}
-              className="w-full py-2.5 bg-pink-500 hover:bg-pink-600 disabled:bg-gray-200 text-white disabled:text-gray-400 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] active:shadow-none active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              {customLoading ? (
-                <>
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>AI Đang Soạn Câu Hỏi...</span>
-                </>
-              ) : (
-                <>
-                  {renderSparklesIcon('w-4 h-4')}
-                  <span>Tạo Bộ Câu Hỏi HSK</span>
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-      )}
 
       {currentQuestion && (
         <div className="space-y-6">

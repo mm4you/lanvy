@@ -16,29 +16,27 @@ type PetType = 'cat' | 'dog' | 'rabbit' | 'panda';
 
 const PET_PHRASES: Record<PetType, Array<{ text: string; pinyin: string; translation: string }>> = {
   cat: [
-    { text: '喵！主人今天真棒！', pinyin: 'Miāo! Zhǔrén jīntiān zhēn bàng!', translation: 'Meow! Chủ nhân hôm nay thật tuyệt vời!' },
-    { text: '我想吃鱼肉。', pinyin: 'Wǒ xiǎng chī yúròu.', translation: 'Tớ muốn ăn cá ngừ tươi ngon!' },
-    { text: '你做得非常好！加油！', pinyin: 'Nǐ zuò de fēicháng hǎo! Jiāyóu!', translation: 'Bạn làm rất tốt! Cố lên nhé!' }
+    { text: 'Meow~ meow~', pinyin: 'māo māo', translation: 'Mèo kêu meo meo nũng nịu đòi vuốt ve' },
+    { text: 'Meow! meow!', pinyin: 'māo māo', translation: 'Mèo dụi đầu cọ cọ vào chân chủ nhân' }
   ],
   dog: [
-    { text: '汪汪！欢迎回家！', pinyin: 'Wāngwāng! Huānyíng huíjiā!', translation: 'Gâu gâu! Mừng bạn đã về nhà!' },
-    { text: '今天天气真好！', pinyin: 'Jīntiān tiānqì zhēn hǎo!', translation: 'Thời tiết hôm nay thật đẹp!' },
-    { text: '我们一起玩吧！', pinyin: 'Wǒmen yìqǐ wán ba!', translation: 'Chúng ta cùng chơi nhé!' }
+    { text: 'Woof! woof!', pinyin: 'wāng wāng', translation: 'Chó Shiba vẫy đuôi gâu gâu mừng rỡ' },
+    { text: 'Arf! arf!', pinyin: 'wāng wāng', translation: 'Chú chó Shiba lật ngửa bụng đòi xoa' }
   ],
   rabbit: [
-    { text: '兔子喜欢吃胡萝卜！', pinyin: 'Tùzi xǐhuan chī húluóbo!', translation: 'Thỏ con thích ăn củ cà rốt tươi ngon!' },
-    { text: '蹦蹦跳跳真开心！', pinyin: 'Bèngbèng tiàotiào zhēn kāixīn!', translation: 'Nhảy nhót tung tăng thật là vui quá!' }
+    { text: 'Chíp chíp~', pinyin: 'jī jī', translation: 'Thỏ con tai dài ngoắc tai nhút nhát' },
+    { text: 'Nhai nhai~', pinyin: 'jī jī', translation: 'Thỏ trắng tung tăng nhảy chân nheo mắt' }
   ],
   panda: [
-    { text: '大熊猫喜欢吃竹子！', pinyin: 'Dàxióngmāo xǐhuan chī zhúzi!', translation: 'Gấu trúc béo thích ăn măng trúc thơm!' },
-    { text: '我是中国国宝！', pinyin: 'Wǒ shì Zhōngguó guóbǎo!', translation: 'Tớ là quốc bảo tiếng Trung của Vy đấy!' }
+    { text: 'Khịt khịt~', pinyin: 'xīng māo', translation: 'Gấu trúc béo tròn ngơ ngác nhai lá trúc' },
+    { text: 'Ủn ỉn~', pinyin: 'xīng māo', translation: 'Gấu trúc Panda lăn quay ra đất đáng yêu' }
   ]
 };
 
 const PET_FOODS = [
-  { id: 'fish', name: 'Cá Tươi (鲜鱼)', price: 15, phrase: { text: '谢谢主人的大鲜鱼！真好吃！', pinyin: 'Xièxie zhǔrén de dà xiānyú! Zhēn hǎochī!', translation: 'Cảm ơn món cá tươi của chủ nhân! Món ăn ngon tuyệt!' } },
-  { id: 'can', name: 'Pate Đóng Hộp (罐头)', price: 30, phrase: { text: '肉罐头太香了！爱死你了！', pinyin: 'Ròuguàntou tài xiāng le! Ài sǐ nǐ le!', translation: 'Pate thịt thơm phức luôn! Yêu chủ nhân nhất đời!' } },
-  { id: 'bone', name: 'Xương Bò Thơm (牛骨)', price: 20, phrase: { text: '好香的牛骨头！太满足了！', pinyin: 'Hǎo xiāng de niúgǔtou! Tài mǎnzú le!', translation: 'Cục xương bò thơm phức! Thật thỏa mãn quá!' } }
+  { id: 'fish', name: 'Cá Tươi (鲜鱼)', price: 15, phrase: { text: 'Meow meow~', pinyin: 'māo māo', translation: 'Mèo liếm mép thưởng thức đĩa cá tươi ngon!' } },
+  { id: 'can', name: 'Pate Đóng Hộp (罐头)', price: 30, phrase: { text: 'Woof woof~', pinyin: 'wāng wāng', translation: 'Thú cưng nhai pate ngon lành thỏa mãn!' } },
+  { id: 'bone', name: 'Xương Bò Thơm (牛骨)', price: 20, phrase: { text: 'Arf arf~', pinyin: 'wāng wāng', translation: 'Gặm cục xương bò thơm phức đầy hào hứng!' } }
 ];
 
 const PET_CATALOG: Array<{ id: PetType; name: string; price: number; desc: string }> = [
@@ -149,12 +147,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     setActiveSpeech(randomPhrase);
     setIsHearting(true);
 
-    if (onPlayTTS) {
-      onPlayTTS(randomPhrase.text);
-    }
-
     setTimeout(() => setIsHearting(false), 1500);
-    setTimeout(() => setActiveSpeech(null), 4000);
+    setTimeout(() => setActiveSpeech(null), 3000);
   };
 
   const handleFeedPet = (food: typeof PET_FOODS[0]) => {
@@ -175,10 +169,9 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
     setActiveSpeech(food.phrase);
     setIsHearting(true);
-    if (onPlayTTS) onPlayTTS(food.phrase.text);
 
     setTimeout(() => setIsHearting(false), 1800);
-    setTimeout(() => setActiveSpeech(null), 4500);
+    setTimeout(() => setActiveSpeech(null), 3500);
     setShowShop(false);
   };
 

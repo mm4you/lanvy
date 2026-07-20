@@ -1158,13 +1158,12 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={toggleDarkMode}
-                  className={`px-3.5 py-1.5 border-2 border-[#1f2937] text-xs font-black rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
-                    isDarkMode ? 'bg-slate-800 text-indigo-200 border-indigo-400' : 'bg-amber-100 text-amber-950 border-amber-300'
+                  className={`p-2 border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center justify-center cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
+                    isDarkMode ? 'bg-slate-800 text-amber-400 border-slate-700' : 'bg-amber-100 text-indigo-600 border-amber-300'
                   }`}
                   title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
                 >
                   {isDarkMode ? renderSunIcon('w-4 h-4 text-amber-400') : renderMoonIcon('w-4 h-4 text-indigo-600')}
-                  <span>{isDarkMode ? 'Ban Ngày' : 'Ban Đêm'}</span>
                 </button>
                 <button
                   onClick={() => {

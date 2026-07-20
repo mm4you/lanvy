@@ -6,6 +6,8 @@ interface PixelPetProps {
   onPlayTTS?: (text: string) => void;
   playSfx?: (type: any) => void;
   isDarkMode?: boolean;
+  externalShowShop?: boolean;
+  onToggleShop?: (show: boolean) => void;
 }
 
 type PetType = 'cat' | 'dog' | 'rabbit' | 'panda';
@@ -55,13 +57,20 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   setCoins,
   onPlayTTS,
   playSfx,
-  isDarkMode = false
+  isDarkMode = false,
+  externalShowShop,
+  onToggleShop
 }) => {
   const [currentPet, setCurrentPet] = useState<PetType>('cat');
   const [unlockedPets, setUnlockedPets] = useState<PetType[]>(['cat', 'dog']);
   const [activeSpeech, setActiveSpeech] = useState<{ text: string; pinyin: string; translation: string } | null>(null);
   const [isHearting, setIsHearting] = useState(false);
-  const [showShop, setShowShop] = useState(false);
+  const [internalShowShop, setInternalShowShop] = useState(false);
+  const showShop = externalShowShop !== undefined ? externalShowShop : internalShowShop;
+  const setShowShop = (val: boolean) => {
+    setInternalShowShop(val);
+    if (onToggleShop) onToggleShop(val);
+  };
   const [shopTab, setShopTab] = useState<'food' | 'pet' | 'voucher'>('food');
   const [purchasedVouchers, setPurchasedVouchers] = useState<string[]>([]);
 
@@ -191,88 +200,126 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           title="Bấm vào thú cưng Pixel để trò chuyện tiếng Trung!"
         >
           {currentPet === 'cat' && (
-            /* CON MÈO 2D PIXEL CHIBI */
+            /* CON MÈO CAM 2D PIXEL CHIBI (ĐUÔI CONG + RÂU MÈO) */
             <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              <path d="M26,18 h2 v-4 h2 v-4 h-2 v4 h-2 z" fill="#f97316" />
-              <rect x="10" y="18" width="16" height="9" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
-              <rect x="12" y="20" width="10" height="6" fill="#fff7ed" />
-              <rect x="11" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="15" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="19" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="23" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="6" y="4" width="4" height="6" fill="#ea580c" />
-              <rect x="7" y="6" width="2" height="3" fill="#fda4af" />
-              <rect x="16" y="4" width="4" height="6" fill="#ea580c" />
-              <rect x="17" y="6" width="2" height="3" fill="#fda4af" />
-              <rect x="5" y="9" width="16" height="11" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
-              <rect x="8" y="13" width="3" height="3" fill="#0f172a" />
-              <rect x="9" y="13" width="1" height="1" fill="#ffffff" />
-              <rect x="15" y="13" width="3" height="3" fill="#0f172a" />
-              <rect x="16" y="13" width="1" height="1" fill="#ffffff" />
-              <rect x="6" y="16" width="2" height="1.5" fill="#f472b6" />
-              <rect x="18" y="16" width="2" height="1.5" fill="#f472b6" />
-              <rect x="12" y="16" width="2" height="1.5" fill="#f43f5e" />
+              {/* Tail Pixel */}
+              <path d="M25,18 h3 v-5 h2 v-3 h-2 v3 h-3 z" fill="#ea580c" />
+              {/* Body Pixel */}
+              <rect x="9" y="18" width="16" height="9" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
+              <rect x="11" y="20" width="10" height="6" fill="#fff7ed" />
+              {/* 4 Paws */}
+              <rect x="10" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="14" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <rect x="18" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="22" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Pointy Cat Ears */}
+              <rect x="5" y="3" width="4" height="6" fill="#ea580c" />
+              <rect x="6" y="5" width="2" height="3" fill="#fda4af" />
+              <rect x="17" y="3" width="4" height="6" fill="#ea580c" />
+              <rect x="18" y="5" width="2" height="3" fill="#fda4af" />
+              {/* Head */}
+              <rect x="4" y="9" width="18" height="10" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
+              {/* Eyes */}
+              <rect x="7" y="12" width="3" height="3" fill="#0f172a" />
+              <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
+              <rect x="16" y="12" width="3" height="3" fill="#0f172a" />
+              <rect x="17" y="12" width="1" height="1" fill="#ffffff" />
+              {/* Whiskers */}
+              <rect x="2" y="14" width="2" height="1" fill="#1f2937" />
+              <rect x="22" y="14" width="2" height="1" fill="#1f2937" />
+              <rect x="12" y="15" width="2" height="1.5" fill="#f43f5e" />
             </svg>
           )}
 
           {currentPet === 'dog' && (
-            /* CHÚ CHÓ SHIBA 2D PIXEL CHIBI */
+            /* CHÚ CHÓ SHIBA 2D PIXEL CHIBI (ĐUÔI CONG TÍT + MÕM TRẮNG + THÈ LƯỠI HỒNG + VÒNG CỔ ĐỎ) */
             <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              <rect x="25" y="14" width="4" height="4" fill="#d97706" />
-              <rect x="10" y="18" width="16" height="9" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
-              <rect x="12" y="20" width="12" height="6" fill="#ffffff" />
-              <rect x="11" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="15" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="19" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="23" y="27" width="3" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="6" y="4" width="4" height="5" fill="#b45309" />
-              <rect x="16" y="4" width="4" height="5" fill="#b45309" />
-              <rect x="5" y="9" width="16" height="11" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
-              <rect x="9" y="14" width="8" height="5" fill="#ffffff" />
-              <rect x="8" y="12" width="3" height="3" fill="#0f172a" />
-              <rect x="9" y="12" width="1" height="1" fill="#ffffff" />
-              <rect x="15" y="12" width="3" height="3" fill="#0f172a" />
-              <rect x="16" y="12" width="1" height="1" fill="#ffffff" />
-              <rect x="12" y="15" width="2" height="2" fill="#0f172a" />
+              {/* Curled Ring Donut Tail on Back */}
+              <rect x="23" y="13" width="5" height="5" fill="#d97706" stroke="#1f2937" strokeWidth="1" />
+              <rect x="25" y="15" width="2" height="2" fill="#fff7ed" />
+              {/* Dog Body */}
+              <rect x="8" y="17" width="17" height="10" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
+              <rect x="10" y="19" width="11" height="7" fill="#ffffff" />
+              {/* Red Dog Collar with Bell */}
+              <rect x="5" y="16" width="14" height="2" fill="#ef4444" />
+              <rect x="11" y="17" width="2" height="2" fill="#f59e0b" />
+              {/* 4 Paws */}
+              <rect x="9" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="13.5" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <rect x="18" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="22.5" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Floppy Dog Ears */}
+              <rect x="3" y="5" width="5" height="5" fill="#b45309" />
+              <rect x="18" y="5" width="5" height="5" fill="#b45309" />
+              {/* Head */}
+              <rect x="4" y="8" width="18" height="9" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
+              {/* Big White Snout */}
+              <rect x="8" y="12" width="10" height="5" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
+              {/* Black Nose */}
+              <rect x="12" y="13" width="2" height="2" fill="#0f172a" />
+              {/* Open Tongue */}
+              <rect x="12" y="15" width="2" height="2" fill="#fda4af" />
+              {/* Dog Eyes */}
+              <rect x="7" y="10" width="3" height="3" fill="#0f172a" />
+              <rect x="8" y="10" width="1" height="1" fill="#ffffff" />
+              <rect x="16" y="10" width="3" height="3" fill="#0f172a" />
+              <rect x="17" y="10" width="1" height="1" fill="#ffffff" />
             </svg>
           )}
 
           {currentPet === 'rabbit' && (
-            /* THỎ TRẮNG 2D PIXEL CHIBI */
+            /* THỎ TRẮNG 2D PIXEL CHIBI (TAI DÀI CAO VÚT + ĐUÔI BÔNG TRÒN + RĂNG THỎ) */
             <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              <rect x="25" y="20" width="3" height="3" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="10" y="18" width="16" height="9" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="11" y="27" width="3" height="4" fill="#e2e8f0" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="15" y="27" width="3" height="4" fill="#e2e8f0" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="19" y="27" width="3" height="4" fill="#e2e8f0" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="23" y="27" width="3" height="4" fill="#e2e8f0" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="7" y="2" width="3" height="8" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="8" y="3" width="1" height="6" fill="#fda4af" />
-              <rect x="15" y="2" width="3" height="8" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="16" y="3" width="1" height="6" fill="#fda4af" />
-              <rect x="5" y="9" width="16" height="11" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="8" y="13" width="3" height="3" fill="#f43f5e" />
-              <rect x="9" y="13" width="1" height="1" fill="#ffffff" />
-              <rect x="15" y="13" width="3" height="3" fill="#f43f5e" />
-              <rect x="16" y="13" width="1" height="1" fill="#ffffff" />
+              {/* Fluffy Cotton Tail */}
+              <rect x="24" y="19" width="4" height="4" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+              {/* Body */}
+              <rect x="9" y="17" width="16" height="10" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+              {/* 4 Bunny Paws */}
+              <rect x="10" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="14" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <rect x="18" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="22" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* TALL UPRIGHT BUNNY EARS */}
+              <rect x="6" y="0" width="4" height="9" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+              <rect x="7" y="1" width="2" height="7" fill="#fda4af" />
+              <rect x="16" y="0" width="4" height="9" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+              <rect x="17" y="1" width="2" height="7" fill="#fda4af" />
+              {/* Head */}
+              <rect x="4" y="8" width="18" height="10" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+              {/* Pink Bunny Eyes */}
+              <rect x="7" y="12" width="3" height="3" fill="#f43f5e" />
+              <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
+              <rect x="16" y="12" width="3" height="3" fill="#f43f5e" />
+              <rect x="17" y="12" width="1" height="1" fill="#ffffff" />
+              {/* Twitchy Pink Nose & Buck Teeth */}
+              <rect x="12" y="14" width="2" height="1.5" fill="#f43f5e" />
+              <rect x="12" y="15.5" width="2" height="1.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.5" />
             </svg>
           )}
 
           {currentPet === 'panda' && (
-            /* GẤU TRÚC PANDA 2D PIXEL CHIBI */
+            /* GẤU TRÚC PANDA 2D PIXEL CHIBI (QUẦNG MẮT ĐEN + TAI TRÒN ĐEN + ÁO VEST ĐEN PANDA) */
             <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              <rect x="10" y="18" width="16" height="9" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="11" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="15" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="19" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="23" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="5" y="5" width="4" height="4" fill="#0f172a" />
-              <rect x="16" y="5" width="4" height="4" fill="#0f172a" />
-              <rect x="5" y="8" width="16" height="11" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="7" y="11" width="4" height="4" fill="#0f172a" />
-              <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
-              <rect x="14" y="11" width="4" height="4" fill="#0f172a" />
-              <rect x="15" y="12" width="1" height="1" fill="#ffffff" />
+              {/* Body (White Belly with Black Shoulder Vest) */}
+              <rect x="9" y="17" width="16" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
+              <rect x="9" y="17" width="16" height="4" fill="#0f172a" />
+              {/* 4 Black Legs */}
+              <rect x="10" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="14" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <rect x="18" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
+              <rect x="22" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Round Black Bear Ears */}
+              <rect x="4" y="4" width="5" height="5" fill="#0f172a" />
+              <rect x="17" y="4" width="5" height="5" fill="#0f172a" />
+              {/* White Head */}
+              <rect x="4" y="8" width="18" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
+              {/* DISTINCT BLACK EYE PATCHES (Quầng Mắt Gấu Trúc) */}
+              <rect x="6" y="10" width="5" height="5" fill="#0f172a" />
+              <rect x="8" y="12" width="1.5" height="1.5" fill="#ffffff" />
+              <rect x="15" y="10" width="5" height="5" fill="#0f172a" />
+              <rect x="16" y="12" width="1.5" height="1.5" fill="#ffffff" />
+              {/* Black Nose */}
+              <rect x="12" y="14" width="2" height="1.5" fill="#0f172a" />
             </svg>
           )}
         </div>

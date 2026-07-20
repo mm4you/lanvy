@@ -20,10 +20,10 @@ export async function getAIChatCompletion({
     { role: 'user', content: userPrompt }
   ];
 
-  // Try Groq first
+  // 1. Try Groq first with a fast 4.5s timeout
   if (groqKey) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 seconds timeout
+    const timeoutId = setTimeout(() => controller.abort(), 4500);
     try {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -51,14 +51,14 @@ export async function getAIChatCompletion({
       }
     } catch (e: any) {
       clearTimeout(timeoutId);
-      console.error('Groq error, trying Nvidia NIM fallback...', e);
+      console.error('Groq error, switching to Nvidia NIM fallback...', e?.message || e);
     }
   }
 
-  // Fallback to NVIDIA NIM
+  // 2. Fallback to NVIDIA NIM with a fast 4.5s timeout
   if (nvidiaKey) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+    const timeoutId = setTimeout(() => controller.abort(), 4500);
     try {
       const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
         method: 'POST',
@@ -82,14 +82,13 @@ export async function getAIChatCompletion({
         if (content) return content;
       } else {
         const errorText = await response.text();
-        throw new Error(`Nvidia NIM error: ${response.status} - ${errorText}`);
+        console.warn(`Nvidia NIM error: ${response.status} - ${errorText}`);
       }
     } catch (e: any) {
       clearTimeout(timeoutId);
-      console.error('Nvidia NIM error:', e);
-      throw e;
+      console.error('Nvidia NIM error:', e?.message || e);
     }
   }
 
-  throw new Error('No working AI API Key configured or both services failed.');
+  throw new Error('AI service is currently busy or API keys are unconfigured.');
 }

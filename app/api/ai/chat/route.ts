@@ -1,6 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getAIChatCompletion } from '@/lib/ai';
 
+const KHANG_FALLBACK_REPLIES = [
+  { text: '我一直在 Vy 的身边。', pinyin: 'Wǒ yīzhí zài Vy de shēnbiān.', translation: 'Anh luôn ở bên cạnh Vy mà!' },
+  { text: '加油，我的爱人！', pinyin: 'Jiāyóu, wǒ de àirén!', translation: 'Cố lên người yêu của anh ơi!' },
+  { text: '今天你想吃什么？', pinyin: 'Jīntiān nǐ xiǎng chī shénme?', translation: 'Hôm nay em muốn ăn món gì nè?' },
+  { text: '我想听听你的声音。', pinyin: 'Wǒ xiǎng tīngting nǐ de shēngyīn.', translation: 'Anh rất muốn nghe giọng nói của em.' },
+  { text: '你觉得累吗？休息一下吧。', pinyin: 'Nǐ juéde lèi ma? Xiūxi yíxià ba.', translation: 'Em có thấy mệt không? Nghỉ ngơi một chút nhé.' }
+];
+
+const GENERIC_AI_FALLBACK_REPLIES = [
+  { text: '你好！这个设计非常棒。', pinyin: 'Nǐ hǎo! Zhège shèjì fēicháng bàng.', translation: 'Chào bạn! Bản thiết kế này rất tuyệt vời.' },
+  { text: '请问你想用什么材料？', pinyin: 'Qǐngwèn nǐ xiǎng yòng shénme cáiliào?', translation: 'Xin hỏi bạn muốn dùng vật liệu gì?' },
+  { text: '好的，我们一起努力吧！', pinyin: 'Hǎo de, wǒmen yìqǐ nǔlì ba!', translation: 'Được rồi, chúng ta cùng cố gắng nhé!' }
+];
+
 export async function POST(request: Request) {
   try {
     const { customerName, message, history } = await request.json();
@@ -9,58 +23,62 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing customerName or message parameter' }, { status: 400 });
     }
 
-    // Build history context if provided
     const formattedHistory = (history || []).map((h: any) => ({
       role: h.sender === 'player' ? 'user' : 'assistant',
       content: h.text
     }));
 
     let systemInstruction = '';
-    if (customerName === 'Nhựt Khang') {
-      systemInstruction = `[BETA - AI Khang Đáng Yêu]
-Bạn là Nhựt Khang, người bạn trai vô cùng ấm áp, ngọt ngào, yêu thương cưng chiều và đôi lúc thích cà khịa trêu chọc một cách đáng yêu cô bạn gái tên Vy của mình.
+    const isKhang = customerName === 'Nhựt Khang';
+
+    if (isKhang) {
+      systemInstruction = `[AI Khang Đáng Yêu]
+Bạn là Nhựt Khang, người bạn trai vô cùng ấm áp, ngọt ngào, yêu thương cưng chiều cô bạn gái tên Vy của mình.
 Hãy đóng vai Khang và chat với Vy bằng tiếng Trung một cách tự nhiên, ngắn gọn (khoảng 10-20 từ).
-Xưng hô là "anh" và "em" (ví dụ: Anh thích em, Em ăn cơm chưa).
+Xưng hô là "anh" và "em".
 Tuyệt đối KHÔNG được sử dụng bất kỳ biểu tượng cảm xúc (emoji) nào trong câu trả lời.
 
-Yêu cầu định dạng câu trả lời BẮT BUỘC (Chỉ trả về đúng định dạng này, không có thêm bất kỳ giải thích nào):
-[Câu tiếng Trung] /// [Phiên âm Pinyin] /// [Bản dịch tiếng Việt tự nhiên]
-
-Ví dụ:
-我爱你，小薇。 /// Wǒ ài nǐ, xiǎo wēi. /// Anh yêu em, Vy à.`;
+Yêu cầu định dạng câu trả lời BẮT BUỘC:
+[Câu tiếng Trung] /// [Phiên âm Pinyin] /// [Bản dịch tiếng Việt]`;
     } else {
-      systemInstruction = `[BETA - AI Cà Khịa Mỏ Hỗn]
-Bạn là khách hàng người Trung Quốc có tên là "${customerName}" đang muốn thuê bà chủ Vy thiết kế nội thất cho căn nhà của mình.
-Hãy đóng vai nhân vật này và trả lời tin nhắn của bà chủ Vy một cách vô cùng tự nhiên, ngắn gọn (khoảng 10-20 từ), thân thiện nhưng đôi khi có chút mỏ hỗn, cà khịa xéo xắt nếu bà chủ Vy hỏi lung tung.
-Hãy thảo luận về các đồ đạc, chất liệu (gỗ, đá, kính) hoặc phong cách thiết kế bạn muốn.
-Xưng hô tự nhiên của nhân vật (ví dụ: tôi - bà chủ).
+      systemInstruction = `[AI Trợ Lý Thiết Kế]
+Bạn là khách hàng hoặc trợ lý người Trung Quốc tên "${customerName}" đang cùng thiết kế nội thất.
+Trả lời ngắn gọn (10-20 từ) bằng tiếng Trung tự nhiên.
 Tuyệt đối KHÔNG được sử dụng bất kỳ biểu tượng cảm xúc (emoji) nào trong câu trả lời.
 
-Yêu cầu định dạng câu trả lời BẮT BUỘC (Chỉ trả về đúng định dạng này, không có thêm bất kỳ giải thích nào):
-[Câu tiếng Trung] /// [Phiên âm Pinyin] /// [Bản dịch tiếng Việt tự nhiên]
-
-Ví dụ:
-我想用木头做一张桌子。 /// Wǒ xiǎng yòng mùtou zuò yì zhāng zhuōzi. /// Tôi muốn dùng gỗ để làm một chiếc bàn.`;
+Yêu cầu định dạng câu trả lời BẮT BUỘC:
+[Câu tiếng Trung] /// [Phiên âm Pinyin] /// [Bản dịch tiếng Việt]`;
     }
 
-    const replyRaw = await getAIChatCompletion({
-      systemPrompt: systemInstruction,
-      userPrompt: message,
-      messages: formattedHistory,
-      temperature: 0.7,
-      maxTokens: 200
-    });
+    try {
+      const replyRaw = await getAIChatCompletion({
+        systemPrompt: systemInstruction,
+        userPrompt: message,
+        messages: formattedHistory,
+        temperature: 0.7,
+        maxTokens: 200
+      });
 
-    // Split response by '///'
-    const parts = replyRaw.split('///').map((p: string) => p.trim());
-    const replyText = parts[0] || '你好！';
-    const replyPinyin = parts[1] || '';
-    const replyTranslation = parts[2] || '';
+      const parts = replyRaw.split('///').map((p: string) => p.trim());
+      if (parts.length >= 2 && parts[0]) {
+        return NextResponse.json({
+          text: parts[0],
+          pinyin: parts[1] || '',
+          translation: parts[2] || ''
+        });
+      }
+    } catch (aiErr: any) {
+      console.warn("AI Chat error, returning smart fallback:", aiErr?.message || aiErr);
+    }
+
+    // Smart fallback if AI fails or times out
+    const pool = isKhang ? KHANG_FALLBACK_REPLIES : GENERIC_AI_FALLBACK_REPLIES;
+    const fallback = pool[Math.floor(Math.random() * pool.length)];
 
     return NextResponse.json({
-      text: replyText,
-      pinyin: replyPinyin,
-      translation: replyTranslation
+      text: fallback.text,
+      pinyin: fallback.pinyin,
+      translation: fallback.translation
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

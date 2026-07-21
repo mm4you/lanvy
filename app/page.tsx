@@ -1603,7 +1603,9 @@ export default function Home() {
                 </button>
 
                 {openNavGroup === 'study' && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                  <div className={`absolute top-full left-0 mt-2 w-56 border rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in zoom-in-95 duration-150 ${
+                    isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
+                  }`}>
                     <button
                       onClick={() => { setActiveTab('quiz'); setOpenNavGroup(null); playSfx('click'); }}
                       className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition cursor-pointer ${
@@ -1613,7 +1615,7 @@ export default function Home() {
                       {renderBookIcon('w-4 h-4 text-blue-500')}
                       <div>
                         <p className="font-bold">Quiz HSK (Bản Vẽ)</p>
-                        <p className="text-[10px] text-slate-400 font-normal">Giải đố HSK nhận Xu & Mảnh bản vẽ</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Giải đố HSK nhận Xu & Mảnh bản vẽ</p>
                       </div>
                     </button>
 
@@ -1626,7 +1628,7 @@ export default function Home() {
                       {renderBookIcon('w-4 h-4 text-amber-500')}
                       <div>
                         <p className="font-bold">Flashcards HSK 3D</p>
-                        <p className="text-[10px] text-slate-400 font-normal">Lật thẻ thông minh có ví dụ & audio</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Lật thẻ thông minh có ví dụ & audio</p>
                       </div>
                     </button>
 
@@ -1639,7 +1641,7 @@ export default function Home() {
                       {renderBookIcon('w-4 h-4 text-purple-500')}
                       <div>
                         <p className="font-bold">Thư Viện Từ Điển</p>
-                        <p className="text-[10px] text-slate-400 font-normal">Tra cứu ngữ pháp & từ vựng HSK 1-3</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Tra cứu ngữ pháp & từ vựng HSK 1-3</p>
                       </div>
                     </button>
                   </div>
@@ -1665,7 +1667,9 @@ export default function Home() {
                 </button>
 
                 {openNavGroup === 'studio' && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                  <div className={`absolute top-full left-0 mt-2 w-56 border rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in zoom-in-95 duration-150 ${
+                    isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
+                  }`}>
                     <button
                       onClick={() => { setActiveTab('studio'); setOpenNavGroup(null); playSfx('click'); }}
                       className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition cursor-pointer ${
@@ -1675,7 +1679,7 @@ export default function Home() {
                       {renderAwardIcon('w-4 h-4 text-rose-500')}
                       <div>
                         <p className="font-bold">Studio Hợp Đồng</p>
-                        <p className="text-[10px] text-slate-400 font-normal">Nhận đơn hàng thiết kế phòng NPC</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Nhận đơn hàng thiết kế phòng NPC</p>
                       </div>
                     </button>
 
@@ -1688,7 +1692,7 @@ export default function Home() {
                       {renderHomeIcon('w-4 h-4 text-emerald-500')}
                       <div>
                         <p className="font-bold">{isVy ? 'Phòng Vy' : `Phòng ${user?.username || 'Của Bạn'}`}</p>
-                        <p className="text-[10px] text-slate-400 font-normal">Trang trí phòng Pixel 2D cá nhân</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Trang trí phòng Pixel 2D cá nhân</p>
                       </div>
                     </button>
 
@@ -1699,7 +1703,7 @@ export default function Home() {
                       {renderShoppingBagIcon('w-4 h-4 text-amber-500')}
                       <div>
                         <p className="font-bold">Cửa Hàng Pet & Nội Thất</p>
-                        <p className="text-[10px] text-slate-400 font-normal">Mua thú cưng & đồ dùng Pixel</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Mua thú cưng & đồ dùng Pixel</p>
                       </div>
                     </button>
                   </div>
@@ -1725,7 +1729,9 @@ export default function Home() {
                 </button>
 
                 {openNavGroup === 'personal' && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                  <div className={`absolute top-full left-0 mt-2 w-56 border rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in zoom-in-95 duration-150 ${
+                    isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
+                  }`}>
                     <button
                       onClick={() => { setActiveTab('love'); setOpenNavGroup(null); playSfx('click'); }}
                       className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition cursor-pointer ${
@@ -1735,7 +1741,7 @@ export default function Home() {
                       {renderVoucherIcon('w-4 h-4 text-pink-500')}
                       <div>
                         <p className="font-bold">{isVy ? 'Thư Tình & Voucher' : 'Ví Voucher HSK'}</p>
-                        <p className="text-[10px] text-slate-400 font-normal">Voucher quà tặng ngọt ngào</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Voucher quà tặng ngọt ngào</p>
                       </div>
                     </button>
 
@@ -1749,7 +1755,7 @@ export default function Home() {
                         {renderAIIcon('w-4 h-4 text-purple-500')}
                         <div>
                           <p className="font-bold">Bảng Admin</p>
-                          <p className="text-[10px] text-slate-400 font-normal">Quản lý từ vựng & nhật ký</p>
+                          <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Quản lý từ vựng & nhật ký</p>
                         </div>
                       </button>
                     )}

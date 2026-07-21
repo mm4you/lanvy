@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* ROOT FIX: Tailwind v4 mặc định dùng @media (prefers-color-scheme: dark) cho dark: selector.
+   Dòng dưới đây buộc Tailwind dùng class .dark trên <html> thay vì media query,
+   giống cách IELTS Vocab hoạt động. Đây là lý do toàn bộ dark: selector bị kích hoạt
+   sai khi hệ điều hành ở Dark Mode dù ứng dụng đang chọn Light Mode. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --bg: #fffdf8;
   --paper: #fffaf0;

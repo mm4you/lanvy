@@ -18,6 +18,10 @@ const LoveInbox = dynamic(() => import('../components/LoveInbox'), {
   loading: () => <div className="py-16 text-center text-xs font-black font-serif opacity-70 animate-pulse">Đang tải Ví Voucher & Thư Tình...</div>
 });
 
+const FlashcardViewer = dynamic(() => import('../components/FlashcardViewer'), {
+  loading: () => <div className="py-16 text-center text-xs font-black font-serif opacity-70 animate-pulse">Đang tải Flashcard HSK...</div>
+});
+
 const ArrangementModal = dynamic(() => import('../components/ArrangementModal').then(m => m.ArrangementModal), {
   loading: () => null
 });
@@ -1455,11 +1459,7 @@ export default function Home() {
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
         <div className="max-w-6xl mx-auto space-y-5">
           {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
-          <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 backdrop-blur-md border shadow-sm ${
-            isDarkMode 
-              ? 'bg-slate-900/90 text-slate-100 border-slate-800' 
-              : 'bg-white/90 text-slate-900 border-slate-200/80'
-          }`}>
+          <header className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs">
             {/* THÀNH PHẦN TRÊN: LOGO, TÊN DỰ ÁN, CHỈ SỐ XU & CÁC NÚT THAO TÁC */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-3.5">
@@ -1563,7 +1563,7 @@ export default function Home() {
                 className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
                   activeTab === 'studio'
                     ? 'bg-rose-500 text-white shadow-sm'
-                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-rose-500')}
@@ -1575,7 +1575,7 @@ export default function Home() {
                 className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
                   activeTab === 'quiz'
                     ? 'bg-rose-500 text-white shadow-sm'
-                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
@@ -1583,11 +1583,23 @@ export default function Home() {
               </button>
 
               <button
+                onClick={() => { setActiveTab('flashcards' as any); playSfx('click'); }}
+                className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                  activeTab === ('flashcards' as any)
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                {renderBookIcon(activeTab === ('flashcards' as any) ? 'w-4 h-4 text-white' : 'w-4 h-4 text-amber-500')}
+                <span>Flashcards HSK</span>
+              </button>
+
+              <button
                 onClick={() => { setActiveTab('room'); playSfx('click'); }}
                 className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
                   activeTab === 'room'
                     ? 'bg-rose-500 text-white shadow-sm'
-                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-emerald-500')}
@@ -1599,7 +1611,7 @@ export default function Home() {
                 className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
                   showPetShopModal
                     ? 'bg-amber-500 text-white shadow-sm'
-                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 {renderShoppingBagIcon(showPetShopModal ? 'w-4 h-4 text-white' : 'w-4 h-4 text-amber-500')}
@@ -1611,7 +1623,7 @@ export default function Home() {
                 className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
                   activeTab === 'love'
                     ? 'bg-rose-500 text-white shadow-sm'
-                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
@@ -1623,7 +1635,7 @@ export default function Home() {
                 className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
                   activeTab === 'library'
                     ? 'bg-rose-500 text-white shadow-sm'
-                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 {renderBookIcon(activeTab === 'library' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
@@ -1636,7 +1648,7 @@ export default function Home() {
                   className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
                     activeTab === 'admin'
                       ? 'bg-purple-600 text-white shadow-sm'
-                      : isDarkMode ? 'bg-slate-800 text-purple-300 hover:bg-slate-700' : 'bg-slate-100 text-purple-700 hover:bg-slate-200'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >
                   {renderAIIcon(activeTab === 'admin' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
@@ -1651,20 +1663,14 @@ export default function Home() {
             {/* TAB 1: STUDIO HỢP ĐỒNG THIẾT KẾ CỦA KHÁCH HÀNG (NPC) */}
             {activeTab === 'studio' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className={`lg:col-span-4 border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-5 h-[460px] flex flex-col ${
-                  isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
-                }`}>
-                  <div className={`flex items-center justify-between border-b-2 border-dashed pb-3 mb-3 ${
-                    isDarkMode ? 'border-slate-700' : 'border-[#1f2937]'
-                  }`}>
-                    <h2 className={`text-base font-serif font-black flex items-center gap-1.5 ${
-                      isDarkMode ? 'text-slate-100' : 'text-[#1f2937]'
-                    }`}>
+                <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-xs p-5 h-[460px] flex flex-col">
+                  <div className="flex items-center justify-between border-b border-dashed border-slate-200 dark:border-slate-800 pb-3 mb-3">
+                    <h2 className="text-base font-bold flex items-center gap-1.5 text-slate-900 dark:text-slate-100">
                       {renderClipboardIcon()} Danh Sách Hợp Đồng
                     </h2>
                     <button
                       onClick={handleCreateNewContract}
-                      className="bg-amber-400 hover:bg-amber-500 text-amber-950 border-2 border-[#1f2937] text-[10px] font-black px-2 py-1 rounded-lg shadow-[1px_1px_0px_#1f2937] active:translate-y-0.5 transition flex items-center gap-1 shrink-0 cursor-pointer"
+                      className="bg-amber-400 hover:bg-amber-500 text-slate-950 border border-slate-300 dark:border-slate-700 text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-xs active:scale-95 transition flex items-center gap-1 shrink-0 cursor-pointer"
                       title="Tự động sinh hợp đồng mới từ khách hàng mới"
                     >
                       Hợp đồng mới
@@ -1681,24 +1687,24 @@ export default function Home() {
                           setShowStudioHint(false);
                           playSfx('click');
                         }}
-                        className={`p-3 border-2 rounded-xl flex items-center gap-3 cursor-pointer transition-all relative ${
+                        className={`p-3 border rounded-xl flex items-center gap-3 cursor-pointer transition-all relative ${
                           currentContract?.id === contract.id
-                            ? 'bg-rose-500 text-white border-rose-600 shadow-none translate-y-0.5'
-                            : isDarkMode ? 'bg-slate-800 text-slate-100 border-slate-700 hover:bg-slate-700' : 'bg-white text-[#1f2937] border-[#1f2937] shadow-[2px_2px_0px_#1f2937] hover:-translate-y-0.5'
+                            ? 'bg-rose-500 text-white border-rose-600 shadow-xs'
+                            : 'bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 border-slate-200 dark:border-slate-700 hover:border-rose-500'
                         }`}
                       >
-                        <div className="shrink-0 bg-white border-2 border-[#1f2937] w-12 h-12 rounded-xl flex items-center justify-center">
+                        <div className="shrink-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 w-12 h-12 rounded-xl flex items-center justify-center">
                           {renderClientAvatar(contract.clientSprite)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-xs font-serif font-black truncate">{contract.title}</h3>
-                          <p className="text-[10px] opacity-80 font-bold mt-0.5">Khách hàng: {contract.clientName}</p>
+                          <h3 className="text-xs font-bold truncate">{contract.title}</h3>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold mt-0.5">Khách hàng: {contract.clientName}</p>
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                            <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.2 rounded font-black font-sans">
+                            <span className="text-[9px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-1.5 py-0.2 rounded font-bold">
                               HSK Cấp {contract.level}
                             </span>
                             {completedContracts.includes(contract.id) && (
-                              <span className="text-[9px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.2 rounded font-black font-sans">
+                              <span className="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 px-1.5 py-0.2 rounded font-bold">
                                 Đã hoàn thành
                               </span>
                             )}
@@ -1712,30 +1718,24 @@ export default function Home() {
                 {/* CHI TIẾT HỢP ĐỒNG ĐÃ CHỌN */}
                 <div className="lg:col-span-8">
                   {currentContract ? (
-                    <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-5 ${
-                      isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
-                    }`}>
-                      <div className={`flex items-center gap-3 border-b-2 border-dashed pb-3 ${
-                        isDarkMode ? 'border-slate-700' : 'border-[#1f2937]'
-                      }`}>
-                        <div className="w-12 h-12 bg-white border-2 border-[#1f2937] rounded-xl flex items-center justify-center shrink-0">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-xs p-6 space-y-5">
+                      <div className="flex items-center gap-3 border-b border-dashed border-slate-200 dark:border-slate-800 pb-3">
+                        <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center shrink-0">
                           {renderClientAvatar(currentContract.clientSprite)}
                         </div>
                         <div>
-                          <h3 className="text-base font-serif font-black">Hợp đồng thiết kế từ: {currentContract.clientName}</h3>
-                          <p className="text-xs opacity-70 font-bold">Cấp độ yêu cầu: HSK Cấp {currentContract.level}</p>
+                          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Hợp đồng thiết kế từ: {currentContract.clientName}</h3>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">Cấp độ yêu cầu: HSK Cấp {currentContract.level}</p>
                         </div>
                       </div>
 
                       <div className="space-y-1 text-left">
-                        <h4 className="text-lg font-serif font-black text-rose-500">{currentContract.title}</h4>
-                        <p className="text-xs opacity-90 font-bold leading-relaxed">{currentContract.description}</p>
+                        <h4 className="text-lg font-bold text-rose-600 dark:text-rose-400">{currentContract.title}</h4>
+                        <p className="text-xs text-slate-700 dark:text-slate-300 font-bold leading-relaxed">{currentContract.description}</p>
                       </div>
 
                       {/* KHU VỰC THƯ TỪ KHÁCH HÀNG BẰNG TIẾNG TRUNG */}
-                      <div className={`p-4 border rounded-xl space-y-2 text-left ${
-                        isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-amber-50 border-amber-200 text-[#1f2937]'
-                      }`}>
+                      <div className="p-4 border rounded-xl space-y-2 text-left bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                         <div className="flex justify-between items-center">
                           <span className="text-[9px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-black uppercase font-sans">
                             Yêu cầu từ khách hàng (Tiếng Trung):
@@ -1912,6 +1912,16 @@ export default function Home() {
               />
             )}
 
+            {/* TAB FLASHCARDS HSK 3D (GIỐNG IELTS VOCAB) */}
+            {activeTab === ('flashcards' as any) && (
+              <FlashcardViewer
+                customVocabs={customVocabs}
+                onPlayAudio={handlePlayTTS}
+                playSfx={playSfx}
+                isDarkMode={isDarkMode}
+              />
+            )}
+
             {/* TAB 3: PHÒNG CỦA VY (ROOM EDITOR) */}
             {activeTab === 'room' && (
               <RoomEditor
@@ -1948,12 +1958,8 @@ export default function Home() {
 
             {/* TAB 5: TỪ ĐIỂN VẬT LIỆU HSK (MATERIALS DICTIONARY) */}
             {activeTab === 'library' && (
-              <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6 transition-colors ${
-                isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fff5f6] text-[#1f2937] border-[#1f2937]'
-              }`}>
-                <h2 className={`text-xl font-serif font-black border-b-2 border-dashed pb-3 flex items-center justify-between ${
-                  isDarkMode ? 'border-slate-700 text-slate-100' : 'border-[#1f2937] text-[#1f2937]'
-                }`}>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl p-6 space-y-6 shadow-xs">
+                <h2 className="text-xl font-bold border-b border-dashed border-slate-200 dark:border-slate-800 pb-3 flex items-center justify-between text-slate-900 dark:text-slate-100">
                   <span>Từ Điển Vật Liệu & Ngữ Pháp HSK 1-2-3</span>
                 </h2>
 
@@ -2325,12 +2331,8 @@ export default function Home() {
             )}
 
             {activeTab === 'admin' && ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
-              <div className={`border-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] p-6 space-y-6 transition-colors ${
-                isDarkMode ? 'bg-[#1e293b] text-slate-100 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
-              }`}>
-                <h2 className={`text-xl font-serif font-black border-b-2 border-dashed pb-3 flex justify-between items-center ${
-                  isDarkMode ? 'border-slate-700 text-slate-100' : 'border-[#1f2937] text-[#1f2937]'
-                }`}>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl p-6 space-y-6 shadow-xs">
+                <h2 className="text-xl font-bold border-b border-dashed border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-center text-slate-900 dark:text-slate-100">
                   <span>Bảng Điều Khiển Admin (Khang & Vy)</span>
                   <button
                     onClick={fetchAdminLogs}

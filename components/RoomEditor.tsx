@@ -626,18 +626,6 @@ export default function RoomEditor({
             {isPreviewMode ? 'Hiện Bảng Đồ' : 'Xem Trước (Preview)'}
           </button>
 
-          <button
-            onClick={() => {
-              setIsIsometric(!isIsometric);
-              playSfx('click');
-            }}
-            className={`px-3 py-1.5 border-2 border-[#1f2937] font-black text-xs uppercase rounded-lg shadow-[2px_2px_0px_#1f2937] flex items-center gap-1.5 cursor-pointer transition-all ${
-              isIsometric ? 'bg-purple-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
-            }`}
-          >
-            Isometric 2.5D
-          </button>
-
           {draggedRoomItemIndex !== null && (
             <>
               <button
@@ -656,10 +644,8 @@ export default function RoomEditor({
           )}
         </div>
 
-        {/* CĂN PHÒNG CHÍNH VỚI CHẾ ĐỘ ISOMETRIC 2.5D */}
-        <div className={`w-full max-w-[420px] aspect-square flex flex-col border-4 border-[#1f2937] rounded-xl overflow-hidden shadow-[4px_4px_0px_#1f2937] relative transition-all duration-500 origin-center ${
-          isIsometric ? 'scale-90 [transform:rotateX(52deg)_rotateZ(-42deg)] shadow-2xl' : ''
-        }`}>
+        {/* CĂN PHÒNG CHÍNH */}
+        <div className="w-full max-w-[420px] aspect-square flex flex-col border-4 border-[#1f2937] rounded-xl overflow-hidden shadow-[4px_4px_0px_#1f2937] relative">
           {/* HIỆU ỨNG ÁNH SÁNG BAN ĐÊM SÂU ẤM CÚNG (DEEP NIGHT AMBIENT LIGHTING) */}
           {isDarkMode && (
             <div className="absolute inset-0 pointer-events-none z-20 bg-gradient-to-b from-indigo-950/40 via-transparent to-amber-500/10 transition-all duration-500" />

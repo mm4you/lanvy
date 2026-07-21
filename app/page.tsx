@@ -2823,23 +2823,25 @@ export default function Home() {
         />
       )}
 
-      {/* THANH ĐIỀU HƯỚNG DÀNH RIÊNG CHO MOBILE (BOTTOM DOCK CAPSULE VỚI ACTIVE GRADIENT INDICATOR & HAPTIC) */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN 100% THEO IELTS VOCAB (FULL-WIDTH BOTTOM BAR) */}
       {user && (
-        <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-full shadow-xl p-1.5 flex items-center justify-around md:hidden transition-all pointer-events-auto relative overflow-hidden">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--paper)] border-t-[3px] border-[var(--line)] z-50 shadow-[0_-4px_0_var(--line)] flex items-center justify-around h-16 pb-safe pointer-events-auto">
           <button
             onClick={() => {
               setActiveTab('studio');
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
-              activeTab === 'studio' 
-                ? 'bg-rose-500 text-white font-bold shadow-xs' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              activeTab === 'studio' ? 'text-rose-500 font-extrabold scale-105' : 'text-[var(--ink)] opacity-80 hover:opacity-100'
             }`}
           >
-            {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-rose-500')}
-            <span className="text-[10px] font-bold mt-0.5">Studio</span>
+            <div className={activeTab === 'studio' ? 'text-rose-500 scale-110 transition-transform' : 'text-[var(--ink)]'}>
+              {renderAwardIcon('w-5 h-5')}
+            </div>
+            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-[var(--ink)]'}`}>
+              Studio
+            </span>
           </button>
 
           <button
@@ -2848,14 +2850,16 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
-              activeTab === 'quiz' 
-                ? 'bg-rose-500 text-white font-bold shadow-xs' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              activeTab === 'quiz' ? 'text-blue-500 font-extrabold scale-105' : 'text-[var(--ink)] opacity-80 hover:opacity-100'
             }`}
           >
-            {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
-            <span className="text-[10px] font-bold mt-0.5">Quiz</span>
+            <div className={activeTab === 'quiz' ? 'text-blue-500 scale-110 transition-transform' : 'text-[var(--ink)]'}>
+              {renderBookIcon('w-5 h-5')}
+            </div>
+            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'quiz' ? 'text-blue-500' : 'text-[var(--ink)]'}`}>
+              Quiz
+            </span>
           </button>
 
           <button
@@ -2864,14 +2868,16 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
-              activeTab === 'room' 
-                ? 'bg-rose-500 text-white font-bold shadow-xs' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              activeTab === 'room' ? 'text-emerald-500 font-extrabold scale-105' : 'text-[var(--ink)] opacity-80 hover:opacity-100'
             }`}
           >
-            {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-emerald-500')}
-            <span className="text-[10px] font-bold mt-0.5">Phòng</span>
+            <div className={activeTab === 'room' ? 'text-emerald-500 scale-110 transition-transform' : 'text-[var(--ink)]'}>
+              {renderHomeIcon('w-5 h-5')}
+            </div>
+            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-[var(--ink)]'}`}>
+              Phòng
+            </span>
           </button>
 
           <button
@@ -2880,10 +2886,14 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className="flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+            className="flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer text-[var(--ink)] opacity-80 hover:opacity-100"
           >
-            {renderShoppingBagIcon('w-4 h-4 text-amber-500')}
-            <span className="text-[10px] font-bold mt-0.5">Shop</span>
+            <div className="text-[var(--ink)]">
+              {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
+            </div>
+            <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 text-[var(--ink)]">
+              Shop
+            </span>
           </button>
 
           <button
@@ -2892,23 +2902,17 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
-              activeTab === 'love' 
-                ? 'bg-rose-500 text-white font-bold shadow-xs' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              activeTab === 'love' ? 'text-purple-500 font-extrabold scale-105' : 'text-[var(--ink)] opacity-80 hover:opacity-100'
             }`}
           >
-            {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
-            <span className="text-[10px] font-bold mt-0.5">Voucher</span>
+            <div className={activeTab === 'love' ? 'text-purple-500 scale-110 transition-transform' : 'text-[var(--ink)]'}>
+              {renderVoucherIcon('w-5 h-5')}
+            </div>
+            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'love' ? 'text-purple-500' : 'text-[var(--ink)]'}`}>
+              Voucher
+            </span>
           </button>
-
-          {/* VỆT SÁNG ACTIVE INDICATOR SLIDING GRADIENT BAR */}
-          <div 
-            className="absolute bottom-0 h-0.5 bg-gradient-to-r from-amber-400 via-rose-500 to-amber-400 rounded-full transition-all duration-300 w-10 shadow-xs"
-            style={{
-              left: activeTab === 'studio' ? '8%' : activeTab === 'quiz' ? '28%' : activeTab === 'room' ? '48%' : activeTab === 'love' ? '86%' : '67%'
-            }}
-          />
         </nav>
       )}
 

@@ -353,6 +353,14 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   const toggleDarkMode = () => {
     const next = !isDarkMode;
     setIsDarkMode(next);
@@ -1181,9 +1189,7 @@ export default function Home() {
   });
 
   return (
-    <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
-      isDarkMode ? 'bg-[#0f172a] text-[#f8fafc]' : 'bg-[#fffdf8] text-[#1f2937]'
-    }`}>
+    <main className="min-h-screen font-sans antialiased transition-colors duration-300 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-3 sm:p-4 md:p-6 pb-24 md:pb-6">
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ (COPY 100% GIAO DIỆN IELTS VOCAB HTTPS://IELTS.VOCAB.UMTERS.CLUB/) */}
       {!user ? (
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden">
@@ -1503,18 +1509,22 @@ export default function Home() {
                   {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
 
-                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CAPSULE MODERN */}
+                {/* NÚT GẠT CHẾ ĐỘ SÁNG / TỐI CAPSULE MODERN 2 ICON */}
                 <button
+                  type="button"
                   onClick={toggleDarkMode}
-                  className="relative flex items-center w-13 h-6.5 p-0.5 rounded-full bg-amber-100 dark:bg-slate-800 border border-amber-300 dark:border-slate-700 transition-colors duration-300 cursor-pointer shrink-0 shadow-inner"
-                  title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
+                  className="relative flex items-center justify-between w-16 h-8 p-1 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 cursor-pointer shrink-0 transition-colors shadow-inner"
+                  title={isDarkMode ? 'Đang Chế độ Ban Đêm (Bấm để sang Ban Ngày)' : 'Đang Chế độ Ban Ngày (Bấm để sang Ban Đêm)'}
                 >
+                  <div className="z-0 pl-0.5">{renderSunIcon('w-3.5 h-3.5 text-amber-500')}</div>
+                  <div className="z-0 pr-0.5">{renderMoonIcon('w-3.5 h-3.5 text-indigo-400')}</div>
+                  
                   <div
-                    className={`w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow-md flex items-center justify-center transform transition-transform duration-300 ${
-                      isDarkMode ? 'translate-x-6.5 text-amber-400' : 'translate-x-0 text-slate-700'
+                    className={`absolute top-0.5 left-0.5 w-7 h-7 rounded-full bg-white dark:bg-slate-900 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transform transition-transform duration-300 z-10 ${
+                      isDarkMode ? 'translate-x-8' : 'translate-x-0'
                     }`}
                   >
-                    {isDarkMode ? renderSunIcon('w-3.5 h-3.5 text-amber-400') : renderMoonIcon('w-3.5 h-3.5 text-slate-700')}
+                    {isDarkMode ? renderMoonIcon('w-4 h-4 text-indigo-400') : renderSunIcon('w-4 h-4 text-amber-500')}
                   </div>
                 </button>
 
@@ -1546,8 +1556,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* THANH ĐIỀU HƯỚNG TABS CHÍNH MODERN CAPSULES */}
-            <nav className="w-full flex items-center gap-2 overflow-x-auto scrollbar-none snap-x shrink-0">
+            {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (DESKTOP: THANH PILL TRÊN, MOBILE: THANH BOTTOM DOCK BÊN DƯỚI) */}
+            <nav className="w-full hidden md:flex items-center gap-2 overflow-x-auto scrollbar-none snap-x shrink-0">
               <button
                 onClick={() => { setActiveTab('studio'); playSfx('click'); }}
                 className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
@@ -1874,8 +1884,14 @@ export default function Home() {
                       )}
                     </div>
                   ) : (
-                    <div className="bg-[#fffaf0] border-4 border-dashed border-[#1f2937] rounded-2xl p-16 text-center text-gray-400 font-bold">
-                      Chọn một hợp đồng từ bảng danh sách bên trái để xem yêu cầu thiết kế của khách hàng.
+                    <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-700 dark:text-slate-300 font-bold space-y-3 shadow-xs">
+                      <div className="w-12 h-12 mx-auto rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                        {renderClipboardIcon('w-6 h-6 text-rose-500')}
+                      </div>
+                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100">Vui lòng chọn một hợp đồng</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                        Chọn một hợp đồng từ bảng danh sách bên trái để xem yêu cầu thiết kế và thử thách HSK của khách hàng.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -2700,6 +2716,85 @@ export default function Home() {
           onClose={() => setSelectedVoiceWord(null)}
           playSfx={playSfx}
         />
+      )}
+
+      {/* THANH ĐIỀU HƯỚNG DÀNH RIÊNG CHO MOBILE (BOTTOM DOCK CAPSULE) */}
+      {user && (
+        <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-full shadow-xl p-1.5 flex items-center justify-around md:hidden transition-all">
+          <button
+            onClick={() => { setActiveTab('studio'); playSfx('click'); }}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+              activeTab === 'studio' 
+                ? 'bg-rose-500 text-white font-bold shadow-xs' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            }`}
+          >
+            {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-rose-500')}
+            <span className="text-[10px] font-bold mt-0.5">Studio</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+              activeTab === 'quiz' 
+                ? 'bg-rose-500 text-white font-bold shadow-xs' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            }`}
+          >
+            {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
+            <span className="text-[10px] font-bold mt-0.5">Quiz</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('room'); playSfx('click'); }}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+              activeTab === 'room' 
+                ? 'bg-rose-500 text-white font-bold shadow-xs' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            }`}
+          >
+            {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-emerald-500')}
+            <span className="text-[10px] font-bold mt-0.5">Phòng</span>
+          </button>
+
+          <button
+            onClick={() => { setShowPetShopModal(true); playSfx('click'); }}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+              showPetShopModal 
+                ? 'bg-amber-500 text-white font-bold shadow-xs' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            }`}
+          >
+            {renderShoppingBagIcon(showPetShopModal ? 'w-4 h-4 text-white' : 'w-4 h-4 text-amber-500')}
+            <span className="text-[10px] font-bold mt-0.5">Shop</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('love'); playSfx('click'); }}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+              activeTab === 'love' 
+                ? 'bg-rose-500 text-white font-bold shadow-xs' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            }`}
+          >
+            {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+            <span className="text-[10px] font-bold mt-0.5">Voucher</span>
+          </button>
+
+          {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
+            <button
+              onClick={() => { setActiveTab('admin'); fetchAdminLogs(); playSfx('click'); }}
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+                activeTab === 'admin' 
+                  ? 'bg-purple-600 text-white font-bold shadow-xs' 
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+              }`}
+            >
+              {renderAIIcon(activeTab === 'admin' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
+              <span className="text-[10px] font-bold mt-0.5">Admin</span>
+            </button>
+          )}
+        </nav>
       )}
 
       {/* THÚ CƯNG PIXEL 2D ĐI DẠO MÀN HÌNH BÊN NGOÀI (CHỈ HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP) */}

@@ -383,19 +383,29 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
       {/* MODAL CỬA HÀNG PIXEL PET & VOUCHER HSK */}
       {showShop && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/65 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-[#fffaf0] dark:bg-slate-900 border-4 border-[#1f2937] dark:border-slate-700 p-4 sm:p-5 rounded-3xl shadow-[6px_6px_0px_#1f2937] max-w-md w-full space-y-3 text-left text-[#1f2937] dark:text-slate-100">
+        <div 
+          onClick={() => setShowShop(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200 pointer-events-auto cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-3xl shadow-2xl max-w-md w-full space-y-3 text-left text-slate-900 dark:text-slate-100 relative cursor-default"
+          >
             {/* HEADER MODAL */}
-            <div className="flex justify-between items-center border-b-2 border-dashed border-[#1f2937] dark:border-slate-700 pb-2">
+            <div className="flex justify-between items-center border-b border-dashed border-slate-200 dark:border-slate-800 pb-3">
               <div>
-                <span className="text-sm sm:text-base font-serif font-black text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+                <span className="text-sm sm:text-base font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
                   Cửa Hàng Pixel Pet & Voucher HSK
                 </span>
-                <p className="text-[10px] font-bold text-gray-500 dark:text-slate-400">Số Xu hiện tại: <span className="text-amber-600 dark:text-amber-400 font-mono font-black">{coins} Xu</span></p>
+                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+                  Số Xu hiện tại: <span className="text-amber-600 dark:text-amber-400 font-mono font-bold">{coins} Xu</span>
+                </p>
               </div>
               <button 
+                type="button"
                 onClick={() => setShowShop(false)} 
-                className="w-7 h-7 bg-white dark:bg-slate-800 border-2 border-[#1f2937] dark:border-slate-600 rounded-full font-black text-xs hover:bg-rose-500 hover:text-white cursor-pointer flex items-center justify-center shrink-0"
+                className="w-8 h-8 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full font-bold text-sm cursor-pointer flex items-center justify-center shrink-0 transition-all active:scale-95"
+                title="Đóng cửa hàng"
               >
                 ✕
               </button>

@@ -253,6 +253,13 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         className="absolute bottom-0 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
         style={{ left: `${posX}px` }}
       >
+        {/* STAGE & MOOD FLOATING INDICATOR KHÔNG KHUNG BỌC */}
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-40 text-slate-800 dark:text-slate-100 text-[10px] font-mono font-bold drop-shadow-md whitespace-nowrap">
+          <span className="text-amber-500 font-extrabold">Cấp {petStage}</span>
+          <span className="text-slate-400 font-normal">|</span>
+          <span className="text-rose-500 font-extrabold">No {hunger}%</span>
+        </div>
+
         {/* POPUP TRÒ CHUYỆN PIXEL 2D SANG TRỌNG KHÔNG VIỀN CỨNG */}
         {activeSpeech && (
           <div className="absolute -top-28 z-50 w-52 sm:w-60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl shadow-xl text-center space-y-1 animate-in fade-in zoom-in-95 duration-200 pointer-events-auto border-0">
@@ -263,25 +270,25 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           </div>
         )}
 
-        {/* HIỆU ỨNG THẢ TIM XP */}
+        {/* HIỆU ỨNG THẢ TIM XP KHÔNG KHUNG BỌC */}
         {isHearting && (
-          <div className="absolute -top-8 text-white font-mono font-bold text-[10px] sm:text-xs animate-bounce z-50 bg-rose-500 px-3 py-0.5 rounded-full shadow-md border-0">
+          <div className="absolute -top-8 text-rose-500 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
             +50 HSK XP
           </div>
         )}
 
-        {/* HIỆU ỨNG NGỦ Zzz */}
+        {/* HIỆU ỨNG NGỦ Zzz KHÔNG KHUNG BỌC */}
         {isSleeping && !activeSpeech && (
-          <div className="absolute -top-9 text-indigo-600 dark:text-indigo-300 font-mono font-bold text-xs animate-pulse z-50 bg-indigo-100 dark:bg-indigo-950/80 px-2.5 py-0.5 rounded-full shadow-sm border-0 flex items-center gap-1">
+          <div className="absolute -top-9 text-indigo-500 dark:text-indigo-400 font-mono font-bold text-xs animate-pulse z-50 flex items-center gap-1 drop-shadow-md">
             <span className="animate-bounce">Z</span>
             <span className="animate-bounce delay-100">z</span>
             <span className="animate-bounce delay-200">z</span> (Đang ngủ)
           </div>
         )}
 
-        {/* HIỆU ỨNG ĐANG ĂN */}
+        {/* HIỆU ỨNG ĐANG ĂN KHÔNG KHUNG BỌC */}
         {isEating && (
-          <div className="absolute -top-7 text-amber-700 dark:text-amber-300 font-mono font-bold text-[11px] animate-bounce z-50 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-full shadow-sm border-0">
+          <div className="absolute -top-7 text-amber-500 dark:text-amber-400 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
             Nhai nhai... Ngon quá!
           </div>
         )}

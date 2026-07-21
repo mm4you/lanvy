@@ -152,28 +152,23 @@ export default function FlashcardViewer({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Bộ từ:</span>
-            <div className="flex gap-1.5">
-              {[5, 10, 'all'].map((sz) => (
-                <button
-                  key={sz}
-                  type="button"
-                  onClick={() => {
-                    setDeckSize(sz as any);
-                    setCurrentIndex(0);
-                    setIsFlipped(false);
-                    setIsSessionCompleted(false);
-                    playSfx('click');
-                  }}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-                    deckSize === sz
-                      ? 'bg-rose-500 text-white shadow-xs'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                  }`}
-                >
-                  {sz === 'all' ? 'Tất cả' : `${sz} từ`}
-                </button>
-              ))}
-            </div>
+            <select
+              value={deckSize}
+              onChange={(e) => {
+                const val = e.target.value;
+                setDeckSize(val === 'all' ? 'all' : (Number(val) as any));
+                setCurrentIndex(0);
+                setIsFlipped(false);
+                setIsSessionCompleted(false);
+                playSfx('click');
+              }}
+              className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded-xl font-mono font-bold text-xs cursor-pointer focus:outline-none"
+            >
+              <option value={5}>5 từ vựng (Học nhanh)</option>
+              <option value={10}>10 từ vựng (Ôn tập vừa)</option>
+              <option value={20}>20 từ vựng (Chuyên sâu)</option>
+              <option value="all">Tất cả từ vựng HSK</option>
+            </select>
           </div>
 
           <div className="flex items-center gap-2">

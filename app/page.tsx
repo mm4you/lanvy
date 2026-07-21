@@ -1760,7 +1760,9 @@ export default function Home() {
             {/* TAB 1: STUDIO HỢP ĐỒNG THIẾT KẾ CỦA KHÁCH HÀNG (NPC) */}
             {activeTab === 'studio' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-xs p-5 h-[460px] flex flex-col">
+                <div className={`lg:col-span-4 border rounded-2xl shadow-xs p-5 h-[460px] flex flex-col ${
+                  isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
+                }`}>
                   <div className="flex items-center justify-between border-b border-dashed border-slate-200 dark:border-slate-800 pb-3 mb-3">
                     <h2 className="text-base font-bold flex items-center gap-1.5 text-slate-900 dark:text-slate-100">
                       {renderClipboardIcon()} Danh Sách Hợp Đồng
@@ -1815,7 +1817,9 @@ export default function Home() {
                 {/* CHI TIẾT HỢP ĐỒNG ĐÃ CHỌN */}
                 <div className="lg:col-span-8">
                   {currentContract ? (
-                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-xs p-6 space-y-5">
+                    <div className={`border rounded-2xl shadow-xs p-6 space-y-5 ${
+                      isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
+                    }`}>
                       <div className="flex items-center gap-3 border-b border-dashed border-slate-200 dark:border-slate-800 pb-3">
                         <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center shrink-0">
                           {renderClientAvatar(currentContract.clientSprite)}

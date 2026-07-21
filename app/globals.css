@@ -12,6 +12,18 @@
   --yellow: #f59e0b;
 }
 
+.dark {
+  --bg: #121212;
+  --paper: #1e1e1e;
+  --ink: #f3f4f6;
+  --muted: #9ca3af;
+  --line: #374151;
+  --blue: #38bdf8;
+  --green: #22c55e;
+  --red: #f87171;
+  --yellow: #fbbf24;
+}
+
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--ink);

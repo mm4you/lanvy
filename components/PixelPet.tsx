@@ -233,26 +233,26 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         className="absolute bottom-0 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
         style={{ left: `${posX}px` }}
       >
-        {/* POPUP TRÒ CHUYỆN PIXEL 2D */}
+        {/* POPUP TRÒ CHUYỆN PIXEL 2D SANG TRỌNG KHÔNG VIỀN CỨNG */}
         {activeSpeech && (
-          <div className="absolute -top-28 z-50 w-52 sm:w-60 bg-white dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-700 p-2.5 rounded-2xl shadow-xl text-center space-y-1 animate-in fade-in zoom-in-95 duration-200 pointer-events-auto">
-            <p className="text-xs font-mono font-black text-rose-600 dark:text-rose-400">{activeSpeech.text}</p>
-            <p className="text-[10px] font-mono font-bold text-gray-500 dark:text-slate-400">{activeSpeech.pinyin}</p>
-            <p className="text-[10px] font-bold text-gray-800 dark:text-slate-200 leading-tight">{activeSpeech.translation}</p>
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-white dark:bg-slate-900 border-b-2 border-r-2 border-slate-800 dark:border-slate-700 rotate-45" />
+          <div className="absolute -top-28 z-50 w-52 sm:w-60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl shadow-xl text-center space-y-1 animate-in fade-in zoom-in-95 duration-200 pointer-events-auto border-0">
+            <p className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400">{activeSpeech.text}</p>
+            <p className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400">{activeSpeech.pinyin}</p>
+            <p className="text-[10px] font-bold text-slate-800 dark:text-slate-200 leading-tight">{activeSpeech.translation}</p>
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white/95 dark:bg-slate-900/95 rotate-45 border-0 shadow-xs" />
           </div>
         )}
 
         {/* HIỆU ỨNG THẢ TIM XP */}
         {isHearting && (
-          <div className="absolute -top-8 text-rose-600 font-mono font-black text-[10px] sm:text-xs animate-bounce z-50 bg-rose-100 dark:bg-rose-950 border border-rose-400 px-2 py-0.5 rounded-full shadow">
+          <div className="absolute -top-8 text-white font-mono font-bold text-[10px] sm:text-xs animate-bounce z-50 bg-rose-500 px-3 py-0.5 rounded-full shadow-md border-0">
             +50 HSK XP
           </div>
         )}
 
         {/* HIỆU ỨNG NGỦ Zzz */}
         {isSleeping && !activeSpeech && (
-          <div className="absolute -top-9 text-indigo-600 dark:text-indigo-400 font-mono font-black text-xs animate-pulse z-50 bg-indigo-50 dark:bg-indigo-950 border border-indigo-300 px-2 py-0.5 rounded-full shadow flex items-center gap-1">
+          <div className="absolute -top-9 text-indigo-600 dark:text-indigo-300 font-mono font-bold text-xs animate-pulse z-50 bg-indigo-100 dark:bg-indigo-950/80 px-2.5 py-0.5 rounded-full shadow-sm border-0 flex items-center gap-1">
             <span className="animate-bounce">Z</span>
             <span className="animate-bounce delay-100">z</span>
             <span className="animate-bounce delay-200">z</span> (Đang ngủ)
@@ -261,7 +261,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
         {/* HIỆU ỨNG ĐANG ĂN */}
         {isEating && (
-          <div className="absolute -top-7 text-amber-600 dark:text-amber-400 font-mono font-bold text-[11px] animate-bounce z-50 bg-amber-50 dark:bg-amber-950 border border-amber-300 px-2 py-0.5 rounded-full shadow">
+          <div className="absolute -top-7 text-amber-700 dark:text-amber-300 font-mono font-bold text-[11px] animate-bounce z-50 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-full shadow-sm border-0">
             Nhai nhai... Ngon quá!
           </div>
         )}

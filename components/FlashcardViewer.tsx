@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GENERAL_VOCAB_ITEMS, GeneralVocabItem } from '../data/vocabulary';
 
 interface FlashcardViewerProps {
@@ -8,6 +8,7 @@ interface FlashcardViewerProps {
   onPlayAudio: (text: string) => void;
   playSfx: (type: 'click' | 'success' | 'flip' | 'perfect') => void;
   isDarkMode?: boolean;
+  onRewardCoins?: (amount: number) => void;
 }
 
 export default function FlashcardViewer({
@@ -15,11 +16,15 @@ export default function FlashcardViewer({
   onPlayAudio,
   playSfx,
   isDarkMode = false,
+  onRewardCoins,
 }: FlashcardViewerProps) {
+  const [deckSize, setDeckSize] = useState<5 | 10 | 'all'>(5);
   const [selectedHsk, setSelectedHsk] = useState<number | 'all'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [masteredIds, setMasteredIds] = useState<string[]>([]);
+  const [autoPlayAudio, setAutoPlayAudio] = useState(true);
+  const [isSessionCompleted, setIsSessionCompleted] = useState(false);
 
   // Aggregate pool of vocabularies
   const allVocabs: GeneralVocabItem[] = [
@@ -37,24 +42,50 @@ export default function FlashcardViewer({
     })),
   ];
 
-  const filteredVocabs = allVocabs.filter(
+  const pool = allVocabs.filter(
     (item) => selectedHsk === 'all' || item.hskLevel === selectedHsk
   );
 
-  const currentItem = filteredVocabs[currentIndex] || filteredVocabs[0];
+  const activeDeck = deckSize === 'all' ? pool : pool.slice(0, deckSize);
+  const currentItem = activeDeck[currentIndex] || activeDeck[0];
+
+  const cleanString = (str: string) => {
+    if (!str) return '';
+    return str.replace(/sở thích & hẹn hò|động vật & thú cưng|mua sắm & shopping/gi, '').trim();
+  };
+
+  useEffect(() => {
+    if (currentItem && autoPlayAudio && !isFlipped && !isSessionCompleted) {
+      onPlayAudio(cleanString(currentItem.nameChinese));
+    }
+  }, [currentIndex, isSessionCompleted]);
 
   const handleNext = () => {
     playSfx('flip');
     setIsFlipped(false);
-    if (filteredVocabs.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % filteredVocabs.length);
+    if (activeDeck.length === 0) return;
+
+    if (currentIndex + 1 >= activeDeck.length) {
+      setIsSessionCompleted(true);
+      playSfx('perfect');
+      if (onRewardCoins) onRewardCoins(20);
+    } else {
+      setCurrentIndex((prev) => prev + 1);
+    }
   };
 
   const handlePrev = () => {
     playSfx('flip');
     setIsFlipped(false);
-    if (filteredVocabs.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + filteredVocabs.length) % filteredVocabs.length);
+    if (activeDeck.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + activeDeck.length) % activeDeck.length);
+  };
+
+  const handleRestartSession = () => {
+    playSfx('click');
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setIsSessionCompleted(false);
   };
 
   const handleToggleMastered = (id: string) => {
@@ -67,11 +98,6 @@ export default function FlashcardViewer({
     }
   };
 
-  const cleanString = (str: string) => {
-    if (!str) return '';
-    return str.replace(/sở thích & hẹn hò|động vật & thú cưng|mua sắm & shopping/gi, '').trim();
-  };
-
   if (!currentItem) {
     return (
       <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500">
@@ -82,37 +108,113 @@ export default function FlashcardViewer({
 
   const isMastered = masteredIds.includes(currentItem.id);
 
-  return (
-    <div className="max-w-xl mx-auto space-y-5 text-slate-900 dark:text-slate-100">
-      {/* HEADER TÌM KIẾM & BỘ LỌC HSK */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Cấp độ HSK:</span>
-          <div className="flex gap-1.5">
-            {['all', 1, 2, 3].map((lvl) => (
-              <button
-                key={lvl}
-                type="button"
-                onClick={() => {
-                  setSelectedHsk(lvl === 'all' ? 'all' : Number(lvl));
-                  setCurrentIndex(0);
-                  setIsFlipped(false);
-                  playSfx('click');
-                }}
-                className={`px-3 py-1 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-                  selectedHsk === lvl
-                    ? 'bg-rose-500 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                {lvl === 'all' ? 'Tất cả' : `HSK ${lvl}`}
-              </button>
-            ))}
+  if (isSessionCompleted) {
+    return (
+      <div className="max-w-xl mx-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl text-center space-y-5 shadow-lg text-slate-900 dark:text-slate-100">
+        <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl font-bold">
+          ✓
+        </div>
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">Hoàn Thành Thẻ Học HSK!</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">
+            Bạn vừa hoàn thành bộ {activeDeck.length} từ vựng và nhận thưởng <span className="text-amber-500 font-bold">+20 Xu</span>!
+          </p>
+        </div>
+
+        <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-around text-xs font-bold">
+          <div>
+            <p className="text-slate-400">Tổng từ bộ này</p>
+            <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{activeDeck.length}</p>
+          </div>
+          <div>
+            <p className="text-slate-400">Từ đã thuộc</p>
+            <p className="text-lg font-bold text-emerald-500">{masteredIds.length}</p>
           </div>
         </div>
 
-        <div className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl">
-          Thẻ {currentIndex + 1} / {filteredVocabs.length}
+        <button
+          type="button"
+          onClick={handleRestartSession}
+          className="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-2xl shadow-xs transition-all active:scale-95 cursor-pointer"
+        >
+          Học Tiếp Bộ Mới ↺
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-xl mx-auto space-y-5 text-slate-900 dark:text-slate-100">
+      {/* HEADER BỘ TỪ & CẤP ĐỘ HSK */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-xs space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Bộ từ:</span>
+            <div className="flex gap-1.5">
+              {[5, 10, 'all'].map((sz) => (
+                <button
+                  key={sz}
+                  type="button"
+                  onClick={() => {
+                    setDeckSize(sz as any);
+                    setCurrentIndex(0);
+                    setIsFlipped(false);
+                    setIsSessionCompleted(false);
+                    playSfx('click');
+                  }}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                    deckSize === sz
+                      ? 'bg-rose-500 text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                  }`}
+                >
+                  {sz === 'all' ? 'Tất cả' : `${sz} từ`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">HSK:</span>
+            <div className="flex gap-1">
+              {['all', 1, 2, 3].map((lvl) => (
+                <button
+                  key={lvl}
+                  type="button"
+                  onClick={() => {
+                    setSelectedHsk(lvl === 'all' ? 'all' : Number(lvl));
+                    setCurrentIndex(0);
+                    setIsFlipped(false);
+                    setIsSessionCompleted(false);
+                    playSfx('click');
+                  }}
+                  className={`px-2 py-0.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
+                    selectedHsk === lvl
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  {lvl === 'all' ? 'Tất cả' : `H${lvl}`}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <label className="flex items-center gap-1.5 cursor-pointer font-bold text-slate-600 dark:text-slate-400 select-none">
+            <input
+              type="checkbox"
+              checked={autoPlayAudio}
+              onChange={(e) => setAutoPlayAudio(e.target.checked)}
+              className="rounded text-rose-500 focus:ring-rose-500"
+            />
+            Tự động đọc tiếng Trung
+          </label>
+
+          <span className="font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-lg">
+            Thẻ {currentIndex + 1} / {activeDeck.length}
+          </span>
         </div>
       </div>
 

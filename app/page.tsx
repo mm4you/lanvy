@@ -1477,7 +1477,11 @@ export default function Home() {
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
         <div className="max-w-6xl mx-auto space-y-5">
           {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
-          <header className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs">
+          <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs border ${
+            isDarkMode 
+              ? 'bg-slate-900 text-slate-100 border-slate-800' 
+              : 'bg-white text-slate-900 border-slate-200'
+          }`}>
             {/* THÀNH PHẦN TRÊN: LOGO, TÊN DỰ ÁN, CHỈ SỐ XU & CÁC NÚT THAO TÁC */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-3.5">
@@ -1492,9 +1496,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-100">
-                    <span className="p-1.5 bg-amber-400 dark:bg-amber-500 rounded-xl shadow-xs border border-amber-300 dark:border-amber-400 inline-flex items-center justify-center shrink-0">
-                      <img src="/logo.svg" alt="Logo" className="w-6 h-6 object-contain" />
-                    </span>
+                    <img src="/logo.svg" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
                     Atelier Thiết Kế HSK
                     {user.email?.toLowerCase() === LOVE_EMAIL && (
                       <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider flex items-center gap-1">
@@ -1842,12 +1844,12 @@ export default function Home() {
                           </span>
                           <button
                             onClick={() => handlePlayTTS(currentContract.promptChinese)}
-                            className="p-1 bg-white hover:bg-amber-100 border border-[#1f2937] rounded-lg cursor-pointer"
+                            className="p-1 bg-white dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-lg cursor-pointer"
                           >
-                            {renderAudioIcon('w-4 h-4 text-[#1f2937]')}
+                            {renderAudioIcon('w-4 h-4 text-slate-700 dark:text-slate-200')}
                           </button>
                         </div>
-                        <p className="text-base font-serif font-black text-[#1f2937]">{currentContract.promptChinese}</p>
+                        <p className="text-base font-serif font-bold text-slate-900 dark:text-slate-100">{currentContract.promptChinese}</p>
                         <p className="text-xs font-bold text-blue-600 font-sans">{currentContract.promptPinyin}</p>
                         {showStudioHint ? (
                           <div className="pt-1.5 border-t border-dashed border-amber-300 flex justify-between items-start gap-4">
@@ -2067,24 +2069,24 @@ export default function Home() {
                 <div className="flex gap-3 mb-4 flex-wrap">
                   <button
                     onClick={() => { setLibrarySubTab('furniture'); playSfx('click'); }}
-                    className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
-                      librarySubTab === 'furniture' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                    className={`px-4 py-2 border font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer ${
+                      librarySubTab === 'furniture' ? 'bg-rose-500 text-white border-rose-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                     }`}
                   >
                     Từ điển Nội Thất HSK
                   </button>
                   <button
                     onClick={() => { setLibrarySubTab('vocab'); playSfx('click'); }}
-                    className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
-                      librarySubTab === 'vocab' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                    className={`px-4 py-2 border font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer ${
+                      librarySubTab === 'vocab' ? 'bg-rose-500 text-white border-rose-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                     }`}
                   >
                     Từ vựng HSK 1-2-3 ({GENERAL_VOCAB_ITEMS.length + customVocabs.length})
                   </button>
                   <button
                     onClick={() => { setLibrarySubTab('grammar'); playSfx('click'); }}
-                    className={`px-4 py-2 border-2 border-[#1f2937] font-serif font-black text-xs rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${
-                      librarySubTab === 'grammar' ? 'bg-pink-500 text-white shadow-none translate-y-0.5' : 'bg-white text-[#1f2937]'
+                    className={`px-4 py-2 border font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer ${
+                      librarySubTab === 'grammar' ? 'bg-rose-500 text-white border-rose-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                     }`}
                   >
                     Sổ tay Ngữ pháp
@@ -2099,31 +2101,33 @@ export default function Home() {
                       return (
                         <div
                           key={item.id}
-                          className={`p-3 border-2 border-[#1f2937] rounded-xl flex items-center justify-between transition-all ${
-                            isUnlocked ? 'bg-white shadow-[2px_2px_0px_#1f2937]' : 'bg-pink-50/40 border-pink-200 opacity-80'
+                          className={`p-3 border rounded-xl flex items-center justify-between transition-all ${
+                            isUnlocked 
+                              ? 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 shadow-xs' 
+                              : 'bg-slate-100/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-60'
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 border-2 border-[#1f2937] bg-[#fff5f6] rounded-lg p-1 flex items-center justify-center shrink-0">
+                            <div className="w-12 h-12 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg p-1 flex items-center justify-center shrink-0">
                               {renderFurnitureSVG(item.id, 0, 'w-10 h-10')}
                             </div>
                             <div className="text-left">
-                              <h4 className="text-xs font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                              <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                                 <span>{item.nameVietnamese}</span>
-                                <span className="text-[9px] bg-pink-100 text-pink-800 border border-pink-200 px-1.5 py-0.2 rounded font-sans font-black">
+                                <span className="text-[9px] bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-1.5 py-0.2 rounded font-mono font-bold">
                                   HSK {item.hsk}
                                 </span>
                               </h4>
-                              <p className="text-sm font-black text-pink-600 font-serif flex items-center gap-1.5">
+                              <p className="text-sm font-bold text-rose-600 dark:text-rose-400 font-serif flex items-center gap-1.5">
                                 <span>{item.nameChinese}</span>
                                 <button
                                   onClick={() => handlePlayTTS(item.nameChinese)}
-                                  className="p-0.5 bg-pink-50 hover:bg-pink-100 border border-gray-300 rounded cursor-pointer"
+                                  className="p-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 border border-slate-300 dark:border-slate-700 rounded cursor-pointer"
                                 >
-                                  {renderAudioIcon('w-3 h-3 text-[#1f2937]')}
+                                  {renderAudioIcon('w-3 h-3 text-slate-700 dark:text-slate-300')}
                                 </button>
                               </p>
-                              <p className="text-[10px] text-gray-400 font-bold font-mono">{item.namePinyin}</p>
+                              <p className="text-[10px] text-slate-400 font-bold font-mono">{item.namePinyin}</p>
                             </div>
                           </div>
 

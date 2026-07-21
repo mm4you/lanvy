@@ -227,10 +227,10 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   };
 
   return (
-    <div className="fixed bottom-2 left-0 right-0 z-40 select-none pointer-events-none w-full h-32 overflow-visible">
+    <div className="fixed bottom-18 md:bottom-2 left-0 right-0 z-30 select-none pointer-events-none w-full h-32 overflow-visible">
       {/* Container di chuyển mượt khắp màn hình */}
       <div 
-        className="absolute bottom-2 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
+        className="absolute bottom-0 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
         style={{ left: `${posX}px` }}
       >
         {/* POPUP TRÒ CHUYỆN PIXEL 2D */}

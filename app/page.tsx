@@ -2811,7 +2811,7 @@ export default function Home() {
 
       {/* THANH ĐIỀU HƯỚNG DÀNH RIÊNG CHO MOBILE (BOTTOM DOCK CAPSULE) */}
       {user && (
-        <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-full shadow-xl p-1.5 flex items-center justify-around md:hidden transition-all">
+        <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-full shadow-xl p-1.5 flex items-center justify-around md:hidden transition-all pointer-events-auto">
           <button
             onClick={() => { setActiveTab('studio'); playSfx('click'); }}
             className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${

@@ -56,18 +56,18 @@ function renderCoinIcon(className = 'w-4 h-4 text-amber-500 inline mr-1') {
   );
 }
 
-function renderSunIcon(className = 'w-4 h-4 text-amber-500') {
+function renderSunIcon(className = 'w-5 h-5 text-yellow-400') {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
     </svg>
   );
 }
 
-function renderMoonIcon(className = 'w-4 h-4 text-indigo-400') {
+function renderMoonIcon(className = 'w-5 h-5 text-slate-600 dark:text-slate-300') {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
     </svg>
   );
 }
@@ -1531,27 +1531,22 @@ export default function Home() {
                   {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
 
-                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI NGUYÊN BẢN THEO CHUẨN IELTS VOCAB */}
+                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CHUẨN 100% THEO CHUẨN SỐC IELTS VOCAB */}
                 <button
                   type="button"
+                  aria-label="Toggle dark mode"
                   onClick={toggleDarkMode}
-                  className={`px-3 py-1.5 rounded-xl border font-mono font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-xs shrink-0 ${
-                    isDarkMode
-                      ? 'bg-slate-800 hover:bg-slate-700 text-indigo-300 border-slate-700'
-                      : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'
-                  }`}
-                  title={isDarkMode ? 'Đang Ban Đêm (Bấm để sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để sang Ban Đêm)'}
+                  className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                  title={isDarkMode ? 'Đang Ban Đêm (Bấm để chuyển sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để chuyển sang Ban Đêm)'}
                 >
                   {isDarkMode ? (
-                    <>
-                      {renderMoonIcon('w-4 h-4 text-indigo-400')}
-                      <span>Tối</span>
-                    </>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-yellow-400">
+                      <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
+                    </svg>
                   ) : (
-                    <>
-                      {renderSunIcon('w-4 h-4 text-amber-500')}
-                      <span>Sáng</span>
-                    </>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-slate-600 dark:text-slate-300">
+                      <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
+                    </svg>
                   )}
                 </button>
 

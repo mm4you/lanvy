@@ -412,27 +412,27 @@ export const PixelPet: React.FC<PixelPetProps> = ({
             </div>
 
             {/* TAB SELECTOR */}
-            <div className="grid grid-cols-3 gap-1 bg-amber-100 dark:bg-slate-800 p-1 rounded-xl border border-[#1f2937] dark:border-slate-700">
+            <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
               <button
                 onClick={() => setShopTab('food')}
-                className={`py-1 text-[11px] font-black rounded-lg transition ${
-                  shopTab === 'food' ? 'bg-amber-400 text-amber-950 shadow' : 'text-gray-700 dark:text-slate-300'
+                className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                  shopTab === 'food' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
                 Thức Ăn HSK
               </button>
               <button
                 onClick={() => setShopTab('pet')}
-                className={`py-1 text-[11px] font-black rounded-lg transition ${
-                  shopTab === 'pet' ? 'bg-rose-500 text-white shadow' : 'text-gray-700 dark:text-slate-300'
+                className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                  shopTab === 'pet' ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
                 Đổi Pet 2D
               </button>
               <button
                 onClick={() => setShopTab('voucher')}
-                className={`py-1 text-[11px] font-black rounded-lg transition ${
-                  shopTab === 'voucher' ? 'bg-indigo-600 text-white shadow' : 'text-gray-700 dark:text-slate-300'
+                className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                  shopTab === 'voucher' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
                 {voucherTabTitle}
@@ -447,13 +447,13 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                     <button
                       key={food.id}
                       onClick={() => handleFeedPet(food)}
-                      className="w-full p-2.5 bg-white dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 border-2 border-[#1f2937] dark:border-slate-600 rounded-2xl text-left flex justify-between items-center text-xs font-bold shadow-[2px_2px_0px_#1f2937] transition cursor-pointer"
+                      className="w-full p-3 bg-slate-50 dark:bg-slate-800/90 hover:bg-amber-50 dark:hover:bg-slate-700/90 border border-slate-200 dark:border-slate-700 rounded-2xl text-left flex justify-between items-center text-xs font-bold transition-all shadow-xs cursor-pointer"
                     >
                       <div>
-                        <div className="font-black text-xs sm:text-sm text-gray-800 dark:text-slate-100">{food.name}</div>
-                        <div className="text-[10px] text-gray-500 dark:text-slate-400 font-normal">Thưởng thoại tiếng Trung & +50 XP</div>
+                        <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100">{food.name}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Thưởng thoại tiếng Trung & +50 XP</div>
                       </div>
-                      <span className="text-xs bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full font-mono font-black border border-[#1f2937]">
+                      <span className="text-xs bg-amber-400 text-amber-950 px-2.5 py-0.5 rounded-full font-mono font-bold border border-amber-300">
                         {food.price} Xu
                       </span>
                     </button>
@@ -470,27 +470,27 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                     return (
                       <div
                         key={pet.id}
-                        className="p-2.5 bg-white dark:bg-slate-800 border-2 border-[#1f2937] dark:border-slate-600 rounded-2xl flex justify-between items-center text-xs shadow-[2px_2px_0px_#1f2937]"
+                        className="p-3 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl flex justify-between items-center text-xs shadow-xs"
                       >
                         <div>
-                          <div className="font-black text-xs sm:text-sm text-gray-800 dark:text-slate-100">{pet.name}</div>
-                          <div className="text-[10px] text-gray-500 dark:text-slate-400">{pet.desc}</div>
+                          <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100">{pet.name}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400">{pet.desc}</div>
                         </div>
                         {isSelected ? (
-                          <span className="text-[10px] bg-emerald-500 text-white font-black px-2.5 py-1 rounded-full border border-emerald-700">
+                          <span className="text-[10px] bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-full border border-emerald-600">
                             Đang Dùng
                           </span>
                         ) : isUnlocked ? (
                           <button
                             onClick={() => handleUnlockPet(pet)}
-                            className="text-[10px] bg-amber-400 text-amber-950 hover:bg-amber-500 font-black px-2.5 py-1 rounded-full border border-[#1f2937] cursor-pointer"
+                            className="text-[10px] bg-amber-400 text-amber-950 hover:bg-amber-500 font-bold px-2.5 py-1 rounded-full border border-amber-300 cursor-pointer"
                           >
                             Sử Dụng
                           </button>
                         ) : (
                           <button
                             onClick={() => handleUnlockPet(pet)}
-                            className="text-[10px] bg-rose-500 text-white hover:bg-rose-600 font-black px-2.5 py-1 rounded-full border border-rose-700 cursor-pointer flex items-center gap-1"
+                            className="text-[10px] bg-rose-500 text-white hover:bg-rose-600 font-bold px-2.5 py-1 rounded-full border border-rose-600 cursor-pointer flex items-center gap-1"
                           >
                             Mở Khóa ({pet.price} Xu)
                           </button>
@@ -509,20 +509,20 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                     return (
                       <div
                         key={v.id}
-                        className="p-2.5 bg-white dark:bg-slate-800 border-2 border-[#1f2937] dark:border-slate-600 rounded-2xl flex justify-between items-center text-xs shadow-[2px_2px_0px_#1f2937]"
+                        className="p-3 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl flex justify-between items-center text-xs shadow-xs"
                       >
                         <div>
-                          <div className="font-black text-xs sm:text-sm text-indigo-600 dark:text-indigo-400">{v.name}</div>
-                          <div className="text-[10px] text-gray-500 dark:text-slate-400">{v.desc}</div>
+                          <div className="font-bold text-xs sm:text-sm text-indigo-600 dark:text-indigo-400">{v.name}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400">{v.desc}</div>
                         </div>
                         {isBought ? (
-                          <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-black px-2.5 py-1 rounded-full border border-indigo-300">
+                          <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-300">
                             Đã Sở Hữu
                           </span>
                         ) : (
                           <button
                             onClick={() => handleBuyVoucher(v)}
-                            className="text-[10px] bg-indigo-600 text-white hover:bg-indigo-700 font-black px-2.5 py-1 rounded-full border border-indigo-900 cursor-pointer"
+                            className="text-[10px] bg-indigo-600 text-white hover:bg-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-700 cursor-pointer"
                           >
                             Đổi ({v.price} Xu)
                           </button>

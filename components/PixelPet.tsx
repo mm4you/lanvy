@@ -64,6 +64,13 @@ const VOUCHER_ITEMS_GENERAL = [
   { id: 'v_giftbox', name: 'Voucher Hộp Quà Bí Mật HSK', price: 100, desc: 'Thưởng ngẫu nhiên 200 Xu & 3 Thức ăn Thú cưng' }
 ];
 
+const PET_ACCESSORIES = [
+  { id: 'hat', name: 'Mũ Rơm Du Lịch', price: 25, desc: 'Chiếc mũ rơm che nắng xinh xắn' },
+  { id: 'glasses', name: 'Kính Tròn Học Giả', price: 35, desc: 'Kính mắt tròn tri thức cho Pet' },
+  { id: 'bow', name: 'Vòng Cổ Nơ Hồng', price: 20, desc: 'Nơ hồng xinh xắn trên cổ Pet' },
+  { id: 'balloon', name: 'Bong Bóng Trái Tim', price: 40, desc: 'Bong bóng trái tim bay theo sau' }
+];
+
 export const PixelPet: React.FC<PixelPetProps> = ({
   coins = 100,
   setCoins,
@@ -82,13 +89,26 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [isSleeping, setIsSleeping] = useState(false);
   const [isJumping, setIsJumping] = useState(false);
   const [isEating, setIsEating] = useState(false);
+  
+  // TAMAGOTCHI MOOD BARS
+  const [hunger, setHunger] = useState(85);
+  const [happiness, setHappiness] = useState(90);
+  const [energy, setEnergy] = useState(80);
+
+  // ACCESSORIES & EVOLUTION STAGE
+  const [equippedAccessory, setEquippedAccessory] = useState<string>('none');
+  const [unlockedAccessories, setUnlockedAccessories] = useState<string[]>([]);
+
+  // EVOLUTION STAGE: 1 = Baby, 2 = Student (Backpack & Scarf), 3 = Master (Sunglasses & Crown)
+  const petStage = coins >= 300 ? 3 : coins >= 100 ? 2 : 1;
+
   const [internalShowShop, setInternalShowShop] = useState(false);
   const showShop = externalShowShop !== undefined ? externalShowShop : internalShowShop;
   const setShowShop = (val: boolean) => {
     setInternalShowShop(val);
     if (onToggleShop) onToggleShop(val);
   };
-  const [shopTab, setShopTab] = useState<'food' | 'pet' | 'voucher'>('food');
+  const [shopTab, setShopTab] = useState<'food' | 'pet' | 'accessory' | 'voucher'>('food');
   const [purchasedVouchers, setPurchasedVouchers] = useState<string[]>([]);
 
   const activeVoucherList = isVy 
@@ -412,30 +432,38 @@ export const PixelPet: React.FC<PixelPetProps> = ({
             </div>
 
             {/* TAB SELECTOR */}
-            <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
               <button
                 onClick={() => setShopTab('food')}
-                className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                className={`py-1 text-[10px] sm:text-[11px] font-bold rounded-lg transition cursor-pointer ${
                   shopTab === 'food' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
-                Thức Ăn HSK
+                Thức Ăn
               </button>
               <button
                 onClick={() => setShopTab('pet')}
-                className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                className={`py-1 text-[10px] sm:text-[11px] font-bold rounded-lg transition cursor-pointer ${
                   shopTab === 'pet' ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
-                Đổi Pet 2D
+                Đổi Pet
+              </button>
+              <button
+                onClick={() => setShopTab('accessory')}
+                className={`py-1 text-[10px] sm:text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                  shopTab === 'accessory' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                Phụ Kiện
               </button>
               <button
                 onClick={() => setShopTab('voucher')}
-                className={`py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                className={`py-1 text-[10px] sm:text-[11px] font-bold rounded-lg transition cursor-pointer ${
                   shopTab === 'voucher' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
-                {voucherTabTitle}
+                Voucher
               </button>
             </div>
 
@@ -458,6 +486,57 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                       </span>
                     </button>
                   ))}
+                </>
+              )}
+
+              {shopTab === 'accessory' && (
+                <>
+                  {PET_ACCESSORIES.map(acc => {
+                    const isUnlocked = unlockedAccessories.includes(acc.id);
+                    const isEquipped = equippedAccessory === acc.id;
+
+                    return (
+                      <div
+                        key={acc.id}
+                        className="p-3 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl flex justify-between items-center text-xs shadow-xs"
+                      >
+                        <div>
+                          <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100">{acc.name}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400">{acc.desc}</div>
+                        </div>
+                        {isEquipped ? (
+                          <button
+                            onClick={() => setEquippedAccessory('none')}
+                            className="text-[10px] bg-slate-700 text-white font-bold px-2.5 py-1 rounded-full border border-slate-600 cursor-pointer"
+                          >
+                            Tháo Ra
+                          </button>
+                        ) : isUnlocked ? (
+                          <button
+                            onClick={() => setEquippedAccessory(acc.id)}
+                            className="text-[10px] bg-purple-600 text-white font-bold px-2.5 py-1 rounded-full border border-purple-700 cursor-pointer"
+                          >
+                            Trang Bị
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              if (coins < acc.price) {
+                                alert(`Cần ${acc.price} Xu để mua ${acc.name}!`);
+                                return;
+                              }
+                              if (setCoins) setCoins(coins - acc.price);
+                              setUnlockedAccessories(prev => [...prev, acc.id]);
+                              setEquippedAccessory(acc.id);
+                            }}
+                            className="text-[10px] bg-amber-400 text-amber-950 font-bold px-2.5 py-1 rounded-full border border-amber-300 cursor-pointer"
+                          >
+                            Mua ({acc.price} Xu)
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </>
               )}
 

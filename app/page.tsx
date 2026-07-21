@@ -2819,12 +2819,16 @@ export default function Home() {
         />
       )}
 
-      {/* THANH ĐIỀU HƯỚNG DÀNH RIÊNG CHO MOBILE (BOTTOM DOCK CAPSULE) */}
+      {/* THANH ĐIỀU HƯỚNG DÀNH RIÊNG CHO MOBILE (BOTTOM DOCK CAPSULE VỚI ACTIVE GRADIENT INDICATOR & HAPTIC) */}
       {user && (
-        <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-full shadow-xl p-1.5 flex items-center justify-around md:hidden transition-all pointer-events-auto">
+        <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-full shadow-xl p-1.5 flex items-center justify-around md:hidden transition-all pointer-events-auto relative overflow-hidden">
           <button
-            onClick={() => { setActiveTab('studio'); playSfx('click'); }}
-            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+            onClick={() => {
+              setActiveTab('studio');
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
               activeTab === 'studio' 
                 ? 'bg-rose-500 text-white font-bold shadow-xs' 
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -2835,8 +2839,12 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
-            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+            onClick={() => {
+              setActiveTab('quiz');
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
               activeTab === 'quiz' 
                 ? 'bg-rose-500 text-white font-bold shadow-xs' 
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -2847,8 +2855,12 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => { setActiveTab('room'); playSfx('click'); }}
-            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+            onClick={() => {
+              setActiveTab('room');
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
               activeTab === 'room' 
                 ? 'bg-rose-500 text-white font-bold shadow-xs' 
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -2859,42 +2871,40 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => { setShowPetShopModal(true); playSfx('click'); }}
-            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
-              showPetShopModal 
-                ? 'bg-amber-500 text-white font-bold shadow-xs' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-            }`}
+            onClick={() => {
+              setShowPetShopModal(true);
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className="flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
           >
-            {renderShoppingBagIcon(showPetShopModal ? 'w-4 h-4 text-white' : 'w-4 h-4 text-amber-500')}
+            {renderShoppingBagIcon('w-4 h-4 text-amber-500')}
             <span className="text-[10px] font-bold mt-0.5">Shop</span>
           </button>
 
           <button
-            onClick={() => { setActiveTab('love'); playSfx('click'); }}
-            className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
+            onClick={() => {
+              setActiveTab('love');
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer z-10 ${
               activeTab === 'love' 
                 ? 'bg-rose-500 text-white font-bold shadow-xs' 
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
-            {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+            {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
             <span className="text-[10px] font-bold mt-0.5">Voucher</span>
           </button>
 
-          {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
-            <button
-              onClick={() => { setActiveTab('admin'); fetchAdminLogs(); playSfx('click'); }}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-all cursor-pointer ${
-                activeTab === 'admin' 
-                  ? 'bg-purple-600 text-white font-bold shadow-xs' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-              }`}
-            >
-              {renderAIIcon(activeTab === 'admin' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
-              <span className="text-[10px] font-bold mt-0.5">Admin</span>
-            </button>
-          )}
+          {/* VỆT SÁNG ACTIVE INDICATOR SLIDING GRADIENT BAR */}
+          <div 
+            className="absolute bottom-0 h-0.5 bg-gradient-to-r from-amber-400 via-rose-500 to-amber-400 rounded-full transition-all duration-300 w-10 shadow-xs"
+            style={{
+              left: activeTab === 'studio' ? '8%' : activeTab === 'quiz' ? '28%' : activeTab === 'room' ? '48%' : activeTab === 'love' ? '86%' : '67%'
+            }}
+          />
         </nav>
       )}
 

@@ -62,6 +62,7 @@ export default function FlashcardViewer({
 
   const handleNext = () => {
     playSfx('flip');
+    if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
     setIsFlipped(false);
     if (activeDeck.length === 0) return;
 
@@ -76,6 +77,7 @@ export default function FlashcardViewer({
 
   const handlePrev = () => {
     playSfx('flip');
+    if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
     setIsFlipped(false);
     if (activeDeck.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + activeDeck.length) % activeDeck.length);

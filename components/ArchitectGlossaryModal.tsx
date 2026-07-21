@@ -50,7 +50,7 @@ export function ArchitectGlossaryModal({
                 Sổ Tay Thuật Ngữ Kiến Trúc & Vật Liệu HSK
                 <span className="text-[10px] bg-rose-500 text-white px-2 py-0.5 rounded-full font-sans uppercase">Pro Designer</span>
               </h2>
-              <p className="text-xs text-gray-600 dark:text-slate-400 font-bold">
+              <p className="text-xs text-slate-800 dark:text-slate-200 font-bold">
                 Tra cứu chuẩn specs vật liệu gỗ, đá, kính, quy cách thi công & bản vẽ CAD bằng tiếng Trung cho Vy
               </p>
             </div>
@@ -67,7 +67,7 @@ export function ArchitectGlossaryModal({
         <div className="p-3 sm:p-4 bg-white dark:bg-slate-850 border-b-2 border-[#1f2937] dark:border-slate-700 space-y-3 shrink-0">
           {/* SEARCH INPUT */}
           <div className="flex items-center bg-[#fff5f6] dark:bg-slate-800 border-2 border-[#1f2937] dark:border-slate-700 rounded-xl px-3 py-1.5 shadow-[2px_2px_0px_#1f2937]">
-            <svg className="w-4 h-4 text-gray-500 dark:text-slate-400 mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-4 h-4 text-slate-700 dark:text-slate-200 mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
@@ -75,10 +75,10 @@ export function ArchitectGlossaryModal({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Nhập tên vật liệu, tiếng Trung, pinyin hoặc quy cách..."
-              className="w-full bg-transparent text-xs font-bold focus:outline-none text-[#1f2937] dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500"
+              className="w-full bg-transparent text-xs font-bold focus:outline-none text-[#1f2937] dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="text-xs font-black text-gray-400 hover:text-gray-600">✕</button>
+              <button onClick={() => setSearchQuery('')} className="text-xs font-black text-slate-600 hover:text-slate-900">✕</button>
             )}
           </div>
 
@@ -89,7 +89,7 @@ export function ArchitectGlossaryModal({
               className={`px-3 py-1 rounded-lg border-2 text-xs font-black whitespace-nowrap transition cursor-pointer ${
                 selectedCat === 'all'
                   ? 'bg-rose-500 text-white border-rose-700 shadow-[2px_2px_0px_#1f2937] translate-y-0.5'
-                  : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 border-[#1f2937] dark:border-slate-700 hover:bg-rose-50'
+                  : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-[#1f2937] dark:border-slate-700 hover:bg-rose-50'
               }`}
             >
               Tất Cả ({ARCHITECT_TERMS.length})
@@ -101,7 +101,7 @@ export function ArchitectGlossaryModal({
                 className={`px-3 py-1 rounded-lg border-2 border-[#1f2937] dark:border-slate-700 text-xs font-black whitespace-nowrap transition cursor-pointer ${
                   selectedCat === cat.id
                     ? 'bg-amber-400 text-[#1f2937] shadow-[2px_2px_0px_#1f2937] translate-y-0.5'
-                    : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-100'
+                    : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-gray-100'
                 }`}
               >
                 {cat.label}
@@ -113,7 +113,7 @@ export function ArchitectGlossaryModal({
         {/* MAIN LIST CONTENT */}
         <div className="p-4 overflow-y-auto flex-1 space-y-4">
           {filteredTerms.length === 0 ? (
-            <div className="text-center py-12 text-gray-500 dark:text-slate-400 font-bold text-sm">
+            <div className="text-center py-12 text-slate-800 dark:text-slate-200 font-bold text-sm">
               Không tìm thấy vật liệu hoặc thuật ngữ kiến trúc phù hợp.
             </div>
           ) : (
@@ -142,12 +142,12 @@ export function ArchitectGlossaryModal({
                     </div>
                     <h3 className="text-base font-serif font-black text-rose-600 dark:text-rose-400 flex items-baseline gap-2">
                       {term.nameChinese}
-                      <span className="text-xs font-mono text-gray-500 dark:text-slate-400 font-bold">({term.namePinyin})</span>
+                      <span className="text-xs font-mono text-slate-800 dark:text-slate-200 font-bold">({term.namePinyin})</span>
                     </h3>
                     <p className="text-xs font-black text-[#1f2937] dark:text-slate-100">{term.nameVietnamese}</p>
                   </div>
 
-                  <div className="p-2.5 bg-amber-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-xl text-xs font-bold text-gray-700 dark:text-slate-300 space-y-1">
+                  <div className="p-2.5 bg-amber-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-slate-100 space-y-1">
                     <div className="text-[11px] font-black text-amber-900 dark:text-amber-400 flex items-center gap-1">
                       🛠️ Quy cách & Đơn giá thi công:
                     </div>

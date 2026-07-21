@@ -541,10 +541,10 @@ export default function BlueprintQuiz({
                 {renderBookOpenIcon('w-5 h-5 text-rose-500')}
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
                   Bản Vẽ Thử Thách HSK
                 </span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
                   {'category' in currentQuestion.item ? 'Chủ đề: Nội Thất Pixel' : 'Chủ đề: Từ Vựng HSK'}
                 </p>
               </div>
@@ -622,10 +622,10 @@ export default function BlueprintQuiz({
                 <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
                   Chữ Hán: <span className="text-rose-600 dark:text-rose-400 text-base">{currentQuestion.chinese}</span>
                 </p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-xs font-extrabold text-slate-800 dark:text-slate-200 mt-1">
                   Phiên âm Pinyin: <span className="text-blue-600 dark:text-blue-400">{currentQuestion.pinyin}</span>
                 </p>
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-300 mt-0.5">
+                <p className="text-xs font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">
                   Nghĩa tiếng Việt: <span>{currentQuestion.translation}</span>
                 </p>
               </div>

@@ -184,7 +184,7 @@ export function VoiceRoastModal({
 
         <div className="mt-4 p-4 bg-white dark:bg-slate-800 border-2 border-[#1f2937] dark:border-slate-700 rounded-2xl shadow-[2px_2px_0px_#1f2937]">
           <h2 className="text-3xl font-serif font-black text-rose-600 dark:text-rose-400 mb-1">{wordChinese}</h2>
-          <p className="text-xs font-mono font-bold text-gray-500 dark:text-slate-400 mb-1">{wordPinyin}</p>
+          <p className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 mb-1">{wordPinyin}</p>
           <p className="text-xs font-black text-amber-900 dark:text-amber-300">Nghĩa: {wordVietnamese}</p>
         </div>
 
@@ -199,7 +199,7 @@ export function VoiceRoastModal({
           >
             {renderMicSVG('w-8 h-8')}
           </button>
-          <span className="text-xs font-black text-gray-600 dark:text-slate-400 mt-2">
+          <span className="text-xs font-black text-slate-800 dark:text-slate-200 mt-2">
             {isRecording ? 'Đang thu âm... Bấm để dừng' : 'Bấm Micro để luyện đọc'}
           </span>
         </div>

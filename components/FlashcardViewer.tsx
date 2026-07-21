@@ -118,18 +118,18 @@ export default function FlashcardViewer({
         </div>
         <div className="space-y-1">
           <h2 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">Hoàn Thành Thẻ Học HSK!</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">
+          <p className="text-xs text-slate-800 dark:text-slate-400 font-bold">
             Bạn vừa hoàn thành bộ {activeDeck.length} từ vựng và nhận thưởng <span className="text-amber-500 font-bold">+20 Xu</span>!
           </p>
         </div>
 
-        <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex justify-around text-xs font-bold">
+        <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl flex justify-around text-xs font-bold">
           <div>
-            <p className="text-slate-400">Tổng từ bộ này</p>
+            <p className="text-slate-700 dark:text-slate-300 font-bold">Tổng từ bộ này</p>
             <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{activeDeck.length}</p>
           </div>
           <div>
-            <p className="text-slate-400">Từ đã thuộc</p>
+            <p className="text-slate-700 dark:text-slate-300 font-bold">Từ đã thuộc</p>
             <p className="text-lg font-bold text-emerald-500">{masteredIds.length}</p>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function FlashcardViewer({
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-xs space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Bộ từ:</span>
+            <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">Bộ từ:</span>
             <select
               value={deckSize}
               onChange={(e) => {
@@ -162,7 +162,7 @@ export default function FlashcardViewer({
                 setIsSessionCompleted(false);
                 playSfx('click');
               }}
-              className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded-xl font-mono font-bold text-xs cursor-pointer focus:outline-none"
+              className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded-xl font-mono font-bold text-xs cursor-pointer focus:outline-none"
             >
               <option value={5}>5 từ vựng (Học nhanh)</option>
               <option value={10}>10 từ vựng (Ôn tập vừa)</option>
@@ -172,7 +172,7 @@ export default function FlashcardViewer({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">HSK:</span>
+            <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">HSK:</span>
             <div className="flex gap-1">
               {['all', 1, 2, 3].map((lvl) => (
                 <button
@@ -188,7 +188,7 @@ export default function FlashcardViewer({
                   className={`px-2 py-0.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
                     selectedHsk === lvl
                       ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
                   }`}
                 >
                   {lvl === 'all' ? 'Tất cả' : `H${lvl}`}
@@ -199,7 +199,7 @@ export default function FlashcardViewer({
         </div>
 
         <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs">
-          <label className="flex items-center gap-1.5 cursor-pointer font-bold text-slate-600 dark:text-slate-400 select-none">
+          <label className="flex items-center gap-1.5 cursor-pointer font-extrabold text-slate-800 dark:text-slate-200 select-none">
             <input
               type="checkbox"
               checked={autoPlayAudio}
@@ -209,7 +209,7 @@ export default function FlashcardViewer({
             Tự động đọc tiếng Trung
           </label>
 
-          <span className="font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-lg">
+          <span className="font-mono font-bold text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-slate-800 px-2.5 py-0.5 rounded-lg">
             Thẻ {currentIndex + 1} / {activeDeck.length}
           </span>
         </div>
@@ -244,53 +244,59 @@ export default function FlashcardViewer({
                 className="p-2.5 bg-rose-50 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-slate-700 text-rose-600 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-slate-700 cursor-pointer transition-all active:scale-95"
                 title="Nghe phát âm tiếng Trung"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                </svg>
+                🔊
               </button>
             </div>
 
-            <div className="space-y-2 my-auto">
-              <h2 className="text-6xl font-serif font-bold text-rose-600 dark:text-rose-400 tracking-wide">
+            <div className="space-y-2">
+              <h3 className="text-5xl font-serif font-black text-slate-900 dark:text-slate-100 tracking-wide">
                 {cleanString(currentItem.nameChinese)}
-              </h2>
-              <p className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">
+              </h3>
+              <p className="text-lg font-mono font-bold text-rose-600 dark:text-rose-400">
                 [{cleanString(currentItem.namePinyin)}]
               </p>
             </div>
 
-            <div className="text-xs text-slate-400 dark:text-slate-500 font-bold animate-pulse">
+            <div className="text-xs text-slate-600 dark:text-slate-300 font-bold animate-pulse">
               Bấm vào thẻ để lật xem nghĩa & ví dụ ↺
             </div>
           </div>
 
-          {/* MẶT SAU (NGHĨA TIẾNG VIỆT & VÍ DỤ) */}
-          <div className="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900 dark:bg-slate-950 text-white border-2 border-slate-700 rounded-3xl p-6 shadow-md flex flex-col justify-between text-left">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <span className="text-sm font-serif font-bold text-rose-400">
-                {cleanString(currentItem.nameChinese)} [{cleanString(currentItem.namePinyin)}]
+          {/* MẶT SAU (NGHĨA VIỆT & VÍ DỤ CÂU) */}
+          <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-3xl p-6 shadow-md flex flex-col justify-between items-center text-center">
+            <div className="w-full flex justify-between items-center">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Nghĩa tiếng Việt</span>
+              <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+                Chủ đề: {currentItem.theme || 'HSK'}
               </span>
-              <span className="text-xs font-bold text-slate-400">Nghĩa tiếng Việt</span>
             </div>
 
             <div className="space-y-3 my-auto">
-              <h3 className="text-2xl font-bold text-emerald-400">
+              <h4 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                 {cleanString(currentItem.nameVietnamese)}
-              </h3>
+              </h4>
 
               {currentItem.exampleChinese && (
-                <div className="p-3 bg-slate-800/80 border border-slate-700 rounded-2xl space-y-1 text-xs">
-                  <p className="font-bold text-slate-200">
-                    <span className="text-rose-400">Ví dụ:</span> {currentItem.exampleChinese}
+                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 space-y-1 max-w-md mx-auto">
+                  <p className="font-serif font-bold text-sm text-slate-900 dark:text-slate-100">
+                    {currentItem.exampleChinese}
                   </p>
-                  <p className="italic text-blue-300">{currentItem.examplePinyin}</p>
-                  <p className="font-bold text-slate-400">{currentItem.exampleVietnamese}</p>
+                  {currentItem.examplePinyin && (
+                    <p className="text-xs font-mono text-rose-500 font-bold">
+                      {currentItem.examplePinyin}
+                    </p>
+                  )}
+                  {currentItem.exampleVietnamese && (
+                    <p className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                      {currentItem.exampleVietnamese}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
 
-            <div className="text-[11px] text-slate-400 text-center font-bold">
-              Bấm vào thẻ để lật lại mặt trước ↺
+            <div className="text-[11px] text-slate-700 dark:text-slate-300 text-center font-bold">
+              Bấm thẻ để xoay lại ↺
             </div>
           </div>
         </div>

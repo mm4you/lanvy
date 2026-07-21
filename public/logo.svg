@@ -1,18 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <!-- KHÔNG ĐÓNG KHUNG NỀN - THIẾT KẾ KHÔNG VIỀN TỐI GIẢN HIỆN ĐẠI -->
-  
-  <!-- BIỂU TƯỢNG CHỮ HÁN "漢" HIỆN ĐẠI & THÉP VÀNG -->
-  <g transform="translate(128, 115)">
-    <!-- Chữ Hán HSK màu đen thẫm sang trọng -->
-    <text x="0" y="38" font-family="'Space Grotesk', 'Fraunces', serif" font-weight="900" font-size="120" fill="#1f2937" text-anchor="middle">漢</text>
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#fb7185" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+
+  <!-- ICON CONTAINER SLIGHT SOFT GLOW WITHOUT HEAVY BOX -->
+  <g transform="translate(128, 110)">
+    <!-- Stylized Modern HSK Chinese Character -->
+    <text x="0" y="32" font-family="'Inter', 'Space Grotesk', system-ui, sans-serif" font-weight="900" font-size="115" fill="#0f172a" text-anchor="middle">漢</text>
   </g>
 
-  <!-- TRÁI TIM PIXEL & NGÔI SAO LẤP LÁNH HIỆN ĐẠI GÓC TRÊN -->
-  <path d="M185 40 C177 28, 160 28, 160 40 C160 52, 185 70, 185 70 C185 70, 210 52, 210 40 C210 28, 193 28, 185 40 Z" fill="#f43f5e" />
+  <!-- Glowing Heart Top Accent -->
+  <path d="M182 36 C174 24, 157 24, 157 36 C157 48, 182 66, 182 66 C182 66, 207 48, 207 36 C207 24, 190 24, 182 36 Z" fill="url(#logoGrad)" />
   
-  <!-- ĐẤU CHẤM VÀNG KIM TINH TẾ -->
-  <circle cx="215" cy="180" r="14" fill="#facc15" />
+  <!-- Architectural Golden Star / Sparkle Accent -->
+  <path d="M210 160 L214 172 L226 176 L214 180 L210 192 L206 180 L194 176 L206 172 Z" fill="url(#goldGrad)" />
 
-  <!-- DÒNG CHỮ PHỤ ATELIER HSK KHÔNG KHUNG -->
-  <text x="128" y="228" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="22" fill="#1f2937" text-anchor="middle" letter-spacing="3">ATELIER HSK</text>
+  <!-- Modern Clean Typography Below -->
+  <text x="128" y="226" font-family="'Inter', 'Space Grotesk', sans-serif" font-weight="800" font-size="20" fill="#0f172a" text-anchor="middle" letter-spacing="4">ATELIER HSK</text>
 </svg>

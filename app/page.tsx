@@ -724,61 +724,64 @@ export default function Home() {
         playTone(300, now, 0.04, 0.06, 'sine');
         playTone(600, now + 0.04, 0.08, 0.06, 'sine');
       } else if (type === 'meow') {
-        // Tiếng mèo kêu Meow Meow tự nhiên qua SpeechSynthesis
-        try {
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance('Meow, meow');
-            u.pitch = 1.8;
-            u.rate = 1.3;
-            u.volume = 0.7;
-            window.speechSynthesis.speak(u);
-            return;
-          }
-        } catch (e) {}
-        playTone(600, now, 0.08, 0.05, 'sine');
+        // Tiếng mèo kêu Meow Pixel ngọt ngào với pitch glide 2 bước
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(650, now);
+        osc.frequency.exponentialRampToValueAtTime(980, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(720, now + 0.32);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.09, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
       } else if (type === 'bark') {
-        // Tiếng chó sủa Woof Woof tự nhiên
-        try {
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance('Woof woof');
-            u.pitch = 0.9;
-            u.rate = 1.4;
-            u.volume = 0.7;
-            window.speechSynthesis.speak(u);
-            return;
-          }
-        } catch (e) {}
-        playTone(350, now, 0.06, 0.05, 'triangle');
+        // Tiếng chó Shiba sủa gâu gâu lanh lảnh (2 tiếng sủa nhịp nhàng)
+        [0, 0.12].forEach((offset) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(460, now + offset);
+          osc.frequency.exponentialRampToValueAtTime(180, now + offset + 0.08);
+          gain.gain.setValueAtTime(0.1, now + offset);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.09);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + offset);
+          osc.stop(now + offset + 0.09);
+        });
       } else if (type === 'squeak') {
-        // Tiếng thỏ chíp chíp
-        try {
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance('Chirp chirp');
-            u.pitch = 2.0;
-            u.rate = 1.5;
-            u.volume = 0.6;
-            window.speechSynthesis.speak(u);
-            return;
-          }
-        } catch (e) {}
-        playTone(1300, now, 0.05, 0.05, 'sine');
+        // Tiếng thỏ chíp chíp cao & đáng yêu
+        [0, 0.09].forEach((offset) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1400, now + offset);
+          osc.frequency.exponentialRampToValueAtTime(1900, now + offset + 0.05);
+          gain.gain.setValueAtTime(0.08, now + offset);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.07);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + offset);
+          osc.stop(now + offset + 0.07);
+        });
       } else if (type === 'grunt') {
-        // Tiếng gấu trúc nhai lá măng
-        try {
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance('Yum yum');
-            u.pitch = 0.8;
-            u.rate = 1.2;
-            u.volume = 0.6;
-            window.speechSynthesis.speak(u);
-            return;
-          }
-        } catch (e) {}
-        playTone(160, now, 0.08, 0.07, 'triangle');
+        // Tiếng gấu trúc nhai lá trúc / ủn ỉn ấm áp
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(260, now + 0.08);
+        osc.frequency.exponentialRampToValueAtTime(140, now + 0.2);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.22);
       } else if (type === 'success') {
         playTone(523.25, now, 0.1, 0.08, 'square');
         playTone(659.25, now + 0.08, 0.1, 0.08, 'square');
@@ -1443,76 +1446,76 @@ export default function Home() {
           )}
         </div>
       ) : (
-        /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN (COPY 100% IELTS VOCAB DASHBOARD) */
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* HEADER TRANG CHỦ CHUẨN 100% NEO-BRUTALISM IELTS VOCAB */}
-          <header className={`border-4 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-all duration-300 ${
+        <div className="max-w-6xl mx-auto space-y-5">
+          {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
+          <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 backdrop-blur-md border shadow-sm ${
             isDarkMode 
-              ? 'bg-slate-900 text-slate-100 border-slate-700 shadow-[4px_4px_0_#020617]' 
-              : 'bg-white text-black border-black shadow-[4px_4px_0_#000]'
+              ? 'bg-slate-900/90 text-slate-100 border-slate-800' 
+              : 'bg-white/90 text-slate-900 border-slate-200/80'
           }`}>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-amber-400 border-4 border-black dark:border-slate-600 rounded-lg overflow-hidden flex items-center justify-center text-rose-600 shrink-0 shadow-[2px_2px_0_#000]">
-                {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                  renderClientAvatar('lan_vy', 'w-10 h-10')
-                ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                  renderClientAvatar('khang', 'w-10 h-10')
-                ) : (
-                  renderPaletteIcon('w-7 h-7')
-                )}
-              </div>
-              <div>
-                <h1 className={`text-lg sm:text-xl font-serif font-black flex items-center gap-2 ${
-                  isDarkMode ? 'text-slate-100' : 'text-black'
-                }`}>
-                  <img src="/logo.svg" alt="Logo" className="w-7 h-7 inline-block rounded-md border border-black shadow-[1px_1px_0_#000]" />
-                  Atelier Thiết Kế HSK
-                  {user.email?.toLowerCase() === LOVE_EMAIL && (
-                    <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-2 border-black dark:border-rose-700 px-2 py-0.5 rounded font-mono font-black uppercase tracking-wider flex items-center gap-1 shadow-[1px_1px_0_#000]">
-                      {renderHeartIcon('w-3 h-3 text-rose-500 fill-current')} Vy Của Khang
-                    </span>
-                  )}
-                  {user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
-                    <span className="text-[10px] bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-2 border-black dark:border-blue-700 px-2 py-0.5 rounded font-mono font-black uppercase tracking-wider flex items-center gap-1 shadow-[1px_1px_0_#000]">
-                      Khang Của Vy
-                    </span>
-                  )}
-                </h1>
-                <p className="text-xs text-gray-600 dark:text-slate-400 font-mono font-bold">
+            {/* THÀNH PHẦN TRÊN: LOGO, TÊN DỰ ÁN, CHỈ SỐ XU & CÁC NÚT THAO TÁC */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 bg-amber-400/20 dark:bg-amber-400/10 rounded-xl overflow-hidden flex items-center justify-center text-rose-600 shrink-0 border border-amber-300/40">
                   {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                    <>Bà chủ: <span className="text-rose-600 dark:text-rose-400">Lan Vy</span></>
+                    renderClientAvatar('lan_vy', 'w-10 h-10')
                   ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                    <>Ông chủ: <span className="text-blue-600 dark:text-blue-400">Nhựt Khang</span></>
+                    renderClientAvatar('khang', 'w-10 h-10')
                   ) : (
-                    <>Chủ tiệm: <span className="text-rose-600 dark:text-rose-400">{user.username}</span></>
-                  )}{' '}
-                  | Chào mừng trở lại!
-                </p>
+                    renderPaletteIcon('w-7 h-7')
+                  )}
+                </div>
+                <div>
+                  <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-100">
+                    <img src="/logo.svg" alt="Logo" className="w-8 h-8 inline-block object-contain" />
+                    Atelier Thiết Kế HSK
+                    {user.email?.toLowerCase() === LOVE_EMAIL && (
+                      <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider flex items-center gap-1">
+                        {renderHeartIcon('w-3 h-3 text-rose-500 fill-current')} Vy Của Khang
+                      </span>
+                    )}
+                    {user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
+                      <span className="text-[10px] bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider flex items-center gap-1">
+                        Khang Của Vy
+                      </span>
+                    )}
+                  </h1>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                    {user.email?.toLowerCase() === LOVE_EMAIL ? (
+                      <>Bà chủ: <span className="text-rose-600 dark:text-rose-400 font-bold">Lan Vy</span></>
+                    ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
+                      <>Ông chủ: <span className="text-blue-600 dark:text-blue-400 font-bold">Nhựt Khang</span></>
+                    ) : (
+                      <>Chủ tiệm: <span className="text-rose-600 dark:text-rose-400 font-bold">{user.username}</span></>
+                    )}{' '}
+                    | Chào mừng trở lại!
+                  </p>
+                </div>
               </div>
-            </div>
 
-            {/* Chỉ số tài khoản & Thao tác Neo-Brutalist */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              {/* Chỉ số Xu & Điểm */}
-              <div className="flex items-center gap-2">
-                <div className="bg-amber-400 text-black border-4 border-black dark:border-slate-600 px-3 py-1.5 rounded-lg text-xs font-black font-mono shadow-[2px_2px_0_#000] flex items-center">
+              {/* CHỈ SỐ XU & CÁC NÚT THAO TÁC */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
                   {renderCoinIcon()} Xu: {coins}
                 </div>
-                <div className="bg-blue-600 text-white border-4 border-black dark:border-slate-600 px-3 py-1.5 rounded-lg text-xs font-black font-mono shadow-[2px_2px_0_#000] flex items-center">
-                  {renderAwardIcon('w-4 h-4 text-white inline mr-1')} Điểm: {score}
+                <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
+                  {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
-              </div>
 
-              {/* Các nút thao tác Neo-Brutalist */}
-              <div className="flex items-center gap-2">
-                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CHUẨN 100% IELTS VOCAB */}
+                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CAPSULE MODERN */}
                 <button
                   onClick={toggleDarkMode}
-                  className="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center border-r-2 border-dashed border-gray-300 dark:border-slate-700 pr-3 mr-1"
+                  className="relative flex items-center w-13 h-6.5 p-0.5 rounded-full bg-amber-100 dark:bg-slate-800 border border-amber-300 dark:border-slate-700 transition-colors duration-300 cursor-pointer shrink-0 shadow-inner"
                   title={isDarkMode ? 'Chuyển sang Ban Ngày' : 'Chuyển sang Ban Đêm (Dark Mode)'}
                 >
-                  {isDarkMode ? renderSunIcon('w-5 h-5 text-yellow-400') : renderMoonIcon('w-5 h-5 text-gray-600')}
+                  <div
+                    className={`w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow-md flex items-center justify-center transform transition-transform duration-300 ${
+                      isDarkMode ? 'translate-x-6.5 text-amber-400' : 'translate-x-0 text-slate-700'
+                    }`}
+                  >
+                    {isDarkMode ? renderSunIcon('w-3.5 h-3.5 text-amber-400') : renderMoonIcon('w-3.5 h-3.5 text-slate-700')}
+                  </div>
                 </button>
 
                 <button
@@ -1520,9 +1523,9 @@ export default function Home() {
                     setShowArchitectModal(true);
                     playSfx('click');
                   }}
-                  className="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-black border-4 border-black dark:border-slate-600 text-xs font-mono font-black rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 transition-all"
+                  className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
                 >
-                  Sổ Tay Specs
+                  Specs
                 </button>
                 <button
                   onClick={() => {
@@ -1530,106 +1533,108 @@ export default function Home() {
                     setFeedbackMsg(null);
                     playSfx('click');
                   }}
-                  className="px-3.5 py-2 bg-cyan-400 hover:bg-cyan-500 text-black border-4 border-black dark:border-slate-600 text-xs font-mono font-black rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 transition-all"
-                  title="Gửi phản hồi / góp ý tính năng cho Studio Vocab"
+                  className="px-3 py-1.5 bg-cyan-400 hover:bg-cyan-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
                 >
                   Góp Ý
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white border-4 border-black dark:border-slate-600 text-xs font-mono font-black rounded-lg shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#020617] flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 transition-all"
+                  className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95 flex items-center gap-1"
                 >
-                  {renderSignoutIcon()} Đăng Xuất
+                  {renderSignoutIcon()} Thoát
                 </button>
               </div>
             </div>
-          </header>
 
-          {/* THANH ĐIỀU HƯỚNG TABS CHÍNH (STICKY NAVBAR CHUẨN 100% NEO-BRUTALISM IELTS VOCAB) */}
-          <nav className="sticky top-2 z-30 w-full flex items-center gap-2 overflow-x-auto pb-2 pt-1 px-1 scrollbar-none snap-x shrink-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-xl border-4 border-black dark:border-slate-700 shadow-[4px_4px_0_#000] dark:shadow-[4px_4px_0_#020617]">
-            <button
-              onClick={() => { setActiveTab('studio'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
-                activeTab === 'studio'
-                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
-                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
-              }`}
-            >
-              {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
-              <span>Studio</span>
-            </button>
-
-            <button
-              onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
-                activeTab === 'quiz'
-                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
-                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
-              }`}
-            >
-              {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
-              <span>Quiz HSK</span>
-            </button>
-
-            <button
-              onClick={() => { setActiveTab('room'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
-                activeTab === 'room'
-                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
-                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
-              }`}
-            >
-              {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
-              <span>{isVy ? 'Phòng Vy' : `Phòng ${user?.username || 'Của Bạn'}`}</span>
-            </button>
-
-            {/* NÚT CỬA HÀNG TRÊN NGAO DIỆN MENU (NEO-BRUTALISM IELTS VOCAB) */}
-            <button
-              onClick={() => { setShowPetShopModal(true); playSfx('click'); }}
-              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
-                showPetShopModal
-                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
-                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
-              }`}
-            >
-              {renderShoppingBagIcon(showPetShopModal ? 'w-4 h-4 text-white' : 'w-4 h-4 text-amber-500')}
-              <span>Cửa Hàng</span>
-            </button>
-
-            <button
-              onClick={() => { setActiveTab('love'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
-                activeTab === 'love'
-                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
-                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
-              }`}
-            >
-              {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
-              <span>{isVy ? 'Thư Tình' : 'Ví Voucher'}</span>
-            </button>
-
-            <button
-              onClick={() => { setActiveTab('library'); playSfx('click'); }}
-              className={`px-4 py-2.5 border-4 border-black dark:border-slate-700 font-mono font-black text-xs uppercase rounded-lg shadow-[3px_3px_0_#000] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 snap-start ${
-                activeTab === 'library'
-                  ? 'bg-blue-600 text-white shadow-none translate-y-0.5'
-                  : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-white text-black hover:bg-amber-100'
-              }`}
-            >
-              {renderBookIcon(activeTab === 'library' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
-              <span>Thư Viện</span>
-            </button>
-
-            {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
+            {/* THANH ĐIỀU HƯỚNG TABS CHÍNH MODERN CAPSULES */}
+            <nav className="w-full flex items-center gap-2 overflow-x-auto scrollbar-none snap-x shrink-0">
               <button
-                onClick={() => { setActiveTab('admin'); fetchAdminLogs(); playSfx('click'); }}
-                className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${activeTab === 'admin' ? 'text-purple-600 font-black scale-105' : 'text-gray-600 dark:text-gray-300 font-bold'}`}
+                onClick={() => { setActiveTab('studio'); playSfx('click'); }}
+                className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                  activeTab === 'studio'
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
               >
-                {renderAIIcon('w-5 h-5')}
-                <span className="text-[10px] mt-0.5">Admin</span>
+                {renderAwardIcon(activeTab === 'studio' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-rose-500')}
+                <span>Studio</span>
               </button>
-            )}
-          </nav>
+
+              <button
+                onClick={() => { setActiveTab('quiz'); playSfx('click'); }}
+                className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                  activeTab === 'quiz'
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {renderBookIcon(activeTab === 'quiz' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-blue-500')}
+                <span>Quiz HSK</span>
+              </button>
+
+              <button
+                onClick={() => { setActiveTab('room'); playSfx('click'); }}
+                className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                  activeTab === 'room'
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {renderHomeIcon(activeTab === 'room' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-emerald-500')}
+                <span>{isVy ? 'Phòng Vy' : `Phòng ${user?.username || 'Của Bạn'}`}</span>
+              </button>
+
+              <button
+                onClick={() => { setShowPetShopModal(true); playSfx('click'); }}
+                className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                  showPetShopModal
+                    ? 'bg-amber-500 text-white shadow-sm'
+                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {renderShoppingBagIcon(showPetShopModal ? 'w-4 h-4 text-white' : 'w-4 h-4 text-amber-500')}
+                <span>Cửa Hàng</span>
+              </button>
+
+              <button
+                onClick={() => { setActiveTab('love'); playSfx('click'); }}
+                className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                  activeTab === 'love'
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {renderVoucherIcon(activeTab === 'love' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-pink-500')}
+                <span>{isVy ? 'Thư Tình' : 'Ví Voucher'}</span>
+              </button>
+
+              <button
+                onClick={() => { setActiveTab('library'); playSfx('click'); }}
+                className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                  activeTab === 'library'
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : isDarkMode ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {renderBookIcon(activeTab === 'library' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
+                <span>Thư Viện</span>
+              </button>
+
+              {ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
+                <button
+                  onClick={() => { setActiveTab('admin'); fetchAdminLogs(); playSfx('click'); }}
+                  className={`px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 ${
+                    activeTab === 'admin'
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : isDarkMode ? 'bg-slate-800 text-purple-300 hover:bg-slate-700' : 'bg-slate-100 text-purple-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {renderAIIcon(activeTab === 'admin' ? 'w-4 h-4 text-white' : 'w-4 h-4 text-purple-500')}
+                  <span>Admin</span>
+                </button>
+              )}
+            </nav>
+          </header>
 
           {/* NỘI DUNG TABS CHÍNH */}
           <div className="transition-all">
@@ -2450,61 +2455,61 @@ export default function Home() {
                   </div>
 
                   {/* PHẦN 2: BOT AI CRAWL TỪ VỰNG & QUẢN LÝ (CHO KHANG) */}
-                  <div className="border-t-2 border-dashed border-[#1f2937] pt-6 space-y-6">
-                    <h3 className="text-lg font-serif font-black text-[#1f2937] flex items-center gap-2">
-                      {renderAIIcon('w-6 h-6 text-blue-600')} Trợ Lý AI: Bot Tạo & Crawl Từ Vựng HSK (Admin Khang)
+                  <div className="border-t border-dashed border-slate-300 dark:border-slate-800 pt-6 space-y-6">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      {renderAIIcon('w-6 h-6 text-blue-600 dark:text-blue-400')} Trợ Lý AI: Bot Tạo & Crawl Từ Vựng HSK (Admin Khang)
                     </h3>
                     
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                       {/* CỘT TRÁI: FORM CRAWL/GENERATE */}
-                      <div className="lg:col-span-6 bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-4">
-                        <h4 className="text-sm font-serif font-black text-[#1f2937] flex items-center gap-1.5">
+                      <div className="lg:col-span-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-xs space-y-4 text-slate-900 dark:text-slate-100">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                           {renderAIIcon('w-4 h-4 text-amber-500')} Nhập chủ đề hoặc danh sách chữ Hán cần tạo
                         </h4>
-                        <p className="text-[11px] text-gray-500 font-bold">
-                          Nhập chữ Hán (ví dụ: 苹果, 香蕉) hoặc chủ đề (ví dụ: Màu sắc, Thời tiết, Đồ ăn) để Bot AI tự động tìm Pinyin, nghĩa Việt và tạo câu ví dụ cực dễ thương cho Vy.
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                          Nhập chữ Hán (ví dụ: 苹果, 香蕉) hoặc chủ đề (ví dụ: Màu sắc, Thời tiết, Đồ ăn) để Bot AI tự động tìm Pinyin, nghĩa Việt và tạo câu ví dụ cho Vy.
                         </p>
 
                         <div className="space-y-3">
-                          <div className="p-2.5 bg-pink-50 border border-pink-200 rounded-lg text-xs font-bold text-pink-900">
-                            <b>Tự động cân bằng HSK 1-2-3 (Giống IELTS):</b> Bot AI sẽ tự động tạo bộ 9 từ vựng thuộc chủ đề được chọn (cân bằng đều 3 từ HSK 1, 3 từ HSK 2 và 3 từ HSK 3).
+                          <div className="p-3 bg-pink-50 dark:bg-pink-950/40 border border-pink-200 dark:border-pink-900/60 rounded-xl text-xs text-pink-900 dark:text-pink-200">
+                            <b>Tự động cân bằng HSK 1-2-3 (Giống IELTS):</b> Bot AI sẽ tự động tạo bộ 9 từ vựng thuộc chủ đề được chọn (cân bằng 3 từ HSK 1, 3 từ HSK 2 và 3 từ HSK 3).
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Chủ đề từ vựng cần tạo:</label>
+                            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Chủ đề từ vựng cần tạo:</label>
                             <select
                               value={vocabTheme}
                               onChange={(e) => setVocabTheme(e.target.value)}
-                              className="w-full p-2 border-2 border-[#1f2937] rounded-lg text-xs bg-[#fff5f6] font-black focus:outline-none cursor-pointer"
+                              className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold focus:outline-none focus:ring-2 focus:ring-rose-500 cursor-pointer"
                             >
-                              <option value="all_themes">TỰ ĐỘNG BƠM TẤT CẢ 14+ CHỦ ĐỀ (FULL THEMES)</option>
-                              <option value="Mua sắm & Shopping">Mua sắm & Shopping</option>
-                              <option value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
-                              <option value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>
-                              <option value="Thời tiết & Thời gian">Thời tiết & Thời gian</option>
-                              <option value="Gia đình & Nhà cửa">Gia đình & Nhà cửa</option>
-                              <option value="Phương hướng & Vị trí">Phương hướng & Vị trí</option>
-                              <option value="Sở thích & Hẹn hò">Sở thích & Hẹn hò</option>
-                              <option value="Động vật & Thú cưng">Động vật & Thú cưng</option>
-                              <option value="Học tập & Trường học">Học tập & Trường học</option>
-                              <option value="Công việc & Văn phòng">Công việc & Văn phòng</option>
-                              <option value="Giao thông & Du lịch">Giao thông & Du lịch</option>
-                              <option value="Kiến trúc & Nội thất">Kiến trúc & Nội thất</option>
-                              <option value="Cảm xúc & Mô tả">Cảm xúc & Mô tả</option>
-                              <option value="Giải trí & Thể thao">Giải trí & Thể thao</option>
-                              <option value="custom">Chủ đề tùy chọn tự nhập...</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="all_themes">TỰ ĐỘNG BƠM TẤT CẢ 14+ CHỦ ĐỀ (FULL THEMES)</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Mua sắm & Shopping">Mua sắm & Shopping</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Ẩm thực & Đi ăn tiệm">Ẩm thực & Đi ăn tiệm</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Màu sắc & Thiết kế">Màu sắc & Thiết kế</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Thời tiết & Thời gian">Thời tiết & Thời gian</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Gia đình & Nhà cửa">Gia đình & Nhà cửa</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Phương hướng & Vị trí">Phương hướng & Vị trí</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Sở thích & Hẹn hò">Sở thích & Hẹn hò</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Động vật & Thú cưng">Động vật & Thú cưng</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Học tập & Trường học">Học tập & Trường học</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Công việc & Văn phòng">Công việc & Văn phòng</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Giao thông & Du lịch">Giao thông & Du lịch</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Kiến trúc & Nội thất">Kiến trúc & Nội thất</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Cảm xúc & Mô tả">Cảm xúc & Mô tả</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Giải trí & Thể thao">Giải trí & Thể thao</option>
+                              <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="custom">Chủ đề tùy chọn tự nhập...</option>
                             </select>
                           </div>
 
                           {vocabTheme === 'custom' && (
                             <div>
-                              <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Nhập chủ đề tùy chọn:</label>
+                              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nhập chủ đề tùy chọn:</label>
                               <input
                                 type="text"
                                 value={vocabCustomTheme}
                                 onChange={e => setVocabCustomTheme(e.target.value)}
                                 placeholder="Ví dụ: Đồ ăn ngọt, Đi uống trà sữa..."
-                                className="w-full p-2 border-2 border-[#1f2937] bg-white rounded-lg text-xs font-bold focus:outline-none"
+                                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-rose-500"
                               />
                             </div>
                           )}
@@ -2513,12 +2518,12 @@ export default function Home() {
                             type="button"
                             onClick={handleGenerateVocab}
                             disabled={vocabBotLoading}
-                            className="w-full py-2 bg-pink-500 hover:bg-pink-600 text-white disabled:bg-gray-200 disabled:text-gray-400 border-2 border-[#1f2937] text-xs font-black rounded-lg shadow-[2px_2px_0px_#1f2937] active:shadow-none active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                            className="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white disabled:opacity-50 text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-98"
                           >
                             {vocabBotLoading ? (
                               <>
-                                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                Đang tạo...
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                Đang tạo từ vựng...
                               </>
                             ) : (
                               'Khởi Chạy Bot Crawl'
@@ -2527,8 +2532,10 @@ export default function Home() {
                         </div>
 
                         {vocabBotMsg && (
-                          <p className={`text-[11px] font-bold p-2.5 rounded border text-center ${
-                            vocabBotMsg.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-700'
+                          <p className={`text-xs font-bold p-3 rounded-xl border text-center ${
+                            vocabBotMsg.type === 'success' 
+                              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300' 
+                              : 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-300'
                           }`}>
                             {vocabBotMsg.text}
                           </p>
@@ -2536,13 +2543,13 @@ export default function Home() {
 
                         {/* Hiển thị danh sách từ vựng vừa tạo được */}
                         {generatedVocab.length > 0 && (
-                          <div className="space-y-3 pt-3 border-t border-dashed border-[#1f2937]">
+                          <div className="space-y-3 pt-3 border-t border-dashed border-slate-300 dark:border-slate-800">
                             <div className="flex justify-between items-center">
-                              <h5 className="text-xs font-black uppercase text-gray-500">Kết quả Bot AI ({generatedVocab.length} từ)</h5>
+                              <h5 className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Kết quả Bot AI ({generatedVocab.length} từ)</h5>
                               <button
                                 type="button"
                                 onClick={handleSaveVocab}
-                                className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white border-2 border-[#1f2937] rounded-lg text-[10px] font-black uppercase cursor-pointer"
+                                className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-bold uppercase cursor-pointer transition-all active:scale-95"
                               >
                                 Lưu Vào Game
                               </button>
@@ -2550,7 +2557,7 @@ export default function Home() {
 
                             <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
                               {generatedVocab.map((item, idx) => (
-                                <div key={idx} className="p-2.5 bg-pink-50/50 border border-[#1f2937] rounded-lg flex items-start gap-2.5 text-left">
+                                <div key={idx} className="p-3 bg-pink-50/60 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl flex items-start gap-3 text-left">
                                   <input
                                     type="checkbox"
                                     checked={item.selected}
@@ -2559,20 +2566,20 @@ export default function Home() {
                                       next[idx].selected = e.target.checked;
                                       setGeneratedVocab(next);
                                     }}
-                                    className="mt-1 accent-pink-500"
+                                    className="mt-1 accent-rose-500 w-4 h-4"
                                   />
                                   <div className="text-xs flex-1">
-                                    <div className="font-serif font-black text-rose-600 flex items-center gap-1.5">
-                                      <span>{item.nameChinese}</span>
-                                      <span className="text-[10px] text-gray-500 font-sans">[{item.namePinyin}]</span>
-                                      <span className="text-[9px] bg-rose-200 text-rose-800 px-1 py-0.2 rounded font-sans uppercase">HSK {item.hskLevel}</span>
+                                    <div className="font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                                      <span className="text-sm">{item.nameChinese}</span>
+                                      <span className="text-xs text-slate-500 dark:text-slate-400">[{item.namePinyin}]</span>
+                                      <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-1.5 py-0.5 rounded font-mono uppercase">HSK {item.hskLevel}</span>
                                     </div>
-                                    <div className="font-bold text-gray-700">Nghĩa: {item.nameVietnamese}</div>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200 mt-1">Nghĩa: {item.nameVietnamese}</div>
                                     {item.exampleChinese && (
-                                      <div className="mt-1 text-[10.5px] text-gray-400 bg-white p-1.5 rounded border border-[#1f2937]/10">
-                                        <p className="font-bold text-gray-500">Ví dụ: {item.exampleChinese}</p>
-                                        <p className="text-[9.5px] italic text-blue-500">{item.examplePinyin}</p>
-                                        <p className="text-[9.5px] text-gray-500 font-bold">Nghĩa ví dụ: {item.exampleVietnamese}</p>
+                                      <div className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800">
+                                        <p className="font-bold text-slate-700 dark:text-slate-300">Ví dụ: {item.exampleChinese}</p>
+                                        <p className="italic text-blue-600 dark:text-blue-400">{item.examplePinyin}</p>
+                                        <p className="font-bold text-slate-600 dark:text-slate-400">Dịch: {item.exampleVietnamese}</p>
                                       </div>
                                     )}
                                   </div>
@@ -2584,31 +2591,31 @@ export default function Home() {
                       </div>
 
                       {/* CỘT PHẢI: DANH SÁCH TỪ VỰNG DƯỚI CSDL */}
-                      <div className="lg:col-span-6 bg-white border-2 border-[#1f2937] p-5 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-3">
-                        <h4 className="text-sm font-serif font-black text-[#1f2937] flex items-center justify-between">
+                      <div className="lg:col-span-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-xs space-y-3 text-slate-900 dark:text-slate-100">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
                           <span>Kho từ vựng bổ sung trong CSDL ({customVocabs.length})</span>
                         </h4>
-                        <p className="text-[11px] text-gray-500 font-bold">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Các từ vựng do bạn tạo sẽ lưu trữ tại đây và tự động gộp vào dải câu hỏi ngẫu nhiên trong phần giải Bản Vẽ của Vy.
                         </p>
 
                         {customVocabs.length === 0 ? (
-                          <div className="py-12 border-2 border-dashed border-[#1f2937]/20 rounded-xl text-center text-gray-400 font-bold text-xs">
+                          <div className="py-12 border border-dashed border-slate-300 dark:border-slate-800 rounded-xl text-center text-slate-400 font-bold text-xs">
                             Hiện chưa có từ vựng bổ sung nào trong CSDL.
                           </div>
                         ) : (
-                          <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                          <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
                             {customVocabs.map((item) => (
-                              <div key={item.id} className="p-2.5 bg-gray-50 border border-[#1f2937] rounded-lg flex justify-between items-center text-left">
+                              <div key={item.id} className="p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl flex justify-between items-center text-left">
                                 <div className="text-xs">
-                                  <div className="font-serif font-black text-gray-800 flex items-center gap-1.5">
-                                    <span>{item.nameChinese}</span>
-                                    <span className="text-[10px] text-gray-400 font-sans">[{item.namePinyin}]</span>
-                                    <span className="text-[9px] bg-gray-200 text-gray-700 px-1 py-0.2 rounded font-sans">HSK {item.hskLevel}</span>
+                                  <div className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                                    <span className="text-sm">{item.nameChinese}</span>
+                                    <span className="text-xs text-slate-500 dark:text-slate-400">[{item.namePinyin}]</span>
+                                    <span className="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-1.5 py-0.5 rounded font-mono">HSK {item.hskLevel}</span>
                                   </div>
-                                  <div className="font-bold text-gray-600 mt-0.5">Nghĩa: {item.nameVietnamese}</div>
+                                  <div className="font-bold text-slate-700 dark:text-slate-300 mt-1">Nghĩa: {item.nameVietnamese}</div>
                                   {item.exampleChinese && (
-                                    <div className="text-[10px] text-gray-400 italic">
+                                    <div className="text-xs text-slate-500 dark:text-slate-400 italic mt-0.5">
                                       Ví dụ: {item.exampleChinese} ({item.exampleVietnamese})
                                     </div>
                                   )}
@@ -2617,7 +2624,7 @@ export default function Home() {
                                 <button
                                   type="button"
                                   onClick={() => handleDeleteVocab(item.id)}
-                                  className="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded text-[9px] font-black uppercase cursor-pointer"
+                                  className="px-2.5 py-1 bg-rose-100 hover:bg-rose-200 dark:bg-rose-950 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 rounded-lg text-[10px] font-bold uppercase cursor-pointer transition-all"
                                 >
                                   Xóa
                                 </button>
@@ -2633,8 +2640,6 @@ export default function Home() {
               </div>
             )}
           </div>
-        </div>
-      )}
 
       {/* OVERLAY MODAL: AI EXPLAIN WORD */}
       {explainWord && (
@@ -2800,6 +2805,9 @@ export default function Home() {
             </form>
           </div>
         </div>
+      )}
+
+      </div>
       )}
 
       {/* Retro CSS animations style tag */}

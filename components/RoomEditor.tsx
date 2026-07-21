@@ -133,13 +133,21 @@ export function renderFurnitureSVG(typeId: string, rotation: number = 0, sizeCla
     case 'sofa_bed':
       return (
         <svg viewBox="0 0 64 64" className={sizeClass} style={rotationStyle}>
-          <rect x="4" y="8" width="56" height="48" rx="4" fill="#451a03" stroke="#1f2937" strokeWidth="2" />
-          <rect x="8" y="14" width="48" height="38" rx="2" fill="#2563eb" stroke="#1f2937" strokeWidth="2" />
-          <rect x="8" y="14" width="48" height="18" rx="2" fill="#3b82f6" stroke="#1f2937" strokeWidth="2" />
-          <rect x="12" y="16" width="18" height="10" rx="2" fill="#93c5fd" stroke="#1f2937" strokeWidth="2" />
-          <rect x="34" y="16" width="18" height="10" rx="2" fill="#93c5fd" stroke="#1f2937" strokeWidth="2" />
-          <rect x="2" y="10" width="6" height="44" rx="2" fill="#78350f" stroke="#1f2937" strokeWidth="2" />
-          <rect x="56" y="10" width="6" height="44" rx="2" fill="#78350f" stroke="#1f2937" strokeWidth="2" />
+          {/* Main Wooden Base Frame */}
+          <rect x="3" y="6" width="58" height="52" rx="5" fill="#582c12" stroke="#1f2937" strokeWidth="2" />
+          {/* Extended Plush Mattress Bed Surface */}
+          <rect x="6" y="12" width="52" height="42" rx="4" fill="#3b82f6" stroke="#1e3a8a" strokeWidth="2" />
+          {/* Backrest Layer */}
+          <rect x="6" y="8" width="52" height="12" rx="3" fill="#1d4ed8" stroke="#1e3a8a" strokeWidth="1.5" />
+          {/* Pillows */}
+          <rect x="9" y="12" width="20" height="11" rx="3" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
+          <rect x="35" y="12" width="20" height="11" rx="3" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
+          {/* Soft Folded Cozy Blanket Throw */}
+          <path d="M 6 32 Q 32 30 58 32 L 58 52 L 6 52 Z" fill="#93c5fd" stroke="#2563eb" strokeWidth="1.5" />
+          <path d="M 12 36 Q 32 34 52 36" stroke="#60a5fa" strokeWidth="2" strokeDasharray="4,3" />
+          {/* Armrests */}
+          <rect x="2" y="8" width="6" height="44" rx="3" fill="#78350f" stroke="#1f2937" strokeWidth="1.5" />
+          <rect x="56" y="8" width="6" height="44" rx="3" fill="#78350f" stroke="#1f2937" strokeWidth="1.5" />
         </svg>
       );
     case 'wood_table':
@@ -193,11 +201,25 @@ export function renderFurnitureSVG(typeId: string, rotation: number = 0, sizeCla
     case 'sofa':
       return (
         <svg viewBox="0 0 64 32" className={sizeClass} style={rotationStyle}>
-          <rect x="4" y="2" width="56" height="28" rx="6" fill="#047857" stroke="#1f2937" strokeWidth="2" />
-          <rect x="8" y="6" width="48" height="22" rx="4" fill="#10b981" />
-          <line x1="32" y1="6" x2="32" y2="28" stroke="#047857" strokeWidth="2" />
-          <rect x="8" y="10" width="8" height="12" rx="2" fill="#fbbf24" stroke="#1f2937" strokeWidth="1.5" />
-          <rect x="48" y="10" width="8" height="12" rx="2" fill="#fbbf24" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Tapered Wooden Legs */}
+          <rect x="6" y="27" width="4" height="4" rx="1" fill="#78350f" />
+          <rect x="54" y="27" width="4" height="4" rx="1" fill="#78350f" />
+          <rect x="22" y="27" width="4" height="4" rx="1" fill="#78350f" />
+          <rect x="38" y="27" width="4" height="4" rx="1" fill="#78350f" />
+          {/* Main Velvet Base Frame */}
+          <rect x="3" y="3" width="58" height="25" rx="5" fill="#0f766e" stroke="#1f2937" strokeWidth="2" />
+          {/* Backrest Cushion Layer */}
+          <rect x="6" y="5" width="25" height="10" rx="3" fill="#14b8a6" stroke="#0f766e" strokeWidth="1.5" />
+          <rect x="33" y="5" width="25" height="10" rx="3" fill="#14b8a6" stroke="#0f766e" strokeWidth="1.5" />
+          {/* Plush Seat Cushions */}
+          <rect x="6" y="15" width="25" height="11" rx="3" fill="#2dd4bf" stroke="#0f766e" strokeWidth="1.5" />
+          <rect x="33" y="15" width="25" height="11" rx="3" fill="#2dd4bf" stroke="#0f766e" strokeWidth="1.5" />
+          {/* Soft Padded Armrests */}
+          <rect x="2" y="6" width="6" height="20" rx="3" fill="#0d9488" stroke="#1f2937" strokeWidth="1.5" />
+          <rect x="56" y="6" width="6" height="20" rx="3" fill="#0d9488" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Warm Accent Throw Pillows */}
+          <rect x="9" y="11" width="7" height="9" rx="2" fill="#fbbf24" stroke="#d97706" strokeWidth="1.5" transform="rotate(-8 12.5 15.5)" />
+          <rect x="48" y="11" width="7" height="9" rx="2" fill="#f43f5e" stroke="#be123c" strokeWidth="1.5" transform="rotate(8 51.5 15.5)" />
         </svg>
       );
     case 'office_chair':
@@ -212,10 +234,20 @@ export function renderFurnitureSVG(typeId: string, rotation: number = 0, sizeCla
     case 'armchair':
       return (
         <svg viewBox="0 0 32 32" className={sizeClass} style={rotationStyle}>
-          <rect x="4" y="4" width="24" height="24" rx="8" fill="#e11d48" stroke="#1f2937" strokeWidth="2" />
-          <rect x="7" y="7" width="18" height="18" rx="5" fill="#fda4af" />
-          <rect x="2" y="8" width="5" height="16" rx="2.5" fill="#f43f5e" stroke="#1f2937" strokeWidth="1.5" />
-          <rect x="25" y="8" width="5" height="16" rx="2.5" fill="#f43f5e" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Tapered Wooden Legs */}
+          <line x1="6" y1="26" x2="4" y2="30" stroke="#78350f" strokeWidth="2" strokeLinecap="round" />
+          <line x1="26" y1="26" x2="28" y2="30" stroke="#78350f" strokeWidth="2" strokeLinecap="round" />
+          {/* Velvet Shell */}
+          <rect x="3" y="3" width="26" height="24" rx="6" fill="#be123c" stroke="#1f2937" strokeWidth="2" />
+          {/* Backrest Cushion */}
+          <rect x="6" y="5" width="20" height="10" rx="3" fill="#f43f5e" />
+          {/* Plush Seat Cushion */}
+          <rect x="6" y="14" width="20" height="11" rx="3" fill="#fb7185" stroke="#be123c" strokeWidth="1" />
+          {/* Wooden Armrests */}
+          <rect x="2" y="8" width="4" height="15" rx="2" fill="#d97706" stroke="#1f2937" strokeWidth="1.5" />
+          <rect x="26" y="8" width="4" height="15" rx="2" fill="#d97706" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Mini Throw Pillow */}
+          <circle cx="16" cy="18" r="3.5" fill="#fef08a" stroke="#ca8a04" strokeWidth="1" />
         </svg>
       );
     case 'desk_lamp':

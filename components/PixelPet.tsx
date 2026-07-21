@@ -108,29 +108,37 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [isWalking, setIsWalking] = useState(false);
 
-  // Tự động cho thú cưng bước đi dạo mượt mà & cử chỉ ngủ Zzz khi nghỉ ngơi (giới hạn posX an toàn)
+  // Tự động cho thú cưng di chuyển tự do khắp chiều rộng màn hình phía dưới
   useEffect(() => {
     if (showShop) return;
 
-    const interval = setInterval(() => {
-      // 30% cơ hội thú cưng ngơi nghỉ đi ngủ Zzz
-      if (Math.random() < 0.35 && !isJumping && !isEating) {
+    const updateWander = () => {
+      // 25% cơ hội thú cưng ngơi nghỉ đi ngủ Zzz
+      if (Math.random() < 0.25 && !isJumping && !isEating) {
         setIsSleeping(true);
         setIsWalking(false);
-        setTimeout(() => setIsSleeping(false), 5000);
+        setTimeout(() => setIsSleeping(false), 4500);
         return;
       }
 
       setIsSleeping(false);
+      const screenW = typeof window !== 'undefined' ? window.innerWidth - 100 : 800;
+      const nextTarget = Math.floor(Math.random() * Math.max(200, screenW - 60)) + 20;
+
       setPosX(prev => {
-        const nextTarget = prev > -30 ? -80 : 0;
         setDirection(nextTarget < prev ? 'left' : 'right');
-        setIsWalking(true);
-        setTimeout(() => setIsWalking(false), 2500);
         return nextTarget;
       });
-    }, 4500);
+      setIsWalking(true);
+      setTimeout(() => setIsWalking(false), 3500);
+    };
 
+    // Khởi tạo vị trí ban đầu ngẫu nhiên
+    if (posX === 0 && typeof window !== 'undefined') {
+      setPosX(Math.floor(Math.random() * (window.innerWidth - 200)) + 50);
+    }
+
+    const interval = setInterval(updateWander, 5500);
     return () => clearInterval(interval);
   }, [showShop, isJumping, isEating]);
 
@@ -218,63 +226,65 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     alert(`Chúc mừng Vy đã đổi thành công: ${v.name}!`);
   };
 
-  // Tính toán vị trí căn lề an toàn chống trượt khỏi viền màn hình
-  const safeSpeechX = Math.max(-80, Math.min(0, posX));
-
   return (
-    <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-6 z-40 select-none pointer-events-auto max-w-[95vw]">
-      {/* POPUP TRÒ CHUYỆN PIXEL 2D SẮC NÉT (BONG BÓNG LỜI THOẠI CHỐNG TRÀN VIỀN) */}
-      {activeSpeech && (
-        <div 
-          className="absolute -top-28 sm:-top-32 right-0 z-50 w-52 sm:w-60 max-w-[85vw] bg-white dark:bg-slate-900 border-4 border-[#1f2937] dark:border-slate-700 p-2.5 rounded-2xl shadow-[4px_4px_0px_#1f2937] text-center space-y-1 animate-in fade-in zoom-in-95 duration-200"
-          style={{ transform: `translate(${safeSpeechX}px, ${posY - 40}px)` }}
-        >
-          <p className="text-xs font-mono font-black text-rose-600 dark:text-rose-400">{activeSpeech.text}</p>
-          <p className="text-[10px] font-mono font-bold text-gray-500 dark:text-slate-400">{activeSpeech.pinyin}</p>
-          <p className="text-[10px] font-bold text-gray-800 dark:text-slate-200 leading-tight">{activeSpeech.translation}</p>
-          <div className="absolute -bottom-2 right-6 w-3.5 h-3.5 bg-white dark:bg-slate-900 border-b-4 border-r-4 border-[#1f2937] dark:border-slate-700 rotate-45" />
-        </div>
-      )}
-
-      {/* HIỆU ỨNG THẢ TIM XP KHI TƯƠNG TÁC */}
-      {isHearting && (
-        <div 
-          className="absolute -top-8 right-2 text-rose-600 font-mono font-black text-[10px] sm:text-xs animate-bounce z-50 bg-rose-100 dark:bg-rose-950 border-2 border-rose-400 dark:border-rose-700 px-2 py-0.5 rounded-full shadow"
-          style={{ transform: `translate(${safeSpeechX}px, ${posY - 20}px)` }}
-        >
-          +50 HSK XP
-        </div>
-      )}
-
-      {/* HIỆU ỨNG NGỦ Zzz KHI PET ĐANG NGHỈ NGƠI */}
-      {isSleeping && !activeSpeech && (
-        <div 
-          className="absolute -top-9 right-1 text-indigo-600 dark:text-indigo-400 font-mono font-black text-xs animate-pulse z-50 bg-indigo-50 dark:bg-indigo-950 border-2 border-indigo-300 dark:border-indigo-800 px-2 py-0.5 rounded-full shadow"
-          style={{ transform: `translate(${safeSpeechX}px, ${posY - 20}px)` }}
-        >
-          Zzz... (Đang ngủ)
-        </div>
-      )}
-
-      {/* KHU VỰC BƯỚC ĐI CỦA THÚ CƯNG PIXEL 2D (COMPACT ON MOBILE) */}
+    <div className="fixed bottom-2 left-0 right-0 z-40 select-none pointer-events-none w-full h-32 overflow-visible">
+      {/* Container di chuyển mượt khắp màn hình */}
       <div 
-        className="flex flex-col items-center gap-1 transition-all duration-1000 ease-in-out cursor-pointer"
-        style={{ transform: `translate(${posX}px, ${posY}px)` }}
+        className="absolute bottom-2 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
+        style={{ left: `${posX}px` }}
       >
+        {/* POPUP TRÒ CHUYỆN PIXEL 2D */}
+        {activeSpeech && (
+          <div className="absolute -top-28 z-50 w-52 sm:w-60 bg-white dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-700 p-2.5 rounded-2xl shadow-xl text-center space-y-1 animate-in fade-in zoom-in-95 duration-200 pointer-events-auto">
+            <p className="text-xs font-mono font-black text-rose-600 dark:text-rose-400">{activeSpeech.text}</p>
+            <p className="text-[10px] font-mono font-bold text-gray-500 dark:text-slate-400">{activeSpeech.pinyin}</p>
+            <p className="text-[10px] font-bold text-gray-800 dark:text-slate-200 leading-tight">{activeSpeech.translation}</p>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-white dark:bg-slate-900 border-b-2 border-r-2 border-slate-800 dark:border-slate-700 rotate-45" />
+          </div>
+        )}
+
+        {/* HIỆU ỨNG THẢ TIM XP */}
+        {isHearting && (
+          <div className="absolute -top-8 text-rose-600 font-mono font-black text-[10px] sm:text-xs animate-bounce z-50 bg-rose-100 dark:bg-rose-950 border border-rose-400 px-2 py-0.5 rounded-full shadow">
+            +50 HSK XP
+          </div>
+        )}
+
+        {/* HIỆU ỨNG NGỦ Zzz */}
+        {isSleeping && !activeSpeech && (
+          <div className="absolute -top-9 text-indigo-600 dark:text-indigo-400 font-mono font-black text-xs animate-pulse z-50 bg-indigo-50 dark:bg-indigo-950 border border-indigo-300 px-2 py-0.5 rounded-full shadow flex items-center gap-1">
+            <span className="animate-bounce">Z</span>
+            <span className="animate-bounce delay-100">z</span>
+            <span className="animate-bounce delay-200">z</span> (Đang ngủ)
+          </div>
+        )}
+
+        {/* HIỆU ỨNG ĐANG ĂN */}
+        {isEating && (
+          <div className="absolute -top-7 text-amber-600 dark:text-amber-400 font-mono font-bold text-[11px] animate-bounce z-50 bg-amber-50 dark:bg-amber-950 border border-amber-300 px-2 py-0.5 rounded-full shadow">
+            Nhai nhai... Ngon quá!
+          </div>
+        )}
+
+        {/* CƠ THỂ PIXEL PET VỚI HOẠT ẢNH HOẠT ĐỘNG VUI VẺ */}
         <div 
           onClick={handlePetClick}
-          className={`relative group cursor-pointer transition-transform hover:scale-110 ${direction === 'left' ? '-scale-x-100' : ''}`}
-          title="Bấm vào thú cưng Pixel để trò chuyện tiếng Trung!"
+          className={`relative group cursor-pointer transition-transform duration-300 hover:scale-125 ${
+            direction === 'left' ? '-scale-x-100' : ''
+          } ${isJumping ? 'animate-bounce -translate-y-4' : isWalking ? 'animate-pulse' : ''}`}
+          title="Bấm vào thú cưng Pixel để trò chuyện!"
         >
           {currentPet === 'cat' && (
-            /* CON MÈO CAM 2D PIXEL CHIBI (ĐUÔI CONG + RÂU MÈO) */
-            <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              {/* Tail Pixel */}
-              <path d="M25,18 h3 v-5 h2 v-3 h-2 v3 h-3 z" fill="#ea580c" />
+            /* CON MÈO CAM PIXEL CHIBI CÓ QUAY ĐUÔI VÀ CHỚP MẮT */
+            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
+              {/* Tail Pixel với hoạt ảnh vẫy đuôi */}
+              <g className="origin-bottom-left animate-spin" style={{ animationDuration: '3s', animationIterationCount: 'infinite' }}>
+                <path d="M25,18 h3 v-5 h2 v-3 h-2 v3 h-3 z" fill="#ea580c" />
+              </g>
               {/* Body Pixel */}
               <rect x="9" y="18" width="16" height="9" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
               <rect x="11" y="20" width="10" height="6" fill="#fff7ed" />
-              {/* 4 Paws */}
+              {/* 4 Paws Bước đi */}
               <rect x="10" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
               <rect x="14" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <rect x="18" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
@@ -287,10 +297,12 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               {/* Head */}
               <rect x="4" y="9" width="18" height="10" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
               {/* Eyes */}
-              <rect x="7" y="12" width="3" height="3" fill="#0f172a" />
-              <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
-              <rect x="16" y="12" width="3" height="3" fill="#0f172a" />
-              <rect x="17" y="12" width="1" height="1" fill="#ffffff" />
+              <g className={isSleeping ? 'opacity-40' : ''}>
+                <rect x="7" y="12" width="3" height="3" fill="#0f172a" />
+                <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
+                <rect x="16" y="12" width="3" height="3" fill="#0f172a" />
+                <rect x="17" y="12" width="1" height="1" fill="#ffffff" />
+              </g>
               {/* Whiskers */}
               <rect x="2" y="14" width="2" height="1" fill="#1f2937" />
               <rect x="22" y="14" width="2" height="1" fill="#1f2937" />
@@ -299,34 +311,24 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           )}
 
           {currentPet === 'dog' && (
-            /* CHÚ CHÓ SHIBA 2D PIXEL CHIBI (ĐUÔI CONG TÍT + MÕM TRẮNG + THÈ LƯỠI HỒNG + VÒNG CỔ ĐỎ) */
-            <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              {/* Curled Ring Donut Tail on Back */}
+            /* CHÓ SHIBA PIXEL CHIBI */
+            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
               <rect x="23" y="13" width="5" height="5" fill="#d97706" stroke="#1f2937" strokeWidth="1" />
               <rect x="25" y="15" width="2" height="2" fill="#fff7ed" />
-              {/* Dog Body */}
               <rect x="8" y="17" width="17" height="10" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
               <rect x="10" y="19" width="11" height="7" fill="#ffffff" />
-              {/* Red Dog Collar with Bell */}
               <rect x="5" y="16" width="14" height="2" fill="#ef4444" />
               <rect x="11" y="17" width="2" height="2" fill="#f59e0b" />
-              {/* 4 Paws */}
               <rect x="9" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
               <rect x="13.5" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <rect x="18" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
               <rect x="22.5" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* Floppy Dog Ears */}
               <rect x="3" y="5" width="5" height="5" fill="#b45309" />
               <rect x="18" y="5" width="5" height="5" fill="#b45309" />
-              {/* Head */}
               <rect x="4" y="8" width="18" height="9" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
-              {/* Big White Snout */}
               <rect x="8" y="12" width="10" height="5" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              {/* Black Nose */}
               <rect x="12" y="13" width="2" height="2" fill="#0f172a" />
-              {/* Open Tongue */}
               <rect x="12" y="15" width="2" height="2" fill="#fda4af" />
-              {/* Dog Eyes */}
               <rect x="7" y="10" width="3" height="3" fill="#0f172a" />
               <rect x="8" y="10" width="1" height="1" fill="#ffffff" />
               <rect x="16" y="10" width="3" height="3" fill="#0f172a" />
@@ -335,57 +337,44 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           )}
 
           {currentPet === 'rabbit' && (
-            /* THỎ TRẮNG 2D PIXEL CHIBI (TAI DÀI CAO VÚT + ĐUÔI BÔNG TRÒN + RĂNG THỎ) */
-            <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              {/* Fluffy Cotton Tail */}
+            /* THỎ TRẮNG PIXEL CHIBI */
+            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
               <rect x="24" y="19" width="4" height="4" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              {/* Body */}
               <rect x="9" y="17" width="16" height="10" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              {/* 4 Bunny Paws */}
               <rect x="10" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce' : ''} />
               <rect x="14" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <rect x="18" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce' : ''} />
               <rect x="22" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* TALL UPRIGHT BUNNY EARS */}
               <rect x="6" y="0" width="4" height="9" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
               <rect x="7" y="1" width="2" height="7" fill="#fda4af" />
               <rect x="16" y="0" width="4" height="9" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
               <rect x="17" y="1" width="2" height="7" fill="#fda4af" />
-              {/* Head */}
               <rect x="4" y="8" width="18" height="10" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              {/* Pink Bunny Eyes */}
               <rect x="7" y="12" width="3" height="3" fill="#f43f5e" />
               <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
               <rect x="16" y="12" width="3" height="3" fill="#f43f5e" />
               <rect x="17" y="12" width="1" height="1" fill="#ffffff" />
-              {/* Twitchy Pink Nose & Buck Teeth */}
               <rect x="12" y="14" width="2" height="1.5" fill="#f43f5e" />
               <rect x="12" y="15.5" width="2" height="1.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.5" />
             </svg>
           )}
 
           {currentPet === 'panda' && (
-            /* GẤU TRÚC PANDA 2D PIXEL CHIBI (QUẦNG MẮT ĐEN + TAI TRÒN ĐEN + ÁO VEST ĐEN PANDA) */
-            <svg viewBox="0 0 32 32" className="w-10 h-10 sm:w-15 sm:h-15 drop-shadow-md" shapeRendering="crispEdges">
-              {/* Body (White Belly with Black Shoulder Vest) */}
+            /* GẤU TRÚC PANDA PIXEL CHIBI */
+            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
               <rect x="9" y="17" width="16" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
               <rect x="9" y="17" width="16" height="4" fill="#0f172a" />
-              {/* 4 Black Legs */}
               <rect x="10" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
               <rect x="14" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <rect x="18" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
               <rect x="22" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* Round Black Bear Ears */}
               <rect x="4" y="4" width="5" height="5" fill="#0f172a" />
               <rect x="17" y="4" width="5" height="5" fill="#0f172a" />
-              {/* White Head */}
               <rect x="4" y="8" width="18" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              {/* DISTINCT BLACK EYE PATCHES (Quầng Mắt Gấu Trúc) */}
               <rect x="6" y="10" width="5" height="5" fill="#0f172a" />
               <rect x="8" y="12" width="1.5" height="1.5" fill="#ffffff" />
               <rect x="15" y="10" width="5" height="5" fill="#0f172a" />
               <rect x="16" y="12" width="1.5" height="1.5" fill="#ffffff" />
-              {/* Black Nose */}
               <rect x="12" y="14" width="2" height="1.5" fill="#0f172a" />
             </svg>
           )}

@@ -354,6 +354,10 @@ export default function Home() {
     const savedTheme = localStorage.getItem('boba_game_theme');
     if (savedTheme === 'dark') {
       setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else if (savedTheme === 'light') {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -368,8 +372,15 @@ export default function Home() {
   const toggleDarkMode = () => {
     const next = !isDarkMode;
     setIsDarkMode(next);
+    if (typeof document !== 'undefined') {
+      if (next) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
     localStorage.setItem('boba_game_theme', next ? 'dark' : 'light');
-    playSfx('click');
+    if (playSfx) playSfx('click');
   };
 
   // Navigation tab state
@@ -1509,23 +1520,14 @@ export default function Home() {
                   {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
 
-                {/* NÚT GẠT CHẾ ĐỘ SÁNG / TỐI CAPSULE MODERN 2 ICON SVG (CHỈ DÙNG SVG, CỐ ĐỊNH Ở GÓC TRÊN BÊN PHẢI) */}
+                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI 1 ICON SVG DUY NHẤT CỐ ĐỊNH Ở GÓC TRÊN BÊN PHẢI */}
                 <button
                   type="button"
                   onClick={toggleDarkMode}
-                  className="fixed top-4 right-4 z-50 flex items-center justify-between w-14 h-7 p-1 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-300 dark:border-slate-700 shadow-md cursor-pointer shrink-0 transition-all active:scale-95"
+                  className="fixed top-4 right-4 z-50 p-2.5 rounded-full border shadow-lg cursor-pointer transition-all active:scale-90 hover:scale-105 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-700 flex items-center justify-center backdrop-blur-md"
                   title={isDarkMode ? 'Đang Ban Đêm (Bấm để sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để sang Ban Đêm)'}
                 >
-                  <div className="z-0 pl-0.5">{renderSunIcon('w-3.5 h-3.5 text-amber-500')}</div>
-                  <div className="z-0 pr-0.5">{renderMoonIcon('w-3.5 h-3.5 text-indigo-400')}</div>
-                  
-                  <div
-                    className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transform transition-transform duration-300 z-10 ${
-                      isDarkMode ? 'translate-x-7' : 'translate-x-0'
-                    }`}
-                  >
-                    {isDarkMode ? renderMoonIcon('w-3.5 h-3.5 text-indigo-400') : renderSunIcon('w-3.5 h-3.5 text-amber-500')}
-                  </div>
+                  {isDarkMode ? renderMoonIcon('w-5 h-5 text-indigo-400') : renderSunIcon('w-5 h-5 text-amber-500')}
                 </button>
 
                 <button

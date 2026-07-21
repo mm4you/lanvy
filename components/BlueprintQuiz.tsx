@@ -45,11 +45,20 @@ function renderBookOpenIcon(className = 'w-5 h-5 text-pink-500') {
   );
 }
 
-function renderFlameIcon(className = 'w-4 h-4') {
+function renderFlameIcon(className = 'w-4.5 h-4.5') {
   return (
-    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" fill="#ea580c" />
-      <path d="M9.879 16.121A3 3 0 1012.015 11L11 14H9.879z" fill="#facc15" />
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 22C16.4183 22 20 18.4183 20 14C20 10.3 17.5 7.2 14 5.7C14 8.5 11.5 10 10 11C8.5 12 7.5 13 7.5 15C7.5 15.5 7.7 16 8 16.5C6.8 15.7 6 14.4 6 13C4.8 14.5 4 16.4 4 18.5C4 20.4 5.6 22 7.5 22C8 22 9.5 21.5 10.5 20.5C10 20 9.5 19.3 9.5 18.5C9.5 17.1 10.6 16 12 16C13.4 16 14.5 17.1 14.5 18.5C14.5 19.5 13.9 20.4 13 21C14 21.8 15.4 22 17 22"
+        fill="url(#flame-grad-ielts)"
+      />
+      <defs>
+        <linearGradient id="flame-grad-ielts" x1="12" y1="4" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF4D4D" />
+          <stop offset="0.5" stopColor="#FF8000" />
+          <stop offset="1" stopColor="#FFCC00" />
+        </linearGradient>
+      </defs>
     </svg>
   );
 }

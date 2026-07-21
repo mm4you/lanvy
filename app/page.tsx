@@ -352,11 +352,13 @@ export default function Home() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('boba_game_theme');
-    if (savedTheme === 'dark') {
-      setIsDarkMode(true);
+    const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    
+    setIsDarkMode(isDark);
+    if (isDark) {
       document.documentElement.classList.add('dark');
-    } else if (savedTheme === 'light') {
-      setIsDarkMode(false);
+    } else {
       document.documentElement.classList.remove('dark');
     }
   }, []);
@@ -370,16 +372,18 @@ export default function Home() {
   }, [isDarkMode]);
 
   const toggleDarkMode = () => {
-    const next = !isDarkMode;
-    setIsDarkMode(next);
-    if (typeof document !== 'undefined') {
-      if (next) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
+    setIsDarkMode((prev) => {
+      const next = !prev;
+      if (typeof document !== 'undefined') {
+        if (next) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       }
-    }
-    localStorage.setItem('boba_game_theme', next ? 'dark' : 'light');
+      localStorage.setItem('boba_game_theme', next ? 'dark' : 'light');
+      return next;
+    });
     if (playSfx) playSfx('click');
   };
 
@@ -1488,7 +1492,9 @@ export default function Home() {
                 </div>
                 <div>
                   <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-100">
-                    <img src="/logo.svg" alt="Logo" className="w-8 h-8 inline-block object-contain" />
+                    <span className="p-1.5 bg-amber-400 dark:bg-amber-500 rounded-xl shadow-xs border border-amber-300 dark:border-amber-400 inline-flex items-center justify-center shrink-0">
+                      <img src="/logo.svg" alt="Logo" className="w-6 h-6 object-contain" />
+                    </span>
                     Atelier Thiết Kế HSK
                     {user.email?.toLowerCase() === LOVE_EMAIL && (
                       <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider flex items-center gap-1">
@@ -1523,23 +1529,14 @@ export default function Home() {
                   {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
 
-                {/* NÚT GẠT CHẾ ĐỘ SÁNG / TỐI CAPSULE CHUẨN VỚI 2 ICON SUN & MOON (TRẢ LẠI THEO YÊU CẦU NGUỜI DÙNG) */}
+                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI 1 NÚT BẤM DUY NHẤT (BẤM VÀO LÀ ĐỔI ICON SÁNG/TỐI TỨC THÌ) */}
                 <button
                   type="button"
                   onClick={toggleDarkMode}
-                  className="relative flex items-center justify-between w-16 h-8 p-1 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 cursor-pointer shrink-0 transition-colors shadow-inner"
+                  className="p-2 rounded-xl border cursor-pointer transition-all active:scale-90 hover:scale-105 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-xs"
                   title={isDarkMode ? 'Đang Chế độ Ban Đêm (Bấm để sang Ban Ngày)' : 'Đang Chế độ Ban Ngày (Bấm để sang Ban Đêm)'}
                 >
-                  <div className="z-0 pl-0.5">{renderSunIcon('w-3.5 h-3.5 text-amber-500')}</div>
-                  <div className="z-0 pr-0.5">{renderMoonIcon('w-3.5 h-3.5 text-indigo-400')}</div>
-                  
-                  <div
-                    className={`absolute top-0.5 left-0.5 w-7 h-7 rounded-full bg-white dark:bg-slate-900 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transform transition-transform duration-300 z-10 ${
-                      isDarkMode ? 'translate-x-8' : 'translate-x-0'
-                    }`}
-                  >
-                    {isDarkMode ? renderMoonIcon('w-4 h-4 text-indigo-400') : renderSunIcon('w-4 h-4 text-amber-500')}
-                  </div>
+                  {isDarkMode ? renderMoonIcon('w-4 h-4 text-indigo-400') : renderSunIcon('w-4 h-4 text-amber-500')}
                 </button>
 
                 <button

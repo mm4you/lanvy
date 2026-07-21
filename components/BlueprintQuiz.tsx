@@ -164,9 +164,35 @@ export default function BlueprintQuiz({
     let options: string[] = [];
 
     const isFurniture = 'category' in randomItem;
-    const itemVietnameseName = isFurniture ? randomItem.nameVietnamese : (randomItem as GeneralVocabItem).nameVietnamese;
-    const itemChineseName = randomItem.nameChinese;
-    const itemPinyinName = randomItem.namePinyin;
+    const cat = (randomItem as any).category || (randomItem as any).theme;
+
+    const cleanStr = (str: string, c?: string) => {
+      if (!str) return str;
+      let s = str;
+      const categories = [
+        'Mua sắm & Shopping', 'Ẩm thực & Đi ăn tiệm', 'Màu sắc & Thiết kế',
+        'Thời tiết & Thời gian', 'Gia đình & Nhà cửa', 'Phương hướng & Vị trí',
+        'Sở thích & Hẹn hò', 'Động vật & Thú cưng', 'Học tập & Trường học',
+        'Công việc & Văn phòng', 'Giao thông & Du lịch', 'Kiến trúc & Nội thất',
+        'Cảm xúc & Mô tả', 'Giải trí & Thể thao', c
+      ].filter(Boolean);
+      for (const catName of categories) {
+        if (!catName) continue;
+        const esc = catName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        s = s.replace(new RegExp(`\\s*[-:：]?\\s*${esc}\\s*`, 'gi'), '').trim();
+      }
+      return s.trim();
+    };
+
+    const cleanChineseStr = (str: string, c?: string) => {
+      let s = cleanStr(str, c);
+      const m = s.match(/^[\u4e00-\u9fa5\u3000-\u303f\uff00-\uffef]+/);
+      return m ? m[0].trim() : s;
+    };
+
+    const itemVietnameseName = cleanStr(isFurniture ? randomItem.nameVietnamese : (randomItem as GeneralVocabItem).nameVietnamese, cat);
+    const itemChineseName = cleanChineseStr(randomItem.nameChinese, cat);
+    const itemPinyinName = cleanStr(randomItem.namePinyin, cat);
 
     if (type === 'translate') {
       questionText = `Hãy chọn chữ Hán chính xác cho từ: "${itemVietnameseName}"`;
@@ -174,30 +200,33 @@ export default function BlueprintQuiz({
       
       const pool = isFurniture ? FURNITURE_ITEMS : dynamicGeneralVocabPool;
       const distractors = pool.filter((i) => i.id !== randomItem.id)
-        .map((i) => i.nameChinese)
+        .map((i) => cleanChineseStr(i.nameChinese, (i as any).category || (i as any).theme))
+        .filter((val) => val !== correctAnswer)
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
-      options = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
+      options = Array.from(new Set([correctAnswer, ...distractors])).sort(() => 0.5 - Math.random());
     } else if (type === 'pinyin') {
-      questionText = `Phiên âm Pinyin chính xác của từ "${itemChineseName}" (${itemVietnameseName}) là:`;
+      questionText = `Chọn phiên âm Pinyin của: "${itemChineseName}"`;
       correctAnswer = itemPinyinName;
 
       const pool = isFurniture ? FURNITURE_ITEMS : dynamicGeneralVocabPool;
       const distractors = pool.filter((i) => i.id !== randomItem.id)
-        .map((i) => i.namePinyin)
+        .map((i) => cleanStr(i.namePinyin, (i as any).category || (i as any).theme))
+        .filter((val) => val !== correctAnswer)
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
-      options = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
+      options = Array.from(new Set([correctAnswer, ...distractors])).sort(() => 0.5 - Math.random());
     } else {
       questionText = 'Nghe phát âm tiếng Trung sau đây và chọn đáp án tương ứng:';
       correctAnswer = itemVietnameseName;
 
       const pool = isFurniture ? FURNITURE_ITEMS : dynamicGeneralVocabPool;
       const distractors = pool.filter((i) => i.id !== randomItem.id)
-        .map((i) => i.nameVietnamese)
+        .map((i) => cleanStr(i.nameVietnamese, (i as any).category || (i as any).theme))
+        .filter((val) => val !== correctAnswer)
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
-      options = [correctAnswer, ...distractors].sort(() => 0.5 - Math.random());
+      options = Array.from(new Set([correctAnswer, ...distractors])).sort(() => 0.5 - Math.random());
     }
 
     setCurrentQuestion({
@@ -484,66 +513,65 @@ export default function BlueprintQuiz({
         </div>
       )}
 
-
       {currentQuestion && (
-        <div className="space-y-6">
-          {/* HÌNH ẢNH BẢN VẼ PHÁC THẢO (PINK BLUEPRINT) */}
-          <div className="h-44 bg-pink-600 border-4 border-[#1f2937] rounded-xl flex items-center justify-center relative overflow-hidden">
-            {/* Lưới ô vuông mờ phong cách blueprint */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:16px_16px]" />
-            
-            <div className="absolute top-2 left-2 text-[10px] text-pink-100 font-mono font-bold uppercase tracking-widest border border-pink-300/30 px-1.5 py-0.2 rounded bg-pink-700/40">
-              PINK BLUEPRINT // HSK {currentQuestion.hskLevel}
+        <div className="space-y-4">
+          {/* THẺ HEADING COMPACT HSK */}
+          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
+                {renderBookOpenIcon('w-5 h-5 text-rose-500')}
+              </div>
+              <div className="text-left">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  Bản Vẽ Thử Thách HSK
+                </span>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  {'category' in currentQuestion.item ? 'Chủ đề: Nội Thất Pixel' : 'Chủ đề: Từ Vựng HSK'}
+                </p>
+              </div>
             </div>
-
-            {/* Món đồ hiển thị phong cách bản vẽ thiết kế */}
-            <div className="w-24 h-24 z-10 flex items-center justify-center stroke-white fill-none text-white [&_rect]:stroke-white [&_rect]:fill-none [&_path]:stroke-white [&_path]:fill-none [&_circle]:stroke-white [&_circle]:fill-none [&_ellipse]:stroke-white [&_ellipse]:fill-none">
-              {'category' in currentQuestion.item ? (
-                renderFurnitureSVG(currentQuestion.item.id, 0, 'w-20 h-20')
-              ) : (
-                renderVocabularyCardSVG('w-16 h-16 text-pink-100 animate-bounce')
-              )}
-            </div>
+            <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+              HSK Cấp {currentQuestion.hskLevel}
+            </span>
           </div>
 
           {/* CÂU HỎI */}
-          <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[2px_2px_0px_#1f2937] text-center">
-            <span className="text-[10px] bg-pink-100 text-pink-800 border border-pink-300 px-2 py-0.5 rounded-full font-black uppercase tracking-wider font-sans">
-              HSK Cấp {currentQuestion.hskLevel}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-xs text-center space-y-2 text-slate-900 dark:text-slate-100">
+            <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider font-sans">
+              Thử Thách HSK {currentQuestion.hskLevel}
             </span>
-            <p className="text-sm font-serif font-black text-[#1f2937] mt-3">
+            <div className="text-sm font-bold text-slate-900 dark:text-slate-100 pt-1">
               {currentQuestion.type === 'listening' ? (
                 <div className="flex items-center justify-center gap-2">
                   <span>Nghe phát âm tiếng Trung:</span>
                   <button
                     onClick={() => playAudio(currentQuestion.chinese)}
-                    className="p-1.5 bg-pink-50 hover:bg-pink-100 border border-[#1f2937] rounded-lg cursor-pointer"
+                    className="p-2 bg-rose-50 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-slate-700 border border-rose-200 dark:border-slate-700 rounded-xl cursor-pointer transition-all active:scale-95"
+                    title="Nghe phát âm tiếng Trung"
                   >
-                    {renderAudioIcon('w-4 h-4 text-pink-600')}
+                    {renderAudioIcon('w-5 h-5 text-rose-600 dark:text-rose-400')}
                   </button>
                 </div>
               ) : (
-                currentQuestion.type === 'translate'
-                  ? `Hãy chọn chữ Hán của: "${currentQuestion.translation}"`
-                  : `Chọn phiên âm Pinyin của: "${currentQuestion.chinese}"`
+                <p>{currentQuestion.questionText}</p>
               )}
-            </p>
+            </div>
           </div>
 
-          {/* CÁC ĐÁP ÁN LỰA CHỌN */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* DANH SÁCH ĐÁP ÁN LỰA CHỌN */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {currentQuestion.options.map((option, idx) => {
-              const isThisSelected = selectedAnswer === option;
-              const isThisCorrect = option === currentQuestion.correctAnswer;
-              
-              let btnClass = 'bg-white hover:bg-pink-50 text-[#1f2937]';
+              let btnClass = 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-rose-500 hover:bg-rose-50/50 dark:hover:bg-slate-800/80';
               if (isAnswered) {
+                const isThisCorrect = option === currentQuestion.correctAnswer;
+                const isThisSelected = option === selectedAnswer;
+
                 if (isThisCorrect) {
-                  btnClass = 'bg-green-500 text-white shadow-none translate-y-0.5 border-green-700';
+                  btnClass = 'bg-emerald-500 text-white border-emerald-600 shadow-sm';
                 } else if (isThisSelected) {
-                  btnClass = 'bg-red-500 text-white shadow-none translate-y-0.5 border-red-700';
+                  btnClass = 'bg-rose-500 text-white border-rose-600 shadow-sm';
                 } else {
-                  btnClass = 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed';
+                  btnClass = 'bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 cursor-not-allowed';
                 }
               }
 
@@ -552,9 +580,9 @@ export default function BlueprintQuiz({
                   key={idx}
                   onClick={() => handleAnswerSubmit(option)}
                   disabled={isAnswered}
-                  className={`w-full py-3.5 px-4 border-2 border-[#1f2937] font-black text-sm rounded-xl shadow-[2px_2px_0px_#1f2937] transition-all cursor-pointer ${btnClass}`}
+                  className={`w-full py-3.5 px-4 border text-sm font-bold rounded-2xl transition-all cursor-pointer shadow-xs active:scale-98 ${btnClass}`}
                 >
-                  <span className="font-serif block text-base">{option}</span>
+                  <span className="font-sans block text-base">{option}</span>
                 </button>
               );
             })}
@@ -562,24 +590,23 @@ export default function BlueprintQuiz({
 
           {/* PHẢN HỒI KẾT QUẢ VÀ GIẢI NGHĨA */}
           {isAnswered && (
-            <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[2px_2px_0px_#1f2937] space-y-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-xs space-y-3 text-slate-900 dark:text-slate-100">
               <div className="flex justify-between items-center">
-                <span className={`text-sm font-black uppercase ${isCorrect ? 'text-green-600' : 'text-red-500'}`}>
+                <span className={`text-xs sm:text-sm font-bold uppercase ${isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                   {isCorrect ? 'Chúc mừng! Bạn đã trả lời đúng' : 'Rất tiếc! Câu trả lời chưa chính xác'}
                 </span>
-                <span className="text-[10px] bg-pink-100 border border-pink-300 text-pink-800 font-bold px-2 py-0.5 rounded-full flex items-center gap-1 font-sans">
+                <span className="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 font-mono font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                   {renderAwardIcon()} +{quizMode === 'furniture' ? '20' : quizMode === 'custom' ? '20' : '15'} Xu
                 </span>
               </div>
-              
-              <div className="p-3 bg-pink-50/20 rounded-lg border border-pink-200 text-left">
-                <p className="text-sm font-serif font-black text-[#1f2937]">
-                  Chữ Hán: <span className="text-pink-600 text-base">{currentQuestion.chinese}</span>
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-left">
+                <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                  Chữ Hán: <span className="text-rose-600 dark:text-rose-400 text-base">{currentQuestion.chinese}</span>
                 </p>
-                <p className="text-xs font-black text-gray-500 mt-1">
-                  Phiên âm Pinyin: <span className="text-blue-600">{currentQuestion.pinyin}</span>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">
+                  Phiên âm Pinyin: <span className="text-blue-600 dark:text-blue-400">{currentQuestion.pinyin}</span>
                 </p>
-                <p className="text-xs font-black text-gray-600 mt-0.5">
+                <p className="text-xs font-bold text-slate-700 dark:text-slate-300 mt-0.5">
                   Nghĩa tiếng Việt: <span>{currentQuestion.translation}</span>
                 </p>
               </div>

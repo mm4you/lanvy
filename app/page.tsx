@@ -1529,14 +1529,28 @@ export default function Home() {
                   {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
 
-                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI 1 NÚT BẤM DUY NHẤT (BẤM VÀO LÀ ĐỔI ICON SÁNG/TỐI TỨC THÌ) */}
+                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI NGUYÊN BẢN THEO CHUẨN IELTS VOCAB */}
                 <button
                   type="button"
                   onClick={toggleDarkMode}
-                  className="p-2 rounded-xl border cursor-pointer transition-all active:scale-90 hover:scale-105 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-xs"
-                  title={isDarkMode ? 'Đang Chế độ Ban Đêm (Bấm để sang Ban Ngày)' : 'Đang Chế độ Ban Ngày (Bấm để sang Ban Đêm)'}
+                  className={`px-3 py-1.5 rounded-xl border font-mono font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-xs shrink-0 ${
+                    isDarkMode
+                      ? 'bg-slate-800 hover:bg-slate-700 text-indigo-300 border-slate-700'
+                      : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'
+                  }`}
+                  title={isDarkMode ? 'Đang Ban Đêm (Bấm để sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để sang Ban Đêm)'}
                 >
-                  {isDarkMode ? renderMoonIcon('w-4 h-4 text-indigo-400') : renderSunIcon('w-4 h-4 text-amber-500')}
+                  {isDarkMode ? (
+                    <>
+                      {renderMoonIcon('w-4 h-4 text-indigo-400')}
+                      <span>Tối</span>
+                    </>
+                  ) : (
+                    <>
+                      {renderSunIcon('w-4 h-4 text-amber-500')}
+                      <span>Sáng</span>
+                    </>
+                  )}
                 </button>
 
                 <button

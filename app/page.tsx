@@ -1495,7 +1495,9 @@ export default function Home() {
                   )}
                 </div>
                 <div>
-                  <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-slate-100">
+                  <h1 className={`text-lg sm:text-xl font-bold flex items-center gap-2 ${
+                    isDarkMode ? 'text-slate-100' : 'text-slate-900'
+                  }`}>
                     <img src="/logo.svg" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
                     Atelier Thiết Kế HSK
                     {user.email?.toLowerCase() === LOVE_EMAIL && (
@@ -1509,7 +1511,9 @@ export default function Home() {
                       </span>
                     )}
                   </h1>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                  <p className={`text-xs font-mono ${
+                    isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                  }`}>
                     {user.email?.toLowerCase() === LOVE_EMAIL ? (
                       <>Bà chủ: <span className="text-rose-600 dark:text-rose-400 font-bold">Lan Vy</span></>
                     ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
@@ -1985,12 +1989,14 @@ export default function Home() {
                       )}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-700 dark:text-slate-300 font-bold space-y-3 shadow-xs">
+                    <div className={`border border-dashed rounded-2xl p-12 text-center font-bold space-y-3 shadow-xs ${
+                      isDarkMode ? 'bg-[#1e1e1e] text-slate-300 border-slate-700' : 'bg-white text-slate-700 border-slate-300'
+                    }`}>
                       <div className="w-12 h-12 mx-auto rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
                         {renderClipboardIcon('w-6 h-6 text-rose-500')}
                       </div>
-                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100">Vui lòng chọn một hợp đồng</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                      <p className={`text-sm font-bold ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>Vui lòng chọn một hợp đồng</p>
+                      <p className={`text-xs max-w-sm mx-auto ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                         Chọn một hợp đồng từ bảng danh sách bên trái để xem yêu cầu thiết kế và thử thách HSK của khách hàng.
                       </p>
                     </div>
@@ -2434,12 +2440,14 @@ export default function Home() {
             )}
 
             {activeTab === 'admin' && ADMIN_EMAILS.includes(user.email.toLowerCase()) && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl p-6 space-y-6 shadow-xs">
+              <div className={`border rounded-2xl p-6 space-y-6 shadow-xs ${
+                isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
+              }`}>
                 <h2 className="text-xl font-bold border-b border-dashed border-slate-200 dark:border-slate-800 pb-3 flex justify-between items-center text-slate-900 dark:text-slate-100">
                   <span>Bảng Điều Khiển Admin (Khang & Vy)</span>
                   <button
                     onClick={fetchAdminLogs}
-                    className="px-3 py-1 bg-white hover:bg-gray-100 border border-[#1f2937] rounded-lg text-xs font-black cursor-pointer transition-all"
+                    className="px-3 py-1 bg-white hover:bg-gray-100 border border-[#1f2937] rounded-lg text-xs font-black cursor-pointer transition-all text-slate-900"
                   >
                     Tải Lại CSDL
                   </button>
@@ -2576,32 +2584,35 @@ export default function Home() {
                   </div>
 
                   {/* PHẦN 2: BOT AI CRAWL TỪ VỰNG & QUẢN LÝ (CHO KHANG) */}
-                  <div className="border-t border-dashed border-slate-300 dark:border-slate-800 pt-6 space-y-6">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <div className={`border-t border-dashed pt-6 space-y-6 ${isDarkMode ? 'border-slate-800' : 'border-slate-300'}`}>
+                    <h3 className={`text-lg font-bold flex items-center gap-2 ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
                       {renderAIIcon('w-6 h-6 text-blue-600 dark:text-blue-400')} Trợ Lý AI: Bot Tạo & Crawl Từ Vựng HSK (Admin Khang)
                     </h3>
                     
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                       {/* CỘT TRÁI: FORM CRAWL/GENERATE */}
-                      <div className="lg:col-span-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-xs space-y-4 text-slate-900 dark:text-slate-100">
-                        <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                      <div className={`lg:col-span-6 border p-5 rounded-2xl shadow-xs space-y-4 ${
+                        isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
+                      }`}>
+                        <h4 className="text-sm font-bold flex items-center gap-1.5">
                           {renderAIIcon('w-4 h-4 text-amber-500')} Nhập chủ đề hoặc danh sách chữ Hán cần tạo
                         </h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                           Nhập chữ Hán (ví dụ: 苹果, 香蕉) hoặc chủ đề (ví dụ: Màu sắc, Thời tiết, Đồ ăn) để Bot AI tự động tìm Pinyin, nghĩa Việt và tạo câu ví dụ cho Vy.
                         </p>
 
                         <div className="space-y-3">
-                          <div className="p-3 bg-pink-50 dark:bg-pink-950/40 border border-pink-200 dark:border-pink-900/60 rounded-xl text-xs text-pink-900 dark:text-pink-200">
+                          <div className={`p-3 border rounded-xl text-xs ${isDarkMode ? 'bg-pink-950/40 border-pink-900/60 text-pink-200' : 'bg-pink-50 border-pink-200 text-pink-900'}`}>
                             <b>Tự động cân bằng HSK 1-2-3 (Giống IELTS):</b> Bot AI sẽ tự động tạo bộ 9 từ vựng thuộc chủ đề được chọn (cân bằng 3 từ HSK 1, 3 từ HSK 2 và 3 từ HSK 3).
                           </div>
 
                           <div>
-                            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Chủ đề từ vựng cần tạo:</label>
+                            <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1 ${
+                              isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                            }`}>Chủ đề từ vựng cần tạo:</label>
                             <select
                               value={vocabTheme}
                               onChange={(e) => setVocabTheme(e.target.value)}
-                              className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold focus:outline-none focus:ring-2 focus:ring-rose-500 cursor-pointer"
                             >
                               <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="all_themes">TỰ ĐỘNG BƠM TẤT CẢ 14+ CHỦ ĐỀ (FULL THEMES)</option>
                               <option className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100" value="Mua sắm & Shopping">Mua sắm & Shopping</option>

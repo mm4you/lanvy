@@ -1807,7 +1807,9 @@ export default function Home() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="text-xs font-bold truncate">{contract.title}</h3>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold mt-0.5">Khách hàng: {contract.clientName}</p>
+                          <p className={`text-[10px] font-bold mt-0.5 ${
+                            isDarkMode ? 'text-slate-300' : 'text-slate-800'
+                          }`}>Khách hàng: {contract.clientName}</p>
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             <span className="text-[9px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-1.5 py-0.2 rounded font-bold">
                               HSK Cấp {contract.level}
@@ -1835,18 +1837,26 @@ export default function Home() {
                           {renderClientAvatar(currentContract.clientSprite)}
                         </div>
                         <div>
-                          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Hợp đồng thiết kế từ: {currentContract.clientName}</h3>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">Cấp độ yêu cầu: HSK Cấp {currentContract.level}</p>
+                          <h3 className={`text-base font-extrabold ${
+                            isDarkMode ? 'text-slate-100' : 'text-slate-900'
+                          }`}>Hợp đồng thiết kế từ: {currentContract.clientName}</h3>
+                          <p className={`text-xs font-bold ${
+                            isDarkMode ? 'text-slate-300' : 'text-slate-800'
+                          }`}>Cấp độ yêu cầu: HSK Cấp {currentContract.level}</p>
                         </div>
                       </div>
 
                       <div className="space-y-1 text-left">
                         <h4 className="text-lg font-bold text-rose-600 dark:text-rose-400">{currentContract.title}</h4>
-                        <p className="text-xs text-slate-700 dark:text-slate-300 font-bold leading-relaxed">{currentContract.description}</p>
+                        <p className={`text-xs font-bold leading-relaxed ${
+                          isDarkMode ? 'text-slate-200' : 'text-slate-900'
+                        }`}>{currentContract.description}</p>
                       </div>
 
                       {/* KHU VỰC THƯ TỪ KHÁCH HÀNG BẰNG TIẾNG TRUNG */}
-                      <div className="p-4 border rounded-xl space-y-2 text-left bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                      <div className={`p-4 border rounded-xl space-y-2 text-left ${
+                        isDarkMode ? 'bg-slate-800/80 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'
+                      }`}>
                         <div className="flex justify-between items-center">
                           <span className="text-[9px] bg-rose-100 text-rose-800 border border-rose-300 px-2 py-0.5 rounded-full font-black uppercase font-sans">
                             Yêu cầu từ khách hàng (Tiếng Trung):
@@ -1862,7 +1872,9 @@ export default function Home() {
                         <p className="text-xs font-bold text-blue-600 font-sans">{currentContract.promptPinyin}</p>
                         {showStudioHint ? (
                           <div className="pt-1.5 border-t border-dashed border-amber-300 flex justify-between items-start gap-4">
-                            <p className="text-xs font-bold text-gray-500">Dịch nghĩa: {currentContract.promptVietnamese}</p>
+                            <p className={`text-xs font-bold ${
+                              isDarkMode ? 'text-slate-300' : 'text-slate-800'
+                            }`}>Dịch nghĩa: {currentContract.promptVietnamese}</p>
                             <button
                               onClick={() => {
                                 playSfx('click');
@@ -1888,7 +1900,9 @@ export default function Home() {
 
                       {/* PHÒNG PHÁC THẢO CHỌN ĐỒ */}
                       <div className="space-y-2 text-left">
-                        <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">
+                        <h5 className={`text-xs font-black uppercase tracking-wider ${
+                          isDarkMode ? 'text-slate-300' : 'text-slate-900'
+                        }`}>
                           Phòng phác thảo ảo (Vy hãy chọn đồ vật ở dưới để thêm vào phòng):
                         </h5>
                         <div className="h-32 bg-pink-900/5 border-2 border-[#1f2937] rounded-xl flex items-center justify-center gap-4 relative overflow-hidden p-3">
@@ -1902,7 +1916,9 @@ export default function Home() {
                               </span>
                             </div>
                           ) : contractSelectedItems.length === 0 ? (
-                            <span className="text-[11px] text-gray-400 font-bold italic z-10">Vy hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!</span>
+                            <span className={`text-[11px] font-extrabold italic z-10 ${
+                              isDarkMode ? 'text-slate-300' : 'text-slate-900'
+                            }`}>Vy hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!</span>
                           ) : (
                             <div className="flex gap-3 overflow-x-auto max-w-full z-10 py-1 px-2">
                               {contractSelectedItems.map((itemId) => {
@@ -1921,7 +1937,9 @@ export default function Home() {
 
                       {/* CHI TIẾT YÊU CẦU ĐỒ NỘI THẤT */}
                       <div className="space-y-2 text-left">
-                        <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">Danh mục đồ nội thất để Vy lựa chọn:</h5>
+                        <h5 className={`text-xs font-black uppercase tracking-wider ${
+                          isDarkMode ? 'text-slate-300' : 'text-slate-900'
+                        }`}>Danh mục đồ nội thất để Vy lựa chọn:</h5>
                         {completedContracts.includes(currentContract.id) ? (
                           <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-800">
                             Bạn đã hoàn thành xuất sắc thử thách này và rinh trọn vẹn phần thưởng!
@@ -1968,7 +1986,9 @@ export default function Home() {
 
                       {/* BUTTON NỘP HỢP ĐỒNG */}
                       <div className="pt-4 border-t border-dashed border-[#1f2937] flex justify-between items-center">
-                        <div className="text-xs font-black text-gray-600 text-left">
+                        <div className={`text-xs font-black text-left ${
+                          isDarkMode ? 'text-slate-200' : 'text-slate-900'
+                        }`}>
                           Phần thưởng: <span className="text-amber-600">{currentContract.rewardCoins} Xu</span> • <span className="text-blue-600">{currentContract.rewardScore} Điểm</span>
                         </div>
                         {!completedContracts.includes(currentContract.id) && (

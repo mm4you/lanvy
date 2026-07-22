@@ -330,7 +330,22 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     if (setCoins) setCoins(coins - v.price);
     if (playSfx) playSfx('levelUp');
     setPurchasedVouchers(prev => [...prev, v.name]);
-    alert(`Chúc mừng ${isVy ? 'Vy' : 'bạn'} đã đổi thành công: ${v.name}!`);
+
+    if (typeof window !== 'undefined') {
+      try {
+        const existing = JSON.parse(localStorage.getItem('hsk_shop_vouchers') || '[]');
+        const newVoucher = {
+          id: `v_shop_${Date.now()}`,
+          title: v.name,
+          description: v.desc,
+          code: `SHOP-${Math.floor(1000 + Math.random() * 9000)}`,
+          unlockedAt: new Date().toISOString()
+        };
+        localStorage.setItem('hsk_shop_vouchers', JSON.stringify([...existing, newVoucher]));
+      } catch (e) {}
+    }
+
+    alert(`Chúc mừng ${isVy ? 'Vy' : 'bạn'} đã đổi thành công: ${v.name}! Vật phẩm đã được lưu vào Túi Đồ!`);
   };
 
   return (

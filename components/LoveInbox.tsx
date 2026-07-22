@@ -136,6 +136,24 @@ export default function LoveInbox({
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [showLoveHint, setShowLoveHint] = useState(false);
+  const [shopVouchers, setShopVouchers] = useState<any[]>([]);
+  const [equippedAccId, setEquippedAccId] = useState<string>('none');
+  const [unlockedAccList, setUnlockedAccList] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const eq = localStorage.getItem('hsk_equipped_accessory') || 'none';
+      setEquippedAccId(eq);
+      try {
+        const un = JSON.parse(localStorage.getItem('hsk_unlocked_accessories') || '[]');
+        setUnlockedAccList(un);
+      } catch (e) {}
+      try {
+        const sv = JSON.parse(localStorage.getItem('hsk_shop_vouchers') || '[]');
+        setShopVouchers(sv);
+      } catch (e) {}
+    }
+  }, [activeTab]);
 
   // Chat states
   const [chatMessages, setChatMessages] = useState<any[]>([]);
@@ -666,32 +684,45 @@ export default function LoveInbox({
                 </span>
               </div>
 
-              {/* Thức ăn & Phụ kiện */}
-              <div className="p-3 bg-blue-50/60 border border-blue-200 rounded-xl flex justify-between items-center">
+              {/* Thức Ăn Pet */}
+              <div className="p-3 bg-emerald-50/60 border border-emerald-200 rounded-xl flex justify-between items-center">
                 <div>
-                  <p className="text-xs font-black text-[#1f2937]">Thức Ăn & Phụ Kiện Pet</p>
-                  <p className="text-[10px] text-gray-500 font-medium">Vật phẩm đã mở khóa trong Pet Shop</p>
+                  <p className="text-xs font-black text-[#1f2937]">Thức Ăn Thú Cưng (Shop)</p>
+                  <p className="text-[10px] text-gray-500 font-medium">Cá Tươi, Pate, Xương Bò dự trữ</p>
                 </div>
-                <span className="px-2.5 py-1 bg-blue-600 text-white font-mono font-extrabold text-xs rounded-lg shadow-xs">
-                  Đã Mở
+                <span className="px-2.5 py-1 bg-emerald-600 text-white font-mono font-extrabold text-xs rounded-lg shadow-xs">
+                  x{(userInventory?.food_fish || 0) + (userInventory?.food_can || 0) + (userInventory?.food_bone || 0)}
+                </span>
+              </div>
+
+              {/* Phụ Kiện Pet */}
+              <div className="p-3 bg-indigo-50/60 border border-indigo-200 rounded-xl flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-black text-[#1f2937]">Phụ Kiện Pet Đã Mở Khoá</p>
+                  <p className="text-[10px] text-gray-500 font-medium">
+                    {equippedAccId === 'hat' ? 'Đang đội Mũ Rơm 👒' : equippedAccId === 'glasses' ? 'Đang đeo Kính Tròn 👓' : equippedAccId === 'bow' ? 'Đang đeo Nơ Hồng 🎀' : equippedAccId === 'balloon' ? 'Đang mang Bong Bóng 🎈' : 'Chưa trang bị phụ kiện'}
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 bg-indigo-600 text-white font-mono font-extrabold text-xs rounded-lg shadow-xs">
+                  {unlockedAccList.length} Món
                 </span>
               </div>
             </div>
           </div>
 
-          {/* MỤC VÍ VOUCHER QUÀ TẶNG ĐỘC QUYỀN */}
+          {/* MỤC VÍ VOUCHER QUÀ TẶNG ĐỘC QUYỀN (BAO GỒM VOUCHER SHOP & CONTRACTS) */}
           <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-3">
             <h3 className="text-sm font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-2 flex items-center gap-1.5">
-              {renderTicketIconSVG('w-4 h-4 text-rose-500')} Ví Voucher Quà Tặng Độc Quyền ({unlockedVouchers.length})
+              {renderTicketIconSVG('w-4 h-4 text-rose-500')} Ví Voucher Quà Tặng Độc Quyền ({unlockedVouchers.length + shopVouchers.length})
             </h3>
 
-            {unlockedVouchers.length === 0 ? (
+            {unlockedVouchers.length === 0 && shopVouchers.length === 0 ? (
               <div className="text-center py-6 bg-pink-50/30 border border-dashed border-pink-200 rounded-xl text-gray-400 font-bold text-xs">
-                {isVy ? 'Vy chưa mở khóa voucher nào. Hãy giải quyết các thử thách thiết kế phòng của Khang để rinh quà nhé!' : `${userName} chưa mở khóa voucher nào.`}
+                {isVy ? 'Vy chưa mở khóa voucher nào. Hãy đổi quà ở Shop hoặc hoàn thành bài thiết kế phòng để rinh quà nhé!' : 'Chưa có voucher nào trong ví.'}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-3">
-                {unlockedVouchers.map((voucher) => (
+                {[...unlockedVouchers, ...shopVouchers].map((voucher) => (
                   <div
                     key={voucher.id}
                     className="bg-pink-50/40 border border-[#1f2937] p-3 rounded-xl flex items-center justify-between gap-3"

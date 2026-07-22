@@ -453,7 +453,7 @@ export default function FlashcardViewer({
                   title={bookmarkedIds.includes(currentItem.id) ? 'Bỏ lưu từ khỏi sổ' : 'Lưu từ vào sổ tay'}
                 >
                   {renderBookmarkIcon(bookmarkedIds.includes(currentItem.id), 'w-4 h-4')}
-                  <span>{bookmarkedIds.includes(currentItem.id) ? 'Đã lưu' : 'Lưu từ'}</span>
+                  <span>Lưu</span>
                 </button>
 
                 <button

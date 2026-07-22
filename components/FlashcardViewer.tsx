@@ -63,7 +63,7 @@ export default function FlashcardViewer({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [masteredIds, setMasteredIds] = useState<string[]>([]);
-  const [autoPlayAudio, setAutoPlayAudio] = useState(true);
+  const [autoPlayAudio, setAutoPlayAudio] = useState(false);
   const [isSessionCompleted, setIsSessionCompleted] = useState(false);
   const [shuffleSeed, setShuffleSeed] = useState(0);
 

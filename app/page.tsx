@@ -1316,7 +1316,7 @@ export default function Home() {
   return (
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-100 text-slate-900'
-    } p-3 sm:p-4 md:p-6 pb-16 md:pb-6`}>
+    } p-0 sm:p-4 md:p-6 pb-24 md:pb-6`}>
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ NEO-BRUTALIST ĐÚNG CHUẨN IELTS VOCAB BIẾN TẤU CHO HSK VOCAB */}
       {!user ? (
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-[#fffaf0] text-slate-900 select-none">
@@ -1644,7 +1644,7 @@ export default function Home() {
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-5 pb-16 md:pb-6">
+        <div className="max-w-6xl mx-auto space-y-5 px-3 sm:px-0 pb-28 md:pb-6">
           {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
           <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs border ${
             isDarkMode 
@@ -2080,7 +2080,7 @@ export default function Home() {
             {/* TAB 1: STUDIO HỢP ĐỒNG THIẾT KẾ CỦA KHÁCH HÀNG (NPC) */}
             {activeTab === 'studio' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className={`lg:col-span-4 border rounded-2xl shadow-xs p-5 h-[460px] flex flex-col ${
+                <div className={`lg:col-span-4 border rounded-2xl shadow-xs p-5 h-[320px] sm:h-[460px] flex flex-col ${
                   isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
                 }`}>
                   <div className="flex items-center justify-between border-b border-dashed border-slate-200 dark:border-slate-800 pb-3 mb-3">

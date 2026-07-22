@@ -1555,7 +1555,7 @@ export default function Home() {
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-5">
+        <div className="max-w-6xl mx-auto space-y-5 pb-36 md:pb-12">
           {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
           <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs border ${
             isDarkMode 
@@ -3306,7 +3306,11 @@ export default function Home() {
           </nav>
 
           {/* SOLID SAFE AREA FILLER TO ELIMINATE SAFARI BOTTOM GAP 100% */}
-          <div className={`w-full h-[env(safe-area-inset-bottom,20px)] min-h-[16px] ${
+          <div className={`w-full h-[env(safe-area-inset-bottom,32px)] min-h-[32px] ${
+            isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#fffaf0]'
+          }`} />
+          {/* SOLID WALL BACKDROP EXTENDING 160PX BELOW THE VIEWPORT */}
+          <div className={`absolute top-full left-0 right-0 h-40 pointer-events-none ${
             isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#fffaf0]'
           }`} />
         </div>

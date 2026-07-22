@@ -1744,15 +1744,28 @@ export default function Home() {
                     isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
                   }`}>
                     <button
-                      onClick={() => { setActiveTab('love'); setOpenNavGroup(null); playSfx('click'); }}
+                      onClick={() => { setActiveTab('love'); setLoveSubTab('wallet'); setOpenNavGroup(null); playSfx('click'); }}
                       className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition cursor-pointer ${
-                        activeTab === 'love' ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+                        activeTab === 'love' && loveSubTab !== 'chat' ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                       }`}
                     >
                       {renderVoucherIcon('w-4 h-4 text-pink-500')}
                       <div>
                         <p className="font-bold">{isVy ? 'Thư Tình & Voucher' : 'Ví Voucher HSK'}</p>
                         <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Voucher quà tặng ngọt ngào</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => { setActiveTab('love'); setLoveSubTab('chat'); setOpenNavGroup(null); playSfx('click'); }}
+                      className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition cursor-pointer ${
+                        activeTab === 'love' && loveSubTab === 'chat' ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+                      }`}
+                    >
+                      {renderChatIcon('w-4 h-4 text-rose-500')}
+                      <div>
+                        <p className="font-bold">Trò Chuyện AI HSK</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Hỏi đáp từ vựng & giao tiếp tiếng Trung</p>
                       </div>
                     </button>
 

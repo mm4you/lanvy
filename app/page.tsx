@@ -358,13 +358,31 @@ function renderClientAvatar(sprite: string, className = 'w-12 h-12') {
     case 'vy':
     case 'lan_vy':
       return (
-        <img src="/lanvy-avatar.png" alt="Lan Vy" className={`${className} rounded-full object-cover border-2 border-pink-300`} />
+        <svg viewBox="0 0 32 32" className={className}>
+          {/* Long dark hair */}
+          <path d="M 5 14 C 5 5, 27 5, 27 14 C 27 24, 25 28, 23 28 L 9 28 C 7 28, 5 24, 5 14 Z" fill="#1e1b4b" stroke="#1f2937" strokeWidth="1.5" />
+          <circle cx="16" cy="17" r="8.5" fill="#fde68a" stroke="#1f2937" strokeWidth="2" />
+          {/* Hair bangs */}
+          <path d="M 5 13 Q 16 7 27 13 Q 21 14 18 10 Q 14 14 5 13" fill="#1e1b4b" stroke="#1f2937" strokeWidth="1.5" />
+          {/* Cute pink bow */}
+          <path d="M 11 9 L 7 7 L 9 12 Z M 21 9 L 25 7 L 23 12 Z" fill="#f43f5e" stroke="#1f2937" strokeWidth="1" />
+          <circle cx="16" cy="9" r="1.5" fill="#fb7185" stroke="#1f2937" strokeWidth="1" />
+          {/* Eyes */}
+          <circle cx="12" cy="16.5" r="1.2" fill="#1f2937" />
+          <circle cx="20" cy="16.5" r="1.2" fill="#1f2937" />
+          {/* Blushing cheeks */}
+          <ellipse cx="9.5" cy="18.5" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
+          <ellipse cx="22.5" cy="18.5" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
+          {/* Smile */}
+          <path d="M 14 20 Q 16 21.5 18 20" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
       );
     default:
       return (
-        <div className="w-10 h-10 rounded-full bg-rose-200 flex items-center justify-center font-bold text-[#1f2937]">
-          K
-        </div>
+        <svg viewBox="0 0 32 32" className={`${className} bg-slate-200 dark:bg-slate-700 rounded-full border border-slate-300 dark:border-slate-600`}>
+          <circle cx="16" cy="12" r="5" fill="#64748b" />
+          <path d="M 6 28 C 6 20, 26 20, 26 28 Z" fill="#64748b" />
+        </svg>
       );
   }
 }
@@ -3494,114 +3512,119 @@ export default function Home() {
       )}
 
       {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT 100% CHUẨN IELTS VOCAB (HARD SHADOW & BORDER) */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT 100% CHUẨN IELTS VOCAB (HARD SHADOW & BORDER) */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 border-t-[3px] border-[#1f2937] shadow-[0_-4px_0_#1f2937] flex items-center justify-around h-13 pb-[env(safe-area-inset-bottom,0px)] ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 border-t-[3px] border-[#1f2937] shadow-[0_-4px_0_#1f2937] flex flex-col ${
           isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
-          {/* TAB 1: STUDIO */}
-          <button
-            onClick={() => {
-              setActiveTab('studio');
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
-              activeTab === 'studio' ? 'text-rose-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={activeTab === 'studio' ? 'text-rose-500 scale-110 transition-transform' : 'text-current'}>
-              {renderAwardIcon('w-6 h-6')}
-            </div>
-            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
-              Studio
-            </span>
-          </button>
+          <div className="flex items-center justify-around h-[50px] w-full">
+            {/* TAB 1: STUDIO */}
+            <button
+              onClick={() => {
+                setActiveTab('studio');
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                activeTab === 'studio' ? 'text-rose-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={activeTab === 'studio' ? 'text-rose-500 scale-110 transition-transform' : 'text-current'}>
+                {renderAwardIcon('w-5 h-5')}
+              </div>
+              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
+                Studio
+              </span>
+            </button>
 
-          {/* TAB 2: HỌC */}
-          <button
-            onClick={() => {
-              setIsMobileStudyOpen(true);
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
-              ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
-                ? 'text-blue-500 font-extrabold scale-102'
-                : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-110 transition-transform' : 'text-current'}>
-              {renderBookIcon('w-6 h-6')}
-            </div>
-            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
-              ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
-            }`}>
-              Học
-            </span>
-          </button>
+            {/* TAB 2: HỌC */}
+            <button
+              onClick={() => {
+                setIsMobileStudyOpen(true);
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
+                  ? 'text-blue-500 font-extrabold scale-102'
+                  : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-110 transition-transform' : 'text-current'}>
+                {renderBookIcon('w-5 h-5')}
+              </div>
+              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
+                ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
+              }`}>
+                Học
+              </span>
+            </button>
 
-          {/* TAB 3: PHÒNG */}
-          <button
-            onClick={() => {
-              setActiveTab('room');
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
-              activeTab === 'room' ? 'text-emerald-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={activeTab === 'room' ? 'text-emerald-500 scale-110 transition-transform' : 'text-current'}>
-              {renderHomeIcon('w-6 h-6')}
-            </div>
-            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
-              Phòng
-            </span>
-          </button>
+            {/* TAB 3: PHÒNG */}
+            <button
+              onClick={() => {
+                setActiveTab('room');
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                activeTab === 'room' ? 'text-emerald-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={activeTab === 'room' ? 'text-emerald-500 scale-110 transition-transform' : 'text-current'}>
+                {renderHomeIcon('w-5 h-5')}
+              </div>
+              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
+                Phòng
+              </span>
+            </button>
 
-          {/* TAB 4: SHOP */}
-          <button
-            onClick={() => {
-              setShowPetShopModal(true);
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
-              showPetShopModal ? 'text-amber-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={showPetShopModal ? 'text-amber-500 scale-110 transition-transform' : 'text-current'}>
-              {renderShoppingBagIcon('w-6 h-6 text-amber-500')}
-            </div>
-            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
-              Shop
-            </span>
-          </button>
+            {/* TAB 4: SHOP */}
+            <button
+              onClick={() => {
+                setShowPetShopModal(true);
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                showPetShopModal ? 'text-amber-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={showPetShopModal ? 'text-amber-500 scale-110 transition-transform' : 'text-current'}>
+                {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
+              </div>
+              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
+                Shop
+              </span>
+            </button>
 
-          {/* TAB 5: THÊM */}
-          <button
-            onClick={() => {
-              setIsMobileMoreOpen(true);
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer relative ${
-              isMobileMoreOpen || (activeTab === 'love')
-                ? 'text-purple-500 font-extrabold scale-102'
-                : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-110 transition-transform' : 'text-current'}>
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </div>
-            <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
-              isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
-            }`}>
-              Thêm
-            </span>
-          </button>
+            {/* TAB 5: THÊM */}
+            <button
+              onClick={() => {
+                setIsMobileMoreOpen(true);
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer relative ${
+                isMobileMoreOpen || (activeTab === 'love')
+                  ? 'text-purple-500 font-extrabold scale-102'
+                  : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-110 transition-transform' : 'text-current'}>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </div>
+              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
+                isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
+              }`}>
+                Thêm
+              </span>
+            </button>
+          </div>
+          {/* SAFE AREA FILLER FOR IOS DEVICES */}
+          <div className="h-[env(safe-area-inset-bottom,0px)] w-full" />
         </div>
       )}
 

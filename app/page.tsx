@@ -1406,19 +1406,28 @@ export default function Home() {
               </h2>
 
               <p className="text-[#1f2937] font-bold leading-relaxed border-l-4 border-[#1f2937] pl-4">
-                Học từ vựng tiếng Trung thông minh qua phương pháp Lặp lại Ngắt quãng (Spaced Repetition), Studio Thiết kế Nội thất Pixel 2D & Thú cưng Đồng hành rèn luyện phản xạ.
+                Học từ vựng HSK hiệu quả với phương pháp Lặp lại Ngắt quãng kết hợp Studio Thiết kế Pixel 2D.
               </p>
 
-              {/* Feature Chips */}
+              {/* Feature Chips with Vector SVG Icons */}
               <div className="flex flex-wrap gap-2 pt-2">
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white border-2 border-[#1f2937] shadow-[2px_2px_0_#1f2937]">
-                  ⚡ Flashcards HSK 1-6
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white border-2 border-[#1f2937] shadow-[2px_2px_0_#1f2937] flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 text-amber-500 fill-current" viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h7v8l10-12h-7V2z" />
+                  </svg>
+                  Flashcards HSK 1-6
                 </span>
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white border-2 border-[#1f2937] shadow-[2px_2px_0_#1f2937]">
-                  🎨 Studio Nội Thất 2D
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white border-2 border-[#1f2937] shadow-[2px_2px_0_#1f2937] flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                  Studio Nội Thất 2D
                 </span>
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white border-2 border-[#1f2937] shadow-[2px_2px_0_#1f2937]">
-                  🐾 Pixel Pet Thông Minh
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white border-2 border-[#1f2937] shadow-[2px_2px_0_#1f2937] flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Pixel Pet Thông Minh
                 </span>
               </div>
             </div>

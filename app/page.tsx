@@ -1331,16 +1331,39 @@ export default function Home() {
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-100 text-slate-900'
     } p-3 sm:p-4 md:p-6 pb-24 md:pb-6`}>
-      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ PHONG CÁCH TỐI GIẢN TƯƠI SÁNG (HSK VOCAB) */}
+      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ MANG ĐẬM NÉT ĐẶC TRƯNG HSK PIXEL 2D */}
       {!user ? (
-        <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#f8fafc] text-slate-900 relative overflow-hidden">
-          {/* Soft Background Grid & Ambient Glows */}
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-[#f8fafc] text-slate-900 relative overflow-hidden select-none">
+          {/* Soft Background Grid & Subtle Chinese Character Watermarks */}
           <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+          
+          {/* Subtle Hanzi Watermarks */}
+          <span className="absolute top-10 left-10 text-9xl font-black text-slate-200/40 select-none pointer-events-none font-serif">漢</span>
+          <span className="absolute bottom-10 right-10 text-9xl font-black text-slate-200/40 select-none pointer-events-none font-serif">學</span>
+          <span className="absolute top-1/3 right-16 text-8xl font-black text-slate-200/30 select-none pointer-events-none font-serif">詞</span>
+
+          {/* Ambient Glows */}
           <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-200/40 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-amber-200/40 rounded-full blur-3xl pointer-events-none" />
 
-          {/* SINGLE CENTERED CLEAN CARD */}
-          <div className="max-w-md w-full relative z-10 bg-white border border-slate-200/80 rounded-3xl shadow-xl p-6 sm:p-10 text-slate-900 backdrop-blur-md">
+          {/* CENTERED CLEAN CARD WITH FLOATING PIXEL ELEMENTS */}
+          <div className="max-w-md w-full relative z-10 bg-white border border-slate-200/90 rounded-3xl shadow-xl p-6 sm:p-10 text-slate-900 backdrop-blur-md">
+            
+            {/* DECORATIVE PIXEL PET PEEKING AVATAR (NÉT ĐẶC TRƯNG UNIQUE) */}
+            <div className="absolute -top-10 -right-4 bg-amber-100 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 p-2 rounded-2xl shadow-lg flex items-center gap-1.5 animate-bounce" title="Pixel Pet Chào Bạn!">
+              <svg viewBox="0 0 32 32" className="w-8 h-8 drop-shadow-xs">
+                {/* Shiba Inu Head & Ears */}
+                <path d="M7,12 L11,5 L14,10 Z" fill="#d97706" />
+                <path d="M25,12 L21,5 L18,10 Z" fill="#d97706" />
+                <circle cx="16" cy="17" r="10" fill="#f59e0b" stroke="#78350f" strokeWidth="1" />
+                <ellipse cx="16" cy="19" rx="6" ry="4" fill="#ffffff" />
+                <circle cx="12" cy="15" r="1.5" fill="#0f172a" />
+                <circle cx="20" cy="15" r="1.5" fill="#0f172a" />
+                <ellipse cx="16" cy="18" rx="1.2" ry="0.8" fill="#0f172a" />
+              </svg>
+              <span className="text-[10px] font-mono font-bold text-amber-800 dark:text-amber-300 pr-1">你好!</span>
+            </div>
+
             {/* BRAND LOGO & HEADER */}
             <div className="flex flex-col items-center text-center space-y-3 mb-6">
               <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 p-2.5 shadow-sm flex items-center justify-center hover:scale-105 transition-transform">
@@ -1352,13 +1375,26 @@ export default function Home() {
                   HSK Vocab
                 </h1>
                 <p className="text-xs font-mono font-bold text-sky-600 mt-1 inline-block bg-sky-50 border border-sky-200/80 px-3 py-0.5 rounded-full">
-                  HSK Vocabulary Studio
+                  HSK Vocabulary & 2D Interior Studio
                 </p>
               </div>
 
               <p className="text-slate-500 text-xs font-medium max-w-xs leading-relaxed pt-1">
-                Học từ vựng tiếng Trung HSK 1-6 thông minh kết hợp thiết kế nội thất Pixel 2D.
+                Nền tảng học từ vựng HSK 1-6 thông minh kết hợp thiết kế nội thất Pixel 2D & Thú cưng đồng hành.
               </p>
+
+              {/* FEATURE BADGES FEATURE STRIP */}
+              <div className="flex items-center justify-center gap-1.5 pt-1">
+                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-lg">
+                  Flashcards HSK 1-6
+                </span>
+                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-lg">
+                  Nội Thất Pixel 2D
+                </span>
+                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-lg">
+                  Pixel Pet
+                </span>
+              </div>
             </div>
 
             {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ */}

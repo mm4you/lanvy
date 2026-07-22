@@ -442,6 +442,7 @@ export default function Home() {
   // Navigation tab & grouped dropdown state
   const [activeTab, setActiveTab] = useState<'studio' | 'quiz' | 'room' | 'love' | 'library' | 'admin' | 'flashcards'>('studio');
   const [openNavGroup, setOpenNavGroup] = useState<'study' | 'studio' | 'personal' | null>(null);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isMobileMoreOpen, setIsMobileMoreOpen] = useState(false);
   const [isMobileStudyOpen, setIsMobileStudyOpen] = useState(false);
   const [loveSubTab, setLoveSubTab] = useState<'contracts' | 'chat' | 'wallet'>('wallet');
@@ -1562,97 +1563,149 @@ export default function Home() {
               ? 'bg-slate-900 text-slate-100 border-slate-800' 
               : 'bg-white text-slate-900 border-slate-200'
           }`}>
-            {/* HÀNG 1: BRAND PROFILE (TRÁI) & HỆ THỐNG CÔNG CỤ SYSTEM (PHẢI) */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-3.5">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 bg-amber-100 dark:bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border-2 border-amber-400 shadow-xs">
-                  {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                    renderClientAvatar('lan_vy', 'w-9 h-9')
-                  ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                    renderClientAvatar('khang', 'w-9 h-9')
-                  ) : (
-                    renderPaletteIcon('w-6 h-6 text-amber-600 dark:text-amber-400')
-                  )}
-                </div>
-                <div>
-                  <h1 className={`text-base sm:text-lg font-bold flex items-center gap-2 ${
-                    isDarkMode ? 'text-slate-100' : 'text-slate-900'
-                  }`}>
-                    <img src="/logo.svg" alt="Logo" className="w-7 h-7 object-contain shrink-0" />
-                    <span>Atelier Thiết Kế HSK</span>
-                    {user.email?.toLowerCase() === LOVE_EMAIL && (
-                      <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider flex items-center gap-1">
-                        {renderHeartIcon('w-3 h-3 text-rose-500 fill-current')} Vy Của Khang
-                      </span>
-                    )}
-                    {user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
-                      <span className="text-[10px] bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider flex items-center gap-1">
-                        Khang Của Vy
-                      </span>
-                    )}
-                  </h1>
-                  <p className={`text-[11px] font-mono ${
-                    isDarkMode ? 'text-slate-400' : 'text-slate-600'
-                  }`}>
-                    {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                      <>Bà chủ: <span className="text-rose-600 dark:text-rose-400 font-bold">Lan Vy</span></>
-                    ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                      <>Ông chủ: <span className="text-blue-600 dark:text-blue-400 font-bold">Nhựt Khang</span></>
-                    ) : (
-                      <>Chủ tiệm: <span className="text-rose-600 dark:text-rose-400 font-bold">{user.username}</span></>
-                    )}{' '}
-                    | Chào mừng trở lại!
-                  </p>
-                </div>
+            {/* HÀNG 1: LOGO & TÊN WEB (TRÁI) - TÀI KHOẢN POPUP MENU (PHẢI) */}
+            <div className="flex items-center justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-3">
+              {/* LOGO & TÊN ATELIER THIẾT KẾ HSK */}
+              <div className="flex items-center gap-2.5">
+                <img src="/logo.svg" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
+                <h1 className={`text-base sm:text-lg font-extrabold tracking-tight ${
+                  isDarkMode ? 'text-slate-100' : 'text-slate-900'
+                }`}>
+                  Atelier Thiết Kế HSK
+                </h1>
               </div>
 
-              {/* NÚT THAO TÁC HỆ THỐNG GÓC TRÊN PHẢI (SPECS, GÓP Ý, THEME, THOÁT) */}
-              <div className="flex items-center gap-2 self-end sm:self-center">
+              {/* NÚT TÀI KHOẢN TÍCH HỢP POPUP MENU (BẤM VÀO SẼ MỞ BẢNG ĐIỂM DÀNH, GÓP Ý, SPECS, THOÁT) */}
+              <div className="relative">
                 <button
                   type="button"
-                  aria-label="Toggle dark mode"
-                  onClick={toggleDarkMode}
-                  className="p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
-                  title={isDarkMode ? 'Đang Ban Đêm (Bấm để chuyển sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để chuyển sang Ban Đêm)'}
+                  onClick={() => {
+                    setIsProfileMenuOpen(!isProfileMenuOpen);
+                    playSfx('click');
+                  }}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shadow-xs active:scale-95"
                 >
-                  {isDarkMode ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-yellow-400">
-                      <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-slate-600 dark:text-slate-300">
-                      <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
-                    </svg>
+                  <div className="w-7 h-7 bg-amber-100 dark:bg-slate-700 rounded-full overflow-hidden flex items-center justify-center border border-amber-400 shrink-0">
+                    {user.email?.toLowerCase() === LOVE_EMAIL ? (
+                      renderClientAvatar('lan_vy', 'w-6 h-6')
+                    ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
+                      renderClientAvatar('khang', 'w-6 h-6')
+                    ) : (
+                      renderPaletteIcon('w-4 h-4 text-amber-600 dark:text-amber-400')
+                    )}
+                  </div>
+
+                  <span className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200 max-w-[100px] sm:max-w-[140px] truncate">
+                    {user.username || user.email?.split('@')[0]}
+                  </span>
+
+                  {user.email?.toLowerCase() === LOVE_EMAIL && (
+                    <span className="hidden sm:inline-flex text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider items-center gap-1">
+                      {renderHeartIcon('w-3 h-3 text-rose-500 fill-current')} Vy Của Khang
+                    </span>
                   )}
+                  {user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' && (
+                    <span className="hidden sm:inline-flex text-[10px] bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider items-center gap-1">
+                      Khang Của Vy
+                    </span>
+                  )}
+
+                  <svg className={`w-3.5 h-3.5 text-slate-500 transition-transform ${isProfileMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
 
-                <button
-                  onClick={() => {
-                    setShowArchitectModal(true);
-                    playSfx('click');
-                  }}
-                  className="px-2.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
-                >
-                  Specs
-                </button>
+                {/* POPUP MENU KHI NHẤP VÀO TÊN TÀI KHOẢN */}
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-3 z-50 space-y-2 animate-in fade-in zoom-in-95 duration-150">
+                    {/* THÔNG TIN CHỦ TIỆM */}
+                    <div className="p-2.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-3">
+                      <div className="w-10 h-10 bg-amber-100 dark:bg-slate-700 rounded-full overflow-hidden flex items-center justify-center border-2 border-amber-400 shrink-0">
+                        {user.email?.toLowerCase() === LOVE_EMAIL ? (
+                          renderClientAvatar('lan_vy', 'w-8 h-8')
+                        ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
+                          renderClientAvatar('khang', 'w-8 h-8')
+                        ) : (
+                          renderPaletteIcon('w-5 h-5 text-amber-600 dark:text-amber-400')
+                        )}
+                      </div>
+                      <div className="overflow-hidden">
+                        <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">{user.username}</p>
+                        <p className="text-[10px] text-slate-500 font-mono truncate">{user.email}</p>
+                      </div>
+                    </div>
 
-                <button
-                  onClick={() => {
-                    setShowFeedbackModal(true);
-                    setFeedbackMsg(null);
-                    playSfx('click');
-                  }}
-                  className="px-2.5 py-1 bg-cyan-400 hover:bg-cyan-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
-                >
-                  Góp Ý
-                </button>
+                    {/* BẢNG ĐIỂM DÀNH HÀNG NGÀY / STREAK */}
+                    <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 rounded-xl border border-rose-200 dark:border-rose-900/60 flex items-center justify-between text-xs font-mono font-bold text-rose-700 dark:text-rose-300">
+                      <div className="flex items-center gap-1.5">
+                        {renderFlameIcon('w-4 h-4 text-rose-500')}
+                        <span>Điểm Danh Streak:</span>
+                      </div>
+                      <span className="bg-rose-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">{streakData.streakCount} Ngày</span>
+                    </div>
 
-                <button
-                  onClick={handleLogout}
-                  className="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95 flex items-center gap-1"
-                >
-                  {renderSignoutIcon()} Thoát
-                </button>
+                    {/* DÀN NÚT TIỆN ÍCH */}
+                    <div className="space-y-1 pt-1 border-t border-slate-100 dark:border-slate-800">
+                      <button
+                        onClick={() => {
+                          setShowFeedbackModal(true);
+                          setIsProfileMenuOpen(false);
+                          setFeedbackMsg(null);
+                          playSfx('click');
+                        }}
+                        className="w-full text-left p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs font-bold flex items-center gap-2.5 text-slate-700 dark:text-slate-200 transition cursor-pointer"
+                      >
+                        {renderChatIcon('w-4 h-4 text-cyan-500')}
+                        <span>Góp Ý & Báo Lỗi</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setShowArchitectModal(true);
+                          setIsProfileMenuOpen(false);
+                          playSfx('click');
+                        }}
+                        className="w-full text-left p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs font-bold flex items-center gap-2.5 text-slate-700 dark:text-slate-200 transition cursor-pointer"
+                      >
+                        {renderClipboardIcon()}
+                        <span>Specs Kiến Trúc</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          toggleDarkMode();
+                          playSfx('click');
+                        }}
+                        className="w-full text-left p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs font-bold flex items-center justify-between text-slate-700 dark:text-slate-200 transition cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          {isDarkMode ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-400">
+                              <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
+                            </svg>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-slate-600 dark:text-slate-300">
+                              <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
+                            </svg>
+                          )}
+                          <span>Giao Diện Đêm</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-slate-400">{isDarkMode ? 'Bật' : 'Tắt'}</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full text-left p-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl text-xs font-bold flex items-center gap-2.5 text-rose-600 dark:text-rose-400 transition cursor-pointer"
+                      >
+                        {renderSignoutIcon()}
+                        <span>Đăng Xuất (Thoát)</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

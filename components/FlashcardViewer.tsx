@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { GENERAL_VOCAB_ITEMS, GeneralVocabItem } from '../data/vocabulary';
 import { getBookmarkedIds, toggleBookmark } from '../lib/bookmarksAndStreak';
 import { getNotebooks, toggleWordInNotebook, Notebook } from '../lib/notebookHelper';
@@ -119,14 +119,24 @@ export default function FlashcardViewer({
     return str.replace(/sở thích & hẹn hò|động vật & thú cưng|mua sắm & shopping/gi, '').trim();
   };
 
+  const prevSpokenWordIdRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (currentItem && autoPlayAudio && !isFlipped && !isSessionCompleted) {
+    if (
+      currentItem &&
+      autoPlayAudio &&
+      !isFlipped &&
+      !isSessionCompleted &&
+      currentItem.id !== prevSpokenWordIdRef.current
+    ) {
+      prevSpokenWordIdRef.current = currentItem.id;
       onPlayAudio(cleanString(currentItem.nameChinese));
     }
-  }, [currentIndex, isSessionCompleted, activeDeck]);
+  }, [currentIndex, isFlipped, isSessionCompleted, autoPlayAudio, currentItem]);
 
   const handleToggleBookmarkCurrent = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     if (!currentItem) return;
     const res = toggleBookmark(currentItem.id);
     setBookmarkedIds(res.allIds);

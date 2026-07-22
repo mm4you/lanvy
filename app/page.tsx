@@ -546,6 +546,7 @@ export default function Home() {
   const [customVocabs, setCustomVocabs] = useState<any[]>([]);
   const [vocabTheme, setVocabTheme] = useState('Mua sắm & Shopping');
   const [vocabCustomTheme, setVocabCustomTheme] = useState('');
+  const [vocabHskGroup, setVocabHskGroup] = useState<'hsk123' | 'hsk456'>('hsk123');
   const [librarySearchQuery, setLibrarySearchQuery] = useState('');
   const [libraryPage, setLibraryPage] = useState(1);
   const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
@@ -666,7 +667,7 @@ export default function Home() {
             const res = await fetch('/api/admin/vocab/generate', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ query: th, category: th })
+              body: JSON.stringify({ query: th, category: th, hskGroup: vocabHskGroup })
             });
             const data = await res.json();
             if (data.success && Array.isArray(data.vocabList)) {
@@ -678,7 +679,7 @@ export default function Home() {
         }
         if (combined.length > 0) {
           setGeneratedVocab(combined.map((item: any) => ({ ...item, selected: true })));
-          setVocabBotMsg({ type: 'success', text: `Đã tự động bơm thành công ${combined.length} từ vựng phủ kín 14 chủ đề!` });
+          setVocabBotMsg({ type: 'success', text: `Đã tự động bơm thành công ${combined.length} từ vựng thuộc nhóm ${vocabHskGroup === 'hsk456' ? 'HSK 4-5-6 Nâng Cao' : 'HSK 1-2-3 Cơ Bản'} phủ kín tất cả chủ đề!` });
         } else {
           setVocabBotMsg({ type: 'error', text: 'Lỗi khi tạo từ vựng tổng hợp.' });
         }
@@ -692,7 +693,7 @@ export default function Home() {
         const res = await fetch('/api/admin/vocab/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: finalTheme, category: finalTheme })
+          body: JSON.stringify({ query: finalTheme, category: finalTheme, hskGroup: vocabHskGroup })
         });
         const data = await res.json();
         if (data.success) {
@@ -1694,6 +1695,18 @@ export default function Home() {
                       <div className="space-y-1 pt-1 border-t border-slate-100 dark:border-slate-800">
                         <button
                           onClick={() => {
+                            setShowNotebookModal(true);
+                            setIsProfileMenuOpen(false);
+                            playSfx('click');
+                          }}
+                          className="w-full text-left p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs font-bold flex items-center gap-2.5 text-slate-700 dark:text-slate-200 transition cursor-pointer"
+                        >
+                          {renderBookIcon('w-4 h-4 text-emerald-500')}
+                          <span>Sổ Tay Cá Nhân</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
                             setShowFeedbackModal(true);
                             setIsProfileMenuOpen(false);
                             setFeedbackMsg(null);
@@ -1879,6 +1892,17 @@ export default function Home() {
                   </div>
                 )}
               </div>
+
+              {/* NÚT SỔ TAY CÁ NHÂN (NOTEBOOKS) ĐƯA RA NGOÀI ĐỘC LẬP */}
+              <button
+                type="button"
+                onClick={() => { setShowNotebookModal(true); playSfx('click'); }}
+                className="px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 border bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-200 dark:hover:bg-emerald-900/80 shadow-xs active:scale-95"
+                title="Mở Sổ Tay Từ Vựng HSK Cá Nhân"
+              >
+                {renderBookIcon('w-4 h-4 text-emerald-600 dark:text-emerald-400')}
+                <span>Sổ Tay Cá Nhân</span>
+              </button>
 
               {/* NHÓM 3: CÁ NHÂN & QUÀ TẶNG */}
               <div className="relative">
@@ -2750,7 +2774,7 @@ export default function Home() {
                           }}
                           className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
                         >
-                          Ôn Tập Bằng Flashcard ➔
+                          Ôn Tập Bằng Flashcard
                         </button>
                       </div>
 
@@ -2972,6 +2996,36 @@ export default function Home() {
                         <div className="space-y-3">
                           <div className={`p-3 border rounded-xl text-xs ${isDarkMode ? 'bg-pink-950/40 border-pink-900/60 text-pink-200' : 'bg-pink-50 border-pink-200 text-pink-900'}`}>
                             <b>Tự động cân bằng HSK 1-2-3 (Giống IELTS):</b> Bot AI sẽ tự động tạo bộ 9 từ vựng thuộc chủ đề được chọn (cân bằng 3 từ HSK 1, 3 từ HSK 2 và 3 từ HSK 3).
+                          </div>
+
+                          <div>
+                            <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1 ${
+                              isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                            }`}>Chọn nhóm cấp độ HSK bơm từ:</label>
+                            <div className="grid grid-cols-2 gap-2 mb-3">
+                              <button
+                                type="button"
+                                onClick={() => setVocabHskGroup('hsk123')}
+                                className={`py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                                  vocabHskGroup === 'hsk123'
+                                    ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                }`}
+                              >
+                                <span>Nhóm HSK 1 - 2 - 3 (Cơ Bản)</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setVocabHskGroup('hsk456')}
+                                className={`py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                                  vocabHskGroup === 'hsk456'
+                                    ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                }`}
+                              >
+                                <span>Nhóm HSK 4 - 5 - 6 (Nâng Cao)</span>
+                              </button>
+                            </div>
                           </div>
 
                           <div>

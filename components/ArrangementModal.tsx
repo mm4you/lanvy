@@ -366,7 +366,7 @@ export function ArrangementModal({
               <div className="bg-white p-3 rounded-2xl border-2 border-amber-300 text-left space-y-2 text-xs">
                 <div className="flex items-center justify-between border-b border-dashed border-amber-200 pb-1.5">
                   <span className="font-black text-rose-600 flex items-center gap-1">
-                    🎨 Phong Cách Thiết Kế:
+                    Phong Cách Thiết Kế:
                   </span>
                   <span className="font-serif font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
                     {placedItems.length >= 3 ? 'Bắc Âu Minimalist (极简风)' : 'Tối Giản Hiện Đại (现代风)'}
@@ -375,7 +375,7 @@ export function ArrangementModal({
 
                 <div className="space-y-1">
                   <div className="font-black text-emerald-800 flex items-center gap-1">
-                    🌿 Đánh Giá Phong Thủy & Ánh Sáng (风水与采光):
+                    Đánh Giá Phong Thủy & Ánh Sáng (风水与采光):
                   </div>
                   <p className="text-[11px] text-gray-700 font-bold bg-emerald-50 p-2 rounded-xl border border-emerald-200">
                     "Bố trí không gian lưu thông mạch lạc, đồ đạc kê tựa tường chắc chắn mang lại vận khí tốt (吉利 - Jílì) và tài lộc cho chủ nhà {contract.clientName}!"
@@ -386,7 +386,7 @@ export function ArrangementModal({
               {/* 2. BẢNG BÁO GIÁ THI CÔNG HSK (BILL OF QUANTITIES - BOQ) */}
               <div className="bg-white p-3 rounded-2xl border-2 border-amber-300 text-left text-xs space-y-2">
                 <div className="font-black text-amber-900 border-b border-dashed border-amber-200 pb-1 flex justify-between items-center">
-                  <span>📊 Bảng Báo Giá Thi Công HSK (工程预算表):</span>
+                  <span>Bảng Báo Giá Thi Công HSK (工程预算表):</span>
                   <span className="text-[10px] text-gray-500 font-mono">BOQ #{contract.id}</span>
                 </div>
                 <div className="space-y-1 max-h-28 overflow-y-auto text-[11px]">

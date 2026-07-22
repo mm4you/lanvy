@@ -2,7 +2,105 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-api';
 import { getAIChatCompletion } from '@/lib/ai';
 
-function generateFallbackBalancedVocab(query: string, category: string) {
+function generateFallbackBalancedVocab(query: string, category: string, hskGroup: 'hsk123' | 'hsk456' = 'hsk123') {
+  if (hskGroup === 'hsk456') {
+    return [
+      // HSK 4
+      {
+        nameChinese: '安排',
+        namePinyin: 'ānpái',
+        nameVietnamese: 'Sắp xếp, an bài',
+        hskLevel: 4,
+        category,
+        exampleChinese: '我们安排好时间去旅行。',
+        examplePinyin: 'Wǒmen ānpái hǎo shíjiān qù lǚxíng.',
+        exampleVietnamese: 'Chúng tôi sắp xếp thời gian để đi du lịch.'
+      },
+      {
+        nameChinese: '保证',
+        namePinyin: 'bǎozhèng',
+        nameVietnamese: 'Bảo đảm, cam kết',
+        hskLevel: 4,
+        category,
+        exampleChinese: '我保证准时完成任务。',
+        examplePinyin: 'Wǒ bǎozhèng zhǔnshí wánchéng rènwu.',
+        exampleVietnamese: 'Tôi đảm bảo sẽ hoàn thành nhiệm vụ đúng giờ.'
+      },
+      {
+        nameChinese: '成功',
+        namePinyin: 'chénggōng',
+        nameVietnamese: 'Thành công',
+        hskLevel: 4,
+        category,
+        exampleChinese: '坚持努力就一定会成功。',
+        examplePinyin: 'Jiānchí nǔlì jiù yídìng huì chénggōng.',
+        exampleVietnamese: 'Kiên trì nỗ lực nhất định sẽ thành công.'
+      },
+      // HSK 5
+      {
+        nameChinese: '把握',
+        namePinyin: 'bǎwò',
+        nameVietnamese: 'Nắm bắt, thấu hiểu',
+        hskLevel: 5,
+        category,
+        exampleChinese: '我们要把握住这次机会。',
+        examplePinyin: 'Wǒmen yào bǎwò zhù zhè cì jīhuì.',
+        exampleVietnamese: 'Chúng ta phải nắm bắt cơ hội lần này.'
+      },
+      {
+        nameChinese: '具备',
+        namePinyin: 'jùbèi',
+        nameVietnamese: 'Có đủ, trang bị',
+        hskLevel: 5,
+        category,
+        exampleChinese: '他具备出色的专业能力。',
+        examplePinyin: 'Tā jùbèi chūsè de zhuānyè nénglì.',
+        exampleVietnamese: 'Anh ấy có đủ năng lực chuyên môn xuất sắc.'
+      },
+      {
+        nameChinese: '追求',
+        namePinyin: 'zhuīqiú',
+        nameVietnamese: 'Mưu cầu, theo đuổi',
+        hskLevel: 5,
+        category,
+        exampleChinese: '追求卓越是每个人的梦想。',
+        examplePinyin: 'Zhuīqiú zhuóyuè shì měi ge rén de mèngxiǎng.',
+        exampleVietnamese: 'Theo đuổi sự vượt trội là giấc mơ của mỗi người.'
+      },
+      // HSK 6
+      {
+        nameChinese: '抱负',
+        namePinyin: 'bàofù',
+        nameVietnamese: 'Hoài bão, chí hướng',
+        hskLevel: 6,
+        category,
+        exampleChinese: '年轻人要有远大的抱负。',
+        examplePinyin: 'Niánqīngrén yào yǒu yuǎndà de bàofù.',
+        exampleVietnamese: 'Người trẻ tuổi cần có hoài bão lớn lao.'
+      },
+      {
+        nameChinese: '领悟',
+        namePinyin: 'lǐngwù',
+        nameVietnamese: 'Lĩnh hội, ngộ ra',
+        hskLevel: 6,
+        category,
+        exampleChinese: '他深深领悟到了真谛。',
+        examplePinyin: 'Tā shēnshēn lǐngwù dào le zhēndì.',
+        exampleVietnamese: 'Anh ấy đã lĩnh hội sâu sắc chân lý.'
+      },
+      {
+        nameChinese: '精益求精',
+        namePinyin: 'jīng yì qiú jīng',
+        nameVietnamese: 'Luôn phấn đấu làm tốt hơn nữa',
+        hskLevel: 6,
+        category,
+        exampleChinese: '对待工作我们要精益求精。',
+        examplePinyin: 'Duìdài gōngzuò wǒmen yào jīng yì qiú jīng.',
+        exampleVietnamese: 'Đối với công việc chúng ta phải luôn tinh ích cầu tinh.'
+      }
+    ];
+  }
+
   return [
     // HSK 1
     {
@@ -107,36 +205,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Quyền truy cập bị từ chối.' }, { status: 403 });
     }
 
-    const { query, category = 'Khác' } = await request.json();
+    const { query, category = 'Khác', hskGroup = 'hsk123' } = await request.json();
     if (!query) {
       return NextResponse.json({ error: 'Thiếu từ khóa hoặc chủ đề tạo từ.' }, { status: 400 });
     }
 
+    const isHighGroup = hskGroup === 'hsk456';
+    const groupText = isHighGroup ? 'NÂNG CAO (đúng 3 từ HSK 4, 3 từ HSK 5, 3 từ HSK 6)' : 'CƠ BẢN (đúng 3 từ HSK 1, 3 từ HSK 2, 3 từ HSK 3)';
+    const hskLevelExample = isHighGroup ? '4, 5, hoặc 6' : '1, 2, hoặc 3';
+
     const systemPrompt = `Bạn là bot tạo từ vựng tiếng Trung HSK cho game.
 Người dùng muốn tạo bộ từ vựng xoay quanh chủ đề: "${query}" (thuộc danh mục: "${category}").
 Yêu cầu BẮT BUỘC:
-1. Hãy tạo ra đúng 9 từ vựng tiếng Trung chất lượng cao.
-2. CÂN BẰNG ĐỀU 3 CẤP ĐỘ: đúng 3 từ HSK 1, 3 từ HSK 2 và 3 từ HSK 3! (Đặt hskLevel tương ứng là 1, 2, hoặc 3).
-3. Mỗi đối tượng từ vựng phải có cấu trúc JSON chính xác như sau:
+1. Hãy tạo ra đúng 9 từ vựng tiếng Trung chất lượng cao thuộc nhóm ${groupText}.
+2. Mỗi đối tượng từ vựng phải có cấu trúc JSON chính xác như sau:
 [
   {
     "nameChinese": "Chữ Hán",
     "namePinyin": "Phiên âm",
     "nameVietnamese": "Dịch nghĩa tiếng Việt",
-    "hskLevel": 1, // hoặc 2, 3
+    "hskLevel": ${hskLevelExample},
     "category": "${category}",
     "exampleChinese": "Ví dụ tiếng Trung",
     "examplePinyin": "Phiên âm câu ví dụ",
     "exampleVietnamese": "Dịch nghĩa câu ví dụ"
   }
 ]
-4. Chỉ trả về duy nhất một mảng JSON hợp lệ dạng [...], không được bao bọc trong block code hay thêm bất kỳ chữ chào hỏi/giải thích nào khác ngoài JSON.
-5. Tuyệt đối KHÔNG sử dụng bất kỳ biểu tượng cảm xúc (emoji) nào.`;
+3. Chỉ trả về duy nhất một mảng JSON hợp lệ dạng [...], không được bao bọc trong block code hay thêm bất kỳ chữ chào hỏi/giải thích nào khác ngoài JSON.
+4. Tuyệt đối KHÔNG sử dụng bất kỳ biểu tượng cảm xúc (emoji) nào.`;
 
     try {
       const content = await getAIChatCompletion({
         systemPrompt,
-        userPrompt: `Hãy tạo 9 từ vựng HSK 1-2-3 cân bằng theo chủ đề: "${query}"`,
+        userPrompt: `Hãy tạo 9 từ vựng thuộc nhóm ${groupText} theo chủ đề: "${query}"`,
         temperature: 0.8,
         maxTokens: 2000
       });
@@ -146,7 +247,6 @@ Yêu cầu BẮT BUỘC:
       if (jsonStart !== -1 && jsonEnd > jsonStart) {
         const cleanJson = content.slice(jsonStart, jsonEnd);
         const vocabList = JSON.parse(cleanJson);
-        // Clean up nameVietnamese to remove any accidental category prefix
         const cleanedVocabList = vocabList.map((item: any) => {
           if (typeof item.nameVietnamese === 'string' && typeof category === 'string') {
             const catPattern = new RegExp(`^\\s*${category}\\s*[-:：]?\\s*`, 'i');
@@ -163,7 +263,7 @@ Yêu cầu BẮT BUỘC:
       console.warn("AI Vocab Gen error, returning smart fallback:", aiErr?.message || aiErr);
     }
 
-    const fallbackVocab = generateFallbackBalancedVocab(query, category);
+    const fallbackVocab = generateFallbackBalancedVocab(query, category, hskGroup);
     return NextResponse.json({ success: true, vocabList: fallbackVocab });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

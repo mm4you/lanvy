@@ -149,7 +149,7 @@ export function ArchitectGlossaryModal({
 
                   <div className="p-2.5 bg-amber-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-slate-100 space-y-1">
                     <div className="text-[11px] font-black text-amber-900 dark:text-amber-400 flex items-center gap-1">
-                      🛠️ Quy cách & Đơn giá thi công:
+                      Quy cách & Đơn giá thi công:
                     </div>
                     <p className="text-[11px] text-gray-600 dark:text-slate-300">{term.specification}</p>
                   </div>
@@ -157,7 +157,7 @@ export function ArchitectGlossaryModal({
                   <div className="p-2.5 bg-pink-50 dark:bg-rose-950/40 border border-pink-200 dark:border-rose-900/60 rounded-xl text-xs space-y-1">
                     <p className="font-serif font-bold text-pink-900 dark:text-rose-200">{term.exampleChinese}</p>
                     <p className="text-[11px] font-mono text-pink-700 dark:text-rose-300">{term.examplePinyin}</p>
-                    <p className="text-[11px] font-bold text-pink-950 dark:text-rose-100">👉 {term.exampleVietnamese}</p>
+                    <p className="text-[11px] font-bold text-pink-950 dark:text-rose-100">{term.exampleVietnamese}</p>
                   </div>
                 </div>
               ))}

@@ -222,7 +222,7 @@ export default function NotebookModal({
                         }}
                         className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5"
                       >
-                        {renderBookIcon('w-4 h-4')} Ôn Thẻ Flashcard ➔
+                        {renderBookIcon('w-4 h-4')} Ôn Thẻ Flashcard
                       </button>
                     )}
                     <button
@@ -257,7 +257,9 @@ export default function NotebookModal({
                                 onClick={() => onPlayAudio(item.nameChinese)}
                                 className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer text-xs"
                               >
-                                🔊
+                                <svg className="w-3.5 h-3.5 text-rose-500 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                </svg>
                               </button>
                             )}
                             <span className="text-[9px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 px-1.5 py-0.2 rounded font-bold">

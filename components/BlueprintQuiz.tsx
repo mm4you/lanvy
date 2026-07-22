@@ -654,7 +654,10 @@ export default function BlueprintQuiz({
                 }`}
                 title="Loại bỏ 2 đáp án sai (Tốn 20 Xu)"
               >
-                <span>🃏 Thẻ 50:50 (-20 Xu)</span>
+                <svg className="w-4 h-4 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM12 8v8m-4-4h8" />
+                </svg>
+                <span>Thẻ 50:50 (-20 Xu)</span>
               </button>
 
               <button

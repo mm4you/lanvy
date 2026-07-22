@@ -40,6 +40,10 @@ const AIChatBubbleModal = dynamic(() => import('../components/AIChatBubbleModal'
   loading: () => null
 });
 
+const DailyAttendanceModal = dynamic(() => import('../components/DailyAttendanceModal'), {
+  loading: () => null
+});
+
 const PixelPet = dynamic(() => import('../components/PixelPet').then(m => m.PixelPet), {
   loading: () => null
 });
@@ -474,18 +478,36 @@ export default function Home() {
   const [streakToastMsg, setStreakToastMsg] = useState<string | null>(null);
   const [isBgmPlaying, setIsBgmPlaying] = useState<boolean>(false);
 
+  const [showDailyAttendanceModal, setShowDailyAttendanceModal] = useState<boolean>(false);
+
   useEffect(() => {
     // Check Daily Streak
     const { streakData: sData, justClaimedReward, rewardCoins } = checkAndRewardDailyStreak();
     setStreakData(sData);
     setBookmarkedIds(getBookmarkedIds());
 
-    if (justClaimedReward && rewardCoins > 0) {
-      setCoins((prev) => prev + rewardCoins);
-      setStreakToastMsg(`Chúc mừng! Bạn điểm danh Ngày ${sData.streakCount} và nhận thưởng +${rewardCoins} Xu!`);
-      setTimeout(() => setStreakToastMsg(null), 5000);
+    const todayStr = new Date().toISOString().split('T')[0];
+    const lastModalShown = localStorage.getItem('hsk_last_attendance_modal_date');
+
+    // Automatically pop up Daily Attendance Modal if not shown today
+    if (lastModalShown !== todayStr || !sData.claimedToday) {
+      setShowDailyAttendanceModal(true);
     }
   }, []);
+
+  const handleClaimDailyAttendance = () => {
+    const { streakData: sData, rewardCoins } = checkAndRewardDailyStreak();
+    const todayStr = new Date().toISOString().split('T')[0];
+    setStreakData({ ...sData, claimedToday: true });
+    localStorage.setItem('hsk_last_attendance_modal_date', todayStr);
+
+    if (rewardCoins > 0) {
+      setCoins((prev) => prev + rewardCoins);
+      setStreakToastMsg(`Chúc mừng! Bạn đã điểm danh Ngày ${sData.streakCount} và nhận +${rewardCoins} Xu!`);
+      setTimeout(() => setStreakToastMsg(null), 5000);
+    }
+    playSfx('success');
+  };
 
   const toggleBGM = () => {
     const status = bgmPlayer.toggle();
@@ -1659,7 +1681,14 @@ export default function Home() {
                       </div>
 
                       {/* BẢNG ĐIỂM DÀNH HÀNG NGÀY / STREAK */}
-                      <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 rounded-xl border border-rose-200 dark:border-rose-900/60 flex items-center justify-between text-xs font-mono font-bold text-rose-700 dark:text-rose-300">
+                      <div
+                        onClick={() => {
+                          setShowDailyAttendanceModal(true);
+                          setIsProfileMenuOpen(false);
+                          playSfx('click');
+                        }}
+                        className="p-2.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl border border-rose-200 dark:border-rose-900/60 flex items-center justify-between text-xs font-mono font-bold text-rose-700 dark:text-rose-300 cursor-pointer transition"
+                      >
                         <div className="flex items-center gap-1.5">
                           {renderFlameIcon('w-4 h-4 text-rose-500')}
                           <span>Điểm Danh Streak:</span>
@@ -1932,7 +1961,14 @@ export default function Home() {
               <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
                 {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
               </div>
-              <div className="bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs" title="Chuỗi ngày đăng nhập học tập liên tục">
+              <div
+                onClick={() => {
+                  setShowDailyAttendanceModal(true);
+                  playSfx('click');
+                }}
+                className="bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/60 dark:hover:bg-rose-900/80 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs cursor-pointer transition active:scale-95"
+                title="Bấm để mở Bảng Điểm Danh Streak Hàng Ngày"
+              >
                 {renderFlameIcon('w-4 h-4 text-rose-500')}
                 <span>Streak: {streakData.streakCount} Ngày</span>
               </div>
@@ -3500,6 +3536,16 @@ export default function Home() {
           setShowNotebookModal(false);
           setActiveTab('flashcards' as any);
         }}
+      />
+
+      {/* POPUP BẢNG ĐIỂM DÀNH HÀNG NGÀY / STREAK MODAL */}
+      <DailyAttendanceModal
+        isOpen={showDailyAttendanceModal}
+        onClose={() => setShowDailyAttendanceModal(false)}
+        streakCount={streakData.streakCount}
+        claimedToday={streakData.claimedToday}
+        onClaimAttendance={handleClaimDailyAttendance}
+        isDarkMode={isDarkMode}
       />
 
       {/* Retro CSS animations style tag */}

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { GENERAL_VOCAB_ITEMS, GeneralVocabItem } from '../data/vocabulary';
 import { getBookmarkedIds, toggleBookmark } from '../lib/bookmarksAndStreak';
+import { getNotebooks, toggleWordInNotebook, Notebook } from '../lib/notebookHelper';
 
 interface FlashcardViewerProps {
   customVocabs?: any[];
@@ -8,6 +9,7 @@ interface FlashcardViewerProps {
   playSfx: (type: 'click' | 'success' | 'flip' | 'perfect') => void;
   isDarkMode?: boolean;
   onRewardCoins?: (amount: number) => void;
+  onOpenNotebookModal?: () => void;
 }
 
 function renderAudioIcon(className = 'w-4 h-4') {
@@ -26,12 +28,21 @@ function renderStarIcon(isFilled: boolean, className = 'w-5 h-5') {
   );
 }
 
+function renderNotebookIcon(className = 'w-5 h-5') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>
+  );
+}
+
 export default function FlashcardViewer({
   customVocabs = [],
   onPlayAudio,
   playSfx,
   isDarkMode = false,
   onRewardCoins,
+  onOpenNotebookModal,
 }: FlashcardViewerProps) {
   const [deckSize, setDeckSize] = useState<number | 'all'>(5);
   const [isCustomSize, setIsCustomSize] = useState(false);
@@ -44,13 +55,19 @@ export default function FlashcardViewer({
   const [masteredIds, setMasteredIds] = useState<string[]>([]);
   const [autoPlayAudio, setAutoPlayAudio] = useState(true);
   const [isSessionCompleted, setIsSessionCompleted] = useState(false);
+  const [shuffleSeed, setShuffleSeed] = useState(0);
+
+  // NOTEBOOK POPOVER STATE
+  const [showNotebookPopover, setShowNotebookPopover] = useState(false);
+  const [userNotebooks, setUserNotebooks] = useState<Notebook[]>([]);
 
   useEffect(() => {
     setBookmarkedIds(getBookmarkedIds());
+    setUserNotebooks(getNotebooks());
   }, []);
 
   // Aggregate pool of vocabularies
-  const allVocabs: GeneralVocabItem[] = [
+  const allVocabs: GeneralVocabItem[] = useMemo(() => [
     ...GENERAL_VOCAB_ITEMS,
     ...(customVocabs || []).map((v) => ({
       id: v.id || `custom_${v.nameChinese}`,
@@ -63,15 +80,28 @@ export default function FlashcardViewer({
       examplePinyin: v.examplePinyin,
       exampleVietnamese: v.exampleVietnamese,
     })),
-  ];
+  ], [customVocabs]);
 
-  const pool = allVocabs.filter((item) => {
-    const matchesHsk = selectedHsk === 'all' || item.hskLevel === selectedHsk;
-    const matchesBookmark = filterMode === 'all' || bookmarkedIds.includes(item.id);
-    return matchesHsk && matchesBookmark;
-  });
+  const activeDeck = useMemo(() => {
+    const pool = allVocabs.filter((item) => {
+      const matchesHsk = selectedHsk === 'all' || item.hskLevel === selectedHsk;
+      const matchesBookmark = filterMode === 'all' || bookmarkedIds.includes(item.id);
+      return matchesHsk && matchesBookmark;
+    });
 
-  const activeDeck = deckSize === 'all' ? pool : pool.slice(0, deckSize);
+    if (deckSize === 'all') return pool;
+
+    // Shuffle pool deterministically based on shuffleSeed so each "Học tiếp" gives a brand new set!
+    const shuffled = [...pool].sort((a, b) => {
+      const s = shuffleSeed * 17;
+      const hashA = (a.id + s).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+      const hashB = (b.id + s).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+      return (hashA % 97) - (hashB % 97);
+    });
+
+    return shuffled.slice(0, deckSize);
+  }, [allVocabs, selectedHsk, filterMode, bookmarkedIds, deckSize, shuffleSeed]);
+
   const currentItem = activeDeck[currentIndex] || activeDeck[0];
 
   const cleanString = (str: string) => {
@@ -83,7 +113,7 @@ export default function FlashcardViewer({
     if (currentItem && autoPlayAudio && !isFlipped && !isSessionCompleted) {
       onPlayAudio(cleanString(currentItem.nameChinese));
     }
-  }, [currentIndex, isSessionCompleted]);
+  }, [currentIndex, isSessionCompleted, activeDeck]);
 
   const handleToggleBookmarkCurrent = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -93,10 +123,17 @@ export default function FlashcardViewer({
     playSfx('click');
   };
 
+  const handleToggleNotebookWord = (notebookId: string, wordId: string) => {
+    const updated = toggleWordInNotebook(notebookId, wordId);
+    setUserNotebooks(updated);
+    playSfx('click');
+  };
+
   const handleNext = () => {
     playSfx('flip');
     if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
     setIsFlipped(false);
+    setShowNotebookPopover(false);
     if (activeDeck.length === 0) return;
 
     if (currentIndex + 1 >= activeDeck.length) {
@@ -112,15 +149,18 @@ export default function FlashcardViewer({
     playSfx('flip');
     if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
     setIsFlipped(false);
+    setShowNotebookPopover(false);
     if (activeDeck.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + activeDeck.length) % activeDeck.length);
   };
 
   const handleRestartSession = () => {
     playSfx('click');
+    setShuffleSeed((prev) => prev + 1); // Shuffle to fetch a BRAND NEW set of words!
     setCurrentIndex(0);
     setIsFlipped(false);
     setIsSessionCompleted(false);
+    setShowNotebookPopover(false);
   };
 
   const handleToggleMastered = (id: string) => {
@@ -317,6 +357,68 @@ export default function FlashcardViewer({
               </span>
 
               <div className="flex items-center gap-2">
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowNotebookPopover(!showNotebookPopover);
+                      playSfx('click');
+                    }}
+                    className="p-2 bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-600 dark:text-purple-300 rounded-xl border border-purple-200 dark:border-purple-800 cursor-pointer transition-all active:scale-95 flex items-center gap-1"
+                    title="Thêm từ này vào Sổ tay..."
+                  >
+                    {renderNotebookIcon('w-5 h-5 text-purple-600 dark:text-purple-300')}
+                  </button>
+
+                  {showNotebookPopover && (
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 border-2 border-[#1f2937] dark:border-slate-700 rounded-2xl shadow-xl p-3 z-50 text-left animate-in zoom-in-95 duration-150"
+                    >
+                      <div className="flex items-center justify-between border-b border-dashed border-slate-200 dark:border-slate-800 pb-2 mb-2">
+                        <span className="text-xs font-black text-slate-800 dark:text-slate-200">Chọn Sổ Tay Thêm Từ</span>
+                        <button
+                          onClick={() => setShowNotebookPopover(false)}
+                          className="text-xs font-black text-slate-400 hover:text-slate-600"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                        {userNotebooks.map((nb) => {
+                          const inNotebook = nb.wordIds.includes(currentItem.id);
+                          return (
+                            <label
+                              key={nb.id}
+                              className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={inNotebook}
+                                onChange={() => handleToggleNotebookWord(nb.id, currentItem.id)}
+                                className="rounded text-purple-600 focus:ring-purple-500"
+                              />
+                              <span className="truncate">{nb.name}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                      {onOpenNotebookModal && (
+                        <button
+                          onClick={() => {
+                            setShowNotebookPopover(false);
+                            onOpenNotebookModal();
+                          }}
+                          className="mt-2.5 w-full py-1.5 bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-[10px] font-black rounded-lg border border-purple-300 dark:border-purple-800 text-center transition cursor-pointer"
+                        >
+                          + Tạo / Quản Lý Sổ Tay 📖
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <button
                   type="button"
                   onClick={handleToggleBookmarkCurrent}

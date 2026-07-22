@@ -2406,6 +2406,7 @@ export default function Home() {
                 onPlayAudio={handlePlayTTS}
                 playSfx={playSfx}
                 isDarkMode={isDarkMode}
+                onOpenNotebookModal={() => setShowNotebookModal(true)}
               />
             )}
 

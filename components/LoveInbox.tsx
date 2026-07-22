@@ -20,6 +20,7 @@ interface LoveInboxProps {
   onUnlockVoucher: (contract: DesignContract) => void;
   playSfx: (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => void;
   isDarkMode?: boolean;
+  initialTab?: 'contracts' | 'chat' | 'wallet';
 }
 
 // Icons bổ trợ thay thế cho Emojis
@@ -94,10 +95,18 @@ export default function LoveInbox({
   unlockedVouchers,
   onUnlockVoucher,
   playSfx,
-  isDarkMode
+  isDarkMode,
+  initialTab
 }: LoveInboxProps) {
   const userName = user?.username || 'Bạn';
-  const [activeTab, setActiveTab] = useState<'contracts' | 'chat' | 'wallet'>(isVy ? 'contracts' : 'wallet');
+  const [activeTab, setActiveTab] = useState<'contracts' | 'chat' | 'wallet'>(initialTab || (isVy ? 'contracts' : 'wallet'));
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
   const [selectedContract, setSelectedContract] = useState<DesignContract | null>(null);
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);

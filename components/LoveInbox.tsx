@@ -333,7 +333,7 @@ export default function LoveInbox({
           }`}
         >
           {renderTicketIconSVG(activeTab === 'wallet' ? 'text-rose-500 w-5 h-5' : 'w-5 h-5')}
-          {isVy ? `Ví Voucher Của Vy (${unlockedVouchers.length})` : `Ví Voucher Của ${userName} (${unlockedVouchers.length})`}
+          {isVy ? `Thử Thách & Túi Đồ Vy (${unlockedVouchers.length})` : `Túi Đồ Cá Nhân (${unlockedVouchers.length})`}
         </button>
       </div>
 

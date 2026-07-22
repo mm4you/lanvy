@@ -1331,193 +1331,148 @@ export default function Home() {
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-100 text-slate-900'
     } p-3 sm:p-4 md:p-6 pb-24 md:pb-6`}>
-      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ PHONG CÁCH HIỆN ĐẠI SANG TRỌNG (HSK VOCAB) */}
+      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ PHONG CÁCH TỐI GIẢN TƯƠI SÁNG (HSK VOCAB) */}
       {!user ? (
-        <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-slate-950 text-slate-100">
-          {/* CỘT TRÁI: HERO BANNER HSK VOCAB SANG TRỌNG */}
-          <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 border-r border-slate-800/60 flex-col justify-between p-12 relative overflow-hidden">
-            {/* Ambient Background Glows */}
-            <div className="absolute top-1/4 -left-20 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#f8fafc] text-slate-900 relative overflow-hidden">
+          {/* Soft Background Grid & Ambient Glows */}
+          <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+          <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-200/40 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-amber-200/40 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="z-10 flex items-center justify-between">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-white/10 border border-white/15 text-sky-300 backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-                HSK Vocabulary Studio
-              </span>
-            </div>
-
-            <div className="z-10 my-auto flex flex-col gap-6 max-w-lg text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-slate-900/90 border border-slate-700/80 p-2 shadow-2xl flex items-center justify-center shrink-0">
-                  <img src="/logo.svg" alt="HSK Vocab Logo" className="w-12 h-12 object-contain" />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-black tracking-tight text-white">HSK Vocab</h1>
-                  <p className="text-xs font-mono text-sky-400 font-bold">Vocabulary & Interior Studio</p>
-                </div>
+          {/* SINGLE CENTERED CLEAN CARD */}
+          <div className="max-w-md w-full relative z-10 bg-white border border-slate-200/80 rounded-3xl shadow-xl p-6 sm:p-10 text-slate-900 backdrop-blur-md">
+            {/* BRAND LOGO & HEADER */}
+            <div className="flex flex-col items-center text-center space-y-3 mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 p-2.5 shadow-sm flex items-center justify-center hover:scale-105 transition-transform">
+                <img src="/logo.svg" alt="HSK Vocab Logo" className="w-12 h-12 object-contain" />
+              </div>
+              
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  HSK Vocab
+                </h1>
+                <p className="text-xs font-mono font-bold text-sky-600 mt-1 inline-block bg-sky-50 border border-sky-200/80 px-3 py-0.5 rounded-full">
+                  HSK Vocabulary Studio
+                </p>
               </div>
 
-              <h2 className="text-4xl lg:text-5xl font-serif font-black text-slate-100 leading-tight">
-                Chinh Phục Tiếng Trung <br />
-                <span className="bg-gradient-to-r from-sky-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
-                  Theo Phong Cách Pixel 2D
-                </span>
-              </h2>
-
-              <p className="text-slate-300 text-sm font-medium leading-relaxed border-l-2 border-sky-500/60 pl-4">
-                Nền tảng học từ vựng HSK 1-6 thông minh kết hợp phương pháp Lặp lại Ngắt quãng (Spaced Repetition), Thiết kế Nội thất Pixel và Thú cưng Đồng hành rèn luyện phản xạ.
-              </p>
-
-              <div className="flex flex-wrap gap-2 pt-2">
-                <span className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/80 border border-slate-700/60 text-slate-200">
-                  ⚡ Flashcards HSK 1-6
-                </span>
-                <span className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/80 border border-slate-700/60 text-slate-200">
-                  🎨 Studio Nội Thất 2D
-                </span>
-                <span className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/80 border border-slate-700/60 text-slate-200">
-                  🐾 Pixel Pet Thông Minh
-                </span>
-              </div>
-            </div>
-
-            <div className="z-10 pt-6 border-t border-slate-800/80">
-              <p className="text-xs font-mono font-bold text-slate-500 tracking-wider">
-                © 2026 HSK VOCAB STUDIO. ALL RIGHTS RESERVED.
+              <p className="text-slate-500 text-xs font-medium max-w-xs leading-relaxed pt-1">
+                Học từ vựng tiếng Trung HSK 1-6 thông minh kết hợp thiết kế nội thất Pixel 2D.
               </p>
             </div>
-          </div>
 
-          {/* CỘT PHẢI: FORM ĐĂNG NHẬP / ĐĂNG KÝ GLASSMORPHISM MODERN */}
-          <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10 min-h-screen bg-slate-950">
-            <div className="max-w-md w-full relative z-10 flex flex-col p-8 sm:p-10 bg-slate-900/90 border border-slate-800 rounded-3xl shadow-2xl text-slate-100 backdrop-blur-xl">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 p-2 shadow-xl flex items-center justify-center">
-                  <img src="/logo.svg" alt="HSK Vocab Logo" className="w-12 h-12 object-contain" />
-                </div>
-              </div>
-
-              <h1 className="text-2xl sm:text-3xl font-black text-white text-center mb-1 tracking-tight">
-                Chào Mừng Bạn Đến HSK Vocab
-              </h1>
-              <p className="text-slate-400 text-xs sm:text-sm font-medium text-center mb-6">
-                Đăng nhập để tiếp tục tiến trình học từ vựng và sáng tạo phòng Pixel 2D của bạn.
-              </p>
-
-              {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ */}
-              <div className="flex bg-slate-800/90 p-1 rounded-2xl mb-6 border border-slate-700/80">
-                <button
-                  type="button"
-                  onClick={() => { setAuthMode('login'); setAuthError(''); playSfx('click'); }}
-                  className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
-                    authMode === 'login'
-                      ? 'bg-sky-500 text-white shadow-md'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Đăng Nhập
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setAuthMode('register'); setAuthError(''); playSfx('click'); }}
-                  className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
-                    authMode === 'register'
-                      ? 'bg-sky-500 text-white shadow-md'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Tạo Tài Khoản
-                </button>
-              </div>
-
-              <form onSubmit={handleAuth} className="flex flex-col gap-4 text-left">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-300">Tên Tài Khoản</label>
-                  <input
-                    type="text"
-                    required
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
-                    placeholder="Nhập tên tài khoản..."
-                    className="w-full bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl font-medium text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
-                  />
-                </div>
-
-                {authMode === 'register' && (
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-300">Địa Chỉ Email</label>
-                    <input
-                      type="email"
-                      required
-                      value={emailInput}
-                      onChange={(e) => setEmailInput(e.target.value)}
-                      placeholder="email@example.com"
-                      className="w-full bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl font-medium text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
-                    />
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label className="text-xs font-bold text-slate-300">Mật Khẩu</label>
-                    {authMode === 'login' && (
-                      <button
-                        type="button"
-                        onClick={() => { setShowForgotModal(true); setForgotStep('request'); setForgotMsg(null); playSfx('click'); }}
-                        className="text-xs font-bold text-sky-400 hover:text-sky-300 transition cursor-pointer"
-                      >
-                        Quên mật khẩu?
-                      </button>
-                    )}
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl font-medium text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
-                  />
-                </div>
-
-                {authError && (
-                  <p className="text-xs font-bold text-rose-400 bg-rose-950/60 border border-rose-800 p-3 rounded-xl text-center">
-                    {authError}
-                  </p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={authLoading}
-                  className="mt-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white py-3.5 font-bold text-sm rounded-xl w-full flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 active:scale-[0.99] transition-all cursor-pointer"
-                >
-                  {authLoading ? 'Đang Xử Lý...' : authMode === 'login' ? 'Đăng Nhập Ngay' : 'Tạo Tài Khoản Mới'}
-                </button>
-              </form>
-
-              <div className="border-t border-slate-800 w-full my-5 relative flex items-center justify-center">
-                <span className="bg-slate-900 px-3 text-xs font-bold text-slate-500 uppercase absolute">HOẶC</span>
-              </div>
-
-              {/* GOOGLE LOGIN BUTTON MODERN */}
-              <a
-                href="/api/auth/google/start"
-                onClick={() => playSfx('click')}
-                className="bg-slate-800 hover:bg-slate-700/80 text-slate-100 border border-slate-700/80 w-full py-3.5 text-xs font-bold flex items-center justify-center gap-3 transition-all rounded-xl cursor-pointer shadow-xs active:scale-[0.99]"
+            {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ */}
+            <div className="flex bg-slate-100 p-1 rounded-2xl mb-6 border border-slate-200/80">
+              <button
+                type="button"
+                onClick={() => { setAuthMode('login'); setAuthError(''); playSfx('click'); }}
+                className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
+                  authMode === 'login'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                Tiếp tục với Google
-              </a>
+                Đăng Nhập
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('register'); setAuthError(''); playSfx('click'); }}
+                className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
+                  authMode === 'register'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                Tạo Tài Khoản
+              </button>
             </div>
+
+            {/* AUTH FORM */}
+            <form onSubmit={handleAuth} className="flex flex-col gap-4 text-left">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-700">Tên Tài Khoản</label>
+                <input
+                  type="text"
+                  required
+                  value={usernameInput}
+                  onChange={(e) => setUsernameInput(e.target.value)}
+                  placeholder="Nhập tên tài khoản..."
+                  className="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl font-medium text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
+                />
+              </div>
+
+              {authMode === 'register' && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-slate-700">Địa Chỉ Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    placeholder="email@example.com"
+                    className="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl font-medium text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
+                  />
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-slate-700">Mật Khẩu</label>
+                  {authMode === 'login' && (
+                    <button
+                      type="button"
+                      onClick={() => { setShowForgotModal(true); setForgotStep('request'); setForgotMsg(null); playSfx('click'); }}
+                      className="text-xs font-bold text-sky-600 hover:text-sky-700 transition cursor-pointer"
+                    >
+                      Quên mật khẩu?
+                    </button>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  required
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl font-medium text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
+                />
+              </div>
+
+              {authError && (
+                <p className="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 p-3 rounded-2xl text-center">
+                  {authError}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={authLoading}
+                className="mt-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white py-3.5 font-black text-sm rounded-2xl w-full flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 active:scale-[0.99] transition-all cursor-pointer"
+              >
+                {authLoading ? 'Đang Xử Lý...' : authMode === 'login' ? 'Đăng Nhập Ngay' : 'Tạo Tài Khoản Mới'}
+              </button>
+            </form>
+
+            <div className="border-t border-slate-200 w-full my-5 relative flex items-center justify-center">
+              <span className="bg-white px-3 text-xs font-bold text-slate-400 uppercase absolute">HOẶC</span>
+            </div>
+
+            {/* GOOGLE LOGIN BUTTON CLEAN */}
+            <a
+              href="/api/auth/google/start"
+              onClick={() => playSfx('click')}
+              className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 w-full py-3.5 text-xs font-bold flex items-center justify-center gap-3 transition-all rounded-2xl cursor-pointer shadow-xs active:scale-[0.99]"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+            </a>
           </div>
 
-          {/* MODAL KHÔI PHỤC MẬT KHẨU OTP (NEO-BRUTALISM) */}
+          {/* MODAL KHÔI PHỤC MẬT KHẨU OTP */}
           {showForgotModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
               <div className="bg-[#fffdf8] border-4 border-black p-6 rounded-2xl shadow-[6px_6px_0_#000] max-w-md w-full space-y-4 text-black text-left relative">
@@ -1971,8 +1926,8 @@ export default function Home() {
                     >
                       {renderVoucherIcon('w-4 h-4 text-pink-500')}
                       <div>
-                        <p className="font-bold">{isVy ? 'Thư Tình & Voucher' : 'Ví Voucher HSK'}</p>
-                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Voucher quà tặng ngọt ngào</p>
+                        <p className="font-bold">{isVy ? 'Thử Thách & Túi Đồ' : 'Túi Đồ Cá Nhân'}</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Quản lý vật phẩm & Voucher</p>
                       </div>
                     </button>
 
@@ -3387,7 +3342,7 @@ export default function Home() {
                 }`}
               >
                 {renderVoucherIcon('w-6 h-6 text-purple-500')}
-                <span className="text-[10px] font-black">{isVy ? 'Hòm Thư Vy' : 'Ví Voucher'}</span>
+                <span className="text-[10px] font-black">{isVy ? 'Túi Đồ Vy' : 'Túi Đồ Cá Nhân'}</span>
               </button>
             </div>
           </div>

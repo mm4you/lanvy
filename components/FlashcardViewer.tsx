@@ -10,6 +10,15 @@ interface FlashcardViewerProps {
   isDarkMode?: boolean;
   onRewardCoins?: (amount: number) => void;
   onOpenNotebookModal?: () => void;
+  onClose?: () => void;
+}
+
+function renderXIcon(className = 'w-4 h-4') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  );
 }
 
 function renderAudioIcon(className = 'w-4 h-4') {
@@ -20,10 +29,10 @@ function renderAudioIcon(className = 'w-4 h-4') {
   );
 }
 
-function renderStarIcon(isFilled: boolean, className = 'w-5 h-5') {
+function renderBookmarkIcon(isFilled: boolean, className = 'w-4 h-4') {
   return (
     <svg className={className} fill={isFilled ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
     </svg>
   );
 }
@@ -43,6 +52,7 @@ export default function FlashcardViewer({
   isDarkMode = false,
   onRewardCoins,
   onOpenNotebookModal,
+  onClose,
 }: FlashcardViewerProps) {
   const [deckSize, setDeckSize] = useState<number | 'all'>(5);
   const [isCustomSize, setIsCustomSize] = useState(false);
@@ -221,7 +231,7 @@ export default function FlashcardViewer({
   return (
     <div className="max-w-xl mx-auto space-y-5 text-slate-900 dark:text-slate-100">
       {/* HEADER BỘ TỪ & CẤP ĐỘ HSK */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-xs space-y-3">
+      <div className="bg-white dark:bg-slate-900 border-2 border-[#1f2937] dark:border-slate-800 p-4 rounded-2xl shadow-[4px_4px_0px_#1f2937] space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">Bộ từ:</span>
@@ -274,29 +284,42 @@ export default function FlashcardViewer({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">HSK:</span>
-            <div className="flex gap-1 flex-wrap">
-              {['all', 1, 2, 3, 4, 5, 6].map((lvl) => (
-                <button
-                  key={lvl}
-                  type="button"
-                  onClick={() => {
-                    setSelectedHsk(lvl === 'all' ? 'all' : Number(lvl));
-                    setCurrentIndex(0);
-                    setIsFlipped(false);
-                    setIsSessionCompleted(false);
-                    playSfx('click');
-                  }}
-                  className={`px-2 py-0.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
-                    selectedHsk === lvl
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
-                  }`}
-                >
-                  {lvl === 'all' ? 'Tất cả' : `H${lvl}`}
-                </button>
-              ))}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">HSK:</span>
+              <div className="flex gap-1 flex-wrap">
+                {['all', 1, 2, 3, 4, 5, 6].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => {
+                      setSelectedHsk(lvl === 'all' ? 'all' : Number(lvl));
+                      setCurrentIndex(0);
+                      setIsFlipped(false);
+                      setIsSessionCompleted(false);
+                      playSfx('click');
+                    }}
+                    className={`px-2 py-0.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
+                      selectedHsk === lvl
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+                    }`}
+                  >
+                    {lvl === 'all' ? 'Tất cả' : `H${lvl}`}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-8 h-8 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center justify-center font-black text-xs cursor-pointer transition active:scale-95 shrink-0 ml-1"
+                title="Thoát chế độ Flashcards"
+              >
+                {renderXIcon('w-4 h-4 text-white')}
+              </button>
+            )}
           </div>
         </div>
 
@@ -319,14 +342,14 @@ export default function FlashcardViewer({
                 setIsFlipped(false);
                 playSfx('click');
               }}
-              className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold flex items-center gap-1 transition-all cursor-pointer border ${
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold flex items-center gap-1 transition-all cursor-pointer border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] ${
                 filterMode === 'bookmarked'
-                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
-                  : 'bg-slate-100 dark:bg-slate-800 text-amber-600 dark:text-amber-400 border-slate-300 dark:border-slate-700'
+                  ? 'bg-amber-400 text-[#1f2937]'
+                  : 'bg-slate-100 dark:bg-slate-800 text-amber-600 dark:text-amber-400'
               }`}
             >
-              {renderStarIcon(true, 'w-3.5 h-3.5')}
-              Sổ Từ Khó ({bookmarkedIds.length})
+              {renderBookmarkIcon(true, 'w-3.5 h-3.5')}
+              Từ Đã Lưu ({bookmarkedIds.length})
             </button>
           </div>
 
@@ -412,7 +435,7 @@ export default function FlashcardViewer({
                           }}
                           className="mt-2.5 w-full py-1.5 bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-[10px] font-black rounded-lg border border-purple-300 dark:border-purple-800 text-center transition cursor-pointer"
                         >
-                          + Tạo / Quản Lý Sổ Tay 📖
+                          + Tạo / Quản Lý Sổ Tay
                         </button>
                       )}
                     </div>
@@ -422,14 +445,15 @@ export default function FlashcardViewer({
                 <button
                   type="button"
                   onClick={handleToggleBookmarkCurrent}
-                  className={`p-2 rounded-xl border transition-all cursor-pointer active:scale-95 ${
+                  className={`px-3 py-1.5 rounded-xl border-2 border-[#1f2937] text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95 ${
                     bookmarkedIds.includes(currentItem.id)
-                      ? 'bg-amber-100 dark:bg-amber-950 text-amber-500 border-amber-400'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700 hover:text-amber-500'
+                      ? 'bg-amber-400 text-[#1f2937]'
+                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-amber-50'
                   }`}
-                  title={bookmarkedIds.includes(currentItem.id) ? 'Bỏ lưu từ khó' : 'Lưu vào Sổ từ khó ôn tập'}
+                  title={bookmarkedIds.includes(currentItem.id) ? 'Bỏ lưu từ khỏi sổ' : 'Lưu từ vào sổ tay'}
                 >
-                  {renderStarIcon(bookmarkedIds.includes(currentItem.id), 'w-5 h-5')}
+                  {renderBookmarkIcon(bookmarkedIds.includes(currentItem.id), 'w-4 h-4')}
+                  <span>{bookmarkedIds.includes(currentItem.id) ? 'Đã lưu' : 'Lưu từ'}</span>
                 </button>
 
                 <button

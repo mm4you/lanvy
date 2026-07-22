@@ -18,6 +18,15 @@ interface BlueprintQuizProps {
     blueprint_rare: number;
   };
   setUserInventory?: React.Dispatch<React.SetStateAction<any>>;
+  onClose?: () => void;
+}
+
+function renderXIcon(className = 'w-4 h-4') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  );
 }
 
 function renderStarIcon(isFilled: boolean, className = 'w-5 h-5') {
@@ -118,7 +127,8 @@ export default function BlueprintQuiz({
   customVocabs,
   isDarkMode,
   userInventory,
-  setUserInventory
+  setUserInventory,
+  onClose,
 }: BlueprintQuizProps) {
   const [quizMode, setQuizMode] = useState<'furniture' | 'general' | 'custom'>('furniture');
   const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all'>('all');
@@ -560,10 +570,21 @@ export default function BlueprintQuiz({
       {/* TIÊU ĐỀ */}
       <h2 className="text-xl font-serif font-black text-slate-900 dark:text-slate-100 border-b border-dashed border-slate-200 dark:border-slate-800 pb-3 mb-4 flex items-center justify-between">
         <span className="flex items-center gap-1.5">{renderBookOpenIcon('text-rose-500')} Bản Vẽ Chế Tạo HSK</span>
-        <span className="text-xs bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-800 px-3 py-1 rounded-full font-mono font-bold flex items-center gap-1.5 shadow-xs" title={`Chuỗi trả lời đúng liên tiếp: ${streak}`}>
-          {renderFlameIcon('w-4 h-4 text-amber-500 animate-pulse')}
-          <span>{streak}</span>
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-800 px-3 py-1 rounded-full font-mono font-bold flex items-center gap-1.5 shadow-xs" title={`Chuỗi trả lời đúng liên tiếp: ${streak}`}>
+            {renderFlameIcon('w-4 h-4 text-amber-500 animate-pulse')}
+            <span>{streak}</span>
+          </span>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="w-8 h-8 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center justify-center font-black text-xs cursor-pointer transition active:scale-95 shrink-0"
+              title="Thoát chế độ Quiz"
+            >
+              {renderXIcon('w-4 h-4 text-white')}
+            </button>
+          )}
+        </div>
       </h2>
 
       {/* BỘ LỌC CẤP ĐỘ HSK 1 - 6 */}

@@ -147,7 +147,7 @@ export function ArchitectGlossaryModal({
             <div className="text-center py-12 text-slate-800 dark:text-slate-200 font-bold text-sm space-y-2">
               <p>Không tìm thấy từ vựng hoặc thuật ngữ phù hợp.</p>
               {filterBookmarkedOnly && (
-                <p className="text-xs text-amber-600 font-normal">Bạn chưa bấm chọn sao ⭐ lưu từ nào vào Sổ Từ Khó.</p>
+                <p className="text-xs text-amber-600 font-normal">Bạn chưa bấm nút lưu từ nào vào sổ tay.</p>
               )}
             </div>
           ) : (

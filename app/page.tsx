@@ -2396,6 +2396,7 @@ export default function Home() {
                 isDarkMode={isDarkMode}
                 userInventory={userInventory}
                 setUserInventory={setUserInventory}
+                onClose={() => setActiveTab('studio')}
               />
             )}
 
@@ -2407,6 +2408,7 @@ export default function Home() {
                 playSfx={playSfx}
                 isDarkMode={isDarkMode}
                 onOpenNotebookModal={() => setShowNotebookModal(true)}
+                onClose={() => setActiveTab('studio')}
               />
             )}
 

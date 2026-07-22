@@ -1331,97 +1331,171 @@ export default function Home() {
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-100 text-slate-900'
     } p-3 sm:p-4 md:p-6 pb-24 md:pb-6`}>
-      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ MANG ĐẬM NÉT ĐẶC TRƯNG HSK PIXEL 2D */}
+      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ CÓ BẢN SẮC RIÊNG (LEFT PIXEL SHOWCASE + RIGHT LOGIN CARD) */}
       {!user ? (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-[#f8fafc] text-slate-900 relative overflow-hidden select-none">
-          {/* Soft Background Grid & Subtle Chinese Character Watermarks */}
-          <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+        <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-slate-950 text-slate-100 select-none">
           
-          {/* Subtle Hanzi Watermarks */}
-          <span className="absolute top-10 left-10 text-9xl font-black text-slate-200/40 select-none pointer-events-none font-serif">漢</span>
-          <span className="absolute bottom-10 right-10 text-9xl font-black text-slate-200/40 select-none pointer-events-none font-serif">學</span>
-          <span className="absolute top-1/3 right-16 text-8xl font-black text-slate-200/30 select-none pointer-events-none font-serif">詞</span>
-
-          {/* Ambient Glows */}
-          <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-200/40 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-amber-200/40 rounded-full blur-3xl pointer-events-none" />
-
-          {/* CENTERED CLEAN CARD WITH FLOATING PIXEL ELEMENTS */}
-          <div className="max-w-md w-full relative z-10 bg-white border border-slate-200/90 rounded-3xl shadow-xl p-6 sm:p-10 text-slate-900 backdrop-blur-md">
+          {/* CỘT TRÁI: SHOWCASE KHU PHÒNG PIXEL 2D & TỪ VỰNG HSK BẢN SẮC RIÊNG */}
+          <div className="hidden lg:flex lg:w-7/12 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 border-r border-slate-800/80 flex-col justify-between p-10 xl:p-14 relative overflow-hidden">
             
-            {/* DECORATIVE PIXEL PET PEEKING AVATAR (NÉT ĐẶC TRƯNG UNIQUE) */}
-            <div className="absolute -top-10 -right-4 bg-amber-100 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 p-2 rounded-2xl shadow-lg flex items-center gap-1.5 animate-bounce" title="Pixel Pet Chào Bạn!">
-              <svg viewBox="0 0 32 32" className="w-8 h-8 drop-shadow-xs">
-                {/* Shiba Inu Head & Ears */}
-                <path d="M7,12 L11,5 L14,10 Z" fill="#d97706" />
-                <path d="M25,12 L21,5 L18,10 Z" fill="#d97706" />
-                <circle cx="16" cy="17" r="10" fill="#f59e0b" stroke="#78350f" strokeWidth="1" />
-                <ellipse cx="16" cy="19" rx="6" ry="4" fill="#ffffff" />
-                <circle cx="12" cy="15" r="1.5" fill="#0f172a" />
-                <circle cx="20" cy="15" r="1.5" fill="#0f172a" />
-                <ellipse cx="16" cy="18" rx="1.2" ry="0.8" fill="#0f172a" />
-              </svg>
-              <span className="text-[10px] font-mono font-bold text-amber-800 dark:text-amber-300 pr-1">你好!</span>
+            {/* Ambient Background Glows */}
+            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+            
+            {/* Watermark Hanzi Characters */}
+            <span className="absolute top-8 left-12 text-9xl font-black text-white/5 pointer-events-none font-serif">漢</span>
+            <span className="absolute bottom-12 left-1/3 text-9xl font-black text-white/5 pointer-events-none font-serif">學</span>
+
+            {/* HEADER BADGE */}
+            <div className="z-10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src="/logo.svg" alt="HSK Vocab Logo" className="w-10 h-10 object-contain drop-shadow-md" />
+                <span className="text-xl font-black tracking-tight text-white font-serif">HSK Vocab</span>
+              </div>
+
+              <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-mono font-bold bg-white/10 border border-white/15 text-sky-300 backdrop-blur-md">
+                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
+                Studio Thiết Kế & Từ Vựng
+              </span>
             </div>
 
-            {/* BRAND LOGO & HEADER */}
-            <div className="flex flex-col items-center text-center space-y-3 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 p-2.5 shadow-sm flex items-center justify-center hover:scale-105 transition-transform">
-                <img src="/logo.svg" alt="HSK Vocab Logo" className="w-12 h-12 object-contain" />
-              </div>
+            {/* HERO CENTER CONTENT WITH MINI ISOMETRIC PIXEL ROOM PREVIEW */}
+            <div className="z-10 my-auto space-y-6 max-w-xl text-left">
               
+              {/* HERO TITLE */}
               <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  HSK Vocab
-                </h1>
-                <p className="text-xs font-mono font-bold text-sky-600 mt-1 inline-block bg-sky-50 border border-sky-200/80 px-3 py-0.5 rounded-full">
-                  HSK Vocabulary & 2D Interior Studio
+                <h2 className="text-4xl xl:text-5xl font-serif font-black text-white leading-tight">
+                  Chinh Phục HSK 1-6 <br />
+                  <span className="bg-gradient-to-r from-sky-400 via-amber-300 to-rose-400 bg-clip-text text-transparent">
+                    Với Phòng Thiết Kế Pixel 2D
+                  </span>
+                </h2>
+                <p className="text-slate-300 text-sm font-medium leading-relaxed border-l-2 border-sky-500/80 pl-4 mt-3">
+                  Nền tảng học tiếng Trung kết hợp phương pháp Lặp lại Ngắt quãng (Spaced Repetition), Studio Thiết kế Nội thất Pixel 2D & Thú cưng Đồng hành rèn luyện phản xạ.
                 </p>
               </div>
 
-              <p className="text-slate-500 text-xs font-medium max-w-xs leading-relaxed pt-1">
-                Nền tảng học từ vựng HSK 1-6 thông minh kết hợp thiết kế nội thất Pixel 2D & Thú cưng đồng hành.
-              </p>
+              {/* MINI PIXEL ROOM CANVAS PREVIEW SHOWCASE (NÉT ĐẶC TRƯNG ĐỘC QUYỀN) */}
+              <div className="bg-slate-900/90 border-2 border-slate-700/80 rounded-3xl p-5 shadow-2xl relative overflow-hidden backdrop-blur-md">
+                <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-3">
+                  <span className="text-xs font-mono font-bold text-amber-400 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-400" /> Studio Phòng 2D Mẫu
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md">
+                    HSK Level 1-6
+                  </span>
+                </div>
 
-              {/* FEATURE BADGES FEATURE STRIP */}
-              <div className="flex items-center justify-center gap-1.5 pt-1">
-                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-lg">
-                  Flashcards HSK 1-6
+                {/* VISUAL MINI ROOM GRAPHIC */}
+                <div className="h-44 bg-slate-950/80 rounded-2xl border border-slate-800 relative flex items-center justify-center p-4">
+                  {/* Grid Lines */}
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:16px_16px] opacity-40" />
+
+                  {/* FLOATING HSK VOCAB CARDS */}
+                  <div className="absolute -top-2 left-6 bg-slate-800/90 border border-sky-500/40 text-sky-300 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-md animate-bounce">
+                    爱 (ài) • Yêu
+                  </div>
+                  <div className="absolute top-2 right-8 bg-slate-800/90 border border-amber-500/40 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-md animate-pulse">
+                    家 (jiā) • Gia đình
+                  </div>
+                  <div className="absolute bottom-3 left-10 bg-slate-800/90 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-md">
+                    学 (xué) • Học tập
+                  </div>
+
+                  {/* SHIBA PIXEL PET AVATAR */}
+                  <div className="z-10 flex items-center gap-3 bg-slate-900/90 border border-slate-700 px-4 py-2.5 rounded-2xl shadow-xl">
+                    <svg viewBox="0 0 32 32" className="w-10 h-10">
+                      <path d="M7,12 L11,5 L14,10 Z" fill="#d97706" />
+                      <path d="M25,12 L21,5 L18,10 Z" fill="#d97706" />
+                      <circle cx="16" cy="17" r="10" fill="#f59e0b" stroke="#78350f" strokeWidth="1" />
+                      <ellipse cx="16" cy="19" rx="6" ry="4" fill="#ffffff" />
+                      <circle cx="12" cy="15" r="1.5" fill="#0f172a" />
+                      <circle cx="20" cy="15" r="1.5" fill="#0f172a" />
+                      <ellipse cx="16" cy="18" rx="1.2" ry="0.8" fill="#0f172a" />
+                    </svg>
+                    <div>
+                      <p className="text-xs font-black text-amber-300">Shiba đồng hành</p>
+                      <p className="text-[10px] font-mono text-slate-400">"你好! Cùng học từ vựng nhé!"</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FEATURE CHIPS */}
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900/90 border border-slate-800 text-slate-300">
+                  ⚡ Flashcards HSK 1-6
                 </span>
-                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-lg">
-                  Nội Thất Pixel 2D
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900/90 border border-slate-800 text-slate-300">
+                  🎨 Studio Nội Thất 2D
                 </span>
-                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-lg">
-                  Pixel Pet
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900/90 border border-slate-800 text-slate-300">
+                  🐾 Pixel Pet Thông Minh
                 </span>
               </div>
             </div>
 
-            {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ */}
-            <div className="flex bg-slate-100 p-1 rounded-2xl mb-6 border border-slate-200/80">
-              <button
-                type="button"
-                onClick={() => { setAuthMode('login'); setAuthError(''); playSfx('click'); }}
-                className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
-                  authMode === 'login'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                Đăng Nhập
-              </button>
-              <button
-                type="button"
-                onClick={() => { setAuthMode('register'); setAuthError(''); playSfx('click'); }}
-                className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
-                  authMode === 'register'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                Tạo Tài Khoản
-              </button>
+            {/* FOOTER */}
+            <div className="z-10 pt-4 border-t border-slate-800/80">
+              <p className="text-xs font-mono font-bold text-slate-500 tracking-wider">
+                © 2026 HSK VOCAB STUDIO. ALL RIGHTS RESERVED.
+              </p>
             </div>
+          </div>
+
+          {/* CỘT PHẢI: FORM ĐĂNG NHẬP / ĐĂNG KÝ VỀ GÓC PHẢI CHUẨN XÁC */}
+          <div className="w-full lg:w-5/12 flex items-center justify-center p-6 md:p-12 relative z-10 min-h-screen bg-[#f8fafc] text-slate-900">
+            
+            {/* Soft background grid for right column */}
+            <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+
+            <div className="max-w-md w-full relative z-10 bg-white border border-slate-200/90 rounded-3xl shadow-xl p-6 sm:p-10 text-slate-900 backdrop-blur-md">
+              
+              {/* BRAND LOGO & HEADER */}
+              <div className="flex flex-col items-center text-center space-y-3 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 p-2.5 shadow-sm flex items-center justify-center hover:scale-105 transition-transform">
+                  <img src="/logo.svg" alt="HSK Vocab Logo" className="w-12 h-12 object-contain" />
+                </div>
+                
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                    Chào Mừng Đến HSK Vocab
+                  </h1>
+                  <p className="text-xs font-mono font-bold text-sky-600 mt-1 inline-block bg-sky-50 border border-sky-200/80 px-3 py-0.5 rounded-full">
+                    HSK Vocabulary & 2D Interior Studio
+                  </p>
+                </div>
+
+                <p className="text-slate-500 text-xs font-medium max-w-xs leading-relaxed pt-1">
+                  Đăng nhập để tiếp tục tiến trình học từ vựng và sáng tạo phòng Pixel 2D của bạn.
+                </p>
+              </div>
+
+              {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ */}
+              <div className="flex bg-slate-100 p-1 rounded-2xl mb-6 border border-slate-200/80">
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('login'); setAuthError(''); playSfx('click'); }}
+                  className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
+                    authMode === 'login'
+                      ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  Đăng Nhập
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('register'); setAuthError(''); playSfx('click'); }}
+                  className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
+                    authMode === 'register'
+                      ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  Tạo Tài Khoản
+                </button>
+              </div>
 
             {/* AUTH FORM */}
             <form onSubmit={handleAuth} className="flex flex-col gap-4 text-left">
@@ -1507,8 +1581,9 @@ export default function Home() {
               </svg>
             </a>
           </div>
+        </div>
 
-          {/* MODAL KHÔI PHỤC MẬT KHẨU OTP */}
+        {/* MODAL KHÔI PHỤC MẬT KHẨU OTP */}
           {showForgotModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
               <div className="bg-[#fffdf8] border-4 border-black p-6 rounded-2xl shadow-[6px_6px_0_#000] max-w-md w-full space-y-4 text-black text-left relative">

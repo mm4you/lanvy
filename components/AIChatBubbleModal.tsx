@@ -170,42 +170,30 @@ export default function AIChatBubbleModal({
 
   return (
     <>
-      {/* FLOATING BUBBLE BUTTON AT BOTTOM RIGHT */}
-      <div className="fixed bottom-28 md:bottom-6 right-4 z-50 flex items-center gap-2">
-        <button
-          onClick={() => {
-            setIsOpen(!isOpen);
-            playSfx('click');
-          }}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-full border-3 border-[var(--line)] shadow-[4px_4px_0_var(--line)] transition-all duration-200 active:scale-95 cursor-pointer ${
-            isOpen
-              ? 'bg-slate-900 text-white dark:bg-slate-800'
-              : 'bg-rose-500 hover:bg-rose-600 text-white'
-          }`}
-          title="Mở Trợ Lý AI Chat HSK"
-        >
-          {isOpen ? (
-            <>
-              {renderCloseIcon('w-5 h-5 text-white')}
-              <span className="text-xs font-black">Đóng Chat</span>
-            </>
-          ) : (
-            <>
-              <div className="relative">
-                {renderSleekChatIcon('w-5 h-5 text-white')}
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border border-white" />
-              </div>
-              <span className="text-xs font-black tracking-wide">
-                {isVy ? 'Chat Anh Khang AI' : 'Trợ Lý AI'}
-              </span>
-            </>
-          )}
-        </button>
-      </div>
+      {/* FLOATING BUBBLE BUTTON (ONLY SHOWN WHEN CLOSED) */}
+      {!isOpen && (
+        <div className="fixed bottom-24 md:bottom-6 right-4 z-40 flex items-center gap-2">
+          <button
+            onClick={() => {
+              setIsOpen(true);
+              playSfx('click');
+            }}
+            className="flex items-center gap-2.5 px-4 py-3 rounded-full border-3 border-[var(--line)] bg-rose-500 hover:bg-rose-600 text-white shadow-[4px_4px_0_var(--line)] transition-all duration-200 active:scale-95 cursor-pointer"
+          >
+            <div className="relative">
+              {renderSleekChatIcon('w-5 h-5 text-white')}
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border border-white" />
+            </div>
+            <span className="text-xs font-black tracking-wide">
+              {isVy ? 'Chat Anh Khang AI' : 'Trợ Lý AI'}
+            </span>
+          </button>
+        </div>
+      )}
 
       {/* FLOATING CHAT MODAL WINDOW */}
       {isOpen && (
-        <div className="fixed bottom-40 md:bottom-20 right-4 z-[55] w-[calc(100vw-2rem)] sm:w-[380px] h-[500px] max-h-[75vh] flex flex-col border-3 border-[var(--line)] rounded-3xl shadow-[6px_6px_0_var(--line)] overflow-hidden animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-[#1e1e1e]">
+        <div className="fixed bottom-24 md:bottom-6 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[75vh] flex flex-col border-3 border-[var(--line)] rounded-3xl shadow-[8px_8px_0_var(--line)] overflow-hidden animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-[#1e1e1e]">
           {/* Header */}
           <div className="bg-rose-500 text-white p-3.5 border-b-3 border-[var(--line)] flex justify-between items-center shrink-0">
             <div className="flex items-center gap-2.5">

@@ -203,8 +203,18 @@ export default function LuckyWheelModal({
               : 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 shadow-amber-400/30'
           }`}
         >
-          {renderTargetIcon('w-4 h-4 text-slate-950')}
-          <span>{isSpinning ? 'Đang Quay Mắn...' : 'Quay Ngay (50 Xu)'}</span>
+          {isSpinning ? (
+            <span className="flex items-center gap-1">
+              <span>Đang quay</span>
+              <span className="inline-flex items-center gap-1 ml-0.5">
+                <span className="w-1.5 h-1.5 bg-slate-600 dark:bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-1.5 h-1.5 bg-slate-600 dark:bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-1.5 h-1.5 bg-slate-600 dark:bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </span>
+            </span>
+          ) : (
+            <span>Quay Ngay (50 Xu)</span>
+          )}
         </button>
       </div>
     </div>

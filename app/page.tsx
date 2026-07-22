@@ -5,6 +5,8 @@ import { FURNITURE_ITEMS, MATERIAL_ITEMS, DESIGN_CONTRACTS, FurnitureItem, Mater
 import dynamic from 'next/dynamic';
 import { renderFurnitureSVG } from '../components/RoomEditor';
 import { generateDynamicContract } from '../lib/contract-generator';
+import { bgmPlayer } from '../lib/bgmPlayer';
+import { checkAndRewardDailyStreak, getBookmarkedIds, toggleBookmark } from '../lib/bookmarksAndStreak';
 
 const RoomEditor = dynamic(() => import('../components/RoomEditor'), {
   loading: () => <div className="py-16 text-center text-xs font-black font-serif opacity-70 animate-pulse">Đang tải Tiệm Thiết Kế...</div>
@@ -160,6 +162,40 @@ function renderAIIcon(className = 'w-4 h-4') {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
+function renderFlameIcon(className = 'w-4 h-4 text-amber-500') {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 22C16.4183 22 20 18.4183 20 14C20 10.3 17.5 7.2 14 5.7C14 8.5 11.5 10 10 11C8.5 12 7.5 13 7.5 15C7.5 15.5 7.7 16 8 16.5C6.8 15.7 6 14.4 6 13C4.8 14.5 4 16.4 4 18.5C4 20.4 5.6 22 7.5 22C8 22 9.5 21.5 10.5 20.5C10 20 9.5 19.3 9.5 18.5C9.5 17.1 10.6 16 12 16C13.4 16 14.5 17.1 14.5 18.5C14.5 19.5 13.9 20.4 13 21C14 21.8 15.4 22 17 22"
+        fill="url(#flame-grad-global)"
+      />
+      <defs>
+        <linearGradient id="flame-grad-global" x1="12" y1="4" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF4D4D" />
+          <stop offset="0.5" stopColor="#FF8000" />
+          <stop offset="1" stopColor="#FFCC00" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+function renderMusicIcon(isPlaying: boolean, className = 'w-4 h-4') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+    </svg>
+  );
+}
+
+function renderStarIcon(isFilled: boolean, className = 'w-4 h-4') {
+  return (
+    <svg className={className} fill={isFilled ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
     </svg>
   );
 }
@@ -425,8 +461,32 @@ export default function Home() {
   const allContracts = [...DESIGN_CONTRACTS, ...dynamicContracts];
 
   // Library subtab state
-  const [librarySubTab, setLibrarySubTab] = useState<'furniture' | 'vocab' | 'grammar'>('furniture');
+  const [librarySubTab, setLibrarySubTab] = useState<'furniture' | 'vocab' | 'grammar' | 'bookmarked'>('furniture');
   const [selectedLibraryTheme, setSelectedLibraryTheme] = useState<string>('all');
+  const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
+  const [streakData, setStreakData] = useState<{ streakCount: number; lastLoginDate: string; claimedToday: boolean }>({ streakCount: 1, lastLoginDate: '', claimedToday: false });
+  const [streakToastMsg, setStreakToastMsg] = useState<string | null>(null);
+  const [isBgmPlaying, setIsBgmPlaying] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Check Daily Streak
+    const { streakData: sData, justClaimedReward, rewardCoins } = checkAndRewardDailyStreak();
+    setStreakData(sData);
+    setBookmarkedIds(getBookmarkedIds());
+
+    if (justClaimedReward && rewardCoins > 0) {
+      setCoins((prev) => prev + rewardCoins);
+      setStreakToastMsg(`Chúc mừng! Bạn điểm danh Ngày ${sData.streakCount} và nhận thưởng +${rewardCoins} Xu!`);
+      setTimeout(() => setStreakToastMsg(null), 5000);
+    }
+  }, []);
+
+  const toggleBGM = () => {
+    const status = bgmPlayer.toggle();
+    setIsBgmPlaying(status);
+    playSfx('click');
+  };
+
   const isVy = user?.username.toLowerCase().includes('vy') || user?.email.toLowerCase() === 'nguyenthilanvy12a2@gmail.com';
 
   // Admin state & functions
@@ -1541,7 +1601,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* CHỈ SỐ XU & CÁC NÚT THAO TÁC */}
+              {/* CHỈ SỐ XU, ĐIỂM & CHUỖI HỌC STREAK */}
               <div className="flex flex-wrap items-center gap-2.5">
                 <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
                   {renderCoinIcon()} Xu: {coins}
@@ -1549,6 +1609,27 @@ export default function Home() {
                 <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
                   {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
+
+                {/* CHUỖI HỌC ĐIỂM DÀNH STREAK HÀNG NGÀY */}
+                <div className="bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs" title="Chuỗi ngày đăng nhập học tập liên tục">
+                  {renderFlameIcon('w-4 h-4 text-rose-500')}
+                  <span>Streak: {streakData.streakCount} Ngày</span>
+                </div>
+
+                {/* NÚT BẬT / TẮT NHẠC NỀN LOFI / PIXEL BGM */}
+                <button
+                  type="button"
+                  onClick={toggleBGM}
+                  className={`px-3 py-1.5 rounded-full border text-xs font-mono font-bold flex items-center gap-1.5 shadow-xs cursor-pointer transition-all active:scale-95 ${
+                    isBgmPlaying
+                      ? 'bg-emerald-500 text-white border-emerald-600 animate-pulse'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200'
+                  }`}
+                  title={isBgmPlaying ? 'Đang phát Nhạc Nền Lofi (Bấm để tắt)' : 'Bấm để phát Nhạc Nền Lofi Pixel BGM'}
+                >
+                  {renderMusicIcon(isBgmPlaying, 'w-3.5 h-3.5')}
+                  <span>{isBgmPlaying ? 'Nhạc: Bật' : 'Nhạc Lofi'}</span>
+                </button>
 
                 {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CHUẨN 100% THEO CHUẨN SỐC IELTS VOCAB */}
                 <button
@@ -1596,6 +1677,22 @@ export default function Home() {
                 </button>
               </div>
             </div>
+
+            {/* STREAK TOAST BANNER */}
+            {streakToastMsg && (
+              <div className="bg-gradient-to-r from-amber-500 to-rose-500 text-white font-bold text-xs p-3 rounded-xl flex items-center justify-between shadow-md animate-in fade-in zoom-in-95 duration-200">
+                <div className="flex items-center gap-2">
+                  {renderFlameIcon('w-5 h-5 text-white animate-bounce')}
+                  <span>{streakToastMsg}</span>
+                </div>
+                <button
+                  onClick={() => setStreakToastMsg(null)}
+                  className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center font-bold text-xs cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
 
             {/* THANH ĐIỀU HƯỚNG NHÓM CHỨC NĂNG (GOM GỌN TẢI DROPDOWN POPUP) */}
             <nav className="w-full hidden md:flex items-center gap-3 shrink-0 relative">
@@ -2151,6 +2248,15 @@ export default function Home() {
                   >
                     Sổ tay Ngữ pháp
                   </button>
+                  <button
+                    onClick={() => { setLibrarySubTab('bookmarked'); setBookmarkedIds(getBookmarkedIds()); playSfx('click'); }}
+                    className={`px-4 py-2 border font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 ${
+                      librarySubTab === 'bookmarked' ? 'bg-amber-500 text-white border-amber-600' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-800'
+                    }`}
+                  >
+                    {renderStarIcon(true, 'w-4 h-4 text-amber-400')}
+                    Sổ Từ Khó Ôn Tập ({bookmarkedIds.length})
+                  </button>
                 </div>
 
                 {librarySubTab === 'furniture' && (
@@ -2485,12 +2591,95 @@ export default function Home() {
                             </button>
                           </p>
                           <p className="text-[10px] text-blue-600 font-bold font-sans">{rule.examplePinyin}</p>
-                          <p className="text-[10.5px] text-gray-500 font-bold">Dịch nghĩa: {rule.exampleVietnamese}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
+
+                {librarySubTab === 'bookmarked' && (() => {
+                  const allVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
+                  const bookmarkedList = allVocabs.filter((v) => bookmarkedIds.includes(v.id));
+
+                  if (bookmarkedList.length === 0) {
+                    return (
+                      <div className="py-12 text-center bg-amber-50/50 dark:bg-amber-950/20 border-2 border-dashed border-amber-300 dark:border-amber-800 rounded-2xl space-y-2">
+                        {renderStarIcon(true, 'w-8 h-8 text-amber-400 mx-auto')}
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Sổ từ khó của bạn đang trống</p>
+                        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                          Khi làm Quiz hoặc lật Flashcards, hãy bấm biểu tượng Ngôi sao để lưu lại các từ cần luyện tập thêm nhé!
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center bg-amber-50 dark:bg-amber-950/50 p-3.5 rounded-xl border border-amber-200 dark:border-amber-800">
+                        <span className="text-xs font-bold text-amber-900 dark:text-amber-300">
+                          Bạn đã lưu <span className="font-black text-amber-600 dark:text-amber-400">{bookmarkedList.length}</span> từ vựng khó cần ôn tập
+                        </span>
+                        <button
+                          onClick={() => {
+                            setActiveTab('flashcards' as any);
+                            playSfx('click');
+                          }}
+                          className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
+                        >
+                          Ôn Tập Bằng Flashcard ➔
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {bookmarkedList.map((item) => (
+                          <div
+                            key={item.id}
+                            className="p-4 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl shadow-xs space-y-2.5 flex flex-col justify-between"
+                          >
+                            <div className="space-y-1 text-left">
+                              <div className="flex justify-between items-center border-b border-dashed border-slate-200 dark:border-slate-700 pb-2">
+                                <h4 className="text-base font-serif font-black text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+                                  <span>{item.nameChinese}</span>
+                                  <button
+                                    onClick={() => handlePlayTTS(item.nameChinese)}
+                                    className="p-0.5 bg-slate-100 dark:bg-slate-700 hover:bg-rose-100 border border-slate-300 dark:border-slate-600 rounded cursor-pointer"
+                                  >
+                                    {renderAudioIcon('w-3.5 h-3.5 text-slate-800 dark:text-slate-200')}
+                                  </button>
+                                </h4>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[9px] bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-1.5 py-0.2 rounded font-sans font-bold">
+                                    HSK {item.hskLevel}
+                                  </span>
+                                  <button
+                                    onClick={() => {
+                                      const res = toggleBookmark(item.id);
+                                      setBookmarkedIds(res.allIds);
+                                      playSfx('click');
+                                    }}
+                                    className="text-amber-500 hover:text-amber-600 p-0.5 cursor-pointer"
+                                    title="Bỏ lưu từ khó"
+                                  >
+                                    {renderStarIcon(true, 'w-4 h-4')}
+                                  </button>
+                                </div>
+                              </div>
+                              <p className="text-xs text-blue-600 dark:text-blue-400 font-bold font-mono">{item.namePinyin}</p>
+                              <p className="text-xs font-bold text-slate-900 dark:text-slate-100">Nghĩa: {item.nameVietnamese}</p>
+                            </div>
+
+                            <button
+                              onClick={() => setSelectedVoiceWord({ wordChinese: item.nameChinese, wordPinyin: item.namePinyin, wordVietnamese: item.nameVietnamese })}
+                              className="w-full py-1.5 bg-pink-100 dark:bg-pink-950/60 hover:bg-pink-200 text-pink-900 dark:text-pink-300 border border-pink-300 dark:border-pink-800 text-[10px] font-bold uppercase rounded-lg cursor-pointer flex items-center justify-center gap-1 shadow-xs transition"
+                            >
+                              Luyện Phát Âm AI
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             )}
 

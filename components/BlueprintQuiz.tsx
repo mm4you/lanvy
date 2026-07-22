@@ -1,8 +1,7 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { FurnitureItem, FURNITURE_ITEMS, GENERAL_VOCAB_ITEMS, GeneralVocabItem } from '../data/vocabulary';
 import { renderFurnitureSVG } from './RoomEditor';
+import { getBookmarkedIds, toggleBookmark } from '../lib/bookmarksAndStreak';
 
 interface BlueprintQuizProps {
   unlockedItems: string[];
@@ -13,6 +12,14 @@ interface BlueprintQuizProps {
   onExplainWord: (word: string) => void;
   customVocabs?: any[];
   isDarkMode?: boolean;
+}
+
+function renderStarIcon(isFilled: boolean, className = 'w-5 h-5') {
+  return (
+    <svg className={className} fill={isFilled ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+    </svg>
+  );
 }
 
 interface Question {
@@ -112,6 +119,17 @@ export default function BlueprintQuiz({
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [streak, setStreak] = useState(0);
+  const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setBookmarkedIds(getBookmarkedIds());
+  }, []);
+
+  const handleToggleBookmark = (wordId: string) => {
+    const res = toggleBookmark(wordId);
+    setBookmarkedIds(res.allIds);
+    playSfx('click');
+  };
 
   // AI custom quiz states
   const [customThemeSelect, setCustomThemeSelect] = useState('all_themes');
@@ -549,9 +567,23 @@ export default function BlueprintQuiz({
                 </p>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
-              HSK Cấp {currentQuestion.hskLevel}
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleToggleBookmark(currentQuestion.item.id)}
+                className={`p-1.5 rounded-xl border transition-all cursor-pointer active:scale-95 ${
+                  bookmarkedIds.includes(currentQuestion.item.id)
+                    ? 'bg-amber-100 dark:bg-amber-950 text-amber-500 border-amber-400'
+                    : 'bg-white dark:bg-slate-900 text-slate-400 border-slate-300 dark:border-slate-700 hover:text-amber-500'
+                }`}
+                title={bookmarkedIds.includes(currentQuestion.item.id) ? 'Bỏ lưu từ khó' : 'Lưu vào Sổ từ khó ôn tập'}
+              >
+                {renderStarIcon(bookmarkedIds.includes(currentQuestion.item.id), 'w-4 h-4')}
+              </button>
+              <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+                HSK Cấp {currentQuestion.hskLevel}
+              </span>
+            </div>
           </div>
 
           {/* CÂU HỎI */}

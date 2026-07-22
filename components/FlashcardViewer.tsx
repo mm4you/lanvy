@@ -1,7 +1,6 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { GENERAL_VOCAB_ITEMS, GeneralVocabItem } from '../data/vocabulary';
+import { getBookmarkedIds, toggleBookmark } from '../lib/bookmarksAndStreak';
 
 interface FlashcardViewerProps {
   customVocabs?: any[];
@@ -9,6 +8,22 @@ interface FlashcardViewerProps {
   playSfx: (type: 'click' | 'success' | 'flip' | 'perfect') => void;
   isDarkMode?: boolean;
   onRewardCoins?: (amount: number) => void;
+}
+
+function renderAudioIcon(className = 'w-4 h-4') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+    </svg>
+  );
+}
+
+function renderStarIcon(isFilled: boolean, className = 'w-5 h-5') {
+  return (
+    <svg className={className} fill={isFilled ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+    </svg>
+  );
 }
 
 export default function FlashcardViewer({
@@ -20,11 +35,17 @@ export default function FlashcardViewer({
 }: FlashcardViewerProps) {
   const [deckSize, setDeckSize] = useState<5 | 10 | 'all'>(5);
   const [selectedHsk, setSelectedHsk] = useState<number | 'all'>('all');
+  const [filterMode, setFilterMode] = useState<'all' | 'bookmarked'>('all');
+  const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [masteredIds, setMasteredIds] = useState<string[]>([]);
   const [autoPlayAudio, setAutoPlayAudio] = useState(true);
   const [isSessionCompleted, setIsSessionCompleted] = useState(false);
+
+  useEffect(() => {
+    setBookmarkedIds(getBookmarkedIds());
+  }, []);
 
   // Aggregate pool of vocabularies
   const allVocabs: GeneralVocabItem[] = [
@@ -42,9 +63,11 @@ export default function FlashcardViewer({
     })),
   ];
 
-  const pool = allVocabs.filter(
-    (item) => selectedHsk === 'all' || item.hskLevel === selectedHsk
-  );
+  const pool = allVocabs.filter((item) => {
+    const matchesHsk = selectedHsk === 'all' || item.hskLevel === selectedHsk;
+    const matchesBookmark = filterMode === 'all' || bookmarkedIds.includes(item.id);
+    return matchesHsk && matchesBookmark;
+  });
 
   const activeDeck = deckSize === 'all' ? pool : pool.slice(0, deckSize);
   const currentItem = activeDeck[currentIndex] || activeDeck[0];
@@ -59,6 +82,14 @@ export default function FlashcardViewer({
       onPlayAudio(cleanString(currentItem.nameChinese));
     }
   }, [currentIndex, isSessionCompleted]);
+
+  const handleToggleBookmarkCurrent = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentItem) return;
+    const res = toggleBookmark(currentItem.id);
+    setBookmarkedIds(res.allIds);
+    playSfx('click');
+  };
 
   const handleNext = () => {
     playSfx('flip');
@@ -198,16 +229,35 @@ export default function FlashcardViewer({
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs">
-          <label className="flex items-center gap-1.5 cursor-pointer font-extrabold text-slate-800 dark:text-slate-200 select-none">
-            <input
-              type="checkbox"
-              checked={autoPlayAudio}
-              onChange={(e) => setAutoPlayAudio(e.target.checked)}
-              className="rounded text-rose-500 focus:ring-rose-500"
-            />
-            Tự động đọc tiếng Trung
-          </label>
+        <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-1.5 cursor-pointer font-extrabold text-slate-800 dark:text-slate-200 select-none">
+              <input
+                type="checkbox"
+                checked={autoPlayAudio}
+                onChange={(e) => setAutoPlayAudio(e.target.checked)}
+                className="rounded text-rose-500 focus:ring-rose-500"
+              />
+              Tự động đọc
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                setFilterMode((prev) => (prev === 'all' ? 'bookmarked' : 'all'));
+                setCurrentIndex(0);
+                setIsFlipped(false);
+                playSfx('click');
+              }}
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold flex items-center gap-1 transition-all cursor-pointer border ${
+                filterMode === 'bookmarked'
+                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-800 text-amber-600 dark:text-amber-400 border-slate-300 dark:border-slate-700'
+              }`}
+            >
+              {renderStarIcon(true, 'w-3.5 h-3.5')}
+              Sổ Từ Khó ({bookmarkedIds.length})
+            </button>
+          </div>
 
           <span className="font-mono font-bold text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-slate-800 px-2.5 py-0.5 rounded-lg">
             Thẻ {currentIndex + 1} / {activeDeck.length}
@@ -235,17 +285,32 @@ export default function FlashcardViewer({
                 HSK {currentItem.hskLevel}
               </span>
 
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPlayAudio(cleanString(currentItem.nameChinese));
-                }}
-                className="p-2.5 bg-rose-50 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-slate-700 text-rose-600 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-slate-700 cursor-pointer transition-all active:scale-95"
-                title="Nghe phát âm tiếng Trung"
-              >
-                🔊
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleToggleBookmarkCurrent}
+                  className={`p-2 rounded-xl border transition-all cursor-pointer active:scale-95 ${
+                    bookmarkedIds.includes(currentItem.id)
+                      ? 'bg-amber-100 dark:bg-amber-950 text-amber-500 border-amber-400'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700 hover:text-amber-500'
+                  }`}
+                  title={bookmarkedIds.includes(currentItem.id) ? 'Bỏ lưu từ khó' : 'Lưu vào Sổ từ khó ôn tập'}
+                >
+                  {renderStarIcon(bookmarkedIds.includes(currentItem.id), 'w-5 h-5')}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPlayAudio(cleanString(currentItem.nameChinese));
+                  }}
+                  className="p-2 bg-rose-50 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-slate-700 text-rose-600 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-slate-700 cursor-pointer transition-all active:scale-95"
+                  title="Nghe phát âm tiếng Trung"
+                >
+                  {renderAudioIcon('w-5 h-5')}
+                </button>
+              </div>
             </div>
 
             <div className="space-y-2">

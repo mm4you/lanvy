@@ -3437,11 +3437,17 @@ export default function Home() {
         </div>
       )}
 
-      {/* THANH ĐIỀU HƯỚNG MOBILE 100% PHỦ KÍN ĐÁY MÀN HÌNH KHÔNG HỞ (CHỦẨN VIEWPORT-FIT COVER) */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE 100% PHỦ KÍN ĐÁY MÀN HÌNH KHÔNG HỞ (CHUẨN VIEWPORT-FIT COVER & INLINE STYLES) */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_8px_rgba(0,0,0,0.05)] flex items-center justify-around h-[calc(56px+env(safe-area-inset-bottom,0px))] pb-[env(safe-area-inset-bottom,0px)] ${
-          isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
-        }`}>
+        <div 
+          style={{
+            height: 'calc(56px + env(safe-area-inset-bottom, 0px))',
+            paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          }}
+          className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_8px_rgba(0,0,0,0.05)] flex items-center justify-around h-safe-nav pb-safe ${
+            isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
+          }`}
+        >
           {/* TAB 1: STUDIO */}
           <button
             onClick={() => {

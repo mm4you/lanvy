@@ -44,6 +44,14 @@
   --font-serif: var(--font-fraunces), "Times New Roman", serif;
 }
 
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility h-safe-nav {
+  height: calc(56px + env(safe-area-inset-bottom, 0px));
+}
+
 body {
   margin: 0;
   color: var(--ink);

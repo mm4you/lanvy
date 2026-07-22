@@ -279,49 +279,11 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         className="absolute bottom-0 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
         style={{ left: `${posX}px` }}
       >
-        {/* STAGE & QUICK PET SWITCHER TOOLBAR */}
-        <div className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-40">
-          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-100 text-[10px] font-mono font-bold drop-shadow-md whitespace-nowrap bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-xs">
-            <span className="text-amber-500 font-extrabold">Cấp {petStage}</span>
-            <span className="text-slate-300 dark:text-slate-700 font-normal">|</span>
-            <span className="text-rose-500 font-extrabold">No {hunger}%</span>
-            <span className="text-slate-300 dark:text-slate-700 font-normal">|</span>
-            {/* Quick Pet Swapper */}
-            <div className="flex items-center gap-1 ml-0.5">
-              <button
-                type="button"
-                onClick={() => selectPet('cat')}
-                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'cat' ? 'bg-orange-500 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
-                title="Đổi sang Mèo Cam"
-              >
-                🐱
-              </button>
-              <button
-                type="button"
-                onClick={() => selectPet('dog')}
-                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'dog' ? 'bg-amber-500 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
-                title="Đổi sang Chó Shiba"
-              >
-                🐶
-              </button>
-              <button
-                type="button"
-                onClick={() => selectPet('rabbit')}
-                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'rabbit' ? 'bg-rose-400 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
-                title="Đổi sang Thỏ Trắng"
-              >
-                🐰
-              </button>
-              <button
-                type="button"
-                onClick={() => selectPet('panda')}
-                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'panda' ? 'bg-slate-800 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
-                title="Đổi sang Gấu Trúc Panda"
-              >
-                🐼
-              </button>
-            </div>
-          </div>
+        {/* STAGE & MOOD FLOATING INDICATOR */}
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-40 text-slate-800 dark:text-slate-100 text-[10px] font-mono font-bold drop-shadow-md whitespace-nowrap">
+          <span className="text-amber-500 font-extrabold">Cấp {petStage}</span>
+          <span className="text-slate-400 font-normal">|</span>
+          <span className="text-rose-500 font-extrabold">No {hunger}%</span>
         </div>
 
         {/* POPUP TRÒ CHUYỆN PIXEL 2D SANG TRỌNG KHÔNG VIỀN CỨNG */}

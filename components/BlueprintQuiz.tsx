@@ -120,6 +120,36 @@ export default function BlueprintQuiz({
   const [isCorrect, setIsCorrect] = useState(false);
   const [streak, setStreak] = useState(0);
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
+  const [disabledOptions, setDisabledOptions] = useState<string[]>([]);
+
+  const handleUse5050 = () => {
+    if (isAnswered || !currentQuestion) return;
+    if (coins < 20) {
+      alert('Bạn cần ít nhất 20 Xu để dùng Thẻ trợ giúp 50:50!');
+      playSfx('error');
+      return;
+    }
+
+    setCoins(coins - 20);
+    playSfx('click');
+
+    const wrongOptions = currentQuestion.options.filter(o => o !== currentQuestion.correctAnswer);
+    const shuffledWrong = [...wrongOptions].sort(() => 0.5 - Math.random());
+    setDisabledOptions(shuffledWrong.slice(0, 2));
+  };
+
+  const handleUseSkip = () => {
+    if (isAnswered || !currentQuestion) return;
+    if (coins < 30) {
+      alert('Bạn cần ít nhất 30 Xu để dùng Thẻ Bỏ Qua câu hỏi!');
+      playSfx('error');
+      return;
+    }
+
+    setCoins(coins - 30);
+    playSfx('success');
+    handleAnswerSubmit(currentQuestion.correctAnswer);
+  };
 
   useEffect(() => {
     setBookmarkedIds(getBookmarkedIds());
@@ -278,6 +308,7 @@ export default function BlueprintQuiz({
     });
     setSelectedAnswer(null);
     setIsAnswered(false);
+    setDisabledOptions([]);
 
     if (type === 'listening') {
       playAudio(itemChineseName);
@@ -500,7 +531,7 @@ export default function BlueprintQuiz({
               : 'bg-white text-[#1f2937]'
           }`}
         >
-          Từ Vựng HSK 1-2-3 (Database Khép Kín)
+          Từ Vựng HSK 1 đến HSK 6 (Full Database)
         </button>
         <button
           onClick={() => {
@@ -527,11 +558,11 @@ export default function BlueprintQuiz({
         </span>
       </h2>
 
-      {/* BỘ LỌC CẤP ĐỘ HSK */}
+      {/* BỘ LỌC CẤP ĐỘ HSK 1 - 6 */}
       {quizMode !== 'custom' && (
         <div className="flex gap-1.5 mb-6 flex-wrap">
           <span className="text-xs font-black text-gray-500 uppercase self-center mr-2">Cấp độ HSK:</span>
-          {['all', 1, 2, 3].map((level) => (
+          {['all', 1, 2, 3, 4, 5, 6].map((level) => (
             <button
               key={level}
               onClick={() => {
@@ -609,9 +640,38 @@ export default function BlueprintQuiz({
             </div>
           </div>
 
+          {/* CÁC THẺ TRỢ GIÚP POWER-UPS: 50:50 VÀ BỎ QUA */}
+          {!isAnswered && (
+            <div className="flex items-center justify-end gap-2 text-xs font-mono font-bold my-1">
+              <button
+                type="button"
+                onClick={handleUse5050}
+                disabled={disabledOptions.length > 0}
+                className={`px-3 py-1.5 rounded-xl border flex items-center gap-1.5 transition cursor-pointer active:scale-95 ${
+                  disabledOptions.length > 0
+                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700 cursor-not-allowed'
+                    : 'bg-pink-100 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300 border-pink-300 dark:border-pink-800 hover:bg-pink-200'
+                }`}
+                title="Loại bỏ 2 đáp án sai (Tốn 20 Xu)"
+              >
+                <span>🃏 Thẻ 50:50 (-20 Xu)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleUseSkip}
+                className="px-3 py-1.5 rounded-xl border bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800 hover:bg-amber-200 flex items-center gap-1.5 transition cursor-pointer active:scale-95"
+                title="Bỏ qua câu hỏi này mà vẫn giữ chuỗi combo (Tốn 30 Xu)"
+              >
+                <span>⏭️ Bỏ Qua (-30 Xu)</span>
+              </button>
+            </div>
+          )}
+
           {/* DANH SÁCH ĐÁP ÁN LỰA CHỌN */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {currentQuestion.options.map((option, idx) => {
+              const isDisabledBy5050 = disabledOptions.includes(option);
               let btnClass = 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-rose-500 hover:bg-rose-50/50 dark:hover:bg-slate-800/80';
               if (isAnswered) {
                 const isThisCorrect = option === currentQuestion.correctAnswer;
@@ -624,13 +684,15 @@ export default function BlueprintQuiz({
                 } else {
                   btnClass = 'bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 cursor-not-allowed';
                 }
+              } else if (isDisabledBy5050) {
+                btnClass = 'bg-slate-100 dark:bg-slate-800/40 text-slate-300 dark:text-slate-600 border-slate-200 dark:border-slate-800 cursor-not-allowed line-through opacity-40';
               }
 
               return (
                 <button
                   key={idx}
                   onClick={() => handleAnswerSubmit(option)}
-                  disabled={isAnswered}
+                  disabled={isAnswered || isDisabledBy5050}
                   className={`w-full py-3.5 px-4 border text-sm font-bold rounded-2xl transition-all cursor-pointer shadow-xs active:scale-98 ${btnClass}`}
                 >
                   <span className="font-sans block text-base">{option}</span>

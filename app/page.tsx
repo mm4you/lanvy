@@ -52,6 +52,18 @@ const NotebookModal = dynamic(() => import('../components/NotebookModal'), {
   loading: () => null
 });
 
+const LuckyWheelModal = dynamic(() => import('../components/LuckyWheelModal'), {
+  loading: () => null
+});
+
+const LeaderboardModal = dynamic(() => import('../components/LeaderboardModal'), {
+  loading: () => null
+});
+
+const LearningStatsModal = dynamic(() => import('../components/LearningStatsModal'), {
+  loading: () => null
+});
+
 interface PlacedItem {
   id: string;
   itemTypeId: string;
@@ -479,6 +491,9 @@ export default function Home() {
   const [isBgmPlaying, setIsBgmPlaying] = useState<boolean>(false);
 
   const [showDailyAttendanceModal, setShowDailyAttendanceModal] = useState<boolean>(false);
+  const [showLuckyWheelModal, setShowLuckyWheelModal] = useState<boolean>(false);
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState<boolean>(false);
+  const [showLearningStatsModal, setShowLearningStatsModal] = useState<boolean>(false);
 
   useEffect(() => {
     // Check Daily Streak
@@ -1932,24 +1947,61 @@ export default function Home() {
               </div>
             </nav>
 
-            {/* CHỈ SỐ THỐNG KÊ (XU, ĐIỂM, STREAK) ĐẶT NGAY BÊN PHẢI HÀNG 2 - CỰC KỲ THOÁNG VÀ SANG TRỌNG */}
-            <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
-              <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
-                {renderCoinIcon()} Xu: {coins}
+            {/* CHỈ SỐ THỐNG KÊ GỌN GÀNG (CHỈ HIỆN ICON + GIÁ TRỊ) & CÁC NÚT TÍNH NĂNG NÂNG CẤP */}
+            <div className="flex flex-wrap items-center gap-2 shrink-0 self-start md:self-auto">
+              {/* NÚT VÒNG QUAY MAY MẮN */}
+              <button
+                type="button"
+                onClick={() => { setShowLuckyWheelModal(true); playSfx('click'); }}
+                className="p-1.5 bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/60 dark:hover:bg-amber-900/80 border border-amber-300 dark:border-amber-800 rounded-full text-xs font-mono font-bold flex items-center justify-center cursor-pointer transition active:scale-95 shadow-xs"
+                title="Vòng Quay May Mắn HSK (50 Xu)"
+              >
+                {renderTargetIcon('w-4 h-4 text-amber-600 dark:text-amber-400')}
+              </button>
+
+              {/* NÚT BẢNG XẾP HẠNG TOP HỌC VIÊN */}
+              <button
+                type="button"
+                onClick={() => { setShowLeaderboardModal(true); playSfx('click'); }}
+                className="p-1.5 bg-purple-100 hover:bg-purple-200 dark:bg-purple-950/60 dark:hover:bg-purple-900/80 border border-purple-300 dark:border-purple-800 rounded-full text-xs font-mono font-bold flex items-center justify-center cursor-pointer transition active:scale-95 shadow-xs"
+                title="Bảng Xếp Hạng Top Học Viên HSK"
+              >
+                {renderTrophyIcon('w-4 h-4 text-purple-600 dark:text-purple-400')}
+              </button>
+
+              {/* NÚT BÁO CÁO THỐNG KÊ TIẾN ĐỘ */}
+              <button
+                type="button"
+                onClick={() => { setShowLearningStatsModal(true); playSfx('click'); }}
+                className="p-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-950/60 dark:hover:bg-blue-900/80 border border-blue-300 dark:border-blue-800 rounded-full text-xs font-mono font-bold flex items-center justify-center cursor-pointer transition active:scale-95 shadow-xs"
+                title="Thống Kê Tiến Độ Học Tập HSK"
+              >
+                {renderChartBarIcon('w-4 h-4 text-blue-600 dark:text-blue-400')}
+              </button>
+
+              {/* BADGE XU */}
+              <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-2.5 py-1 rounded-full text-xs font-bold font-mono flex items-center gap-1 shadow-xs" title="Số Xu hiện có">
+                {renderCoinIcon()}
+                <span>{coins}</span>
               </div>
-              <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
-                {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
+
+              {/* BADGE ĐIỂM */}
+              <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-2.5 py-1 rounded-full text-xs font-bold font-mono flex items-center gap-1 shadow-xs" title="Tổng Điểm kinh nghiệm tích lũy">
+                {renderAwardIcon('w-3.5 h-3.5 text-blue-600 dark:text-blue-400')}
+                <span>{score}</span>
               </div>
+
+              {/* BADGE STREAK */}
               <div
                 onClick={() => {
                   setShowDailyAttendanceModal(true);
                   playSfx('click');
                 }}
-                className="bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/60 dark:hover:bg-rose-900/80 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs cursor-pointer transition active:scale-95"
+                className="bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/60 dark:hover:bg-rose-900/80 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2.5 py-1 rounded-full text-xs font-bold font-mono flex items-center gap-1 shadow-xs cursor-pointer transition active:scale-95"
                 title="Bấm để mở Bảng Điểm Danh Streak Hàng Ngày"
               >
-                {renderFlameIcon('w-4 h-4 text-rose-500')}
-                <span>Streak: {streakData.streakCount} Ngày</span>
+                {renderFlameIcon('w-3.5 h-3.5 text-rose-500')}
+                <span>{streakData.streakCount}</span>
               </div>
             </div>
           </div>
@@ -3527,6 +3579,36 @@ export default function Home() {
         isDarkMode={isDarkMode}
       />
 
+      {/* POPUP VÒNG QUAY MAY MẮN HSK */}
+      <LuckyWheelModal
+        isOpen={showLuckyWheelModal}
+        onClose={() => setShowLuckyWheelModal(false)}
+        coins={coins}
+        setCoins={setCoins}
+        playSfx={playSfx}
+        isDarkMode={isDarkMode}
+      />
+
+      {/* POPUP BẢNG XẾP HẠNG TOP HỌC VIÊN */}
+      <LeaderboardModal
+        isOpen={showLeaderboardModal}
+        onClose={() => setShowLeaderboardModal(false)}
+        userScore={score}
+        userStreak={streakData.streakCount}
+        username={user?.username || 'Chủ Tiệm HSK'}
+        isDarkMode={isDarkMode}
+      />
+
+      {/* POPUP BÁO CÁO THỐNG KÊ TIẾN ĐỘ HỌC TẬP */}
+      <LearningStatsModal
+        isOpen={showLearningStatsModal}
+        onClose={() => setShowLearningStatsModal(false)}
+        userScore={score}
+        streakCount={streakData.streakCount}
+        unlockedItems={unlockedItems}
+        isDarkMode={isDarkMode}
+      />
+
       {/* Retro CSS animations style tag */}
       <style>{`
         @keyframes fadeIn {
@@ -3546,6 +3628,32 @@ function renderPaletteIcon(className = 'w-5 h-5') {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+    </svg>
+  );
+}
+
+function renderTargetIcon(className = 'w-4 h-4 text-amber-500') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function renderTrophyIcon(className = 'w-4 h-4 text-purple-500') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 3h14M5 3v5a4 4 0 004 4h6a4 4 0 004-4V3M5 3H3v3a3 3 0 003 3h1m12-6h2a3 3 0 013 3v0a3 3 0 01-3 3h-1M9 12v3a3 3 0 003 3h0a3 3 0 003-3v-3M12 18v3m-3 0h6" />
+    </svg>
+  );
+}
+
+function renderChartBarIcon(className = 'w-4 h-4 text-blue-500') {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
     </svg>
   );
 }

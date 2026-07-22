@@ -302,107 +302,132 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           title="Bấm vào thú cưng Pixel để trò chuyện!"
         >
           {currentPet === 'cat' && (
-            /* CON MÈO CAM PIXEL CHIBI CÓ QUAY ĐUÔI VÀ CHỚP MẮT */
-            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
-              {/* Tail Pixel với hoạt ảnh vẫy đuôi */}
-              <g className="origin-bottom-left animate-spin" style={{ animationDuration: '3s', animationIterationCount: 'infinite' }}>
-                <path d="M25,18 h3 v-5 h2 v-3 h-2 v3 h-3 z" fill="#ea580c" />
-              </g>
-              {/* Body Pixel */}
-              <rect x="9" y="18" width="16" height="9" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
-              <rect x="11" y="20" width="10" height="6" fill="#fff7ed" />
-              {/* 4 Paws Bước đi */}
-              <rect x="10" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="14" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="18" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="22" y="27" width="3" height="4" fill="#ea580c" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* Pointy Cat Ears */}
-              <rect x="5" y="3" width="4" height="6" fill="#ea580c" />
-              <rect x="6" y="5" width="2" height="3" fill="#fda4af" />
-              <rect x="17" y="3" width="4" height="6" fill="#ea580c" />
-              <rect x="18" y="5" width="2" height="3" fill="#fda4af" />
-              {/* Head */}
-              <rect x="4" y="9" width="18" height="10" fill="#fb923c" stroke="#1f2937" strokeWidth="1" />
-              {/* Eyes */}
-              <g className={isSleeping ? 'opacity-40' : ''}>
-                <rect x="7" y="12" width="3" height="3" fill="#0f172a" />
-                <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
-                <rect x="16" y="12" width="3" height="3" fill="#0f172a" />
-                <rect x="17" y="12" width="1" height="1" fill="#ffffff" />
-              </g>
-              {/* Whiskers */}
-              <rect x="2" y="14" width="2" height="1" fill="#1f2937" />
-              <rect x="22" y="14" width="2" height="1" fill="#1f2937" />
-              <rect x="12" y="15" width="2" height="1.5" fill="#f43f5e" />
+            /* SIÊU MÈO CAM KAWAII CHIBI CÓ MÁ HỒNG & BÀN CHÂN TRÒN XINH */
+            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+              {/* Fluffy Tail */}
+              <path d="M24,20 C28,18 30,12 28,9 C26,7 24,10 24,14 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" className="animate-pulse origin-bottom" />
+              {/* Cute Round Body */}
+              <ellipse cx="16" cy="22" rx="9" ry="7" fill="#fb923c" stroke="#c2410c" strokeWidth="1.5" />
+              <ellipse cx="16" cy="23" rx="6" ry="4" fill="#fff7ed" />
+              {/* Soft Round Paws */}
+              <circle cx="10" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="14" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <circle cx="18" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="22" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Pointy Cute Ears */}
+              <path d="M7,12 L10,4 L14,11 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
+              <path d="M8.5,11 L10,6 L12.5,10.5 Z" fill="#fda4af" />
+              <path d="M18,11 L22,4 L25,12 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
+              <path d="M19.5,10.5 L22,6 L23.5,11 Z" fill="#fda4af" />
+              {/* Big Cute Round Head */}
+              <circle cx="16" cy="14" r="8.5" fill="#fb923c" stroke="#c2410c" strokeWidth="1.5" />
+              <ellipse cx="16" cy="16" rx="4.5" ry="3" fill="#fff7ed" />
+              {/* Blush Cheeks */}
+              <ellipse cx="10" cy="16" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
+              <ellipse cx="22" cy="16" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
+              {/* Sparkling Anime Eyes */}
+              {!isSleeping ? (
+                <>
+                  <circle cx="11.5" cy="13.5" r="2" fill="#0f172a" />
+                  <circle cx="12.2" cy="12.8" r="0.8" fill="#ffffff" />
+                  <circle cx="20.5" cy="13.5" r="2" fill="#0f172a" />
+                  <circle cx="21.2" cy="12.8" r="0.8" fill="#ffffff" />
+                </>
+              ) : (
+                <>
+                  <path d="M10,14 Q11.5,12 13,14" stroke="#0f172a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                  <path d="M19,14 Q20.5,12 22,14" stroke="#0f172a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                </>
+              )}
+              {/* Pink Nose & Mouth */}
+              <polygon points="15.2,15 16.8,15 16,15.8" fill="#f43f5e" />
+              <path d="M15,16 Q16,17.2 17,16" stroke="#0f172a" strokeWidth="1" fill="none" strokeLinecap="round" />
             </svg>
           )}
 
           {currentPet === 'dog' && (
-            /* CHÓ SHIBA PIXEL CHIBI */
-            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
-              <rect x="23" y="13" width="5" height="5" fill="#d97706" stroke="#1f2937" strokeWidth="1" />
-              <rect x="25" y="15" width="2" height="2" fill="#fff7ed" />
-              <rect x="8" y="17" width="17" height="10" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
-              <rect x="10" y="19" width="11" height="7" fill="#ffffff" />
-              <rect x="5" y="16" width="14" height="2" fill="#ef4444" />
-              <rect x="11" y="17" width="2" height="2" fill="#f59e0b" />
-              <rect x="9" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="13.5" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="18" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="22.5" y="27" width="3.5" height="4" fill="#b45309" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="3" y="5" width="5" height="5" fill="#b45309" />
-              <rect x="18" y="5" width="5" height="5" fill="#b45309" />
-              <rect x="4" y="8" width="18" height="9" fill="#f59e0b" stroke="#1f2937" strokeWidth="1" />
-              <rect x="8" y="12" width="10" height="5" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="12" y="13" width="2" height="2" fill="#0f172a" />
-              <rect x="12" y="15" width="2" height="2" fill="#fda4af" />
-              <rect x="7" y="10" width="3" height="3" fill="#0f172a" />
-              <rect x="8" y="10" width="1" height="1" fill="#ffffff" />
-              <rect x="16" y="10" width="3" height="3" fill="#0f172a" />
-              <rect x="17" y="10" width="1" height="1" fill="#ffffff" />
+            /* SIÊU CHÓ SHIBA KAWAII CHIBI CÓ MÁ HỒNG & CHÂN TRÒN */
+            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+              <ellipse cx="16" cy="22" rx="9" ry="7" fill="#f59e0b" stroke="#b45309" strokeWidth="1.5" />
+              <ellipse cx="16" cy="23" rx="6" ry="4.5" fill="#ffffff" />
+              <circle cx="10" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="14" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <circle cx="18" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="22" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <path d="M7,11 L9,4 L13,11 Z" fill="#b45309" stroke="#78350f" strokeWidth="1" />
+              <path d="M19,11 L23,4 L25,11 Z" fill="#b45309" stroke="#78350f" strokeWidth="1" />
+              <circle cx="16" cy="14" r="8.5" fill="#f59e0b" stroke="#b45309" strokeWidth="1.5" />
+              <ellipse cx="16" cy="16.5" rx="5" ry="3.5" fill="#ffffff" stroke="#b45309" strokeWidth="1" />
+              <ellipse cx="9.5" cy="15.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
+              <ellipse cx="22.5" cy="15.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
+              {!isSleeping ? (
+                <>
+                  <circle cx="11.5" cy="13.5" r="2" fill="#0f172a" />
+                  <circle cx="12.2" cy="12.8" r="0.8" fill="#ffffff" />
+                  <circle cx="20.5" cy="13.5" r="2" fill="#0f172a" />
+                  <circle cx="21.2" cy="12.8" r="0.8" fill="#ffffff" />
+                </>
+              ) : (
+                <>
+                  <path d="M10,14 Q11.5,12 13,14" stroke="#0f172a" strokeWidth="1.5" fill="none" />
+                  <path d="M19,14 Q20.5,12 22,14" stroke="#0f172a" strokeWidth="1.5" fill="none" />
+                </>
+              )}
+              <ellipse cx="16" cy="15.2" rx="1.2" ry="0.9" fill="#0f172a" />
             </svg>
           )}
 
           {currentPet === 'rabbit' && (
-            /* THỎ TRẮNG PIXEL CHIBI */
-            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
-              <rect x="24" y="19" width="4" height="4" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              <rect x="9" y="17" width="16" height="10" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              <rect x="10" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="14" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="18" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="22" y="27" width="3" height="4" fill="#cbd5e1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="6" y="0" width="4" height="9" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              <rect x="7" y="1" width="2" height="7" fill="#fda4af" />
-              <rect x="16" y="0" width="4" height="9" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              <rect x="17" y="1" width="2" height="7" fill="#fda4af" />
-              <rect x="4" y="8" width="18" height="10" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              <rect x="7" y="12" width="3" height="3" fill="#f43f5e" />
-              <rect x="8" y="12" width="1" height="1" fill="#ffffff" />
-              <rect x="16" y="12" width="3" height="3" fill="#f43f5e" />
-              <rect x="17" y="12" width="1" height="1" fill="#ffffff" />
-              <rect x="12" y="14" width="2" height="1.5" fill="#f43f5e" />
-              <rect x="12" y="15.5" width="2" height="1.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.5" />
+            /* SIÊU THỎ TRẮNG KAWAII CHIBI TAI DÀI MÁ HỒNG */
+            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+              <ellipse cx="16" cy="22" rx="8.5" ry="6.5" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+              <circle cx="10" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="14" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <circle cx="18" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="22" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <rect x="9" y="1" width="3.5" height="11" rx="1.8" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.2" />
+              <rect x="10" y="2.5" width="1.5" height="8" rx="0.8" fill="#fda4af" />
+              <rect x="19.5" y="1" width="3.5" height="11" rx="1.8" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.2" />
+              <rect x="20.5" y="2.5" width="1.5" height="8" rx="0.8" fill="#fda4af" />
+              <circle cx="16" cy="15" r="8" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+              <ellipse cx="9.5" cy="16.5" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
+              <ellipse cx="22.5" cy="16.5" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
+              {!isSleeping ? (
+                <>
+                  <circle cx="11.5" cy="14" r="2" fill="#f43f5e" />
+                  <circle cx="12.2" cy="13.3" r="0.8" fill="#ffffff" />
+                  <circle cx="20.5" cy="14" r="2" fill="#f43f5e" />
+                  <circle cx="21.2" cy="13.3" r="0.8" fill="#ffffff" />
+                </>
+              ) : (
+                <>
+                  <path d="M10,14.5 Q11.5,13 13,14.5" stroke="#f43f5e" strokeWidth="1.5" fill="none" />
+                  <path d="M19,14.5 Q20.5,13 22,14.5" stroke="#f43f5e" strokeWidth="1.5" fill="none" />
+                </>
+              )}
+              <polygon points="15.2,15.8 16.8,15.8 16,16.5" fill="#f43f5e" />
             </svg>
           )}
 
           {currentPet === 'panda' && (
-            /* GẤU TRÚC PANDA PIXEL CHIBI */
-            <svg viewBox="0 0 32 32" className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-lg" shapeRendering="crispEdges">
-              <rect x="9" y="17" width="16" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="9" y="17" width="16" height="4" fill="#0f172a" />
-              <rect x="10" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="14" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="18" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
-              <rect x="22" y="27" width="3" height="4" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="4" y="4" width="5" height="5" fill="#0f172a" />
-              <rect x="17" y="4" width="5" height="5" fill="#0f172a" />
-              <rect x="4" y="8" width="18" height="10" fill="#ffffff" stroke="#1f2937" strokeWidth="1" />
-              <rect x="6" y="10" width="5" height="5" fill="#0f172a" />
-              <rect x="8" y="12" width="1.5" height="1.5" fill="#ffffff" />
-              <rect x="15" y="10" width="5" height="5" fill="#0f172a" />
-              <rect x="16" y="12" width="1.5" height="1.5" fill="#ffffff" />
-              <rect x="12" y="14" width="2" height="1.5" fill="#0f172a" />
+            /* SIÊU GẤU TRÚC PANDA KAWAII CHIBI TRÒN XINH */
+            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+              <ellipse cx="16" cy="22" rx="9" ry="7" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+              <ellipse cx="16" cy="21" rx="9" ry="3.5" fill="#0f172a" />
+              <circle cx="10" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="14" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <circle cx="18" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="22" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <circle cx="8.5" cy="7.5" r="3.5" fill="#0f172a" />
+              <circle cx="23.5" cy="7.5" r="3.5" fill="#0f172a" />
+              <circle cx="16" cy="14" r="8.5" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+              <ellipse cx="10.5" cy="13.5" rx="3" ry="2.2" fill="#0f172a" transform="rotate(-15, 10.5, 13.5)" />
+              <circle cx="10.8" cy="13.2" r="1" fill="#ffffff" />
+              <ellipse cx="21.5" cy="13.5" rx="3" ry="2.2" fill="#0f172a" transform="rotate(15, 21.5, 13.5)" />
+              <circle cx="21.2" cy="13.2" r="1" fill="#ffffff" />
+              <ellipse cx="9" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
+              <ellipse cx="23" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
+              <ellipse cx="16" cy="15.5" rx="1.3" ry="1" fill="#0f172a" />
             </svg>
           )}
         </div>

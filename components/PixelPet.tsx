@@ -273,17 +273,55 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   };
 
   return (
-    <div className="fixed bottom-24 sm:bottom-20 md:bottom-4 left-0 right-0 z-30 select-none pointer-events-none w-full h-36 overflow-visible">
+    <div className="fixed bottom-16 sm:bottom-16 md:bottom-2 left-0 right-0 z-30 select-none pointer-events-none w-full h-32 overflow-visible">
       {/* Container di chuyển mượt khắp màn hình */}
       <div 
         className="absolute bottom-0 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
         style={{ left: `${posX}px` }}
       >
-        {/* STAGE & MOOD FLOATING INDICATOR KHÔNG KHUNG BỌC */}
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-40 text-slate-800 dark:text-slate-100 text-[10px] font-mono font-bold drop-shadow-md whitespace-nowrap">
-          <span className="text-amber-500 font-extrabold">Cấp {petStage}</span>
-          <span className="text-slate-400 font-normal">|</span>
-          <span className="text-rose-500 font-extrabold">No {hunger}%</span>
+        {/* STAGE & QUICK PET SWITCHER TOOLBAR */}
+        <div className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-40">
+          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-100 text-[10px] font-mono font-bold drop-shadow-md whitespace-nowrap bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-xs">
+            <span className="text-amber-500 font-extrabold">Cấp {petStage}</span>
+            <span className="text-slate-300 dark:text-slate-700 font-normal">|</span>
+            <span className="text-rose-500 font-extrabold">No {hunger}%</span>
+            <span className="text-slate-300 dark:text-slate-700 font-normal">|</span>
+            {/* Quick Pet Swapper */}
+            <div className="flex items-center gap-1 ml-0.5">
+              <button
+                type="button"
+                onClick={() => selectPet('cat')}
+                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'cat' ? 'bg-orange-500 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
+                title="Đổi sang Mèo Cam"
+              >
+                🐱
+              </button>
+              <button
+                type="button"
+                onClick={() => selectPet('dog')}
+                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'dog' ? 'bg-amber-500 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
+                title="Đổi sang Chó Shiba"
+              >
+                🐶
+              </button>
+              <button
+                type="button"
+                onClick={() => selectPet('rabbit')}
+                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'rabbit' ? 'bg-rose-400 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
+                title="Đổi sang Thỏ Trắng"
+              >
+                🐰
+              </button>
+              <button
+                type="button"
+                onClick={() => selectPet('panda')}
+                className={`px-1 py-0.5 rounded transition text-[11px] ${currentPet === 'panda' ? 'bg-slate-800 text-white font-bold scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-800 opacity-70'}`}
+                title="Đổi sang Gấu Trúc Panda"
+              >
+                🐼
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* POPUP TRÒ CHUYỆN PIXEL 2D SANG TRỌNG KHÔNG VIỀN CỨNG */}
@@ -314,8 +352,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
         {/* HIỆU ỨNG ĐANG ĂN KHÔNG KHUNG BỌC */}
         {isEating && (
-          <div className="absolute -top-7 text-amber-500 dark:text-amber-400 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
-            Nhai nhai... Ngon quá!
+          <div className="absolute -top-8 text-amber-500 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
+            Nhai nhai... 😋
           </div>
         )}
 
@@ -328,70 +366,41 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           title="Bấm vào thú cưng Pixel để trò chuyện!"
         >
           {currentPet === 'cat' && (
-            /* SIÊU MÈO CAM KAWAII CHIBI CÓ MÁ HỒNG & BÀN CHÂN TRÒN XINH */
+            /* SIÊU MÈO CAM TABBY KAWAII CHIBI CÓ VẰN VẬỆT & RÂU MÈO */
             <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
-              {/* Fluffy Tail */}
-              <path d="M24,20 C28,18 30,12 28,9 C26,7 24,10 24,14 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" className="animate-pulse origin-bottom" />
-              {/* Cute Round Body */}
-              <ellipse cx="16" cy="22" rx="9" ry="7" fill="#fb923c" stroke="#c2410c" strokeWidth="1.5" />
+              {/* Fluffy Cat Tail */}
+              <path d="M25,22 C29,20 31,14 29,10 C27,8 25,11 25,16 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" className="animate-pulse origin-bottom" />
+              {/* Cute Round Cat Body */}
+              <ellipse cx="16" cy="22" rx="9" ry="7" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" />
               <ellipse cx="16" cy="23" rx="6" ry="4" fill="#fff7ed" />
-              {/* Soft Round Paws */}
+              {/* Soft Paws */}
               <circle cx="10" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="14" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <circle cx="18" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="22" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* Pointy Cute Ears */}
-              <path d="M7,12 L10,4 L14,11 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
-              <path d="M8.5,11 L10,6 L12.5,10.5 Z" fill="#fda4af" />
-              <path d="M18,11 L22,4 L25,12 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
-              <path d="M19.5,10.5 L22,6 L23.5,11 Z" fill="#fda4af" />
-              {/* Big Cute Round Head */}
-              <circle cx="16" cy="14" r="8.5" fill="#fb923c" stroke="#c2410c" strokeWidth="1.5" />
-              <ellipse cx="16" cy="16" rx="4.5" ry="3" fill="#fff7ed" />
+              {/* Pointy Cat Ears */}
+              <path d="M6,12 L9,3 L13,10 Z" fill="#ea580c" stroke="#c2410c" strokeWidth="1.2" />
+              <path d="M7.5,11 L9.5,5 L11.5,10 Z" fill="#fda4af" />
+              <path d="M19,10 L23,3 L26,12 Z" fill="#ea580c" stroke="#c2410c" strokeWidth="1.2" />
+              <path d="M20.5,10 L22.5,5 L24.5,11 Z" fill="#fda4af" />
+              {/* Round Cat Head */}
+              <circle cx="16" cy="14" r="8.5" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" />
+              {/* Tabby Stripes on forehead */}
+              <path d="M16,7 L16,10 M14,8 L14,10 M18,8 L18,10" stroke="#c2410c" strokeWidth="1.2" strokeLinecap="round" />
+              {/* Cat Muzzle */}
+              <ellipse cx="16" cy="16" rx="4" ry="2.5" fill="#fff7ed" />
+              {/* Whiskers */}
+              <path d="M7,15 L12,16 M7,17 L12,17 M20,16 L25,15 M20,17 L25,17" stroke="#c2410c" strokeWidth="0.9" />
               {/* Blush Cheeks */}
-              <ellipse cx="10" cy="16" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
-              <ellipse cx="22" cy="16" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
-              {/* Sparkling Anime Eyes */}
+              <ellipse cx="9.5" cy="16" rx="1.5" ry="0.9" fill="#f43f5e" opacity="0.6" />
+              <ellipse cx="22.5" cy="16" rx="1.5" ry="0.9" fill="#f43f5e" opacity="0.6" />
+              {/* Anime Cat Eyes */}
               {!isSleeping ? (
                 <>
-                  <circle cx="11.5" cy="13.5" r="2" fill="#0f172a" />
-                  <circle cx="12.2" cy="12.8" r="0.8" fill="#ffffff" />
-                  <circle cx="20.5" cy="13.5" r="2" fill="#0f172a" />
-                  <circle cx="21.2" cy="12.8" r="0.8" fill="#ffffff" />
-                </>
-              ) : (
-                <>
-                  <path d="M10,14 Q11.5,12 13,14" stroke="#0f172a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                  <path d="M19,14 Q20.5,12 22,14" stroke="#0f172a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                </>
-              )}
-              {/* Pink Nose & Mouth */}
-              <polygon points="15.2,15 16.8,15 16,15.8" fill="#f43f5e" />
-              <path d="M15,16 Q16,17.2 17,16" stroke="#0f172a" strokeWidth="1" fill="none" strokeLinecap="round" />
-            </svg>
-          )}
-
-          {currentPet === 'dog' && (
-            /* SIÊU CHÓ SHIBA KAWAII CHIBI CÓ MÁ HỒNG & CHÂN TRÒN */
-            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
-              <ellipse cx="16" cy="22" rx="9" ry="7" fill="#f59e0b" stroke="#b45309" strokeWidth="1.5" />
-              <ellipse cx="16" cy="23" rx="6" ry="4.5" fill="#ffffff" />
-              <circle cx="10" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="14" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <circle cx="18" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="22" cy="27.5" r="2" fill="#ffffff" stroke="#b45309" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <path d="M7,11 L9,4 L13,11 Z" fill="#b45309" stroke="#78350f" strokeWidth="1" />
-              <path d="M19,11 L23,4 L25,11 Z" fill="#b45309" stroke="#78350f" strokeWidth="1" />
-              <circle cx="16" cy="14" r="8.5" fill="#f59e0b" stroke="#b45309" strokeWidth="1.5" />
-              <ellipse cx="16" cy="16.5" rx="5" ry="3.5" fill="#ffffff" stroke="#b45309" strokeWidth="1" />
-              <ellipse cx="9.5" cy="15.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
-              <ellipse cx="22.5" cy="15.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
-              {!isSleeping ? (
-                <>
-                  <circle cx="11.5" cy="13.5" r="2" fill="#0f172a" />
-                  <circle cx="12.2" cy="12.8" r="0.8" fill="#ffffff" />
-                  <circle cx="20.5" cy="13.5" r="2" fill="#0f172a" />
-                  <circle cx="21.2" cy="12.8" r="0.8" fill="#ffffff" />
+                  <ellipse cx="11.5" cy="13.5" rx="2" ry="2.5" fill="#0f172a" />
+                  <circle cx="12.2" cy="12.5" r="0.8" fill="#ffffff" />
+                  <ellipse cx="20.5" cy="13.5" rx="2" ry="2.5" fill="#0f172a" />
+                  <circle cx="21.2" cy="12.5" r="0.8" fill="#ffffff" />
                 </>
               ) : (
                 <>
@@ -399,31 +408,88 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                   <path d="M19,14 Q20.5,12 22,14" stroke="#0f172a" strokeWidth="1.5" fill="none" />
                 </>
               )}
-              <ellipse cx="16" cy="15.2" rx="1.2" ry="0.9" fill="#0f172a" />
+              {/* Nose & Cat Mouth w */}
+              <polygon points="15.2,15 16.8,15 16,15.8" fill="#f43f5e" />
+              <path d="M14.5,16.2 Q15.5,17.2 16,16.2 Q16.5,17.2 17.5,16.2" stroke="#c2410c" strokeWidth="1" fill="none" strokeLinecap="round" />
+            </svg>
+          )}
+
+          {currentPet === 'dog' && (
+            /* SIÊU CHÓ SHIBA VÀNG CHIBI CÓ LÔNG BỤNG TRẮNG & LÔNG MÀY */
+            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+              {/* Curly Shiba Tail */}
+              <path d="M24,20 C27,17 27,13 25,12 C23,11 22,14 24,18 Z" fill="#eab308" stroke="#a16207" strokeWidth="1.5" className="animate-pulse" />
+              {/* Shiba Body */}
+              <ellipse cx="16" cy="22" rx="9" ry="7" fill="#eab308" stroke="#a16207" strokeWidth="1.5" />
+              <ellipse cx="16" cy="23" rx="6" ry="4.5" fill="#ffffff" />
+              {/* Paws */}
+              <circle cx="10" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="14" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <circle cx="18" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="22" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Perky Folded Ears */}
+              <path d="M6,10 L9,3 L13,10 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
+              <path d="M19,10 L23,3 L26,10 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
+              {/* Shiba Head */}
+              <circle cx="16" cy="14" r="8.5" fill="#eab308" stroke="#a16207" strokeWidth="1.5" />
+              <ellipse cx="16" cy="16.5" rx="5" ry="3.5" fill="#ffffff" stroke="#a16207" strokeWidth="1" />
+              {/* White Eyebrow Dots */}
+              <circle cx="11.5" cy="10" r="1.2" fill="#ffffff" />
+              <circle cx="20.5" cy="10" r="1.2" fill="#ffffff" />
+              {/* Blush */}
+              <ellipse cx="9" cy="15" rx="1.5" ry="0.9" fill="#fda4af" opacity="0.8" />
+              <ellipse cx="23" cy="15" rx="1.5" ry="0.9" fill="#fda4af" opacity="0.8" />
+              {/* Eyes */}
+              {!isSleeping ? (
+                <>
+                  <circle cx="11.5" cy="13" r="1.8" fill="#0f172a" />
+                  <circle cx="12" cy="12.3" r="0.7" fill="#ffffff" />
+                  <circle cx="20.5" cy="13" r="1.8" fill="#0f172a" />
+                  <circle cx="21" cy="12.3" r="0.7" fill="#ffffff" />
+                </>
+              ) : (
+                <>
+                  <path d="M10,13.5 Q11.5,12 13,13.5" stroke="#0f172a" strokeWidth="1.5" fill="none" />
+                  <path d="M19,13.5 Q20.5,12 22,13.5" stroke="#0f172a" strokeWidth="1.5" fill="none" />
+                </>
+              )}
+              {/* Shiba Snout & Smile */}
+              <ellipse cx="16" cy="15" rx="1.3" ry="1" fill="#0f172a" />
+              <path d="M15,16 Q16,17 17,16" stroke="#0f172a" strokeWidth="1" fill="none" />
             </svg>
           )}
 
           {currentPet === 'rabbit' && (
-            /* SIÊU THỎ TRẮNG KAWAII CHIBI TAI DÀI MÁ HỒNG */
+            /* SIÊU THỎ TRẮNG TAI CỰC DÀI KAWAII CÓ MẮT NGỌC BÍCH HỒNG */
             <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
-              <ellipse cx="16" cy="22" rx="8.5" ry="6.5" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
-              <circle cx="10" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="14" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <circle cx="18" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="22" cy="27.5" r="2" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <rect x="9" y="1" width="3.5" height="11" rx="1.8" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.2" />
-              <rect x="10" y="2.5" width="1.5" height="8" rx="0.8" fill="#fda4af" />
-              <rect x="19.5" y="1" width="3.5" height="11" rx="1.8" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.2" />
-              <rect x="20.5" y="2.5" width="1.5" height="8" rx="0.8" fill="#fda4af" />
-              <circle cx="16" cy="15" r="8" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
-              <ellipse cx="9.5" cy="16.5" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
-              <ellipse cx="22.5" cy="16.5" rx="1.8" ry="1" fill="#f43f5e" opacity="0.6" />
+              {/* Round Fluffy Bunny Tail */}
+              <circle cx="25" cy="22" r="3" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+              {/* Rabbit Body */}
+              <ellipse cx="16" cy="23" rx="8.5" ry="6" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.5" />
+              {/* Paws */}
+              <circle cx="10" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="14" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              <circle cx="18" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
+              <circle cx="22" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* GIANT TALL RABBIT EARS */}
+              <g className="animate-pulse origin-bottom">
+                <rect x="8.5" y="-3" width="4" height="15" rx="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+                <rect x="9.5" y="-1.5" width="2" height="12" rx="1" fill="#fda4af" />
+                <rect x="19.5" y="-3" width="4" height="15" rx="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+                <rect x="20.5" y="-1.5" width="2" height="12" rx="1" fill="#fda4af" />
+              </g>
+              {/* Rabbit Head */}
+              <circle cx="16" cy="15" r="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.5" />
+              {/* Pink Cheeks */}
+              <ellipse cx="9" cy="16.5" rx="2" ry="1.2" fill="#f43f5e" opacity="0.6" />
+              <ellipse cx="23" cy="16.5" rx="2" ry="1.2" fill="#f43f5e" opacity="0.6" />
+              {/* Shiny Ruby Eyes */}
               {!isSleeping ? (
                 <>
-                  <circle cx="11.5" cy="14" r="2" fill="#f43f5e" />
-                  <circle cx="12.2" cy="13.3" r="0.8" fill="#ffffff" />
-                  <circle cx="20.5" cy="14" r="2" fill="#f43f5e" />
-                  <circle cx="21.2" cy="13.3" r="0.8" fill="#ffffff" />
+                  <circle cx="11.5" cy="14" r="2.2" fill="#f43f5e" />
+                  <circle cx="12.3" cy="13.2" r="0.9" fill="#ffffff" />
+                  <circle cx="20.5" cy="14" r="2.2" fill="#f43f5e" />
+                  <circle cx="21.3" cy="13.2" r="0.9" fill="#ffffff" />
                 </>
               ) : (
                 <>
@@ -431,35 +497,44 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                   <path d="M19,14.5 Q20.5,13 22,14.5" stroke="#f43f5e" strokeWidth="1.5" fill="none" />
                 </>
               )}
+              {/* Nose & Front Tooth */}
               <polygon points="15.2,15.8 16.8,15.8 16,16.5" fill="#f43f5e" />
+              <rect x="15.4" y="16.5" width="1.2" height="1.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.5" />
             </svg>
           )}
 
           {currentPet === 'panda' && (
-            /* SIÊU GẤU TRÚC PANDA KAWAII CHIBI TRÒN XINH */
+            /* SIÊU GẤU TRÚC PANDA KAWAII CHIBI CÓ QUẦNG MẮT ĐEN & CÀNH TRÚC BẢO VỆ */
             <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+              {/* Panda Body */}
               <ellipse cx="16" cy="22" rx="9" ry="7" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
-              <ellipse cx="16" cy="21" rx="9" ry="3.5" fill="#0f172a" />
+              {/* Black Vest/Shoulder band */}
+              <path d="M7,20 C10,17 22,17 25,20 C24,26 8,26 7,20 Z" fill="#0f172a" />
+              {/* Black Paws */}
               <circle cx="10" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="14" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <circle cx="18" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="22" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <circle cx="8.5" cy="7.5" r="3.5" fill="#0f172a" />
-              <circle cx="23.5" cy="7.5" r="3.5" fill="#0f172a" />
+              {/* Round Black Panda Ears */}
+              <circle cx="8" cy="7.5" r="3.5" fill="#0f172a" />
+              <circle cx="24" cy="7.5" r="3.5" fill="#0f172a" />
+              {/* White Panda Head */}
               <circle cx="16" cy="14" r="8.5" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+              {/* Big Black Oval Eye Patches */}
               <ellipse cx="10.5" cy="13.5" rx="3" ry="2.2" fill="#0f172a" transform="rotate(-15, 10.5, 13.5)" />
               <circle cx="10.8" cy="13.2" r="1" fill="#ffffff" />
               <ellipse cx="21.5" cy="13.5" rx="3" ry="2.2" fill="#0f172a" transform="rotate(15, 21.5, 13.5)" />
               <circle cx="21.2" cy="13.2" r="1" fill="#ffffff" />
-              <ellipse cx="9" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
-              <ellipse cx="23" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
+              {/* Blush */}
+              <ellipse cx="8.5" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
+              <ellipse cx="23.5" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
               <ellipse cx="16" cy="15.5" rx="1.3" ry="1" fill="#0f172a" />
+              {/* Green Bamboo stick in mouth */}
+              <path d="M12,18 L21,15" stroke="#22c55e" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
           )}
         </div>
       </div>
-
-      {/* MODAL CỬA HÀNG PIXEL PET & VOUCHER HSK */}
       {showShop && (
         <div 
           onClick={() => setShowShop(false)}

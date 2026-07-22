@@ -3492,7 +3492,7 @@ export default function Home() {
 
       {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT 100% CHUẨN IELTS VOCAB (HARD SHADOW & BORDER) */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--paper)] border-t-[3px] border-[var(--line)] shadow-[0_-4px_0_var(--line)] flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom,0px)] ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 border-t-[3px] border-[#1f2937] shadow-[0_-4px_0_#1f2937] flex items-center justify-around h-13 pb-[env(safe-area-inset-bottom,0px)] ${
           isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
           {/* TAB 1: STUDIO */}
@@ -3605,6 +3605,7 @@ export default function Home() {
       {/* THÚ CƯNG PIXEL 2D ĐI DẠO MÀN HÌNH BÊN NGOÀI (CHỈ HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP) */}
       {user && (
         <PixelPet 
+          user={user}
           coins={coins} 
           setCoins={setCoins} 
           onPlayTTS={handlePlayTTS} 

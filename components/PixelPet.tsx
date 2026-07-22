@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 interface PixelPetProps {
+  user?: any;
   coins?: number;
   setCoins?: (c: number) => void;
   onPlayTTS?: (text: string) => void;
@@ -117,6 +118,7 @@ function renderPetAccessory(accId: string) {
 }
 
 export const PixelPet: React.FC<PixelPetProps> = ({
+  user,
   coins = 100,
   setCoins,
   onPlayTTS,
@@ -127,6 +129,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   isVy = false,
   isKhang = false
 }) => {
+  const userKey = user?.id || user?.email || (isVy ? 'vy' : isKhang ? 'khang' : 'guest');
   const [currentPet, setCurrentPet] = useState<PetType>('cat');
   const [unlockedPets, setUnlockedPets] = useState<PetType[]>(['cat', 'dog']);
 
@@ -136,20 +139,25 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedPet = localStorage.getItem('hsk_selected_pet') as PetType;
-      if (savedPet && ['cat', 'dog', 'rabbit', 'panda'].includes(savedPet)) {
-        setCurrentPet(savedPet);
+      const savedUserPet = localStorage.getItem(`hsk_selected_pet_${userKey}`) || (localStorage.getItem('hsk_selected_pet') as PetType);
+      if (savedUserPet && ['cat', 'dog', 'rabbit', 'panda'].includes(savedUserPet)) {
+        setCurrentPet(savedUserPet as PetType);
+      } else if (isVy) {
+        setCurrentPet('rabbit');
       }
-      const savedUnlocked = localStorage.getItem('hsk_unlocked_pets');
+
+      const savedUnlocked = localStorage.getItem(`hsk_unlocked_pets_${userKey}`) || localStorage.getItem('hsk_unlocked_pets');
       if (savedUnlocked) {
         try {
           const parsed = JSON.parse(savedUnlocked);
           if (Array.isArray(parsed) && parsed.length > 0) setUnlockedPets(parsed);
         } catch (e) {}
       }
-      const savedEquipped = localStorage.getItem('hsk_equipped_accessory');
+
+      const savedEquipped = localStorage.getItem(`hsk_equipped_accessory_${userKey}`) || localStorage.getItem('hsk_equipped_accessory');
       if (savedEquipped) setEquippedAccessory(savedEquipped);
-      const savedUnlockedAcc = localStorage.getItem('hsk_unlocked_accessories');
+
+      const savedUnlockedAcc = localStorage.getItem(`hsk_unlocked_accessories_${userKey}`) || localStorage.getItem('hsk_unlocked_accessories');
       if (savedUnlockedAcc) {
         try {
           const parsed = JSON.parse(savedUnlockedAcc);
@@ -157,11 +165,12 @@ export const PixelPet: React.FC<PixelPetProps> = ({
         } catch (e) {}
       }
     }
-  }, []);
+  }, [userKey, isVy, isKhang]);
 
   const changeEquippedAccessory = (accId: string) => {
     setEquippedAccessory(accId);
     if (typeof window !== 'undefined') {
+      localStorage.setItem(`hsk_equipped_accessory_${userKey}`, accId);
       localStorage.setItem('hsk_equipped_accessory', accId);
     }
   };
@@ -169,6 +178,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const selectPet = (petId: PetType) => {
     setCurrentPet(petId);
     if (typeof window !== 'undefined') {
+      localStorage.setItem(`hsk_selected_pet_${userKey}`, petId);
       localStorage.setItem('hsk_selected_pet', petId);
     }
   };

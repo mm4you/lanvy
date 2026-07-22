@@ -3437,121 +3437,115 @@ export default function Home() {
         </div>
       )}
 
-      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN ĐẸP, KÍN KHÍT 100% TỚI ĐÁY MÀN HÌNH */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN ĐẸP 100% NHƯ IELTS VOCAB */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 flex flex-col border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom,0px)] border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] ${
           isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
-          {/* HÀNG NÚT MENU (50px) */}
-          <div className="flex items-center justify-around h-[50px] w-full shrink-0">
-            {/* TAB 1: STUDIO */}
-            <button
-              onClick={() => {
-                setActiveTab('studio');
-                playSfx('click');
-                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-              }}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-                activeTab === 'studio' ? 'text-rose-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-              }`}
-            >
-              <div className={activeTab === 'studio' ? 'text-rose-500 scale-105 transition-transform' : 'text-current'}>
-                {renderAwardIcon('w-5 h-5')}
-              </div>
-              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
-                Studio
-              </span>
-            </button>
+          {/* TAB 1: STUDIO */}
+          <button
+            onClick={() => {
+              setActiveTab('studio');
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              activeTab === 'studio' ? 'text-rose-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+            }`}
+          >
+            <div className={activeTab === 'studio' ? 'text-rose-500 scale-105 transition-transform' : 'text-current'}>
+              {renderAwardIcon('w-5 h-5')}
+            </div>
+            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
+              Studio
+            </span>
+          </button>
 
-            {/* TAB 2: HỌC */}
-            <button
-              onClick={() => {
-                setIsMobileStudyOpen(true);
-                playSfx('click');
-                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-              }}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-                ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
-                  ? 'text-blue-500 font-extrabold'
-                  : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-              }`}
-            >
-              <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-105 transition-transform' : 'text-current'}>
-                {renderBookIcon('w-5 h-5')}
-              </div>
-              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
-                ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
-              }`}>
-                Học
-              </span>
-            </button>
+          {/* TAB 2: HỌC */}
+          <button
+            onClick={() => {
+              setIsMobileStudyOpen(true);
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
+                ? 'text-blue-500 font-extrabold'
+                : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+            }`}
+          >
+            <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-105 transition-transform' : 'text-current'}>
+              {renderBookIcon('w-5 h-5')}
+            </div>
+            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
+              ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
+            }`}>
+              Học
+            </span>
+          </button>
 
-            {/* TAB 3: PHÒNG */}
-            <button
-              onClick={() => {
-                setActiveTab('room');
-                playSfx('click');
-                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-              }}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-                activeTab === 'room' ? 'text-emerald-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-              }`}
-            >
-              <div className={activeTab === 'room' ? 'text-emerald-500 scale-105 transition-transform' : 'text-current'}>
-                {renderHomeIcon('w-5 h-5')}
-              </div>
-              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
-                Phòng
-              </span>
-            </button>
+          {/* TAB 3: PHÒNG */}
+          <button
+            onClick={() => {
+              setActiveTab('room');
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              activeTab === 'room' ? 'text-emerald-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+            }`}
+          >
+            <div className={activeTab === 'room' ? 'text-emerald-500 scale-105 transition-transform' : 'text-current'}>
+              {renderHomeIcon('w-5 h-5')}
+            </div>
+            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
+              Phòng
+            </span>
+          </button>
 
-            {/* TAB 4: SHOP */}
-            <button
-              onClick={() => {
-                setShowPetShopModal(true);
-                playSfx('click');
-                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-              }}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-                showPetShopModal ? 'text-amber-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-              }`}
-            >
-              <div className={showPetShopModal ? 'text-amber-500 scale-105 transition-transform' : 'text-current'}>
-                {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
-              </div>
-              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
-                Shop
-              </span>
-            </button>
+          {/* TAB 4: SHOP */}
+          <button
+            onClick={() => {
+              setShowPetShopModal(true);
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
+              showPetShopModal ? 'text-amber-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+            }`}
+          >
+            <div className={showPetShopModal ? 'text-amber-500 scale-105 transition-transform' : 'text-current'}>
+              {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
+            </div>
+            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
+              Shop
+            </span>
+          </button>
 
-            {/* TAB 5: THÊM */}
-            <button
-              onClick={() => {
-                setIsMobileMoreOpen(true);
-                playSfx('click');
-                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-              }}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer relative ${
-                isMobileMoreOpen || (activeTab === 'love')
-                  ? 'text-purple-500 font-extrabold'
-                  : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-              }`}
-            >
-              <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-105 transition-transform' : 'text-current'}>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </div>
-              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
-                isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
-              }`}>
-                Thêm
-              </span>
-            </button>
-          </div>
-
-          {/* VÙNG ĐỆM AN TOÀN PHỦ KÍN MỌI THIẾT BỊ IPHONE/ANDROID - CHE KÍN CHỮ VÀ DỮ LIỆU ĐÁY MÀN HÌNH */}
-          <div className="w-full h-[env(safe-area-inset-bottom,20px)] min-h-[16px] shrink-0" />
+          {/* TAB 5: THÊM */}
+          <button
+            onClick={() => {
+              setIsMobileMoreOpen(true);
+              playSfx('click');
+              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+            }}
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer relative ${
+              isMobileMoreOpen || (activeTab === 'love')
+                ? 'text-purple-500 font-extrabold'
+                : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+            }`}
+          >
+            <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-105 transition-transform' : 'text-current'}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </div>
+            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
+              isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
+            }`}>
+              Thêm
+            </span>
+          </button>
         </div>
       )}
 

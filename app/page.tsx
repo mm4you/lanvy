@@ -3002,14 +3002,12 @@ export default function Home() {
         </div>
       )}
 
-      {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT ZERO GAP */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT 100% CHUẨN IELTS VOCAB (ZERO GAP BOTTOM BAR) */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-[3px] border-[var(--line)] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] ${
-          isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#fffaf0]'
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-[45] border-t-[3px] border-[var(--line)] shadow-[0_-6px_20px_rgba(0,0,0,0.15)] pb-[env(safe-area-inset-bottom,16px)] ${
+          isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
-          <nav className={`flex items-center justify-around h-16 ${
-            isDarkMode ? 'text-slate-100' : 'text-slate-900'
-          }`}>
+          <nav className="flex items-center justify-around h-16">
             {/* TAB 1: STUDIO */}
             <button
               onClick={() => {
@@ -3071,27 +3069,22 @@ export default function Home() {
               </span>
             </button>
 
-            {/* TAB 4: AI CHAT (RIÊNG) */}
+            {/* TAB 4: SHOP */}
             <button
               onClick={() => {
-                setActiveTab('love');
-                setLoveSubTab('chat');
+                setShowPetShopModal(true);
                 playSfx('click');
                 if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
               }}
               className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer ${
-                activeTab === 'love' && loveSubTab === 'chat'
-                  ? 'text-pink-500 font-extrabold scale-105'
-                  : isDarkMode ? 'text-slate-200' : 'text-slate-800'
+                showPetShopModal ? 'text-amber-500 font-extrabold scale-105' : isDarkMode ? 'text-slate-200' : 'text-slate-800'
               }`}
             >
-              <div className={activeTab === 'love' && loveSubTab === 'chat' ? 'text-pink-500 scale-110 transition-transform' : 'text-current'}>
-                {renderChatIcon('w-5 h-5')}
+              <div className={showPetShopModal ? 'text-amber-500 scale-110 transition-transform' : 'text-current'}>
+                {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
               </div>
-              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
-                activeTab === 'love' && loveSubTab === 'chat' ? 'text-pink-500' : 'text-current'
-              }`}>
-                AI Chat
+              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
+                Shop
               </span>
             </button>
 
@@ -3103,26 +3096,23 @@ export default function Home() {
                 if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
               }}
               className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-all cursor-pointer relative ${
-                isMobileMoreOpen || (activeTab === 'love' && loveSubTab !== 'chat') || showPetShopModal
-                  ? 'text-amber-500 font-extrabold scale-105'
+                isMobileMoreOpen || (activeTab === 'love')
+                  ? 'text-purple-500 font-extrabold scale-105'
                   : isDarkMode ? 'text-slate-200' : 'text-slate-800'
               }`}
             >
-              <div className={isMobileMoreOpen || (activeTab === 'love' && loveSubTab !== 'chat') || showPetShopModal ? 'text-amber-500 scale-110 transition-transform' : 'text-current'}>
+              <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-110 transition-transform' : 'text-current'}>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </div>
               <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
-                isMobileMoreOpen || (activeTab === 'love' && loveSubTab !== 'chat') || showPetShopModal ? 'text-amber-500' : 'text-current'
+                isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
               }`}>
                 Thêm
               </span>
             </button>
           </nav>
-
-          {/* KHỐI NỀN PHỦ KÍN 100% SAFE AREA DƯỚI CÙNG DÀNH CHO IPHONE CHỈ BÁO GESTURE HOME BAR */}
-          <div className="w-full bg-inherit" style={{ height: 'max(env(safe-area-inset-bottom, 0px), 12px)' }} />
         </div>
       )}
 

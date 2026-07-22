@@ -171,7 +171,7 @@ export default function AIChatBubbleModal({
   return (
     <>
       {/* FLOATING BUBBLE BUTTON AT BOTTOM RIGHT */}
-      <div className="fixed bottom-20 md:bottom-6 right-4 z-50 flex items-center gap-2">
+      <div className="fixed bottom-28 md:bottom-6 right-4 z-50 flex items-center gap-2">
         {!isOpen && (
           <div className="hidden sm:flex items-center gap-1.5 bg-white dark:bg-slate-800 border-2 border-[var(--line)] px-3 py-1.5 rounded-full shadow-[3px_3px_0_var(--line)] animate-bounce-short text-xs font-bold text-slate-800 dark:text-slate-100">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

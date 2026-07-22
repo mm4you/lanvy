@@ -52,9 +52,24 @@ export default function LeaderboardModal({
   username,
   isDarkMode = false,
 }: LeaderboardModalProps) {
+  const [realUsers, setRealUsers] = React.useState<LeaderboardUser[]>([]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      fetch('/api/leaderboard')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.leaderboard && Array.isArray(data.leaderboard)) {
+            setRealUsers(data.leaderboard);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  const currentUserObj = {
+  const currentUserObj: LeaderboardUser = {
     rank: 0,
     name: username || 'Chủ Tiệm HSK',
     score: userScore,
@@ -63,17 +78,35 @@ export default function LeaderboardModal({
     isCurrentUser: true
   };
 
-  const initialList: LeaderboardUser[] = [
-    { rank: 0, name: 'Lan Vy', score: Math.max(userScore + 250, 3500), streak: Math.max(userStreak, 7), title: 'Chủ Tiệm Xuất Sắc' },
-    { rank: 0, name: 'Nhựt Khang', score: Math.max(userScore + 50, 3295), streak: Math.max(userStreak - 1, 5), title: 'Kiến Trúc Sư HSK' },
-    currentUserObj,
-    { rank: 0, name: 'Minh Ngọc', score: 2840, streak: 4, title: 'Chuyên Gia HSK 3' },
-    { rank: 0, name: 'Bảo Tiên', score: 2410, streak: 3, title: 'Học Viên Thần Tốc' },
-    { rank: 0, name: 'Phương Thảo', score: 1950, streak: 2, title: 'Nhà Thiết Kế Mới' },
-  ];
+  const userMap = new Map<string, LeaderboardUser>();
+
+  // Add real users from DB
+  realUsers.forEach((u) => {
+    if (u.name) {
+      userMap.set(u.name.toLowerCase(), {
+        rank: 0,
+        name: u.name,
+        score: u.score,
+        streak: u.streak,
+        title: u.title,
+        isCurrentUser: u.name.toLowerCase() === (username || '').toLowerCase(),
+      });
+    }
+  });
+
+  // Ensure current user is updated with live score/streak
+  userMap.set((username || 'Chủ Tiệm HSK').toLowerCase(), currentUserObj);
+
+  // Core active users
+  if (!userMap.has('lan vy')) {
+    userMap.set('lan vy', { rank: 0, name: 'Lan Vy', score: Math.max(userScore + 250, 3500), streak: Math.max(userStreak, 7), title: 'Chủ Tiệm Xuất Sắc' });
+  }
+  if (!userMap.has('nhựt khang')) {
+    userMap.set('nhựt khang', { rank: 0, name: 'Nhựt Khang', score: Math.max(userScore + 50, 3295), streak: Math.max(userStreak - 1, 5), title: 'Kiến Trúc Sư HSK' });
+  }
 
   // Dynamic Real-time Sorting & Ranking
-  const rawUsers = initialList
+  const rawUsers = Array.from(userMap.values())
     .sort((a, b) => b.score - a.score)
     .map((u, i) => ({ ...u, rank: i + 1 }));
 

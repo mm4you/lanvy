@@ -3452,6 +3452,10 @@ export default function Home() {
             isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
           }`}
         >
+          {/* KHỐI NỀN CHE ĐÁY TUYỆT ĐỐI: KHÓA KÍN 100% KHÔNG CHO BẤT KỲ NỘI DUNG NÀO TRÔI XUỐNG PHÍA DƯỚI NAVBAR */}
+          <div className={`absolute left-0 right-0 top-full h-32 pointer-events-none -z-10 ${
+            isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#fffaf0]'
+          }`} />
           {/* TAB 1: STUDIO */}
           <button
             onClick={() => {

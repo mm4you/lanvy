@@ -34,6 +34,10 @@ const ArchitectGlossaryModal = dynamic(() => import('../components/ArchitectGlos
   loading: () => null
 });
 
+const AIChatBubbleModal = dynamic(() => import('../components/AIChatBubbleModal'), {
+  loading: () => null
+});
+
 const PixelPet = dynamic(() => import('../components/PixelPet').then(m => m.PixelPet), {
   loading: () => null
 });
@@ -3134,6 +3138,17 @@ export default function Home() {
           onToggleShop={setShowPetShopModal}
           isVy={isVy}
           isKhang={user?.email?.toLowerCase() === 'ungnhutkhang53@gmail.com'}
+        />
+      )}
+
+      {/* BONG BÓNG CHAT AI NỔI Ở GÓC MÀN HÌNH (FLOATING AI CHAT WIDGET) */}
+      {user && (
+        <AIChatBubbleModal
+          user={user}
+          isVy={isVy}
+          onPlayTTS={handlePlayTTS}
+          playSfx={playSfx}
+          isDarkMode={isDarkMode}
         />
       )}
 

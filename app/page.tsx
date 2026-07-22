@@ -1393,7 +1393,7 @@ export default function Home() {
 
                   {/* FLOATING HSK VOCAB CARDS */}
                   <div className="absolute -top-2 left-6 bg-slate-800/90 border border-sky-500/40 text-sky-300 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-md animate-bounce">
-                    爱 (ài) • Yêu
+                    书 (shū) • Sách
                   </div>
                   <div className="absolute top-2 right-8 bg-slate-800/90 border border-amber-500/40 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-md animate-pulse">
                     家 (jiā) • Gia đình

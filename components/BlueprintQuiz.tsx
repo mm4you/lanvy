@@ -12,6 +12,12 @@ interface BlueprintQuizProps {
   onExplainWord: (word: string) => void;
   customVocabs?: any[];
   isDarkMode?: boolean;
+  userInventory?: {
+    powerup_5050: number;
+    powerup_skip: number;
+    blueprint_rare: number;
+  };
+  setUserInventory?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 function renderStarIcon(isFilled: boolean, className = 'w-5 h-5') {

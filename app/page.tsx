@@ -387,6 +387,61 @@ function renderClientAvatar(sprite: string, className = 'w-12 h-12') {
   }
 }
 
+// Hàm render Markdown đẹp mắt, loại bỏ hoàn toàn các ký tự ### thô
+function renderFormattedMarkdownText(text: string) {
+  if (!text) return null;
+
+  const lines = text.split('\n');
+
+  return (
+    <div className="space-y-3">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) return null;
+
+        // Check for Headers (e.g. ### 1. Ý nghĩa, ### 2. Cách dùng)
+        if (trimmed.startsWith('#')) {
+          const headerText = trimmed.replace(/^#+\s*/, '');
+          return (
+            <div key={idx} className="pt-2 border-b border-dashed border-rose-200 dark:border-rose-900 pb-1 mt-2">
+              <h4 className="font-extrabold text-xs sm:text-sm text-rose-600 dark:text-rose-400 uppercase tracking-wide flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-rose-500 inline-block shrink-0" />
+                {headerText}
+              </h4>
+            </div>
+          );
+        }
+
+        // Check for Quotes or Examples starting with " or “
+        if (trimmed.startsWith('"') || trimmed.startsWith('“')) {
+          return (
+            <div key={idx} className="p-2.5 bg-amber-50 dark:bg-amber-950/40 border-l-3 border-amber-400 rounded-r-xl italic text-amber-900 dark:text-amber-200 font-medium">
+              {trimmed}
+            </div>
+          );
+        }
+
+        // Standard text lines: handle **bold** text
+        const parts = trimmed.split(/(\*\*.*?\*\*)/g);
+        return (
+          <p key={idx} className="leading-relaxed text-slate-700 dark:text-slate-300">
+            {parts.map((part, pIdx) => {
+              if (part.startsWith('**') && part.endsWith('**')) {
+                return (
+                  <strong key={pIdx} className="font-extrabold text-slate-900 dark:text-slate-100">
+                    {part.slice(2, -2)}
+                  </strong>
+                );
+              }
+              return part;
+            })}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Home() {
   // Auth state
   const [user, setUser] = useState<{ id: string; username: string; email: string } | null>(null);
@@ -3339,13 +3394,7 @@ export default function Home() {
             ) : (
               <div className="space-y-4 max-h-[360px] overflow-y-auto pr-1 text-xs leading-relaxed font-medium">
                 {explanationText ? (
-                  <div className="prose prose-sm max-w-none text-[#1f2937]">
-                    {explanationText.split('\n').map((line, idx) => (
-                      <p key={idx} className="my-1.5">
-                        {line}
-                      </p>
-                    ))}
-                  </div>
+                  renderFormattedMarkdownText(explanationText)
                 ) : (
                   <p className="text-red-500 font-bold">Lỗi không thể tải dữ liệu phân tích.</p>
                 )}

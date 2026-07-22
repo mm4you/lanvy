@@ -1630,16 +1630,6 @@ export default function Home() {
                     }}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shadow-xs active:scale-95"
                   >
-                    <div className="w-7 h-7 bg-amber-100 dark:bg-slate-700 rounded-full overflow-hidden flex items-center justify-center border border-amber-400 shrink-0">
-                      {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                        renderClientAvatar('lan_vy', 'w-6 h-6')
-                      ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                        renderClientAvatar('khang', 'w-6 h-6')
-                      ) : (
-                        renderPaletteIcon('w-4 h-4 text-amber-600 dark:text-amber-400')
-                      )}
-                    </div>
-
                     <span className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200 max-w-[100px] sm:max-w-[140px] truncate">
                       {user.username || user.email?.split('@')[0]}
                     </span>
@@ -1664,20 +1654,9 @@ export default function Home() {
                   {isProfileMenuOpen && (
                     <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-3 z-50 space-y-2 animate-in fade-in zoom-in-95 duration-150">
                       {/* THÔNG TIN CHỦ TIỆM */}
-                      <div className="p-2.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-3">
-                        <div className="w-10 h-10 bg-amber-100 dark:bg-slate-700 rounded-full overflow-hidden flex items-center justify-center border-2 border-amber-400 shrink-0">
-                          {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                            renderClientAvatar('lan_vy', 'w-8 h-8')
-                          ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                            renderClientAvatar('khang', 'w-8 h-8')
-                          ) : (
-                            renderPaletteIcon('w-5 h-5 text-amber-600 dark:text-amber-400')
-                          )}
-                        </div>
-                        <div className="overflow-hidden">
-                          <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">{user.username}</p>
-                          <p className="text-[10px] text-slate-500 font-mono truncate">{user.email}</p>
-                        </div>
+                      <div className="p-2.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+                        <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">{user.username}</p>
+                        <p className="text-[10px] text-slate-500 font-mono truncate">{user.email}</p>
                       </div>
 
                       {/* BẢNG ĐIỂM DÀNH HÀNG NGÀY / STREAK */}

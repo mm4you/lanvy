@@ -250,10 +250,10 @@ function renderSignoutIcon(className = 'w-4 h-4') {
   );
 }
 
-// Avatar biểu tượng đầu người & thân người 100% SVG vẽ bằng NÉT STROKE thanh lịch, mượt mà & sang trọng
+// Avatar biểu tượng đầu người & thân người 100% SVG vẽ bằng NÉT STROKE thanh lịch, nằm sát xuống đáy
 function renderClientAvatar(_sprite?: string, className = 'w-12 h-12') {
   return (
-    <div className={`${className} rounded-full bg-gradient-to-b from-slate-100 to-slate-200/90 dark:from-slate-800 dark:to-slate-900 border border-slate-300/90 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-xs relative p-2`}>
+    <div className={`${className} rounded-full bg-gradient-to-b from-slate-100 to-slate-200/90 dark:from-slate-800 dark:to-slate-900 border border-slate-300/90 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-xs relative p-1.5 overflow-hidden`}>
       <svg
         viewBox="0 0 24 24"
         className="w-full h-full text-slate-700 dark:text-slate-200"
@@ -264,9 +264,9 @@ function renderClientAvatar(_sprite?: string, className = 'w-12 h-12') {
         strokeLinejoin="round"
       >
         {/* Đầu người vẽ nét tròn mềm mại */}
-        <circle cx="12" cy="8" r="4" />
-        {/* Thân người nét vẽ uốn cong thanh thoát */}
-        <path d="M5 20c0-3.5 3.5-6.5 7-6.5s7 3 7 6.5" />
+        <circle cx="12" cy="9.5" r="3.8" />
+        {/* Thân người nét vẽ uốn cong hạ thấp sát mép đáy */}
+        <path d="M4.5 21.5c0-4 3.3-6.8 7.5-6.8s7.5 2.8 7.5 6.8" />
       </svg>
     </div>
   );

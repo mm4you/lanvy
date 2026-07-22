@@ -71,6 +71,51 @@ const PET_ACCESSORIES = [
   { id: 'balloon', name: 'Bong Bóng Trái Tim', price: 40, desc: 'Bong bóng trái tim bay theo sau' }
 ];
 
+function renderPetAccessory(accId: string) {
+  if (!accId || accId === 'none') return null;
+
+  if (accId === 'hat') {
+    return (
+      <g key="acc-hat">
+        <ellipse cx="16" cy="6.5" rx="9.5" ry="2.2" fill="#fde047" stroke="#ca8a04" strokeWidth="1.2" />
+        <path d="M10,6.5 C10,1.5 22,1.5 22,6.5 Z" fill="#facc15" stroke="#ca8a04" strokeWidth="1.2" />
+        <path d="M10,6 Q16,7.5 22,6" stroke="#ef4444" strokeWidth="1.5" fill="none" />
+      </g>
+    );
+  }
+
+  if (accId === 'glasses') {
+    return (
+      <g key="acc-glasses">
+        <circle cx="11.5" cy="13.5" r="3.2" fill="none" stroke="#0f172a" strokeWidth="1.2" />
+        <circle cx="20.5" cy="13.5" r="3.2" fill="none" stroke="#0f172a" strokeWidth="1.2" />
+        <line x1="14.7" y1="13.5" x2="17.3" y2="13.5" stroke="#0f172a" strokeWidth="1.2" />
+      </g>
+    );
+  }
+
+  if (accId === 'bow') {
+    return (
+      <g key="acc-bow">
+        <polygon points="12,21 16,22 12,23" fill="#f43f5e" stroke="#be123c" strokeWidth="0.8" />
+        <polygon points="20,21 16,22 20,23" fill="#f43f5e" stroke="#be123c" strokeWidth="0.8" />
+        <circle cx="16" cy="22" r="1.2" fill="#fb7185" stroke="#be123c" strokeWidth="0.8" />
+      </g>
+    );
+  }
+
+  if (accId === 'balloon') {
+    return (
+      <g key="acc-balloon" className="animate-bounce">
+        <path d="M26,20 C29,14 27,8 28,2" stroke="#94a3b8" strokeWidth="0.8" fill="none" strokeDasharray="1,1" />
+        <path d="M28,2 C26,-1 23,0 23,3 C23,6 28,9 28,9 C28,9 33,6 33,3 C33,0 30,-1 28,2 Z" fill="#f43f5e" stroke="#be123c" strokeWidth="1" />
+      </g>
+    );
+  }
+
+  return null;
+}
+
 export const PixelPet: React.FC<PixelPetProps> = ({
   coins = 100,
   setCoins,
@@ -85,6 +130,10 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [currentPet, setCurrentPet] = useState<PetType>('cat');
   const [unlockedPets, setUnlockedPets] = useState<PetType[]>(['cat', 'dog']);
 
+  // ACCESSORIES & EVOLUTION STAGE
+  const [equippedAccessory, setEquippedAccessory] = useState<string>('none');
+  const [unlockedAccessories, setUnlockedAccessories] = useState<string[]>([]);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedPet = localStorage.getItem('hsk_selected_pet') as PetType;
@@ -98,8 +147,24 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           if (Array.isArray(parsed) && parsed.length > 0) setUnlockedPets(parsed);
         } catch (e) {}
       }
+      const savedEquipped = localStorage.getItem('hsk_equipped_accessory');
+      if (savedEquipped) setEquippedAccessory(savedEquipped);
+      const savedUnlockedAcc = localStorage.getItem('hsk_unlocked_accessories');
+      if (savedUnlockedAcc) {
+        try {
+          const parsed = JSON.parse(savedUnlockedAcc);
+          if (Array.isArray(parsed)) setUnlockedAccessories(parsed);
+        } catch (e) {}
+      }
     }
   }, []);
+
+  const changeEquippedAccessory = (accId: string) => {
+    setEquippedAccessory(accId);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hsk_equipped_accessory', accId);
+    }
+  };
 
   const selectPet = (petId: PetType) => {
     setCurrentPet(petId);
@@ -117,10 +182,6 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const [hunger, setHunger] = useState(85);
   const [happiness, setHappiness] = useState(90);
   const [energy, setEnergy] = useState(80);
-
-  // ACCESSORIES & EVOLUTION STAGE
-  const [equippedAccessory, setEquippedAccessory] = useState<string>('none');
-  const [unlockedAccessories, setUnlockedAccessories] = useState<string[]>([]);
 
   // EVOLUTION STAGE: 1 = Baby, 2 = Student (Backpack & Scarf), 3 = Master (Sunglasses & Crown)
   const petStage = coins >= 300 ? 3 : coins >= 100 ? 2 : 1;
@@ -273,7 +334,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   };
 
   return (
-    <div className="fixed bottom-16 sm:bottom-16 md:bottom-2 left-0 right-0 z-30 select-none pointer-events-none w-full h-32 overflow-visible">
+    <div className="fixed bottom-12 sm:bottom-12 md:bottom-2 left-0 right-0 z-30 select-none pointer-events-none w-full h-32 overflow-visible">
       {/* Container di chuyển mượt khắp màn hình */}
       <div 
         className="absolute bottom-0 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"
@@ -373,6 +434,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               {/* Nose & Cat Mouth w */}
               <polygon points="15.2,15 16.8,15 16,15.8" fill="#f43f5e" />
               <path d="M14.5,16.2 Q15.5,17.2 16,16.2 Q16.5,17.2 17.5,16.2" stroke="#c2410c" strokeWidth="1" fill="none" strokeLinecap="round" />
+              {/* EQUIPPED ACCESSORY */}
+              {renderPetAccessory(equippedAccessory)}
             </svg>
           )}
 
@@ -418,6 +481,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               {/* Shiba Snout & Smile */}
               <ellipse cx="16" cy="15" rx="1.3" ry="1" fill="#0f172a" />
               <path d="M15,16 Q16,17 17,16" stroke="#0f172a" strokeWidth="1" fill="none" />
+              {/* EQUIPPED ACCESSORY */}
+              {renderPetAccessory(equippedAccessory)}
             </svg>
           )}
 
@@ -462,6 +527,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               {/* Nose & Front Tooth */}
               <polygon points="15.2,15.8 16.8,15.8 16,16.5" fill="#f43f5e" />
               <rect x="15.4" y="16.5" width="1.2" height="1.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.5" />
+              {/* EQUIPPED ACCESSORY */}
+              {renderPetAccessory(equippedAccessory)}
             </svg>
           )}
 
@@ -493,6 +560,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               <ellipse cx="16" cy="15.5" rx="1.3" ry="1" fill="#0f172a" />
               {/* Green Bamboo stick in mouth */}
               <path d="M12,18 L21,15" stroke="#22c55e" strokeWidth="1.8" strokeLinecap="round" />
+              {/* EQUIPPED ACCESSORY */}
+              {renderPetAccessory(equippedAccessory)}
             </svg>
           )}
         </div>
@@ -570,13 +639,13 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                     <button
                       key={food.id}
                       onClick={() => handleFeedPet(food)}
-                      className="w-full p-3 bg-slate-50 dark:bg-slate-800/90 hover:bg-amber-50 dark:hover:bg-slate-700/90 border border-slate-200 dark:border-slate-700 rounded-2xl text-left flex justify-between items-center text-xs font-bold transition-all shadow-xs cursor-pointer"
+                      className="w-full p-3 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl flex justify-between items-center text-xs hover:border-amber-400 cursor-pointer transition active:scale-98 shadow-xs"
                     >
-                      <div>
-                        <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100">{food.name}</div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Thưởng thoại tiếng Trung & +50 XP</div>
+                      <div className="text-left">
+                        <div className="font-bold text-slate-900 dark:text-slate-100">{food.name}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">Tăng No +30% & Vui vẻ +20%</div>
                       </div>
-                      <span className="text-xs bg-amber-400 text-amber-950 px-2.5 py-0.5 rounded-full font-mono font-bold border border-amber-300">
+                      <span className="font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-2.5 py-1 rounded-xl border border-amber-200 dark:border-amber-800">
                         {food.price} Xu
                       </span>
                     </button>
@@ -601,14 +670,14 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                         </div>
                         {isEquipped ? (
                           <button
-                            onClick={() => setEquippedAccessory('none')}
+                            onClick={() => changeEquippedAccessory('none')}
                             className="text-[10px] bg-slate-700 text-white font-bold px-2.5 py-1 rounded-full border border-slate-600 cursor-pointer"
                           >
                             Tháo Ra
                           </button>
                         ) : isUnlocked ? (
                           <button
-                            onClick={() => setEquippedAccessory(acc.id)}
+                            onClick={() => changeEquippedAccessory(acc.id)}
                             className="text-[10px] bg-purple-600 text-white font-bold px-2.5 py-1 rounded-full border border-purple-700 cursor-pointer"
                           >
                             Trang Bị
@@ -621,8 +690,12 @@ export const PixelPet: React.FC<PixelPetProps> = ({
                                 return;
                               }
                               if (setCoins) setCoins(coins - acc.price);
-                              setUnlockedAccessories(prev => [...prev, acc.id]);
-                              setEquippedAccessory(acc.id);
+                              const newUnlocked = [...unlockedAccessories, acc.id];
+                              setUnlockedAccessories(newUnlocked);
+                              changeEquippedAccessory(acc.id);
+                              if (typeof window !== 'undefined') {
+                                localStorage.setItem('hsk_unlocked_accessories', JSON.stringify(newUnlocked));
+                              }
                             }}
                             className="text-[10px] bg-amber-400 text-amber-950 font-bold px-2.5 py-1 rounded-full border border-amber-300 cursor-pointer"
                           >

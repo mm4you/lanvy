@@ -1358,7 +1358,7 @@ export default function Home() {
   return (
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-100 text-slate-900'
-    } p-3 sm:p-4 md:p-6 pb-24 md:pb-6`}>
+    } p-3 sm:p-4 md:p-6 pb-16 md:pb-6`}>
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ NEO-BRUTALIST ĐÚNG CHUẨN IELTS VOCAB BIẾN TẤU CHO HSK VOCAB */}
       {!user ? (
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-[#fffaf0] text-slate-900 select-none">
@@ -1686,7 +1686,7 @@ export default function Home() {
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-5 pb-36 md:pb-12">
+        <div className="max-w-6xl mx-auto space-y-5 pb-16 md:pb-6">
           {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
           <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs border ${
             isDarkMode 
@@ -3471,10 +3471,10 @@ export default function Home() {
 
       {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT 100% CHUẨN IELTS VOCAB (ZERO GAP BOTTOM BAR) */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-[45] border-t-[3px] border-[var(--line)] shadow-[0_-6px_20px_rgba(0,0,0,0.15)] pb-[env(safe-area-inset-bottom,16px)] ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-[45] border-t-[3px] border-[var(--line)] shadow-[0_-6px_20px_rgba(0,0,0,0.15)] pb-[env(safe-area-inset-bottom,0px)] ${
           isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
-          <nav className="flex items-center justify-around h-16">
+          <nav className="flex items-center justify-around h-12">
             {/* TAB 1: STUDIO */}
             <button
               onClick={() => {

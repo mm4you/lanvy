@@ -44,6 +44,10 @@ const PixelPet = dynamic(() => import('../components/PixelPet').then(m => m.Pixe
   loading: () => null
 });
 
+const NotebookModal = dynamic(() => import('../components/NotebookModal'), {
+  loading: () => null
+});
+
 interface PlacedItem {
   id: string;
   itemTypeId: string;
@@ -457,6 +461,7 @@ export default function Home() {
   const [showArrangementModal, setShowArrangementModal] = useState<boolean>(false);
   const [showPetShopModal, setShowPetShopModal] = useState<boolean>(false);
   const [selectedVoiceWord, setSelectedVoiceWord] = useState<{ wordChinese: string; wordPinyin: string; wordVietnamese: string } | null>(null);
+  const [showNotebookModal, setShowNotebookModal] = useState<boolean>(false);
 
   const allContracts = [...DESIGN_CONTRACTS, ...dynamicContracts];
 
@@ -1557,8 +1562,8 @@ export default function Home() {
               ? 'bg-slate-900 text-slate-100 border-slate-800' 
               : 'bg-white text-slate-900 border-slate-200'
           }`}>
-            {/* THÀNH PHẦN TRÊN: LOGO, TÊN DỰ ÁN, CHỈ SỐ XU & CÁC NÚT THAO TÁC */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
+            {/* HÀNG 1: LOGO, TÊN ATELIER & CHỈ SỐ STATS (XU, ĐIỂM, STREAK) */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-3.5">
                 <div className="w-12 h-12 bg-amber-100 dark:bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border-2 border-amber-400 shadow-xs">
                   {user.email?.toLowerCase() === LOVE_EMAIL ? (
@@ -1601,80 +1606,69 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* CHỈ SỐ XU, ĐIỂM & CHUỖI HỌC STREAK */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
+              {/* CHỈ SỐ THỐNG KÊ RỘNG RÃI: XU, ĐIỂM, STREAK */}
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-3.5 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
                   {renderCoinIcon()} Xu: {coins}
                 </div>
-                <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
+                <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3.5 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
                   {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
                 </div>
 
                 {/* CHUỖI HỌC ĐIỂM DÀNH STREAK HÀNG NGÀY */}
-                <div className="bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs" title="Chuỗi ngày đăng nhập học tập liên tục">
+                <div className="bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3.5 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs" title="Chuỗi ngày đăng nhập học tập liên tục">
                   {renderFlameIcon('w-4 h-4 text-rose-500')}
                   <span>Streak: {streakData.streakCount} Ngày</span>
                 </div>
 
-                {/* NÚT BẬT / TẮT NHẠC NỀN LOFI / PIXEL BGM */}
-                <button
-                  type="button"
-                  onClick={toggleBGM}
-                  className={`px-3 py-1.5 rounded-full border text-xs font-mono font-bold flex items-center gap-1.5 shadow-xs cursor-pointer transition-all active:scale-95 ${
-                    isBgmPlaying
-                      ? 'bg-emerald-500 text-white border-emerald-600 animate-pulse'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200'
-                  }`}
-                  title={isBgmPlaying ? 'Đang phát Nhạc Nền Lofi (Bấm để tắt)' : 'Bấm để phát Nhạc Nền Lofi Pixel BGM'}
-                >
-                  {renderMusicIcon(isBgmPlaying, 'w-3.5 h-3.5')}
-                  <span>{isBgmPlaying ? 'Nhạc: Bật' : 'Nhạc Lofi'}</span>
-                </button>
+                {/* CÁC NÚT THAO TÁC CÔNG CỤ (SPECS, GÓP Ý, THEME, THOÁT) */}
+                <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+                  <button
+                    type="button"
+                    aria-label="Toggle dark mode"
+                    onClick={toggleDarkMode}
+                    className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                    title={isDarkMode ? 'Đang Ban Đêm (Bấm để chuyển sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để chuyển sang Ban Đêm)'}
+                  >
+                    {isDarkMode ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-yellow-400">
+                        <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-slate-600 dark:text-slate-300">
+                        <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
+                      </svg>
+                    )}
+                  </button>
 
-                {/* NÚT ĐỔI CHẾ ĐỘ SÁNG / TỐI CHUẨN 100% THEO CHUẨN SỐC IELTS VOCAB */}
-                <button
-                  type="button"
-                  aria-label="Toggle dark mode"
-                  onClick={toggleDarkMode}
-                  className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
-                  title={isDarkMode ? 'Đang Ban Đêm (Bấm để chuyển sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để chuyển sang Ban Đêm)'}
-                >
-                  {isDarkMode ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-yellow-400">
-                      <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-slate-600 dark:text-slate-300">
-                      <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
-                    </svg>
-                  )}
-                </button>
+                  <button
+                    onClick={() => {
+                      setShowArchitectModal(true);
+                      playSfx('click');
+                    }}
+                    className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
+                  >
+                    Specs
+                  </button>
 
-                <button
-                  onClick={() => {
-                    setShowArchitectModal(true);
-                    playSfx('click');
-                  }}
-                  className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
-                >
-                  Specs
-                </button>
-                <button
-                  onClick={() => {
-                    setShowFeedbackModal(true);
-                    setFeedbackMsg(null);
-                    playSfx('click');
-                  }}
-                  className="px-3 py-1.5 bg-cyan-400 hover:bg-cyan-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
-                >
-                  Góp Ý
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95 flex items-center gap-1"
-                >
-                  {renderSignoutIcon()} Thoát
-                </button>
+                  <button
+                    onClick={() => {
+                      setShowFeedbackModal(true);
+                      setFeedbackMsg(null);
+                      playSfx('click');
+                    }}
+                    className="px-3 py-1.5 bg-cyan-400 hover:bg-cyan-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
+                  >
+                    Góp Ý
+                  </button>
+
+                  <button
+                    onClick={handleLogout}
+                    className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95 flex items-center gap-1"
+                  >
+                    {renderSignoutIcon()} Thoát
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -2256,6 +2250,13 @@ export default function Home() {
                   >
                     {renderStarIcon(true, 'w-4 h-4 text-amber-400')}
                     Sổ Từ Khó Ôn Tập ({bookmarkedIds.length})
+                  </button>
+                  <button
+                    onClick={() => { setShowNotebookModal(true); playSfx('click'); }}
+                    className="px-4 py-2 border font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 flex items-center gap-1.5 hover:bg-rose-100"
+                  >
+                    {renderBookIcon('w-4 h-4 text-rose-500')}
+                    Sổ Tay Cá Nhân (Notebooks)
                   </button>
                 </div>
 
@@ -3302,6 +3303,11 @@ export default function Home() {
               </span>
             </button>
           </nav>
+
+          {/* SOLID SAFE AREA FILLER TO ELIMINATE SAFARI BOTTOM GAP 100% */}
+          <div className={`w-full h-[env(safe-area-inset-bottom,20px)] min-h-[16px] ${
+            isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#fffaf0]'
+          }`} />
         </div>
       )}
 
@@ -3423,6 +3429,18 @@ export default function Home() {
 
       </div>
       )}
+
+      {/* SỔ TAY TỪ VỰNG HSK CÁ NHÂN MODAL */}
+      <NotebookModal
+        isOpen={showNotebookModal}
+        onClose={() => setShowNotebookModal(false)}
+        playSfx={playSfx}
+        onPlayAudio={handlePlayTTS}
+        onSelectNotebookToStudy={(wordIds, notebookName) => {
+          setShowNotebookModal(false);
+          setActiveTab('flashcards' as any);
+        }}
+      />
 
       {/* Retro CSS animations style tag */}
       <style>{`

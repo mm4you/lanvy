@@ -33,7 +33,9 @@ export default function FlashcardViewer({
   isDarkMode = false,
   onRewardCoins,
 }: FlashcardViewerProps) {
-  const [deckSize, setDeckSize] = useState<5 | 10 | 'all'>(5);
+  const [deckSize, setDeckSize] = useState<number | 'all'>(5);
+  const [isCustomSize, setIsCustomSize] = useState(false);
+  const [customInputVal, setCustomInputVal] = useState('15');
   const [selectedHsk, setSelectedHsk] = useState<number | 'all'>('all');
   const [filterMode, setFilterMode] = useState<'all' | 'bookmarked'>('all');
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
@@ -184,10 +186,17 @@ export default function FlashcardViewer({
           <div className="flex items-center gap-2">
             <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">Bộ từ:</span>
             <select
-              value={deckSize}
+              value={isCustomSize ? 'custom' : deckSize}
               onChange={(e) => {
                 const val = e.target.value;
-                setDeckSize(val === 'all' ? 'all' : (Number(val) as any));
+                if (val === 'custom') {
+                  setIsCustomSize(true);
+                  const num = Math.max(1, parseInt(customInputVal) || 10);
+                  setDeckSize(num);
+                } else {
+                  setIsCustomSize(false);
+                  setDeckSize(val === 'all' ? 'all' : Number(val));
+                }
                 setCurrentIndex(0);
                 setIsFlipped(false);
                 setIsSessionCompleted(false);
@@ -195,11 +204,33 @@ export default function FlashcardViewer({
               }}
               className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded-xl font-mono font-bold text-xs cursor-pointer focus:outline-none"
             >
-              <option value={5}>5 từ vựng (Học nhanh)</option>
-              <option value={10}>10 từ vựng (Ôn tập vừa)</option>
-              <option value={20}>20 từ vựng (Chuyên sâu)</option>
+              <option value={5}>5 từ (Học nhanh)</option>
+              <option value={10}>10 từ (Ôn tập vừa)</option>
+              <option value={20}>20 từ (Chuyên sâu)</option>
+              <option value="custom">Tùy chọn số lượng...</option>
               <option value="all">Tất cả từ vựng HSK</option>
             </select>
+
+            {isCustomSize && (
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min={1}
+                  max={500}
+                  value={customInputVal}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCustomInputVal(val);
+                    const num = Math.max(1, parseInt(val) || 1);
+                    setDeckSize(num);
+                    setCurrentIndex(0);
+                  }}
+                  className="w-16 bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-700 px-2 py-1 rounded-xl font-mono font-bold text-xs focus:outline-none text-center shadow-xs"
+                  placeholder="Số từ"
+                />
+                <span className="text-xs font-bold text-slate-500">từ</span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

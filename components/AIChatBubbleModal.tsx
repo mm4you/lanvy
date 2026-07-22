@@ -172,19 +172,20 @@ export default function AIChatBubbleModal({
     <>
       {/* FLOATING BUBBLE BUTTON (ONLY SHOWN WHEN CLOSED) */}
       {!isOpen && (
-        <div className="fixed bottom-24 md:bottom-6 right-4 z-40 flex items-center gap-2">
+        <div className="fixed bottom-20 sm:bottom-6 right-4 z-40 flex items-center gap-2">
           <button
             onClick={() => {
               setIsOpen(true);
               playSfx('click');
             }}
-            className="flex items-center gap-2.5 px-4 py-3 rounded-full border-3 border-[var(--line)] bg-rose-500 hover:bg-rose-600 text-white shadow-[4px_4px_0_var(--line)] transition-all duration-200 active:scale-95 cursor-pointer"
+            className="flex items-center gap-2.5 p-3 sm:px-4 sm:py-3 rounded-full border-3 border-[var(--line)] bg-rose-500 hover:bg-rose-600 text-white shadow-[4px_4px_0_var(--line)] transition-all duration-200 active:scale-95 cursor-pointer"
+            title={isVy ? 'Chat Anh Khang AI' : 'Trợ Lý AI Tiếng Trung'}
           >
-            <div className="relative">
-              {renderSleekChatIcon('w-5 h-5 text-white')}
+            <div className="relative shrink-0">
+              {renderSleekChatIcon('w-6 h-6 sm:w-5 sm:h-5 text-white')}
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border border-white" />
             </div>
-            <span className="text-xs font-black tracking-wide">
+            <span className="hidden sm:inline text-xs font-black tracking-wide">
               {isVy ? 'Chat Anh Khang AI' : 'Trợ Lý AI'}
             </span>
           </button>

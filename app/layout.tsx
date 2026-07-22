@@ -48,9 +48,9 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${spaceGrotesk.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${fraunces.variable} h-full antialiased bg-[#fffaf0] dark:bg-[#121212]`}
     >
-      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#fffdf8] dark:bg-[#121212] text-slate-900 dark:text-slate-100 transition-colors duration-300">{children}</body>
     </html>
   );
 }

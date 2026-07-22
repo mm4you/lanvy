@@ -1315,7 +1315,7 @@ export default function Home() {
 
   return (
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
-      isDarkMode ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-100 text-slate-900'
+      isDarkMode ? 'dark bg-[#121212] text-slate-100' : 'bg-[#fffdf8] text-slate-900'
     } p-0 sm:p-4 md:p-6 pb-24 md:pb-6`}>
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ NEO-BRUTALIST ĐÚNG CHUẨN IELTS VOCAB BIẾN TẤU CHO HSK VOCAB */}
       {!user ? (

@@ -1500,13 +1500,13 @@ export default function Home() {
             {/* THÀNH PHẦN TRÊN: LOGO, TÊN DỰ ÁN, CHỈ SỐ XU & CÁC NÚT THAO TÁC */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 bg-amber-400/20 dark:bg-amber-400/10 rounded-xl overflow-hidden flex items-center justify-center text-rose-600 shrink-0 border border-amber-300/40">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border-2 border-amber-400 shadow-xs">
                   {user.email?.toLowerCase() === LOVE_EMAIL ? (
                     renderClientAvatar('lan_vy', 'w-10 h-10')
                   ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
                     renderClientAvatar('khang', 'w-10 h-10')
                   ) : (
-                    renderPaletteIcon('w-7 h-7')
+                    renderPaletteIcon('w-7 h-7 text-amber-600 dark:text-amber-400')
                   )}
                 </div>
                 <div>

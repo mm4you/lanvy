@@ -3437,9 +3437,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN ĐẸP 100% NHƯ IELTS VOCAB */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN ĐẸP, VIỀN MỎNG THUẬN MẮT & KHÔNG BỊ NÂNG CAO */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom,0px)] border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_8px_rgba(0,0,0,0.05)] flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom,0px)] ${
           isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
           {/* TAB 1: STUDIO */}

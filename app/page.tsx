@@ -2885,17 +2885,17 @@ export default function Home() {
         />
       )}
 
-      {/* POPUP DRAWER "HOC" (STUDY) - TRUOT TU DUOI LEN */}
+      {/* POPUP DRAWER "HỌC" (STUDY) - TRƯỢT TỪ DƯỚI LÊN */}
       {isMobileStudyOpen && (
         <div className="md:hidden fixed inset-0 z-[60]">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40" onClick={() => setIsMobileStudyOpen(false)} />
           {/* Drawer */}
-          <div className={`absolute bottom-0 left-0 right-0 rounded-t-3xl border-t-[3px] border-[var(--line)] p-5 pb-8 space-y-3 animate-in slide-in-from-bottom duration-200 ${
+          <div className={`absolute bottom-0 left-0 right-0 rounded-t-3xl border-t-[3px] border-[var(--line)] p-5 pb-[calc(2rem+env(safe-area-inset-bottom,0px))] space-y-3 animate-in slide-in-from-bottom duration-200 ${
             isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
           }`}>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-black uppercase tracking-wider">Hoc Tap HSK</h3>
+              <h3 className="text-sm font-black uppercase tracking-wider">Học Tập HSK</h3>
               <button
                 onClick={() => setIsMobileStudyOpen(false)}
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm cursor-pointer transition ${
@@ -2916,7 +2916,7 @@ export default function Home() {
                 }`}
               >
                 {renderBookIcon('w-6 h-6 text-blue-500')}
-                <span className="text-[10px] font-black">Quiz Ban Ve</span>
+                <span className="text-[10px] font-black">Quiz Bản Vẽ</span>
               </button>
 
               {/* FLASHCARDS */}
@@ -2932,7 +2932,7 @@ export default function Home() {
                 <span className="text-[10px] font-black">Flashcards 3D</span>
               </button>
 
-              {/* THU VIEN TU DIEN */}
+              {/* THƯ VIỆN TỪ ĐIỂN */}
               <button
                 onClick={() => { setActiveTab('library'); setIsMobileStudyOpen(false); playSfx('click'); if (navigator.vibrate) navigator.vibrate(15); }}
                 className={`p-4 border-2 border-[var(--line)] rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all active:scale-95 col-span-2 ${
@@ -2942,24 +2942,24 @@ export default function Home() {
                 }`}
               >
                 {renderBookIcon('w-6 h-6 text-purple-500')}
-                <span className="text-[10px] font-black">Thu Vien HSK</span>
+                <span className="text-[10px] font-black">Thư Viện HSK</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* POPUP DRAWER "THEM" (MORE) - TRUOT TU DUOI LEN KIEU IELTS VOCAB */}
+      {/* POPUP DRAWER "THÊM" (MORE) - TRƯỢT TỪ DƯỚI LÊN KIEU IELTS VOCAB */}
       {isMobileMoreOpen && (
         <div className="md:hidden fixed inset-0 z-[60]">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40" onClick={() => setIsMobileMoreOpen(false)} />
           {/* Drawer */}
-          <div className={`absolute bottom-0 left-0 right-0 rounded-t-3xl border-t-[3px] border-[var(--line)] p-5 pb-8 space-y-3 animate-in slide-in-from-bottom duration-200 ${
-            isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
+          <div className={`absolute bottom-0 left-0 right-0 rounded-t-3xl border-t-[3px] border-[var(--line)] p-5 pb-[calc(2rem+env(safe-area-inset-bottom,0px))] space-y-3 animate-in slide-in-from-bottom duration-200 ${
+            isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0]'
           }`}>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-black uppercase tracking-wider">Tien Ich Khac</h3>
+              <h3 className="text-sm font-black uppercase tracking-wider">Tiện Ích Khác</h3>
               <button
                 onClick={() => setIsMobileMoreOpen(false)}
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm cursor-pointer transition ${
@@ -2970,7 +2970,7 @@ export default function Home() {
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {/* CUA HANG SHOP */}
+              {/* CỬA HÀNG SHOP */}
               <button
                 onClick={() => { setShowPetShopModal(true); setIsMobileMoreOpen(false); playSfx('click'); if (navigator.vibrate) navigator.vibrate(15); }}
                 className={`p-4 border-2 border-[var(--line)] rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all active:scale-95 ${
@@ -2978,7 +2978,7 @@ export default function Home() {
                 }`}
               >
                 {renderShoppingBagIcon('w-6 h-6 text-amber-500')}
-                <span className="text-[10px] font-black">Shop & Noi That</span>
+                <span className="text-[10px] font-black">Shop & Nội Thất</span>
               </button>
 
               {/* VOUCHER */}
@@ -2991,19 +2991,19 @@ export default function Home() {
                 }`}
               >
                 {renderVoucherIcon('w-6 h-6 text-purple-500')}
-                <span className="text-[10px] font-black">{isVy ? 'Hop Thu Vy' : 'Vi Voucher'}</span>
+                <span className="text-[10px] font-black">{isVy ? 'Hòm Thư Vy' : 'Ví Voucher'}</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* THANH DIEU HUONG MOBILE KIN KHIT ZERO GAP */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT ZERO GAP */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-[3px] border-[var(--line)] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] ${
           isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#fffaf0]'
         }`}>
-          <nav className={`border-t-[3px] border-[var(--line)] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] flex items-center justify-around h-16 ${
+          <nav className={`flex items-center justify-around h-16 ${
             isDarkMode ? 'text-slate-100' : 'text-slate-900'
           }`}>
             {/* TAB 1: STUDIO */}
@@ -3025,7 +3025,7 @@ export default function Home() {
               </span>
             </button>
 
-            {/* TAB 2: HOC */}
+            {/* TAB 2: HỌC */}
             <button
               onClick={() => {
                 setIsMobileStudyOpen(true);
@@ -3044,11 +3044,11 @@ export default function Home() {
               <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
                 ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
               }`}>
-                Hoc
+                Học
               </span>
             </button>
 
-            {/* TAB 3: PHONG */}
+            {/* TAB 3: PHÒNG */}
             <button
               onClick={() => {
                 setActiveTab('room');
@@ -3063,11 +3063,11 @@ export default function Home() {
                 {renderHomeIcon('w-5 h-5')}
               </div>
               <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
-                Phong
+                Phòng
               </span>
             </button>
 
-            {/* TAB 4: AI CHAT (RIENG) */}
+            {/* TAB 4: AI CHAT (RIÊNG) */}
             <button
               onClick={() => {
                 setActiveTab('love');
@@ -3091,7 +3091,7 @@ export default function Home() {
               </span>
             </button>
 
-            {/* TAB 5: THEM */}
+            {/* TAB 5: THÊM */}
             <button
               onClick={() => {
                 setIsMobileMoreOpen(true);
@@ -3112,12 +3112,13 @@ export default function Home() {
               <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
                 isMobileMoreOpen || (activeTab === 'love' && loveSubTab !== 'chat') || showPetShopModal ? 'text-amber-500' : 'text-current'
               }`}>
-                Them
+                Thêm
               </span>
             </button>
           </nav>
-          {/* KHOI MAU NEN LAP KIN PHAN SAFE AREA DUOI CUNG */}
-          <div className="w-full" style={{ height: 'env(safe-area-inset-bottom, 0px)' }} />
+
+          {/* KHỐI NỀN PHỦ KÍN 100% SAFE AREA DƯỚI CÙNG DÀNH CHO IPHONE CHỈ BÁO GESTURE HOME BAR */}
+          <div className="w-full bg-inherit" style={{ height: 'max(env(safe-area-inset-bottom, 0px), 12px)' }} />
         </div>
       )}
 

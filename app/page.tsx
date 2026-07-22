@@ -573,7 +573,7 @@ export default function Home() {
   const [customVocabs, setCustomVocabs] = useState<any[]>([]);
   const [vocabTheme, setVocabTheme] = useState('Mua sắm & Shopping');
   const [vocabCustomTheme, setVocabCustomTheme] = useState('');
-  const [vocabHskGroup, setVocabHskGroup] = useState<'hsk123' | 'hsk456'>('hsk123');
+  const [vocabHskGroup, setVocabHskGroup] = useState<'hsk123' | 'hsk456' | 'all'>('hsk123');
   const [librarySearchQuery, setLibrarySearchQuery] = useState('');
   const [libraryPage, setLibraryPage] = useState(1);
   const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
@@ -705,8 +705,9 @@ export default function Home() {
           }
         }
         if (combined.length > 0) {
+          const groupLabel = vocabHskGroup === 'all' ? 'Toàn Bộ HSK 1-6' : vocabHskGroup === 'hsk456' ? 'HSK 4-5-6 Nâng Cao' : 'HSK 1-2-3 Cơ Bản';
           setGeneratedVocab(combined.map((item: any) => ({ ...item, selected: true })));
-          setVocabBotMsg({ type: 'success', text: `Đã tự động bơm thành công ${combined.length} từ vựng thuộc nhóm ${vocabHskGroup === 'hsk456' ? 'HSK 4-5-6 Nâng Cao' : 'HSK 1-2-3 Cơ Bản'} phủ kín tất cả chủ đề!` });
+          setVocabBotMsg({ type: 'success', text: `Đã tự động bơm thành công ${combined.length} từ vựng thuộc nhóm ${groupLabel} phủ kín tất cả chủ đề!` });
         } else {
           setVocabBotMsg({ type: 'error', text: 'Lỗi khi tạo từ vựng tổng hợp.' });
         }
@@ -3090,7 +3091,7 @@ export default function Home() {
                             <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1 ${
                               isDarkMode ? 'text-slate-400' : 'text-slate-500'
                             }`}>Chọn nhóm cấp độ HSK bơm từ:</label>
-                            <div className="grid grid-cols-2 gap-2 mb-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                               <button
                                 type="button"
                                 onClick={() => setVocabHskGroup('hsk123')}
@@ -3100,7 +3101,7 @@ export default function Home() {
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                                 }`}
                               >
-                                <span>Nhóm HSK 1 - 2 - 3 (Cơ Bản)</span>
+                                <span>HSK 1 - 2 - 3 (Cơ Bản)</span>
                               </button>
                               <button
                                 type="button"
@@ -3111,7 +3112,18 @@ export default function Home() {
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                                 }`}
                               >
-                                <span>Nhóm HSK 4 - 5 - 6 (Nâng Cao)</span>
+                                <span>HSK 4 - 5 - 6 (Nâng Cao)</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setVocabHskGroup('all')}
+                                className={`py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                                  vocabHskGroup === 'all'
+                                    ? 'bg-purple-600 text-white border-purple-700 shadow-sm'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                }`}
+                              >
+                                <span>Nạp Tất Cả HSK 1 - 6</span>
                               </button>
                             </div>
                           </div>

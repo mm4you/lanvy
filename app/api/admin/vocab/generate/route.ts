@@ -2,7 +2,23 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-api';
 import { getAIChatCompletion } from '@/lib/ai';
 
-function generateFallbackBalancedVocab(query: string, category: string, hskGroup: 'hsk123' | 'hsk456' = 'hsk123') {
+function generateFallbackBalancedVocab(query: string, category: string, hskGroup: 'hsk123' | 'hsk456' | 'all' = 'hsk123') {
+  if (hskGroup === 'all') {
+    return [
+      { nameChinese: '苹果', namePinyin: 'píngguǒ', nameVietnamese: 'Táo', hskLevel: 1, category, exampleChinese: '我喜欢吃苹果。', examplePinyin: 'Wǒ xǐhuan chī píngguǒ.', exampleVietnamese: 'Tôi thích ăn táo.' },
+      { nameChinese: '学习', namePinyin: 'xuéxí', nameVietnamese: 'Học tập', hskLevel: 1, category, exampleChinese: '我们在学习汉语。', examplePinyin: 'Wǒmen zài xuéxí Hànyǔ.', exampleVietnamese: 'Chúng tôi đang học tiếng Trung.' },
+      { nameChinese: '非常', namePinyin: 'fēicháng', nameVietnamese: 'Vô cùng', hskLevel: 2, category, exampleChinese: '这个非常好。', examplePinyin: 'Zhè ge fēicháng hǎo.', exampleVietnamese: 'Cái này vô cùng tốt.' },
+      { nameChinese: '准备', namePinyin: 'zhǔnbèi', nameVietnamese: 'Chuẩn bị', hskLevel: 2, category, exampleChinese: '我准备好了。', examplePinyin: 'Wǒ zhǔnbèi hǎo le.', exampleVietnamese: 'Tôi đã chuẩn bị xong.' },
+      { nameChinese: '选择', namePinyin: 'xuǎnzé', nameVietnamese: 'Lựa chọn', hskLevel: 3, category, exampleChinese: '这是好的选择。', examplePinyin: 'Zhè shì hǎo de xuǎnzé.', exampleVietnamese: 'Đây là sự lựa chọn tốt.' },
+      { nameChinese: '影响', namePinyin: 'yǐngxiǎng', nameVietnamese: 'Ảnh hưởng', hskLevel: 3, category, exampleChinese: '环境有很大影响。', examplePinyin: 'Huánjìng yǒu hěn dà yǐngxiǎng.', exampleVietnamese: 'Môi trường có ảnh hưởng rất lớn.' },
+      { nameChinese: '安排', namePinyin: 'ānpái', nameVietnamese: 'Sắp xếp', hskLevel: 4, category, exampleChinese: '我们安排好时间。', examplePinyin: 'Wǒmen ānpái hǎo shíjiān.', exampleVietnamese: 'Chúng tôi sắp xếp thời gian.' },
+      { nameChinese: '成功', namePinyin: 'chénggōng', nameVietnamese: 'Thành công', hskLevel: 4, category, exampleChinese: '一定会成功。', examplePinyin: 'Yídìng huì chénggōng.', exampleVietnamese: 'Nhất định sẽ thành công.' },
+      { nameChinese: '把握', namePinyin: 'bǎwò', nameVietnamese: 'Nắm bắt', hskLevel: 5, category, exampleChinese: '把握住机会。', examplePinyin: 'Bǎwò zhù jīhuì.', exampleVietnamese: 'Nắm bắt cơ hội.' },
+      { nameChinese: '追求', namePinyin: 'zhuīqiú', nameVietnamese: 'Theo đuổi', hskLevel: 5, category, exampleChinese: '追求卓越。', examplePinyin: 'Zhuīqiú zhuóyuè.', exampleVietnamese: 'Theo đuổi sự vượt trội.' },
+      { nameChinese: '抱负', namePinyin: 'bàofù', nameVietnamese: 'Hoài bão', hskLevel: 6, category, exampleChinese: '要有远大抱负。', examplePinyin: 'Yào yǒu yuǎndà bàofù.', exampleVietnamese: 'Cần có hoài bão lớn.' },
+      { nameChinese: '领悟', namePinyin: 'lǐngwù', nameVietnamese: 'Lĩnh hội', hskLevel: 6, category, exampleChinese: '深深领悟。', examplePinyin: 'Shēnshēn lǐngwù.', exampleVietnamese: 'Lĩnh hội sâu sắc.' }
+    ];
+  }
   if (hskGroup === 'hsk456') {
     return [
       // HSK 4
@@ -210,9 +226,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Thiếu từ khóa hoặc chủ đề tạo từ.' }, { status: 400 });
     }
 
-    const isHighGroup = hskGroup === 'hsk456';
-    const groupText = isHighGroup ? 'NÂNG CAO (đúng 3 từ HSK 4, 3 từ HSK 5, 3 từ HSK 6)' : 'CƠ BẢN (đúng 3 từ HSK 1, 3 từ HSK 2, 3 từ HSK 3)';
-    const hskLevelExample = isHighGroup ? '4, 5, hoặc 6' : '1, 2, hoặc 3';
+    let groupText = 'CƠ BẢN (đúng 3 từ HSK 1, 3 từ HSK 2, 3 từ HSK 3)';
+    let hskLevelExample = '1, 2, hoặc 3';
+    if (hskGroup === 'hsk456') {
+      groupText = 'NÂNG CAO (đúng 3 từ HSK 4, 3 từ HSK 5, 3 từ HSK 6)';
+      hskLevelExample = '4, 5, hoặc 6';
+    } else if (hskGroup === 'all' || hskGroup === 'hsk1to6') {
+      groupText = 'TOÀN BỘ HSK 1 TỚI HSK 6 (gồm 12 từ rải đều từ cấp HSK 1, 2, 3, 4, 5 đến HSK 6)';
+      hskLevelExample = '1, 2, 3, 4, 5, hoặc 6';
+    }
 
     const systemPrompt = `Bạn là bot tạo từ vựng tiếng Trung HSK cho game.
 Người dùng muốn tạo bộ từ vựng xoay quanh chủ đề: "${query}" (thuộc danh mục: "${category}").

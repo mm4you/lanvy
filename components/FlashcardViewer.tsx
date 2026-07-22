@@ -235,8 +235,8 @@ export default function FlashcardViewer({
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">HSK:</span>
-            <div className="flex gap-1">
-              {['all', 1, 2, 3].map((lvl) => (
+            <div className="flex gap-1 flex-wrap">
+              {['all', 1, 2, 3, 4, 5, 6].map((lvl) => (
                 <button
                   key={lvl}
                   type="button"

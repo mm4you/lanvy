@@ -1562,24 +1562,24 @@ export default function Home() {
               ? 'bg-slate-900 text-slate-100 border-slate-800' 
               : 'bg-white text-slate-900 border-slate-200'
           }`}>
-            {/* HÀNG 1: LOGO, TÊN ATELIER & CHỈ SỐ STATS (XU, ĐIỂM, STREAK) */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-4">
+            {/* HÀNG 1: BRAND PROFILE (TRÁI) & HỆ THỐNG CÔNG CỤ SYSTEM (PHẢI) */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-3.5">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border-2 border-amber-400 shadow-xs">
+                <div className="w-11 h-11 bg-amber-100 dark:bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border-2 border-amber-400 shadow-xs">
                   {user.email?.toLowerCase() === LOVE_EMAIL ? (
-                    renderClientAvatar('lan_vy', 'w-10 h-10')
+                    renderClientAvatar('lan_vy', 'w-9 h-9')
                   ) : user.email?.toLowerCase() === 'ungnhutkhang53@gmail.com' ? (
-                    renderClientAvatar('khang', 'w-10 h-10')
+                    renderClientAvatar('khang', 'w-9 h-9')
                   ) : (
-                    renderPaletteIcon('w-7 h-7 text-amber-600 dark:text-amber-400')
+                    renderPaletteIcon('w-6 h-6 text-amber-600 dark:text-amber-400')
                   )}
                 </div>
                 <div>
-                  <h1 className={`text-lg sm:text-xl font-bold flex items-center gap-2 ${
+                  <h1 className={`text-base sm:text-lg font-bold flex items-center gap-2 ${
                     isDarkMode ? 'text-slate-100' : 'text-slate-900'
                   }`}>
-                    <img src="/logo.svg" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
-                    Atelier Thiết Kế HSK
+                    <img src="/logo.svg" alt="Logo" className="w-7 h-7 object-contain shrink-0" />
+                    <span>Atelier Thiết Kế HSK</span>
                     {user.email?.toLowerCase() === LOVE_EMAIL && (
                       <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-wider flex items-center gap-1">
                         {renderHeartIcon('w-3 h-3 text-rose-500 fill-current')} Vy Của Khang
@@ -1591,7 +1591,7 @@ export default function Home() {
                       </span>
                     )}
                   </h1>
-                  <p className={`text-xs font-mono ${
+                  <p className={`text-[11px] font-mono ${
                     isDarkMode ? 'text-slate-400' : 'text-slate-600'
                   }`}>
                     {user.email?.toLowerCase() === LOVE_EMAIL ? (
@@ -1606,69 +1606,53 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* CHỈ SỐ THỐNG KÊ RỘNG RÃI: XU, ĐIỂM, STREAK */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-3.5 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
-                  {renderCoinIcon()} Xu: {coins}
-                </div>
-                <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3.5 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
-                  {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
-                </div>
+              {/* NÚT THAO TÁC HỆ THỐNG GÓC TRÊN PHẢI (SPECS, GÓP Ý, THEME, THOÁT) */}
+              <div className="flex items-center gap-2 self-end sm:self-center">
+                <button
+                  type="button"
+                  aria-label="Toggle dark mode"
+                  onClick={toggleDarkMode}
+                  className="p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                  title={isDarkMode ? 'Đang Ban Đêm (Bấm để chuyển sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để chuyển sang Ban Đêm)'}
+                >
+                  {isDarkMode ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-yellow-400">
+                      <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-slate-600 dark:text-slate-300">
+                      <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
+                    </svg>
+                  )}
+                </button>
 
-                {/* CHUỖI HỌC ĐIỂM DÀNH STREAK HÀNG NGÀY */}
-                <div className="bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3.5 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs" title="Chuỗi ngày đăng nhập học tập liên tục">
-                  {renderFlameIcon('w-4 h-4 text-rose-500')}
-                  <span>Streak: {streakData.streakCount} Ngày</span>
-                </div>
+                <button
+                  onClick={() => {
+                    setShowArchitectModal(true);
+                    playSfx('click');
+                  }}
+                  className="px-2.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
+                >
+                  Specs
+                </button>
 
-                {/* CÁC NÚT THAO TÁC CÔNG CỤ (SPECS, GÓP Ý, THEME, THOÁT) */}
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
-                  <button
-                    type="button"
-                    aria-label="Toggle dark mode"
-                    onClick={toggleDarkMode}
-                    className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
-                    title={isDarkMode ? 'Đang Ban Đêm (Bấm để chuyển sang Ban Ngày)' : 'Đang Ban Ngày (Bấm để chuyển sang Ban Đêm)'}
-                  >
-                    {isDarkMode ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-yellow-400">
-                        <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-slate-600 dark:text-slate-300">
-                        <path d="M21 12.79A9 9 0 0 1 12.21 3c-.13 0-.26 0-.39.01A7 7 0 0 0 12 21a9 9 0 0 0 9-8.21z" />
-                      </svg>
-                    )}
-                  </button>
+                <button
+                  onClick={() => {
+                    setShowFeedbackModal(true);
+                    setFeedbackMsg(null);
+                    playSfx('click');
+                  }}
+                  className="px-2.5 py-1 bg-cyan-400 hover:bg-cyan-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
+                >
+                  Góp Ý
+                </button>
 
-                  <button
-                    onClick={() => {
-                      setShowArchitectModal(true);
-                      playSfx('click');
-                    }}
-                    className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
-                  >
-                    Specs
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setShowFeedbackModal(true);
-                      setFeedbackMsg(null);
-                      playSfx('click');
-                    }}
-                    className="px-3 py-1.5 bg-cyan-400 hover:bg-cyan-500 text-slate-950 text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95"
-                  >
-                    Góp Ý
-                  </button>
-
-                  <button
-                    onClick={handleLogout}
-                    className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95 flex items-center gap-1"
-                  >
-                    {renderSignoutIcon()} Thoát
-                  </button>
-                </div>
+                <button
+                  onClick={handleLogout}
+                  className="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-xs cursor-pointer transition-all active:scale-95 flex items-center gap-1"
+                >
+                  {renderSignoutIcon()} Thoát
+                </button>
               </div>
             </div>
 
@@ -1688,8 +1672,10 @@ export default function Home() {
               </div>
             )}
 
-            {/* THANH ĐIỀU HƯỚNG NHÓM CHỨC NĂNG (GOM GỌN TẢI DROPDOWN POPUP) */}
-            <nav className="w-full hidden md:flex items-center gap-3 shrink-0 relative">
+            {/* HÀNG 2: THANH MENU ĐIỀU HƯỚNG (TRÁI) & CHỈ SỐ THỐNG KÊ (PHẢI) */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-0.5">
+              {/* THANH ĐIỀU HƯỚNG NHÓM CHỨC NĂNG */}
+              <nav className="w-full md:w-auto hidden md:flex items-center gap-3 shrink-0 relative">
               {/* NHÓM 1: HỌC TẬP HSK */}
               <div className="relative">
                 <button
@@ -1882,7 +1868,22 @@ export default function Home() {
                 )}
               </div>
             </nav>
-          </header>
+
+            {/* CHỈ SỐ THỐNG KÊ (XU, ĐIỂM, STREAK) ĐẶT NGAY BÊN PHẢI HÀNG 2 - CỰC KỲ THOÁNG VÀ SANG TRỌNG */}
+            <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
+              <div className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
+                {renderCoinIcon()} Xu: {coins}
+              </div>
+              <div className="bg-blue-100 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center shadow-xs">
+                {renderAwardIcon('w-4 h-4 text-blue-600 dark:text-blue-400 inline mr-1')} Điểm: {score}
+              </div>
+              <div className="bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-800 px-3 py-1.5 rounded-full text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs" title="Chuỗi ngày đăng nhập học tập liên tục">
+                {renderFlameIcon('w-4 h-4 text-rose-500')}
+                <span>Streak: {streakData.streakCount} Ngày</span>
+              </div>
+            </div>
+          </div>
+        </header>
 
           {/* NỘI DUNG TABS CHÍNH */}
           <div className="transition-all">

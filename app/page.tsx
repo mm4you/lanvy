@@ -250,17 +250,110 @@ function renderSignoutIcon(className = 'w-4 h-4') {
   );
 }
 
-// Avatar biểu tượng đầu người & thân người đơn giản 100% SVG áp dụng cho tất cả
-function renderClientAvatar(_sprite?: string, className = 'w-12 h-12') {
+// Avatar nhân vật hợp đồng vẽ bằng SVG siêu cute, màu sắc tươi sáng & mềm mại
+function renderClientAvatar(sprite = 'default', className = 'w-12 h-12') {
+  const s = sprite ? sprite.toLowerCase() : 'default';
+
+  if (s === 'vy' || s === 'lan_vy') {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-gradient-to-tr from-rose-100 to-pink-50 dark:from-rose-950 dark:to-slate-900 border-2 border-rose-300 dark:border-rose-700 flex items-center justify-center shrink-0 shadow-xs`}>
+        <svg viewBox="0 0 32 32" className="w-full h-full">
+          <path d="M 5 14 C 5 5, 27 5, 27 14 C 27 24, 25 28, 23 28 L 9 28 C 7 28, 5 24, 5 14 Z" fill="#1e1b4b" />
+          <circle cx="16" cy="17" r="8.5" fill="#fde68a" stroke="#1f2937" strokeWidth="1.5" />
+          <path d="M 5 13 Q 16 7 27 13 Q 21 14 18 10 Q 14 14 5 13" fill="#1e1b4b" />
+          <path d="M 11 9 L 7 7 L 9 12 Z M 21 9 L 25 7 L 23 12 Z" fill="#f43f5e" />
+          <circle cx="16" cy="9" r="1.2" fill="#fb7185" />
+          <circle cx="12" cy="16.5" r="1.2" fill="#1f2937" />
+          <circle cx="20" cy="16.5" r="1.2" fill="#1f2937" />
+          <ellipse cx="9.5" cy="18.5" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
+          <ellipse cx="22.5" cy="18.5" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
+          <path d="M 14 20 Q 16 21.5 18 20" fill="none" stroke="#1f2937" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+  }
+
+  if (s === 'khang' || s === 'nhutkhang') {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-gradient-to-tr from-sky-100 to-blue-50 dark:from-slate-800 dark:to-slate-900 border-2 border-sky-300 dark:border-sky-700 flex items-center justify-center shrink-0 shadow-xs`}>
+        <svg viewBox="0 0 32 32" className="w-full h-full">
+          <path d="M 6 12 C 6 6, 26 6, 26 12 Z" fill="#1f2937" />
+          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="1.5" />
+          <path d="M 6 12 Q 16 6 26 12 Q 18 13 16 11 Q 14 13 6 12" fill="#1f2937" />
+          <circle cx="12" cy="17" r="3.2" fill="none" stroke="#1f2937" strokeWidth="1.5" />
+          <circle cx="20" cy="17" r="3.2" fill="none" stroke="#1f2937" strokeWidth="1.5" />
+          <line x1="15" y1="17" x2="17" y2="17" stroke="#1f2937" strokeWidth="1.5" />
+          <circle cx="12" cy="17" r="1" fill="#1f2937" />
+          <circle cx="20" cy="17" r="1" fill="#1f2937" />
+          <path d="M 14 22 Q 16 23.5 18 22" fill="none" stroke="#1f2937" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+  }
+
+  if (s === 'panda') {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-gradient-to-tr from-emerald-100 to-teal-50 dark:from-teal-950 dark:to-slate-900 border-2 border-emerald-300 dark:border-teal-700 flex items-center justify-center shrink-0 shadow-xs`}>
+        <svg viewBox="0 0 32 32" className="w-full h-full">
+          <circle cx="8" cy="9" r="4.5" fill="#1f2937" />
+          <circle cx="24" cy="9" r="4.5" fill="#1f2937" />
+          <circle cx="16" cy="17" r="10.5" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" />
+          <ellipse cx="10" cy="15" rx="3.2" ry="4" fill="#1f2937" />
+          <ellipse cx="22" cy="15" rx="3.2" ry="4" fill="#1f2937" />
+          <circle cx="10" cy="14" r="1" fill="#ffffff" />
+          <circle cx="22" cy="14" r="1" fill="#ffffff" />
+          <polygon points="14,19 18,19 16,21" fill="#1f2937" />
+        </svg>
+      </div>
+    );
+  }
+
+  if (s === 'cat') {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-gradient-to-tr from-purple-100 to-indigo-50 dark:from-purple-950 dark:to-slate-900 border-2 border-purple-300 dark:border-purple-700 flex items-center justify-center shrink-0 shadow-xs`}>
+        <svg viewBox="0 0 32 32" className="w-full h-full">
+          <polygon points="6,9 12,13 6,15" fill="#64748b" stroke="#1f2937" strokeWidth="1.5" />
+          <polygon points="26,9 20,13 26,15" fill="#64748b" stroke="#1f2937" strokeWidth="1.5" />
+          <circle cx="16" cy="18" r="10" fill="#94a3b8" stroke="#1f2937" strokeWidth="1.5" />
+          <circle cx="12" cy="17" r="2" fill="#1f2937" />
+          <circle cx="20" cy="17" r="2" fill="#1f2937" />
+          <polygon points="15,20 17,20 16,21.5" fill="#f43f5e" />
+          <line x1="8" y1="19" x2="4" y2="18" stroke="#1f2937" strokeWidth="1.2" />
+          <line x1="24" y1="19" x2="28" y2="18" stroke="#1f2937" strokeWidth="1.2" />
+        </svg>
+      </div>
+    );
+  }
+
+  if (s === 'shiba') {
+    return (
+      <div className={`${className} rounded-full overflow-hidden bg-gradient-to-tr from-amber-100 to-orange-50 dark:from-amber-950 dark:to-slate-900 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center shrink-0 shadow-xs`}>
+        <svg viewBox="0 0 32 32" className="w-full h-full">
+          <polygon points="6,8 13,11 8,15" fill="#ea580c" stroke="#1f2937" strokeWidth="1.5" />
+          <polygon points="26,8 19,11 24,15" fill="#ea580c" stroke="#1f2937" strokeWidth="1.5" />
+          <circle cx="16" cy="18" r="10" fill="#f97316" stroke="#1f2937" strokeWidth="1.5" />
+          <ellipse cx="11" cy="16" rx="4" ry="5" fill="#ffffff" />
+          <ellipse cx="21" cy="16" rx="4" ry="5" fill="#ffffff" />
+          <circle cx="12" cy="16" r="2" fill="#1f2937" />
+          <circle cx="20" cy="16" r="2" fill="#1f2937" />
+          <ellipse cx="16" cy="19" rx="2.2" ry="1.5" fill="#1f2937" />
+        </svg>
+      </div>
+    );
+  }
+
+  // Default Cute Character Avatar (Cho các khách hàng Nam, Tiến, Ngọc và các contract mới)
   return (
-    <div className={`${className} rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0 shadow-xs`}>
-      <svg
-        viewBox="0 0 32 32"
-        className="w-full h-full text-slate-500 dark:text-slate-400 p-0.5"
-        fill="currentColor"
-      >
-        <circle cx="16" cy="11.5" r="5.5" />
-        <path d="M 6 28 C 6 19.5, 26 19.5, 26 28 Z" />
+    <div className={`${className} rounded-full overflow-hidden bg-gradient-to-tr from-rose-100 via-amber-50 to-sky-100 dark:from-slate-800 dark:to-slate-900 border-2 border-rose-300 dark:border-slate-600 flex items-center justify-center shrink-0 shadow-xs`}>
+      <svg viewBox="0 0 32 32" className="w-full h-full">
+        <path d="M 6 13 C 6 6, 26 6, 26 13 Z" fill="#475569" />
+        <circle cx="16" cy="18" r="9" fill="#fde68a" stroke="#1f2937" strokeWidth="1.5" />
+        <path d="M 6 13 Q 16 7 26 13 Q 20 14 18 11 Q 13 15 6 13" fill="#475569" />
+        <circle cx="12" cy="17" r="1.2" fill="#1f2937" />
+        <circle cx="20" cy="17" r="1.2" fill="#1f2937" />
+        <ellipse cx="9" cy="19" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
+        <ellipse cx="23" cy="19" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
+        <path d="M 14 21 Q 16 22.5 18 21" fill="none" stroke="#1f2937" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     </div>
   );
@@ -3435,115 +3528,121 @@ export default function Home() {
         </div>
       )}
 
-      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN ĐẸP, VIỀN MỎNG THUẬN MẮT & KHÔNG BỊ HỞ */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN ĐẸP, KÍN KHÍT 100% TỚI ĐÁY MÀN HÌNH */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] flex items-center justify-around h-[50px] pb-[env(safe-area-inset-bottom,0px)] ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 flex flex-col border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] ${
           isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
-          {/* TAB 1: STUDIO */}
-          <button
-            onClick={() => {
-              setActiveTab('studio');
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-              activeTab === 'studio' ? 'text-rose-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={activeTab === 'studio' ? 'text-rose-500 scale-105 transition-transform' : 'text-current'}>
-              {renderAwardIcon('w-5 h-5')}
-            </div>
-            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
-              Studio
-            </span>
-          </button>
+          {/* HÀNG NÚT MENU (50px) */}
+          <div className="flex items-center justify-around h-[50px] w-full shrink-0">
+            {/* TAB 1: STUDIO */}
+            <button
+              onClick={() => {
+                setActiveTab('studio');
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                activeTab === 'studio' ? 'text-rose-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={activeTab === 'studio' ? 'text-rose-500 scale-105 transition-transform' : 'text-current'}>
+                {renderAwardIcon('w-5 h-5')}
+              </div>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
+                Studio
+              </span>
+            </button>
 
-          {/* TAB 2: HỌC */}
-          <button
-            onClick={() => {
-              setIsMobileStudyOpen(true);
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-              ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
-                ? 'text-blue-500 font-extrabold'
-                : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-105 transition-transform' : 'text-current'}>
-              {renderBookIcon('w-5 h-5')}
-            </div>
-            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
-              ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
-            }`}>
-              Học
-            </span>
-          </button>
+            {/* TAB 2: HỌC */}
+            <button
+              onClick={() => {
+                setIsMobileStudyOpen(true);
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
+                  ? 'text-blue-500 font-extrabold'
+                  : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-105 transition-transform' : 'text-current'}>
+                {renderBookIcon('w-5 h-5')}
+              </div>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
+                ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
+              }`}>
+                Học
+              </span>
+            </button>
 
-          {/* TAB 3: PHÒNG */}
-          <button
-            onClick={() => {
-              setActiveTab('room');
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-              activeTab === 'room' ? 'text-emerald-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={activeTab === 'room' ? 'text-emerald-500 scale-105 transition-transform' : 'text-current'}>
-              {renderHomeIcon('w-5 h-5')}
-            </div>
-            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
-              Phòng
-            </span>
-          </button>
+            {/* TAB 3: PHÒNG */}
+            <button
+              onClick={() => {
+                setActiveTab('room');
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                activeTab === 'room' ? 'text-emerald-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={activeTab === 'room' ? 'text-emerald-500 scale-105 transition-transform' : 'text-current'}>
+                {renderHomeIcon('w-5 h-5')}
+              </div>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
+                Phòng
+              </span>
+            </button>
 
-          {/* TAB 4: SHOP */}
-          <button
-            onClick={() => {
-              setShowPetShopModal(true);
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-              showPetShopModal ? 'text-amber-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={showPetShopModal ? 'text-amber-500 scale-105 transition-transform' : 'text-current'}>
-              {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
-            </div>
-            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
-              Shop
-            </span>
-          </button>
+            {/* TAB 4: SHOP */}
+            <button
+              onClick={() => {
+                setShowPetShopModal(true);
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
+                showPetShopModal ? 'text-amber-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={showPetShopModal ? 'text-amber-500 scale-105 transition-transform' : 'text-current'}>
+                {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
+              </div>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
+                Shop
+              </span>
+            </button>
 
-          {/* TAB 5: THÊM */}
-          <button
-            onClick={() => {
-              setIsMobileMoreOpen(true);
-              playSfx('click');
-              if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer relative ${
-              isMobileMoreOpen || (activeTab === 'love')
-                ? 'text-purple-500 font-extrabold'
-                : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
-            }`}
-          >
-            <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-105 transition-transform' : 'text-current'}>
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </div>
-            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
-              isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
-            }`}>
-              Thêm
-            </span>
-          </button>
+            {/* TAB 5: THÊM */}
+            <button
+              onClick={() => {
+                setIsMobileMoreOpen(true);
+                playSfx('click');
+                if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer relative ${
+                isMobileMoreOpen || (activeTab === 'love')
+                  ? 'text-purple-500 font-extrabold'
+                  : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+              }`}
+            >
+              <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-105 transition-transform' : 'text-current'}>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </div>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
+                isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
+              }`}>
+                Thêm
+              </span>
+            </button>
+          </div>
+
+          {/* VÙNG ĐỆM AN TOÀN PHỦ KÍN MỌI THIẾT BỊ IPHONE/ANDROID - CHE KÍN CHỮ VÀ DỮ LIỆU ĐÁY MÀN HÌNH */}
+          <div className="w-full h-[env(safe-area-inset-bottom,20px)] min-h-[16px] shrink-0" />
         </div>
       )}
 

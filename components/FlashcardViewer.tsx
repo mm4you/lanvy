@@ -358,7 +358,7 @@ export default function FlashcardViewer({
                   : 'bg-slate-100 dark:bg-slate-800 text-amber-600 dark:text-amber-400'
               }`}
             >
-              {renderBookmarkIcon(true, 'w-3.5 h-3.5')}
+              {renderBookmarkIcon(true, 'w-4 h-4')}
               Từ Đã Lưu ({bookmarkedIds.length})
             </button>
           </div>
@@ -401,7 +401,7 @@ export default function FlashcardViewer({
                     className="p-2 bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-600 dark:text-purple-300 rounded-xl border border-purple-200 dark:border-purple-800 cursor-pointer transition-all active:scale-95 flex items-center gap-1"
                     title="Thêm từ này vào Sổ tay..."
                   >
-                    {renderNotebookIcon('w-5 h-5 text-purple-600 dark:text-purple-300')}
+                    {renderNotebookIcon('w-4 h-4 text-purple-600 dark:text-purple-300')}
                   </button>
 
                   {showNotebookPopover && (
@@ -475,7 +475,7 @@ export default function FlashcardViewer({
                   className="p-2 bg-rose-50 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-slate-700 text-rose-600 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-slate-700 cursor-pointer transition-all active:scale-95"
                   title="Nghe phát âm tiếng Trung"
                 >
-                  {renderAudioIcon('w-5 h-5')}
+                  {renderAudioIcon('w-4 h-4')}
                 </button>
               </div>
             </div>

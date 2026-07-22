@@ -84,6 +84,29 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 }) => {
   const [currentPet, setCurrentPet] = useState<PetType>('cat');
   const [unlockedPets, setUnlockedPets] = useState<PetType[]>(['cat', 'dog']);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedPet = localStorage.getItem('hsk_selected_pet') as PetType;
+      if (savedPet && ['cat', 'dog', 'rabbit', 'panda'].includes(savedPet)) {
+        setCurrentPet(savedPet);
+      }
+      const savedUnlocked = localStorage.getItem('hsk_unlocked_pets');
+      if (savedUnlocked) {
+        try {
+          const parsed = JSON.parse(savedUnlocked);
+          if (Array.isArray(parsed) && parsed.length > 0) setUnlockedPets(parsed);
+        } catch (e) {}
+      }
+    }
+  }, []);
+
+  const selectPet = (petId: PetType) => {
+    setCurrentPet(petId);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hsk_selected_pet', petId);
+    }
+  };
   const [activeSpeech, setActiveSpeech] = useState<{ text: string; pinyin: string; translation: string } | null>(null);
   const [isHearting, setIsHearting] = useState(false);
   const [isSleeping, setIsSleeping] = useState(false);
@@ -191,7 +214,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   const handleFeedPet = (food: typeof PET_FOODS[0]) => {
     if (coins < food.price) {
       if (playSfx) playSfx('error');
-      alert(`Vy không đủ Xu! Cần ${food.price} Xu để mua ${food.name}.`);
+      alert(`Bạn không đủ Xu! Cần ${food.price} Xu để mua ${food.name}.`);
       return;
     }
 
@@ -214,7 +237,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
   const handleUnlockPet = (pet: typeof PET_CATALOG[0]) => {
     if (unlockedPets.includes(pet.id)) {
-      setCurrentPet(pet.id);
+      selectPet(pet.id);
       triggerPetSound();
       return;
     }
@@ -227,9 +250,12 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
     if (setCoins) setCoins(coins - pet.price);
     if (playSfx) playSfx('levelUp');
-    setUnlockedPets(prev => [...prev, pet.id]);
-    setCurrentPet(pet.id);
-    triggerPetSound();
+    const newUnlocked = [...unlockedPets, pet.id];
+    setUnlockedPets(newUnlocked);
+    selectPet(pet.id);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hsk_unlocked_pets', JSON.stringify(newUnlocked));
+    }
     alert(`Chúc mừng Vy đã mở khóa thú cưng ${pet.name}!`);
   };
 
@@ -247,7 +273,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
   };
 
   return (
-    <div className="fixed bottom-18 md:bottom-2 left-0 right-0 z-30 select-none pointer-events-none w-full h-32 overflow-visible">
+    <div className="fixed bottom-24 sm:bottom-20 md:bottom-4 left-0 right-0 z-30 select-none pointer-events-none w-full h-36 overflow-visible">
       {/* Container di chuyển mượt khắp màn hình */}
       <div 
         className="absolute bottom-0 transition-all duration-[3500ms] ease-in-out pointer-events-auto flex flex-col items-center"

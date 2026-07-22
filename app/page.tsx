@@ -503,10 +503,10 @@ export default function Home() {
 
     const todayStr = new Date().toISOString().split('T')[0];
     const lastModalShown = localStorage.getItem('hsk_last_attendance_modal_date');
-
-    // Automatically pop up Daily Attendance Modal if not shown today
-    if (lastModalShown !== todayStr || !sData.claimedToday) {
+    // Automatically pop up Daily Attendance Modal ONLY on first daily visit
+    if (lastModalShown !== todayStr) {
       setShowDailyAttendanceModal(true);
+      localStorage.setItem('hsk_last_attendance_modal_date', todayStr);
     }
   }, []);
 
@@ -1797,8 +1797,8 @@ export default function Home() {
                     >
                       {renderBookIcon('w-4 h-4 text-blue-500')}
                       <div>
-                        <p className="font-bold">Quiz HSK (Bản Vẽ)</p>
-                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Giải đố HSK nhận Xu & Mảnh bản vẽ</p>
+                        <p className="font-bold">Chế Tạo Bản Vẽ HSK</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Chế tạo mảnh bản vẽ nội thất & trả lời quiz HSK</p>
                       </div>
                     </button>
 
@@ -1936,19 +1936,6 @@ export default function Home() {
                       <div>
                         <p className="font-bold">{isVy ? 'Thư Tình & Voucher' : 'Ví Voucher HSK'}</p>
                         <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Voucher quà tặng ngọt ngào</p>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => { setActiveTab('love'); setLoveSubTab('chat'); setOpenNavGroup(null); playSfx('click'); }}
-                      className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition cursor-pointer ${
-                        activeTab === 'love' && loveSubTab === 'chat' ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
-                      }`}
-                    >
-                      {renderChatIcon('w-4 h-4 text-rose-500')}
-                      <div>
-                        <p className="font-bold">Trò Chuyện AI HSK</p>
-                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Hỏi đáp từ vựng & giao tiếp tiếng Trung</p>
                       </div>
                     </button>
 

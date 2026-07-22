@@ -54,14 +54,28 @@ export default function LeaderboardModal({
 }: LeaderboardModalProps) {
   if (!isOpen) return null;
 
-  const rawUsers: LeaderboardUser[] = [
-    { rank: 1, name: 'Lan Vy', score: Math.max(userScore + 250, 3500), streak: 7, title: 'Chủ Tiệm Xuất Sắc' },
-    { rank: 2, name: 'Nhựt Khang', score: Math.max(userScore + 50, 3295), streak: 5, title: 'Kiến Trúc Sư HSK' },
-    { rank: 3, name: username || 'Chủ Tiệm HSK', score: userScore, streak: userStreak, title: 'Học Viên Chăm Chỉ', isCurrentUser: true },
-    { rank: 4, name: 'Minh Ngọc', score: 2840, streak: 4, title: 'Chuyên Gia HSK 3' },
-    { rank: 5, name: 'Bảo Tiên', score: 2410, streak: 3, title: 'Học Viên Thần Tốc' },
-    { rank: 6, name: 'Phương Thảo', score: 1950, streak: 2, title: 'Nhà Thiết Kế Mới' },
+  const currentUserObj = {
+    rank: 0,
+    name: username || 'Chủ Tiệm HSK',
+    score: userScore,
+    streak: userStreak,
+    title: userScore >= 3000 ? 'Chủ Tiệm Xuất Sắc' : userScore >= 1500 ? 'Kiến Trúc Sư HSK' : 'Học Viên Chăm Chỉ',
+    isCurrentUser: true
+  };
+
+  const initialList: LeaderboardUser[] = [
+    { rank: 0, name: 'Lan Vy', score: Math.max(userScore + 250, 3500), streak: Math.max(userStreak, 7), title: 'Chủ Tiệm Xuất Sắc' },
+    { rank: 0, name: 'Nhựt Khang', score: Math.max(userScore + 50, 3295), streak: Math.max(userStreak - 1, 5), title: 'Kiến Trúc Sư HSK' },
+    currentUserObj,
+    { rank: 0, name: 'Minh Ngọc', score: 2840, streak: 4, title: 'Chuyên Gia HSK 3' },
+    { rank: 0, name: 'Bảo Tiên', score: 2410, streak: 3, title: 'Học Viên Thần Tốc' },
+    { rank: 0, name: 'Phương Thảo', score: 1950, streak: 2, title: 'Nhà Thiết Kế Mới' },
   ];
+
+  // Dynamic Real-time Sorting & Ranking
+  const rawUsers = initialList
+    .sort((a, b) => b.score - a.score)
+    .map((u, i) => ({ ...u, rank: i + 1 }));
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">

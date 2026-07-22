@@ -76,9 +76,14 @@ export default function LuckyWheelModal({
     const prize = SLICES[prizeIndex];
 
     const sliceAngle = 360 / SLICES.length;
-    const targetAngle = 3600 + (360 - prizeIndex * sliceAngle - sliceAngle / 2);
-
-    setRotationDegree(targetAngle);
+    // Top pointer is at 270deg (12 o'clock). Slice i center is at i * 60 + 30.
+    // To bring slice i center to 270deg clockwise: targetMod = (240 - i * 60 + 360) % 360.
+    setRotationDegree((prev) => {
+      const currentMod = prev % 360;
+      const desiredMod = (240 - prizeIndex * sliceAngle + 3600) % 360;
+      const diff = (desiredMod - currentMod + 360) % 360;
+      return prev + 1800 + diff;
+    });
 
     setTimeout(() => {
       setIsSpinning(false);
@@ -86,10 +91,16 @@ export default function LuckyWheelModal({
 
       if (prize.type === 'coins' && prize.amount) {
         setCoins((prev) => prev + prize.amount);
-        setWinMessage(`Chúc mừng! Bạn trúng phần thưởng ${prize.text}!`);
+        setWinMessage(`Chúc mừng! Bạn trúng thưởng ${prize.text}!`);
+      } else if (prize.id === 'powerup_5050') {
+        setCoins((prev) => prev + 50);
+        setWinMessage(`Chúc mừng! Bạn trúng Thẻ 50:50 (Quy đổi +50 Xu học tập)!`);
+      } else if (prize.id === 'blueprint_rare') {
+        setCoins((prev) => prev + 80);
+        setWinMessage(`Chúc mừng! Bạn trúng Mảnh Bản Vẽ Hiếm (Quy đổi +80 Xu nội thất)!`);
       } else {
-        setCoins((prev) => prev + 60);
-        setWinMessage(`Chúc mừng! Bạn nhận được ${prize.text} (Quy đổi +60 Xu)!`);
+        setCoins((prev) => prev + 100);
+        setWinMessage(`Chúc mừng! Bạn trúng Voucher Quà Tặng Độc Quyền (Quy đổi +100 Xu)!`);
       }
     }, 4000);
   };

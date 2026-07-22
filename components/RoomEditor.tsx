@@ -28,6 +28,7 @@ interface RoomEditorProps {
   contractSubmitMsg?: { type: 'success' | 'error'; text: string } | null;
   onPlayTTS?: (text: string) => void;
   isDarkMode?: boolean;
+  isVy?: boolean;
 }
 
 // Các SVG Icon bổ trợ thay cho Emojis
@@ -392,7 +393,8 @@ export default function RoomEditor({
   onSubmitContract,
   contractSubmitMsg,
   onPlayTTS,
-  isDarkMode
+  isDarkMode,
+  isVy
 }: RoomEditorProps) {
   const [selectedCatalogItem, setSelectedCatalogItem] = useState<string | null>(null);
   const [draggedRoomItemIndex, setDraggedRoomItemIndex] = useState<number | null>(null);
@@ -572,7 +574,7 @@ export default function RoomEditor({
         <h2 className={`text-xl font-serif font-black mb-4 flex items-center gap-2 ${
           isDarkMode ? 'text-pink-400' : 'text-[#1f2937]'
         }`}>
-          {renderPaletteIcon('w-6 h-6 text-pink-500')} Tiệm Thiết Kế Màu Hồng của Vy
+          {renderPaletteIcon('w-6 h-6 text-pink-500')} {isVy ? 'Tiệm Thiết Kế Màu Hồng của Vy' : 'Studio Thiết Kế Nội Thất Pixel'}
         </h2>
 
         {/* GỢI Ý THIẾT KẾ PHÒNG TỰ DO */}
@@ -580,7 +582,7 @@ export default function RoomEditor({
           isDarkMode ? 'bg-slate-800 text-amber-200 border-slate-700' : 'bg-[#fffaf0] text-[#1f2937] border-[#1f2937]'
         }`}>
           {renderPaletteIcon('w-4 h-4 shrink-0 text-pink-500')}
-          <span>Góc Thiết Kế Tự Do: Vy hãy mở khóa các đồ nội thất bằng cách làm Quiz HSK ở tab "Bản Vẽ HSK", sau đó tự do trang trí căn phòng của riêng mình nhé!</span>
+          <span>Góc Thiết Kế Tự Do: {isVy ? 'Vy' : 'Bạn'} hãy mở khóa các đồ nội thất bằng cách làm Quiz HSK ở tab "Bản Vẽ HSK", sau đó tự do trang trí căn phòng của riêng mình nhé!</span>
         </div>
 
         {/* HIỂN THỊ THÔNG BÁO NỘP */}

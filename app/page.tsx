@@ -1331,111 +1331,141 @@ export default function Home() {
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-100 text-slate-900'
     } p-3 sm:p-4 md:p-6 pb-24 md:pb-6`}>
-      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ (COPY 100% GIAO DIỆN IELTS VOCAB HTTPS://IELTS.VOCAB.UMTERS.CLUB/) */}
+      {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ PHONG CÁCH HIỆN ĐẠI SANG TRỌNG (HSK VOCAB) */}
       {!user ? (
-        <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden">
-          {/* CỘT TRÁI TRÊN DESKTOP: LÒ LUYỆN TỪ VỰNG HSK */}
-          <div className="hidden md:flex md:w-1/2 bg-amber-400 border-r-4 border-black flex-col justify-between p-12 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1.5px,transparent_1.5px)] [background-size:24px_24px]" />
-            <div className="z-10">
-              <div className="inline-block border-4 border-black bg-white rounded-lg px-3 py-1.5 font-mono font-black text-xs uppercase shadow-[2px_2px_0_#000] text-black">
-                Chinese HSK Vocabulary Studio
-              </div>
+        <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-slate-950 text-slate-100">
+          {/* CỘT TRÁI: HERO BANNER HSK VOCAB SANG TRỌNG */}
+          <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 border-r border-slate-800/60 flex-col justify-between p-12 relative overflow-hidden">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-1/4 -left-20 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="z-10 flex items-center justify-between">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-white/10 border border-white/15 text-sky-300 backdrop-blur-md">
+                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
+                HSK Vocabulary Studio
+              </span>
             </div>
-            <div className="z-10 my-auto flex flex-col gap-6 max-w-md">
-              <div className="mb-2">
-                <div className="w-28 h-28 bg-white border-4 border-black rounded-2xl flex items-center justify-center shadow-[4px_4px_0_#000]">
-                  <img src="/logo.svg" alt="Game Logo" className="w-22 h-22 drop-shadow-md hover:scale-105 transition-transform" />
+
+            <div className="z-10 my-auto flex flex-col gap-6 max-w-lg text-left">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-slate-900/90 border border-slate-700/80 p-2 shadow-2xl flex items-center justify-center shrink-0">
+                  <img src="/logo.svg" alt="HSK Vocab Logo" className="w-12 h-12 object-contain" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-black tracking-tight text-white">HSK Vocab</h1>
+                  <p className="text-xs font-mono text-sky-400 font-bold">Vocabulary & Interior Studio</p>
                 </div>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-serif font-black text-black leading-tight">
-                Tiệm Thiết Kế HSK
+
+              <h2 className="text-4xl lg:text-5xl font-serif font-black text-slate-100 leading-tight">
+                Chinh Phục Tiếng Trung <br />
+                <span className="bg-gradient-to-r from-sky-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
+                  Theo Phong Cách Pixel 2D
+                </span>
               </h2>
-              <p className="text-black font-bold leading-relaxed border-l-4 border-black pl-4">
-                Học từ vựng HSK 1-3 thông minh qua phương pháp sắp xếp nội thất pixel, lặp lại ngắt quãng tối ưu và rèn luyện phản xạ phát âm cùng thú cưng 2D.
+
+              <p className="text-slate-300 text-sm font-medium leading-relaxed border-l-2 border-sky-500/60 pl-4">
+                Nền tảng học từ vựng HSK 1-6 thông minh kết hợp phương pháp Lặp lại Ngắt quãng (Spaced Repetition), Thiết kế Nội thất Pixel và Thú cưng Đồng hành rèn luyện phản xạ.
               </p>
+
+              <div className="flex flex-wrap gap-2 pt-2">
+                <span className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/80 border border-slate-700/60 text-slate-200">
+                  ⚡ Flashcards HSK 1-6
+                </span>
+                <span className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/80 border border-slate-700/60 text-slate-200">
+                  🎨 Studio Nội Thất 2D
+                </span>
+                <span className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/80 border border-slate-700/60 text-slate-200">
+                  🐾 Pixel Pet Thông Minh
+                </span>
+              </div>
             </div>
-            <div className="z-10 pt-6 border-t-4 border-black border-dashed">
-              <p className="text-xs font-mono font-black text-black uppercase tracking-wider">
-                © 2026 CHINESE HSK VOCABULARY STUDIO. ALL RIGHTS RESERVED.
+
+            <div className="z-10 pt-6 border-t border-slate-800/80">
+              <p className="text-xs font-mono font-bold text-slate-500 tracking-wider">
+                © 2026 HSK VOCAB STUDIO. ALL RIGHTS RESERVED.
               </p>
             </div>
           </div>
 
-          {/* CỘT PHẢI: FORM ĐĂNG NHẬP / ĐĂNG KÝ CHUẨN IELTS VOCAB */}
-          <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10 min-h-screen">
-            <div className="max-w-md w-full relative z-10 flex flex-col p-8 md:p-10 bg-white border-4 border-black rounded-2xl shadow-[6px_6px_0_#000] text-black">
-              <div className="flex justify-center mb-3">
-                <img src="/logo.svg" alt="Game Logo" className="w-20 h-20 drop-shadow-md hover:scale-105 transition-transform" />
+          {/* CỘT PHẢI: FORM ĐĂNG NHẬP / ĐĂNG KÝ GLASSMORPHISM MODERN */}
+          <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10 min-h-screen bg-slate-950">
+            <div className="max-w-md w-full relative z-10 flex flex-col p-8 sm:p-10 bg-slate-900/90 border border-slate-800 rounded-3xl shadow-2xl text-slate-100 backdrop-blur-xl">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 p-2 shadow-xl flex items-center justify-center">
+                  <img src="/logo.svg" alt="HSK Vocab Logo" className="w-12 h-12 object-contain" />
+                </div>
               </div>
-              <h1 className="text-3xl md:text-4xl font-serif font-black text-black text-center mb-2">
-                Atelier HSK
+
+              <h1 className="text-2xl sm:text-3xl font-black text-white text-center mb-1 tracking-tight">
+                Chào Mừng Bạn Đến HSK Vocab
               </h1>
-              <p className="text-gray-600 text-xs sm:text-sm font-bold text-center mb-6">
-                Hệ thống yêu cầu đăng nhập để cá nhân hóa tiến trình học tập tiếng Trung HSK của bạn.
+              <p className="text-slate-400 text-xs sm:text-sm font-medium text-center mb-6">
+                Đăng nhập để tiếp tục tiến trình học từ vựng và sáng tạo phòng Pixel 2D của bạn.
               </p>
 
-              {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ CHUẨN IELTS VOCAB */}
-              <div className="flex border-4 border-black rounded-lg overflow-hidden mb-6 shadow-[2px_2px_0_#000]">
+              {/* TOGGLE TAB ĐĂNG NHẬP / ĐĂNG KÝ */}
+              <div className="flex bg-slate-800/90 p-1 rounded-2xl mb-6 border border-slate-700/80">
                 <button
                   type="button"
                   onClick={() => { setAuthMode('login'); setAuthError(''); playSfx('click'); }}
-                  className={`flex-1 py-2 font-mono font-bold text-sm uppercase transition-colors cursor-pointer ${
+                  className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
                     authMode === 'login'
-                      ? 'bg-blue-600 text-white border-r-4 border-black'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                      ? 'bg-sky-500 text-white shadow-md'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  Đăng nhập
+                  Đăng Nhập
                 </button>
                 <button
                   type="button"
                   onClick={() => { setAuthMode('register'); setAuthError(''); playSfx('click'); }}
-                  className={`flex-1 py-2 font-mono font-bold text-sm uppercase transition-colors cursor-pointer ${
+                  className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer ${
                     authMode === 'register'
-                      ? 'bg-blue-600 text-white border-l-4 border-black'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                      ? 'bg-sky-500 text-white shadow-md'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  Đăng ký
+                  Tạo Tài Khoản
                 </button>
               </div>
 
-              <form onSubmit={handleAuth} className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="font-mono text-xs font-bold text-black uppercase">Tên tài khoản</label>
+              <form onSubmit={handleAuth} className="flex flex-col gap-4 text-left">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-slate-300">Tên Tài Khoản</label>
                   <input
                     type="text"
                     required
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
                     placeholder="Nhập tên tài khoản..."
-                    className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none focus:bg-amber-50 shadow-[2px_2px_0_#000] focus:shadow-[4px_4px_0_#000] transition-all"
+                    className="w-full bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl font-medium text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
                   />
                 </div>
 
                 {authMode === 'register' && (
-                  <div className="flex flex-col gap-1">
-                    <label className="font-mono text-xs font-bold text-black uppercase">Địa chỉ Email</label>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-slate-300">Địa Chỉ Email</label>
                     <input
                       type="email"
                       required
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
                       placeholder="email@example.com"
-                      className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none focus:bg-amber-50 shadow-[2px_2px_0_#000] focus:shadow-[4px_4px_0_#000] transition-all"
+                      className="w-full bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl font-medium text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
                     />
                   </div>
                 )}
 
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1.5">
                   <div className="flex justify-between items-center">
-                    <label className="font-mono text-xs font-bold text-black uppercase">Mật khẩu</label>
+                    <label className="text-xs font-bold text-slate-300">Mật Khẩu</label>
                     {authMode === 'login' && (
                       <button
                         type="button"
                         onClick={() => { setShowForgotModal(true); setForgotStep('request'); setForgotMsg(null); playSfx('click'); }}
-                        className="text-xs font-mono font-bold text-blue-600 hover:text-blue-800 underline cursor-pointer"
+                        className="text-xs font-bold text-sky-400 hover:text-sky-300 transition cursor-pointer"
                       >
                         Quên mật khẩu?
                       </button>
@@ -1446,13 +1476,13 @@ export default function Home() {
                     required
                     value={passwordInput}
                     onChange={(e) => setPasswordInput(e.target.value)}
-                    placeholder="******"
-                    className="w-full border-4 border-black p-3 font-mono font-bold text-sm rounded bg-white text-black focus:outline-none focus:bg-amber-50 shadow-[2px_2px_0_#000] focus:shadow-[4px_4px_0_#000] transition-all"
+                    placeholder="••••••••"
+                    className="w-full bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl font-medium text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
                   />
                 </div>
 
                 {authError && (
-                  <p className="text-xs font-mono font-bold text-rose-600 bg-rose-50 border-2 border-rose-400 p-2 rounded text-center">
+                  <p className="text-xs font-bold text-rose-400 bg-rose-950/60 border border-rose-800 p-3 rounded-xl text-center">
                     {authError}
                   </p>
                 )}
@@ -1460,21 +1490,21 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={authLoading}
-                  className="mt-2 bg-emerald-500 hover:bg-emerald-600 text-white py-3 font-mono font-bold text-sm uppercase rounded w-full flex items-center justify-center gap-2 border-4 border-black shadow-[3px_3px_0_#000] active:translate-y-0.5 transition-all cursor-pointer"
+                  className="mt-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white py-3.5 font-bold text-sm rounded-xl w-full flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 active:scale-[0.99] transition-all cursor-pointer"
                 >
-                  {authLoading ? 'Đang Xử Lý...' : authMode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'}
+                  {authLoading ? 'Đang Xử Lý...' : authMode === 'login' ? 'Đăng Nhập Ngay' : 'Tạo Tài Khoản Mới'}
                 </button>
               </form>
 
-              <div className="border-t-2 border-dashed border-gray-300 w-full my-5 relative flex items-center justify-center">
-                <span className="bg-white px-3 text-xs font-mono font-bold text-gray-400 uppercase absolute">Hoặc</span>
+              <div className="border-t border-slate-800 w-full my-5 relative flex items-center justify-center">
+                <span className="bg-slate-900 px-3 text-xs font-bold text-slate-500 uppercase absolute">HOẶC</span>
               </div>
 
-              {/* GOOGLE LOGIN BUTTON CHUẨN IELTS VOCAB */}
+              {/* GOOGLE LOGIN BUTTON MODERN */}
               <a
                 href="/api/auth/google/start"
                 onClick={() => playSfx('click')}
-                className="bg-white hover:bg-amber-100 text-black w-full py-3 text-sm uppercase font-mono font-bold flex items-center justify-center gap-3 transition-colors duration-300 shadow-[3px_3px_0_#000] border-4 border-black rounded cursor-pointer"
+                className="bg-slate-800 hover:bg-slate-700/80 text-slate-100 border border-slate-700/80 w-full py-3.5 text-xs font-bold flex items-center justify-center gap-3 transition-all rounded-xl cursor-pointer shadow-xs active:scale-[0.99]"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -1482,7 +1512,7 @@ export default function Home() {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                 </svg>
-                Đăng nhập bằng Google
+                Tiếp tục với Google
               </a>
             </div>
           </div>
@@ -2333,6 +2363,7 @@ export default function Home() {
                 contractSubmitMsg={contractSubmitMsg}
                 onPlayTTS={handlePlayTTS}
                 isDarkMode={isDarkMode}
+                isVy={isVy}
               />
             )}
 

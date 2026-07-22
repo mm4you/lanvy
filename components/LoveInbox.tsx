@@ -21,6 +21,18 @@ interface LoveInboxProps {
   playSfx: (type: 'click' | 'success' | 'error' | 'perfect' | 'levelUp' | 'flip') => void;
   isDarkMode?: boolean;
   initialTab?: 'contracts' | 'chat' | 'wallet';
+  userInventory?: {
+    powerup_5050: number;
+    powerup_skip: number;
+    blueprint_rare: number;
+    food_fish?: number;
+    food_can?: number;
+    food_bone?: number;
+    acc_hat?: boolean;
+    acc_glasses?: boolean;
+    acc_bow?: boolean;
+    acc_balloon?: boolean;
+  };
 }
 
 // Icons bổ trợ thay thế cho Emojis
@@ -96,7 +108,8 @@ export default function LoveInbox({
   onUnlockVoucher,
   playSfx,
   isDarkMode,
-  initialTab
+  initialTab,
+  userInventory
 }: LoveInboxProps) {
   const userName = user?.username || 'Bạn';
   const [activeTab, setActiveTab] = useState<'contracts' | 'chat' | 'wallet'>(initialTab || (isVy ? 'contracts' : 'wallet'));
@@ -446,7 +459,7 @@ export default function LoveInbox({
               {/* PHÒNG PHÁC THẢO CHỌN ĐỒ */}
               <div className="space-y-2 text-left">
                 <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">
-                  Phòng phác thảo ảo (Vy hãy chọn đồ vật ở dưới để thêm vào phòng):
+                  Phòng phác thảo ảo ({isVy ? 'Vy' : 'Bạn'} hãy chọn đồ vật ở dưới để thêm vào phòng):
                 </h5>
                 <div className="h-32 bg-pink-900/5 border-2 border-[#1f2937] rounded-xl flex items-center justify-center gap-4 relative overflow-hidden p-3">
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(31,41,55,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(31,41,55,0.04)_1px,transparent_1px)] bg-[size:12px_12px]" />
@@ -458,7 +471,9 @@ export default function LoveInbox({
                       </span>
                     </div>
                   ) : selectedItems.length === 0 ? (
-                    <span className="text-[11px] text-gray-400 font-bold italic z-10">Vy hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!</span>
+                    <span className="text-[11px] text-gray-400 font-bold italic z-10">
+                      {isVy ? 'Vy hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!' : 'Hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!'}
+                    </span>
                   ) : (
                     <div className="flex gap-3 overflow-x-auto max-w-full z-10 py-1 px-2">
                       {selectedItems.map((itemId) => {
@@ -475,12 +490,44 @@ export default function LoveInbox({
                 </div>
               </div>
 
-              {/* YÊU CẦU ĐỒ NỘI THẤT */}
-              <div className="space-y-2 text-left">
-                <h5 className="text-xs font-black text-gray-500 uppercase tracking-wider">Danh mục đồ nội thất để Vy lựa chọn:</h5>
-                {unlockedVouchers.some((v) => v.code === selectedContract.voucherReward?.code) ? (
-                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-800">
-                    Bạn đã hoàn thành xuất sắc thử thách này và rinh trọn vẹn phần thưởng!
+              <p className="text-xs text-gray-700 font-medium leading-relaxed text-left bg-pink-50/50 p-3 rounded-lg border border-pink-200">
+                "{selectedContract.description}"
+              </p>
+
+              {/* CHỌN ĐỒ NỘI THẤT NỘP */}
+              <div className="text-left space-y-2">
+                <div className="flex justify-between items-center">
+                  <h5 className="text-xs font-black text-[#1f2937] uppercase">Chọn Đồ Nội Thất Nộp Bản Vẽ:</h5>
+                  <button
+                    type="button"
+                    onClick={() => setShowLoveHint(!showLoveHint)}
+                    className="text-[10px] font-bold text-pink-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    {renderLightbulbIcon('w-3.5 h-3.5 text-pink-600')} {showLoveHint ? 'Ẩn Gợi Ý' : 'Xem Gợi Ý Đồ Thiếu'}
+                  </button>
+                </div>
+
+                {showLoveHint && (
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 font-medium">
+                    <p className="font-bold mb-1">Gợi ý đồ nội thất yêu cầu:</p>
+                    <ul className="list-disc list-inside space-y-0.5 text-[11px]">
+                      {selectedContract.targetRequirements.map((reqId) => {
+                        const items = require('../data/vocabulary').FURNITURE_ITEMS;
+                        const item = items.find((i: any) => i.id === reqId);
+                        const isPlaced = placedItems.some((i) => i.itemTypeId === reqId);
+                        return (
+                          <li key={reqId} className={isPlaced ? 'text-green-700 font-bold' : 'text-amber-800'}>
+                            {item?.nameVietnamese || reqId} ({item?.nameChinese}) - {isPlaced ? '✓ Đã đặt trong phòng' : '✗ Chưa đặt trong phòng'}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+                {placedItems.length === 0 ? (
+                  <div className="p-4 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl text-center text-xs font-bold text-gray-500">
+                    {isVy ? 'Phòng Vy chưa đặt món đồ nội thất nào. Hãy vào Studio Thiết Kế để đặt đồ vào phòng trước nhé!' : 'Phòng của bạn chưa đặt món đồ nội thất nào. Hãy vào Studio Thiết Kế để đặt đồ vào phòng trước nhé!'}
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[180px] overflow-y-auto pr-1">
@@ -508,7 +555,6 @@ export default function LoveInbox({
                             {renderFurnitureSVG(item.id, 0, 'w-6 h-6')}
                           </div>
                           <span className="text-[9px] font-black text-[#1f2937] leading-tight truncate w-full">{item.nameVietnamese}</span>
-                          <span className="text-[8px] font-bold text-pink-600 font-serif">{item.nameChinese}</span>
                           
                           {isSelected && (
                             <div className="absolute top-0.5 right-0.5 w-3 h-3 bg-rose-500 rounded-full border border-white flex items-center justify-center text-white text-[7px] font-black">
@@ -521,20 +567,6 @@ export default function LoveInbox({
                   </div>
                 )}
               </div>
-
-              {/* VOUCHER PHẦN THƯỞNG */}
-              {selectedContract.voucherReward && (
-                <div className="p-3 bg-pink-50/40 border border-pink-200 rounded-xl flex items-center gap-3 text-left">
-                  <div className="text-pink-600 shrink-0">
-                    {renderTicketIconSVG('w-8 h-8')}
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-black text-[#1f2937] uppercase">Voucher Đặc Quyền Vy Nhận Được:</h5>
-                    <p className="text-xs font-serif font-black text-pink-700">{selectedContract.voucherReward.title}</p>
-                    <p className="text-[10.5px] text-gray-500 font-bold leading-normal mt-0.5">{selectedContract.voucherReward.description}</p>
-                  </div>
-                </div>
-              )}
 
               {/* NỘP BẢN THIẾT KẾ */}
               <div className="pt-3 border-t border-dashed border-[#1f2937] flex justify-between items-center text-left">
@@ -575,41 +607,105 @@ export default function LoveInbox({
         </div>
       )}
 
-      {/* TAB 2: VÍ VOUCHER ĐÃ MỞ KHÓA CỦA VY */}
+      {/* TAB 2: TÚI ĐỒ CÁ NHÂN & VÍ VOUCHER */}
       {activeTab === 'wallet' && (
-        <div className="space-y-4">
-          {unlockedVouchers.length === 0 ? (
-            <div className="text-center py-10 bg-white border-2 border-dashed border-[#1f2937] rounded-xl text-gray-400 font-bold">
-              {isVy ? 'Vy chưa mở khóa voucher nào. Hãy giải quyết các thử thách thiết kế phòng của Khang để rinh quà nhé!' : `${userName} chưa mở khóa voucher nào. Hãy hoàn thành các hợp đồng thiết kế phòng để rinh quà nhé!`}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {unlockedVouchers.map((voucher) => (
-                <div
-                  key={voucher.id}
-                  className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] flex items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="text-rose-500">
-                      {renderHeartIconSVG('w-8 h-8 fill-rose-100 text-rose-500')}
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-serif font-black text-[#1f2937]">{voucher.title}</h4>
-                      <p className="text-[11px] text-gray-500 font-medium leading-normal mt-0.5">{voucher.description}</p>
-                      <span className="text-[10px] text-gray-400 font-bold font-sans">Mở khóa lúc: {new Date(voucher.unlockedAt).toLocaleDateString('vi-VN')}</span>
-                    </div>
-                  </div>
+        <div className="space-y-4 text-left">
+          {/* TOÀN BỘ VẬT PHẨM TRONG TÚI ĐỒ (INVENTORY) */}
+          <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-3">
+            <h3 className="text-sm font-serif font-black text-[#1f2937] flex items-center justify-between border-b-2 border-dashed border-[#1f2937] pb-2">
+              <span className="flex items-center gap-1.5">
+                {renderTicketIconSVG('w-4 h-4 text-amber-600')}
+                Vật Phẩm Trong Túi Đồ
+              </span>
+              <span className="text-xs font-mono font-bold text-amber-600">Sẵn Sàng Sử Dụng</span>
+            </h3>
 
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] text-gray-400 font-bold block mb-1">Mã Voucher:</span>
-                    <span className="px-2.5 py-1.5 bg-pink-100 border border-[#1f2937] font-mono font-black text-xs rounded-lg text-pink-800 select-all">
-                      {voucher.code}
-                    </span>
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Thẻ 50:50 */}
+              <div className="p-3 bg-pink-50/60 border border-pink-200 rounded-xl flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-black text-[#1f2937]">Thẻ Trợ Giúp 50:50</p>
+                  <p className="text-[10px] text-gray-500 font-medium">Hỗ trợ loại 2 đáp án sai trong Quiz HSK</p>
                 </div>
-              ))}
+                <span className="px-2.5 py-1 bg-rose-500 text-white font-mono font-extrabold text-xs rounded-lg shadow-xs">
+                  x{userInventory?.powerup_5050 || 0}
+                </span>
+              </div>
+
+              {/* Thẻ Bỏ Qua */}
+              <div className="p-3 bg-amber-50/60 border border-amber-200 rounded-xl flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-black text-[#1f2937]">Thẻ Bỏ Qua Câu Hỏi</p>
+                  <p className="text-[10px] text-gray-500 font-medium">Bỏ qua câu hỏi giữ nguyên combo</p>
+                </div>
+                <span className="px-2.5 py-1 bg-amber-500 text-white font-mono font-extrabold text-xs rounded-lg shadow-xs">
+                  x{userInventory?.powerup_skip || 0}
+                </span>
+              </div>
+
+              {/* Mảnh Bản Vẽ Hiếm */}
+              <div className="p-3 bg-purple-50/60 border border-purple-200 rounded-xl flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-black text-[#1f2937]">Mảnh Bản Vẽ Hiếm</p>
+                  <p className="text-[10px] text-gray-500 font-medium">Mảnh bản vẽ kiến trúc từ Vòng quay</p>
+                </div>
+                <span className="px-2.5 py-1 bg-purple-600 text-white font-mono font-extrabold text-xs rounded-lg shadow-xs">
+                  x{userInventory?.blueprint_rare || 0}
+                </span>
+              </div>
+
+              {/* Thức ăn & Phụ kiện */}
+              <div className="p-3 bg-blue-50/60 border border-blue-200 rounded-xl flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-black text-[#1f2937]">Thức Ăn & Phụ Kiện Pet</p>
+                  <p className="text-[10px] text-gray-500 font-medium">Vật phẩm đã mở khóa trong Pet Shop</p>
+                </div>
+                <span className="px-2.5 py-1 bg-blue-600 text-white font-mono font-extrabold text-xs rounded-lg shadow-xs">
+                  Đã Mở
+                </span>
+              </div>
             </div>
-          )}
+          </div>
+
+          {/* MỤC VÍ VOUCHER QUÀ TẶNG ĐỘC QUYỀN */}
+          <div className="bg-white border-2 border-[#1f2937] p-4 rounded-xl shadow-[3px_3px_0px_#1f2937] space-y-3">
+            <h3 className="text-sm font-serif font-black text-[#1f2937] border-b-2 border-dashed border-[#1f2937] pb-2 flex items-center gap-1.5">
+              {renderTicketIconSVG('w-4 h-4 text-rose-500')} Ví Voucher Quà Tặng Độc Quyền ({unlockedVouchers.length})
+            </h3>
+
+            {unlockedVouchers.length === 0 ? (
+              <div className="text-center py-6 bg-pink-50/30 border border-dashed border-pink-200 rounded-xl text-gray-400 font-bold text-xs">
+                {isVy ? 'Vy chưa mở khóa voucher nào. Hãy giải quyết các thử thách thiết kế phòng của Khang để rinh quà nhé!' : `${userName} chưa mở khóa voucher nào.`}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
+                {unlockedVouchers.map((voucher) => (
+                  <div
+                    key={voucher.id}
+                    className="bg-pink-50/40 border border-[#1f2937] p-3 rounded-xl flex items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="text-rose-500 shrink-0">
+                        {renderHeartIconSVG('w-7 h-7 fill-rose-100 text-rose-500')}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-serif font-black text-[#1f2937]">{voucher.title}</h4>
+                        <p className="text-[10.5px] text-gray-500 font-medium leading-normal mt-0.5">{voucher.description}</p>
+                        <span className="text-[9.5px] text-gray-400 font-bold">Mở khóa: {new Date(voucher.unlockedAt).toLocaleDateString('vi-VN')}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className="text-[9px] text-gray-400 font-bold block mb-0.5">Mã Code:</span>
+                      <span className="px-2 py-1 bg-pink-100 border border-[#1f2937] font-mono font-black text-[11px] rounded-lg text-pink-800 select-all">
+                        {voucher.code}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -244,7 +244,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
     if (coins < pet.price) {
       if (playSfx) playSfx('error');
-      alert(`Vy cần ${pet.price} Xu để mở khóa ${pet.name}!`);
+      alert(`${isVy ? 'Vy' : 'Bạn'} cần ${pet.price} Xu để mở khóa ${pet.name}!`);
       return;
     }
 
@@ -256,20 +256,20 @@ export const PixelPet: React.FC<PixelPetProps> = ({
     if (typeof window !== 'undefined') {
       localStorage.setItem('hsk_unlocked_pets', JSON.stringify(newUnlocked));
     }
-    alert(`Chúc mừng Vy đã mở khóa thú cưng ${pet.name}!`);
+    alert(`Chúc mừng ${isVy ? 'Vy' : 'bạn'} đã mở khóa thú cưng ${pet.name}!`);
   };
 
   const handleBuyVoucher = (v: typeof VOUCHER_ITEMS_VY[0]) => {
     if (coins < v.price) {
       if (playSfx) playSfx('error');
-      alert(`Vy cần ${v.price} Xu để đổi ${v.name}!`);
+      alert(`${isVy ? 'Vy' : 'Bạn'} cần ${v.price} Xu để đổi ${v.name}!`);
       return;
     }
 
     if (setCoins) setCoins(coins - v.price);
     if (playSfx) playSfx('levelUp');
     setPurchasedVouchers(prev => [...prev, v.name]);
-    alert(`Chúc mừng Vy đã đổi thành công: ${v.name}!`);
+    alert(`Chúc mừng ${isVy ? 'Vy' : 'bạn'} đã đổi thành công: ${v.name}!`);
   };
 
   return (

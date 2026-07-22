@@ -342,9 +342,9 @@ export default function FlashcardViewer({
                 setIsFlipped(false);
                 playSfx('click');
               }}
-              className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold flex items-center gap-1 transition-all cursor-pointer border-2 border-[#1f2937] shadow-[1.5px_1.5px_0px_#1f2937] ${
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold flex items-center gap-1 transition-all cursor-pointer ${
                 filterMode === 'bookmarked'
-                  ? 'bg-amber-400 text-[#1f2937]'
+                  ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 font-extrabold'
                   : 'bg-slate-100 dark:bg-slate-800 text-amber-600 dark:text-amber-400'
               }`}
             >
@@ -445,10 +445,10 @@ export default function FlashcardViewer({
                 <button
                   type="button"
                   onClick={handleToggleBookmarkCurrent}
-                  className={`px-3 py-1.5 rounded-xl border-2 border-[#1f2937] text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-[2px_2px_0px_#1f2937] active:scale-95 ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
                     bookmarkedIds.includes(currentItem.id)
-                      ? 'bg-amber-400 text-[#1f2937]'
-                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-amber-50'
+                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 font-extrabold'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-amber-50'
                   }`}
                   title={bookmarkedIds.includes(currentItem.id) ? 'Bỏ lưu từ khỏi sổ' : 'Lưu từ vào sổ tay'}
                 >

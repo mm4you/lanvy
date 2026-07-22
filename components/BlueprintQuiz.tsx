@@ -116,7 +116,9 @@ export default function BlueprintQuiz({
   playSfx,
   onExplainWord,
   customVocabs,
-  isDarkMode
+  isDarkMode,
+  userInventory,
+  setUserInventory
 }: BlueprintQuizProps) {
   const [quizMode, setQuizMode] = useState<'furniture' | 'general' | 'custom'>('furniture');
   const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all'>('all');
@@ -653,26 +655,33 @@ export default function BlueprintQuiz({
                 type="button"
                 onClick={handleUse5050}
                 disabled={disabledOptions.length > 0}
-                className={`px-3 py-1.5 rounded-xl border flex items-center gap-1.5 transition cursor-pointer active:scale-95 ${
+                className={`px-3 py-1.5 rounded-xl border flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs ${
                   disabledOptions.length > 0
                     ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 border-slate-300 dark:border-slate-700 cursor-not-allowed'
-                    : 'bg-pink-100 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300 border-pink-300 dark:border-pink-800 hover:bg-pink-200'
+                    : 'bg-pink-100 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300 border-pink-300 dark:border-pink-800 hover:bg-pink-200 dark:hover:bg-pink-900/60'
                 }`}
-                title="Loại bỏ 2 đáp án sai (Tốn 20 Xu)"
+                title="Loại bỏ 2 đáp án sai"
               >
-                <svg className="w-4 h-4 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM12 8v8m-4-4h8" />
+                <svg className="w-4 h-4 text-pink-500 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                 </svg>
-                <span>Thẻ 50:50 (-20 Xu)</span>
+                <span>
+                  Thẻ 50:50 {(userInventory?.powerup_5050 || 0) > 0 ? `(Túi đồ: x${userInventory?.powerup_5050})` : '(-20 Xu)'}
+                </span>
               </button>
 
               <button
                 type="button"
                 onClick={handleUseSkip}
-                className="px-3 py-1.5 rounded-xl border bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800 hover:bg-amber-200 flex items-center gap-1.5 transition cursor-pointer active:scale-95"
-                title="Bỏ qua câu hỏi này mà vẫn giữ chuỗi combo (Tốn 30 Xu)"
+                className="px-3 py-1.5 rounded-xl border bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900/60 flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs"
+                title="Bỏ qua câu hỏi này mà vẫn giữ chuỗi combo"
               >
-                <span>⏭️ Bỏ Qua (-30 Xu)</span>
+                <svg className="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+                <span>
+                  Bỏ Qua {(userInventory?.powerup_skip || 0) > 0 ? `(Túi đồ: x${userInventory?.powerup_skip})` : '(-30 Xu)'}
+                </span>
               </button>
             </div>
           )}

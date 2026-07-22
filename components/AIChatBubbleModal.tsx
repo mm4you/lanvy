@@ -26,10 +26,10 @@ function renderLightbulbIcon(className = 'w-4 h-4') {
   );
 }
 
-function renderRobotSparkleIcon(className = 'w-6 h-6') {
+function renderSleekChatIcon(className = 'w-5 h-5') {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
     </svg>
   );
 }
@@ -172,31 +172,32 @@ export default function AIChatBubbleModal({
     <>
       {/* FLOATING BUBBLE BUTTON AT BOTTOM RIGHT */}
       <div className="fixed bottom-28 md:bottom-6 right-4 z-50 flex items-center gap-2">
-        {!isOpen && (
-          <div className="hidden sm:flex items-center gap-1.5 bg-white dark:bg-slate-800 border-2 border-[var(--line)] px-3 py-1.5 rounded-full shadow-[3px_3px_0_var(--line)] animate-bounce-short text-xs font-bold text-slate-800 dark:text-slate-100">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>{isVy ? 'Chat với Anh Khang AI' : 'Trợ lý AI HSK'}</span>
-          </div>
-        )}
-
         <button
           onClick={() => {
             setIsOpen(!isOpen);
             playSfx('click');
           }}
-          className={`w-14 h-14 rounded-full border-3 border-[var(--line)] flex items-center justify-center shadow-[4px_4px_0_var(--line)] transition-all duration-300 transform active:scale-90 cursor-pointer relative ${
+          className={`flex items-center gap-2.5 px-4 py-3 rounded-full border-3 border-[var(--line)] shadow-[4px_4px_0_var(--line)] transition-all duration-200 active:scale-95 cursor-pointer ${
             isOpen
-              ? 'bg-rose-500 text-white rotate-180 scale-105'
-              : 'bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 text-white hover:scale-110'
+              ? 'bg-slate-900 text-white dark:bg-slate-800'
+              : 'bg-rose-500 hover:bg-rose-600 text-white'
           }`}
           title="Mở Trợ Lý AI Chat HSK"
         >
           {isOpen ? (
-            renderCloseIcon('w-6 h-6 text-white')
+            <>
+              {renderCloseIcon('w-5 h-5 text-white')}
+              <span className="text-xs font-black">Đóng Chat</span>
+            </>
           ) : (
             <>
-              {renderRobotSparkleIcon('w-7 h-7 text-white animate-pulse')}
-              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" />
+              <div className="relative">
+                {renderSleekChatIcon('w-5 h-5 text-white')}
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border border-white" />
+              </div>
+              <span className="text-xs font-black tracking-wide">
+                {isVy ? 'Chat Anh Khang AI' : 'Trợ Lý AI'}
+              </span>
             </>
           )}
         </button>
@@ -204,12 +205,12 @@ export default function AIChatBubbleModal({
 
       {/* FLOATING CHAT MODAL WINDOW */}
       {isOpen && (
-        <div className="fixed bottom-36 md:bottom-24 right-4 z-[55] w-[calc(100vw-2rem)] sm:w-[380px] h-[500px] max-h-[75vh] flex flex-col border-3 border-[var(--line)] rounded-3xl shadow-[6px_6px_0_var(--line)] overflow-hidden animate-in slide-in-from-bottom-5 duration-200 bg-white dark:bg-[#1e1e1e]">
+        <div className="fixed bottom-40 md:bottom-20 right-4 z-[55] w-[calc(100vw-2rem)] sm:w-[380px] h-[500px] max-h-[75vh] flex flex-col border-3 border-[var(--line)] rounded-3xl shadow-[6px_6px_0_var(--line)] overflow-hidden animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-[#1e1e1e]">
           {/* Header */}
           <div className="bg-rose-500 text-white p-3.5 border-b-3 border-[var(--line)] flex justify-between items-center shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center border border-white/40">
-                {renderRobotSparkleIcon('w-5 h-5 text-white')}
+                {renderSleekChatIcon('w-5 h-5 text-white')}
               </div>
               <div>
                 <h3 className="text-xs font-black uppercase tracking-wider">{isVy ? 'Khang Đang Online (AI)' : 'Trợ Lý AI Tiếng Trung'}</h3>

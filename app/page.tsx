@@ -253,13 +253,16 @@ function renderSignoutIcon(className = 'w-4 h-4') {
 // Avatar biểu tượng đầu người & thân người đơn giản 100% SVG áp dụng cho tất cả
 function renderClientAvatar(_sprite?: string, className = 'w-12 h-12') {
   return (
-    <svg
-      viewBox="0 0 32 32"
-      className={`${className} bg-slate-100 dark:bg-slate-800 rounded-full border-2 border-slate-300 dark:border-slate-700 shrink-0`}
-    >
-      <circle cx="16" cy="11" r="5" fill="#64748b" />
-      <path d="M 7 27 C 7 20, 25 20, 25 27 Z" fill="#64748b" />
-    </svg>
+    <div className={`${className} rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0 shadow-xs`}>
+      <svg
+        viewBox="0 0 32 32"
+        className="w-full h-full text-slate-500 dark:text-slate-400 p-0.5"
+        fill="currentColor"
+      >
+        <circle cx="16" cy="11.5" r="5.5" />
+        <path d="M 6 28 C 6 19.5, 26 19.5, 26 28 Z" />
+      </svg>
+    </div>
   );
 }
 
@@ -2103,9 +2106,7 @@ export default function Home() {
                             : 'bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 border-slate-200 dark:border-slate-700 hover:border-rose-500'
                         }`}
                       >
-                        <div className="shrink-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 w-12 h-12 rounded-xl flex items-center justify-center">
-                          {renderClientAvatar(contract.clientSprite)}
-                        </div>
+                        {renderClientAvatar(contract.clientSprite)}
                         <div className="flex-1 min-w-0">
                           <h3 className="text-xs font-bold truncate">{contract.title}</h3>
                           <p className={`text-[10px] font-bold mt-0.5 ${
@@ -2134,9 +2135,7 @@ export default function Home() {
                       isDarkMode ? 'bg-[#1e1e1e] text-slate-100 border-slate-700' : 'bg-white text-slate-900 border-slate-200'
                     }`}>
                       <div className="flex items-center gap-3 border-b border-dashed border-slate-200 dark:border-slate-800 pb-3">
-                        <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center shrink-0">
-                          {renderClientAvatar(currentContract.clientSprite)}
-                        </div>
+                        {renderClientAvatar(currentContract.clientSprite)}
                         <div>
                           <h3 className={`text-base font-extrabold ${
                             isDarkMode ? 'text-slate-100' : 'text-slate-900'

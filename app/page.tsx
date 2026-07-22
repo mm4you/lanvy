@@ -250,141 +250,17 @@ function renderSignoutIcon(className = 'w-4 h-4') {
   );
 }
 
-// Avatar vẽ bằng SVG siêu cute
-function renderClientAvatar(sprite: string, className = 'w-12 h-12') {
-  switch (sprite) {
-    case 'panda':
-      return (
-        <svg viewBox="0 0 32 32" className={className}>
-          <circle cx="16" cy="17" r="11" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
-          <circle cx="8" cy="8" r="4.5" fill="#1f2937" />
-          <circle cx="24" cy="8" r="4.5" fill="#1f2937" />
-          <ellipse cx="10" cy="15" rx="3.5" ry="4.5" fill="#1f2937" />
-          <ellipse cx="22" cy="15" rx="3.5" ry="4.5" fill="#1f2937" />
-          <circle cx="10" cy="14" r="1" fill="#ffffff" />
-          <circle cx="22" cy="14" r="1" fill="#ffffff" />
-          <polygon points="14,20 18,20 16,22" fill="#1f2937" />
-        </svg>
-      );
-    case 'cat':
-      return (
-        <svg viewBox="0 0 32 32" className={className}>
-          <circle cx="16" cy="18" r="10.5" fill="#94a3b8" stroke="#1f2937" strokeWidth="2" />
-          <polygon points="6,10 12,14 6,16" fill="#64748b" stroke="#1f2937" strokeWidth="2" />
-          <polygon points="26,10 20,14 26,16" fill="#64748b" stroke="#1f2937" strokeWidth="2" />
-          <circle cx="12" cy="17" r="2" fill="#1f2937" />
-          <circle cx="20" cy="17" r="2" fill="#1f2937" />
-          <polygon points="15,20 17,20 16,21.5" fill="#f43f5e" />
-          <line x1="8" y1="19" x2="4" y2="18" stroke="#1f2937" strokeWidth="1.5" />
-          <line x1="24" y1="19" x2="28" y2="18" stroke="#1f2937" strokeWidth="1.5" />
-        </svg>
-      );
-    case 'shiba':
-      return (
-        <svg viewBox="0 0 32 32" className={className}>
-          <circle cx="16" cy="18" r="10.5" fill="#f97316" stroke="#1f2937" strokeWidth="2" />
-          <polygon points="6,9 13,12 8,16" fill="#ea580c" stroke="#1f2937" strokeWidth="2" />
-          <polygon points="26,9 19,12 24,16" fill="#ea580c" stroke="#1f2937" strokeWidth="2" />
-          <ellipse cx="11" cy="16" rx="4" ry="5.5" fill="#ffffff" />
-          <ellipse cx="21" cy="16" rx="4" ry="5.5" fill="#ffffff" />
-          <circle cx="12" cy="16" r="2.2" fill="#1f2937" />
-          <circle cx="20" cy="16" r="2.2" fill="#1f2937" />
-          <ellipse cx="16" cy="19" rx="2.5" ry="1.8" fill="#1f2937" />
-        </svg>
-      );
-    case 'khang':
-      return (
-        <svg viewBox="0 0 32 32" className={className}>
-          {/* Tóc đen */}
-          <path d="M 6 12 C 6 6, 26 6, 26 12 Z" fill="#1f2937" />
-          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
-          {/* Mái tóc */}
-          <path d="M 6 12 Q 16 6 26 12 Q 18 13 16 11 Q 14 13 6 12" fill="#1f2937" stroke="#1f2937" strokeWidth="1.5" />
-          {/* Kính cận tròn */}
-          <circle cx="12" cy="17" r="3.2" fill="none" stroke="#1f2937" strokeWidth="2" />
-          <circle cx="20" cy="17" r="3.2" fill="none" stroke="#1f2937" strokeWidth="2" />
-          <line x1="15" y1="17" x2="17" y2="17" stroke="#1f2937" strokeWidth="2" />
-          {/* Mắt */}
-          <circle cx="12" cy="17" r="1" fill="#1f2937" />
-          <circle cx="20" cy="17" r="1" fill="#1f2937" />
-          <path d="M 14 22 Q 16 23.5 18 22" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    case 'tien':
-      return (
-        <svg viewBox="0 0 32 32" className={className}>
-          {/* Short brown hair */}
-          <path d="M 6 13 C 6 6, 26 6, 26 13 Z" fill="#7c2d12" />
-          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
-          {/* Hair bangs */}
-          <path d="M 6 13 Q 16 7 26 13 Q 20 14 18 11 Q 13 15 6 13" fill="#7c2d12" stroke="#1f2937" strokeWidth="1.5" />
-          {/* Flower hair clip */}
-          <circle cx="9" cy="11" r="2" fill="#fbbf24" stroke="#1f2937" strokeWidth="1" />
-          <circle cx="7.5" cy="9.5" r="1.2" fill="#ffffff" />
-          <circle cx="10.5" cy="9.5" r="1.2" fill="#ffffff" />
-          <circle cx="7.5" cy="12.5" r="1.2" fill="#ffffff" />
-          <circle cx="10.5" cy="12.5" r="1.2" fill="#ffffff" />
-          {/* Eyes */}
-          <circle cx="12" cy="17" r="1.2" fill="#1f2937" />
-          <circle cx="20" cy="17" r="1.2" fill="#1f2937" />
-          {/* Blushing cheeks */}
-          <ellipse cx="9" cy="19" rx="1.5" ry="1" fill="#fecdd3" />
-          <ellipse cx="23" cy="19" rx="1.5" ry="1" fill="#fecdd3" />
-          {/* Smile */}
-          <path d="M 14 21 Q 16 22.5 18 21" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    case 'ngoc':
-      return (
-        <svg viewBox="0 0 32 32" className={className}>
-          {/* Ponytail extension */}
-          <path d="M 23 11 C 28 8, 30 18, 25 21 C 23 18, 23 13, 23 11 Z" fill="#1e293b" stroke="#1f2937" strokeWidth="1.5" />
-          {/* Head */}
-          <circle cx="16" cy="18" r="9" fill="#fed7aa" stroke="#1f2937" strokeWidth="2" />
-          {/* Black hair */}
-          <path d="M 6 13 C 6 6, 26 6, 26 13 Z" fill="#1e293b" />
-          <path d="M 6 13 Q 16 8 26 13 Q 19 13 16 11 Q 12 14 6 13" fill="#1e293b" stroke="#1f2937" strokeWidth="1.5" />
-          {/* Glasses */}
-          <rect x="9" y="14" width="6" height="5" rx="1.5" fill="none" stroke="#1f2937" strokeWidth="2" />
-          <rect x="17" y="14" width="6" height="5" rx="1.5" fill="none" stroke="#1f2937" strokeWidth="2" />
-          <line x1="15" y1="16" x2="17" y2="16" stroke="#1f2937" strokeWidth="2" />
-          {/* Eyes inside glasses */}
-          <circle cx="12" cy="16.5" r="0.8" fill="#1f2937" />
-          <circle cx="20" cy="16.5" r="0.8" fill="#1f2937" />
-          {/* Smile */}
-          <path d="M 14 22 Q 16 23.5 18 22" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    case 'vy':
-    case 'lan_vy':
-      return (
-        <svg viewBox="0 0 32 32" className={className}>
-          {/* Long dark hair */}
-          <path d="M 5 14 C 5 5, 27 5, 27 14 C 27 24, 25 28, 23 28 L 9 28 C 7 28, 5 24, 5 14 Z" fill="#1e1b4b" stroke="#1f2937" strokeWidth="1.5" />
-          <circle cx="16" cy="17" r="8.5" fill="#fde68a" stroke="#1f2937" strokeWidth="2" />
-          {/* Hair bangs */}
-          <path d="M 5 13 Q 16 7 27 13 Q 21 14 18 10 Q 14 14 5 13" fill="#1e1b4b" stroke="#1f2937" strokeWidth="1.5" />
-          {/* Cute pink bow */}
-          <path d="M 11 9 L 7 7 L 9 12 Z M 21 9 L 25 7 L 23 12 Z" fill="#f43f5e" stroke="#1f2937" strokeWidth="1" />
-          <circle cx="16" cy="9" r="1.5" fill="#fb7185" stroke="#1f2937" strokeWidth="1" />
-          {/* Eyes */}
-          <circle cx="12" cy="16.5" r="1.2" fill="#1f2937" />
-          <circle cx="20" cy="16.5" r="1.2" fill="#1f2937" />
-          {/* Blushing cheeks */}
-          <ellipse cx="9.5" cy="18.5" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
-          <ellipse cx="22.5" cy="18.5" rx="1.5" ry="1" fill="#f43f5e" opacity="0.6" />
-          {/* Smile */}
-          <path d="M 14 20 Q 16 21.5 18 20" fill="none" stroke="#1f2937" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    default:
-      return (
-        <svg viewBox="0 0 32 32" className={`${className} bg-slate-200 dark:bg-slate-700 rounded-full border border-slate-300 dark:border-slate-600`}>
-          <circle cx="16" cy="12" r="5" fill="#64748b" />
-          <path d="M 6 28 C 6 20, 26 20, 26 28 Z" fill="#64748b" />
-        </svg>
-      );
-  }
+// Avatar biểu tượng đầu người & thân người đơn giản 100% SVG áp dụng cho tất cả
+function renderClientAvatar(_sprite?: string, className = 'w-12 h-12') {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      className={`${className} bg-slate-100 dark:bg-slate-800 rounded-full border-2 border-slate-300 dark:border-slate-700 shrink-0`}
+    >
+      <circle cx="16" cy="11" r="5" fill="#64748b" />
+      <path d="M 7 27 C 7 20, 25 20, 25 27 Z" fill="#64748b" />
+    </svg>
+  );
 }
 
 // Hàm render Markdown đẹp mắt, loại bỏ hoàn toàn các ký tự ### thô
@@ -3560,13 +3436,12 @@ export default function Home() {
         </div>
       )}
 
-      {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT 100% CHUẨN IELTS VOCAB (HARD SHADOW & BORDER) */}
-      {/* THANH ĐIỀU HƯỚNG MOBILE KÍN KHÍT 100% CHUẨN IELTS VOCAB (HARD SHADOW & BORDER) */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE CHUẨN ĐẸP, VIỀN MỎNG THUẬN MẮT & KHÔNG BỊ HỞ */}
       {user && (
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 border-t-[3px] border-[#1f2937] shadow-[0_-4px_0_#1f2937] flex flex-col ${
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] flex flex-col pb-[max(0.5rem,env(safe-area-inset-bottom))] ${
           isDarkMode ? 'bg-[#1e1e1e] text-slate-100' : 'bg-[#fffaf0] text-slate-900'
         }`}>
-          <div className="flex items-center justify-around h-[50px] w-full">
+          <div className="flex items-center justify-around h-[48px] w-full">
             {/* TAB 1: STUDIO */}
             <button
               onClick={() => {
@@ -3575,13 +3450,13 @@ export default function Home() {
                 if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
               }}
               className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-                activeTab === 'studio' ? 'text-rose-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+                activeTab === 'studio' ? 'text-rose-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
               }`}
             >
-              <div className={activeTab === 'studio' ? 'text-rose-500 scale-110 transition-transform' : 'text-current'}>
+              <div className={activeTab === 'studio' ? 'text-rose-500 scale-105 transition-transform' : 'text-current'}>
                 {renderAwardIcon('w-5 h-5')}
               </div>
-              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
                 Studio
               </span>
             </button>
@@ -3595,14 +3470,14 @@ export default function Home() {
               }}
               className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
                 ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
-                  ? 'text-blue-500 font-extrabold scale-102'
+                  ? 'text-blue-500 font-extrabold'
                   : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
               }`}
             >
-              <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-110 transition-transform' : 'text-current'}>
+              <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-105 transition-transform' : 'text-current'}>
                 {renderBookIcon('w-5 h-5')}
               </div>
-              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
                 ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
               }`}>
                 Học
@@ -3617,13 +3492,13 @@ export default function Home() {
                 if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
               }}
               className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-                activeTab === 'room' ? 'text-emerald-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+                activeTab === 'room' ? 'text-emerald-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
               }`}
             >
-              <div className={activeTab === 'room' ? 'text-emerald-500 scale-110 transition-transform' : 'text-current'}>
+              <div className={activeTab === 'room' ? 'text-emerald-500 scale-105 transition-transform' : 'text-current'}>
                 {renderHomeIcon('w-5 h-5')}
               </div>
-              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
                 Phòng
               </span>
             </button>
@@ -3636,13 +3511,13 @@ export default function Home() {
                 if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
               }}
               className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer ${
-                showPetShopModal ? 'text-amber-500 font-extrabold scale-102' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
+                showPetShopModal ? 'text-amber-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
               }`}
             >
-              <div className={showPetShopModal ? 'text-amber-500 scale-110 transition-transform' : 'text-current'}>
+              <div className={showPetShopModal ? 'text-amber-500 scale-105 transition-transform' : 'text-current'}>
                 {renderShoppingBagIcon('w-5 h-5 text-amber-500')}
               </div>
-              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
                 Shop
               </span>
             </button>
@@ -3656,24 +3531,22 @@ export default function Home() {
               }}
               className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 text-center transition-all cursor-pointer relative ${
                 isMobileMoreOpen || (activeTab === 'love')
-                  ? 'text-purple-500 font-extrabold scale-102'
+                  ? 'text-purple-500 font-extrabold'
                   : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
               }`}
             >
-              <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-110 transition-transform' : 'text-current'}>
+              <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-105 transition-transform' : 'text-current'}>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </div>
-              <span className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
+              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
                 isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
               }`}>
                 Thêm
               </span>
             </button>
           </div>
-          {/* SAFE AREA FILLER FOR IOS DEVICES */}
-          <div className="h-[env(safe-area-inset-bottom,0px)] w-full" />
         </div>
       )}
 

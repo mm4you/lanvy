@@ -13,8 +13,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Atelier Thiết Kế HSK - Học Tiếng Trung 2D Pixel",
-  description: "Atelier thiết kế nội thất pixel 2D và học từ vựng tiếng Trung HSK 1-3 thông minh.",
+  title: "HSK Vocab - Học Từ Vựng HSK 1-6 & Thiết Kế Pixel 2D",
+  description: "HSK Vocab Studio - Nền tảng học từ vựng tiếng Trung HSK 1-6 kết hợp thiết kế nội thất Pixel 2D thông minh.",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Atelier HSK",
+    title: "HSK Vocab",
   },
 };
 

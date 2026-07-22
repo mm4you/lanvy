@@ -1603,14 +1603,21 @@ export default function Home() {
           }`}>
             {/* HÀNG 1: LOGO & TÊN WEB (TRÁI) - TÀI KHOẢN POPUP MENU (PHẢI) */}
             <div className="flex items-center justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-3">
-              {/* LOGO & TÊN ATELIER THIẾT KẾ HSK */}
-              <div className="flex items-center gap-2.5">
-                <img src="/logo.svg" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
-                <h1 className={`text-base sm:text-lg font-extrabold tracking-tight ${
-                  isDarkMode ? 'text-slate-100' : 'text-slate-900'
-                }`}>
-                  Atelier Thiết Kế HSK
-                </h1>
+              {/* LOGO & TÊN BRAND HSK VOCAB (PHONG CÁCH TỐI GIẢN HIỆN ĐẠI DỄ NHÌN NHƯ IELTS VOCAB) */}
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 flex items-center justify-center shrink-0 drop-shadow-xs">
+                  <img src="/logo.svg" alt="HSK Vocab Logo" className="w-9 h-9 object-contain" />
+                </div>
+                <div className="flex flex-col text-left">
+                  <h1 className={`text-base sm:text-lg font-black tracking-tight leading-tight ${
+                    isDarkMode ? 'text-slate-100' : 'text-slate-900'
+                  }`}>
+                    HSK Vocab
+                  </h1>
+                  <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 -mt-0.5">
+                    HSK Vocabulary Studio
+                  </span>
+                </div>
               </div>
 
               {/* NÚT ĐỔI GIAO DIỆN SÁNG/TỐI (ĐẶT Ở NGOÀI) & NÚT TÀI KHOẢN TÍCH HỢP POPUP MENU */}

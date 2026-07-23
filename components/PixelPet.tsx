@@ -421,11 +421,15 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               {/* Cute Round Cat Body */}
               <ellipse cx="16" cy="22" rx="9" ry="7" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" />
               <ellipse cx="16" cy="23" rx="6" ry="4" fill="#fff7ed" />
-              {/* Soft Paws */}
-              <circle cx="10" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="14" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <circle cx="18" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="22" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Natural Chubby Cat Paws */}
+              <g className={isWalking ? 'animate-bounce' : ''}>
+                <ellipse cx="12" cy="27" rx="3.2" ry="2.2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1.2" />
+                <circle cx="12" cy="27.5" r="1" fill="#fda4af" opacity="0.8" />
+              </g>
+              <g className={isWalking ? 'animate-bounce delay-100' : ''}>
+                <ellipse cx="20" cy="27" rx="3.2" ry="2.2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1.2" />
+                <circle cx="20" cy="27.5" r="1" fill="#fda4af" opacity="0.8" />
+              </g>
               {/* Pointy Soft Cat Ears */}
               <path d="M5.5,12 L9,2.5 L13.5,10 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
               <path d="M7,11 L9,4.5 L11.5,9.5 Z" fill="#f472b6" />
@@ -478,11 +482,15 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               {/* Shiba Body */}
               <ellipse cx="16" cy="22" rx="9" ry="7" fill="#eab308" stroke="#a16207" strokeWidth="1.5" />
               <ellipse cx="16" cy="23" rx="6" ry="4.5" fill="#ffffff" />
-              {/* Paws */}
-              <circle cx="10" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="14" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <circle cx="18" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="22" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Natural Chubby White Shiba Paws */}
+              <g className={isWalking ? 'animate-bounce' : ''}>
+                <ellipse cx="12" cy="27" rx="3.2" ry="2.2" fill="#ffffff" stroke="#a16207" strokeWidth="1.2" />
+                <circle cx="12" cy="27.5" r="1" fill="#fda4af" opacity="0.7" />
+              </g>
+              <g className={isWalking ? 'animate-bounce delay-100' : ''}>
+                <ellipse cx="20" cy="27" rx="3.2" ry="2.2" fill="#ffffff" stroke="#a16207" strokeWidth="1.2" />
+                <circle cx="20" cy="27.5" r="1" fill="#fda4af" opacity="0.7" />
+              </g>
               {/* Ears */}
               <path d="M5.5,10 L9,2.5 L13,9.5 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
               <path d="M19,9.5 L23,2.5 L26.5,10 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
@@ -526,11 +534,15 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               <circle cx="25" cy="22" r="3.2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
               {/* Rabbit Body */}
               <ellipse cx="16" cy="23" rx="8.5" ry="6" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.5" />
-              {/* Paws */}
-              <circle cx="10" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="14" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <circle cx="18" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="22" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Soft Chubby Bunny Feet */}
+              <g className={isWalking ? 'animate-bounce' : ''}>
+                <ellipse cx="11.5" cy="27.5" rx="3.5" ry="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+                <circle cx="11.5" cy="28" r="1" fill="#fda4af" opacity="0.7" />
+              </g>
+              <g className={isWalking ? 'animate-bounce delay-100' : ''}>
+                <ellipse cx="20.5" cy="27.5" rx="3.5" ry="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+                <circle cx="20.5" cy="28" r="1" fill="#fda4af" opacity="0.7" />
+              </g>
               {/* GIANT FLOPPY RABBIT EARS */}
               <g className="animate-pulse origin-bottom">
                 <rect x="8" y="-4" width="4.5" height="16" rx="2.2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
@@ -574,11 +586,15 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               <ellipse cx="16" cy="22" rx="9" ry="7" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
               {/* Black Vest/Shoulder band */}
               <path d="M7,20 C10,17 22,17 25,20 C24,26 8,26 7,20 Z" fill="#0f172a" />
-              {/* Black Paws */}
-              <circle cx="10" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="14" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              <circle cx="18" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
-              <circle cx="22" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
+              {/* Chubby Black Panda Paws with Pink Paw Pads */}
+              <g className={isWalking ? 'animate-bounce' : ''}>
+                <ellipse cx="12" cy="27" rx="3.4" ry="2.2" fill="#0f172a" />
+                <circle cx="12" cy="27.3" r="1.1" fill="#fda4af" />
+              </g>
+              <g className={isWalking ? 'animate-bounce delay-100' : ''}>
+                <ellipse cx="20" cy="27" rx="3.4" ry="2.2" fill="#0f172a" />
+                <circle cx="20" cy="27.3" r="1.1" fill="#fda4af" />
+              </g>
               {/* Round Black Panda Ears */}
               <circle cx="7.5" cy="7.5" r="3.8" fill="#0f172a" />
               <circle cx="24.5" cy="7.5" r="3.8" fill="#0f172a" />

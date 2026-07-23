@@ -1881,7 +1881,7 @@ export default function Home() {
                       {renderBookIcon('w-4 h-4 text-purple-500')}
                       <div>
                         <p className="font-bold">Thư Viện Từ Điển</p>
-                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Tra cứu ngữ pháp & từ vựng HSK 1-3</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Tra cứu ngữ pháp & từ vựng HSK 1-6</p>
                       </div>
                     </button>
                   </div>

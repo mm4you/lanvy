@@ -414,10 +414,10 @@ export const PixelPet: React.FC<PixelPetProps> = ({
           title="Bấm vào thú cưng Pixel để trò chuyện!"
         >
           {currentPet === 'cat' && (
-            /* SIÊU MÈO CAM TABBY KAWAII CHIBI CÓ VẰN VẬỆT & RÂU MÈO */
-            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
-              {/* Fluffy Cat Tail */}
-              <path d="M25,22 C29,20 31,14 29,10 C27,8 25,11 25,16 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" className="animate-pulse origin-bottom" />
+            /* SIÊU MÈO CAM TABBY ULTRA KAWAII ANIME CHIBI */
+            <svg viewBox="0 0 32 32" className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-xl overflow-visible">
+              {/* Fluffy Cat Tail with Gentle Motion */}
+              <path d="M25,22 C29,19 32,13 29,9 C26,7 24,10 25,16 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" className="animate-pulse origin-bottom" />
               {/* Cute Round Cat Body */}
               <ellipse cx="16" cy="22" rx="9" ry="7" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" />
               <ellipse cx="16" cy="23" rx="6" ry="4" fill="#fff7ed" />
@@ -426,49 +426,55 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               <circle cx="14" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <circle cx="18" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="22" cy="27.5" r="2" fill="#fff7ed" stroke="#c2410c" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* Pointy Cat Ears */}
-              <path d="M6,12 L9,3 L13,10 Z" fill="#ea580c" stroke="#c2410c" strokeWidth="1.2" />
-              <path d="M7.5,11 L9.5,5 L11.5,10 Z" fill="#fda4af" />
-              <path d="M19,10 L23,3 L26,12 Z" fill="#ea580c" stroke="#c2410c" strokeWidth="1.2" />
-              <path d="M20.5,10 L22.5,5 L24.5,11 Z" fill="#fda4af" />
-              {/* Round Cat Head */}
-              <circle cx="16" cy="14" r="8.5" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" />
+              {/* Pointy Soft Cat Ears */}
+              <path d="M5.5,12 L9,2.5 L13.5,10 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
+              <path d="M7,11 L9,4.5 L11.5,9.5 Z" fill="#f472b6" />
+              <path d="M18.5,10 L23,2.5 L26.5,12 Z" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
+              <path d="M20.5,9.5 L23,4.5 L25,11 Z" fill="#f472b6" />
+              {/* Round Kawaii Cat Head */}
+              <circle cx="16" cy="14" r="8.8" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" />
               {/* Tabby Stripes on forehead */}
-              <path d="M16,7 L16,10 M14,8 L14,10 M18,8 L18,10" stroke="#c2410c" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M16,6.5 L16,9.5 M13.8,7.5 L14.2,9.5 M18.2,7.5 L17.8,9.5" stroke="#c2410c" strokeWidth="1.2" strokeLinecap="round" />
               {/* Cat Muzzle */}
-              <ellipse cx="16" cy="16" rx="4" ry="2.5" fill="#fff7ed" />
-              {/* Whiskers */}
-              <path d="M7,15 L12,16 M7,17 L12,17 M20,16 L25,15 M20,17 L25,17" stroke="#c2410c" strokeWidth="0.9" />
-              {/* Blush Cheeks */}
-              <ellipse cx="9.5" cy="16" rx="1.5" ry="0.9" fill="#f43f5e" opacity="0.6" />
-              <ellipse cx="22.5" cy="16" rx="1.5" ry="0.9" fill="#f43f5e" opacity="0.6" />
-              {/* Anime Cat Eyes */}
+              <ellipse cx="16" cy="16.2" rx="4.2" ry="2.6" fill="#fff7ed" />
+              {/* Cute Whiskers */}
+              <path d="M6,15.5 L11,16 M6,17.2 L11,17 M21,16 L26,15.5 M21,17 L26,17.2" stroke="#c2410c" strokeWidth="0.9" strokeLinecap="round" />
+              {/* Rosy Glow Blush Cheeks */}
+              <ellipse cx="9" cy="16" rx="2" ry="1.2" fill="#f43f5e" opacity="0.75" />
+              <ellipse cx="23" cy="16" rx="2" ry="1.2" fill="#f43f5e" opacity="0.75" />
+              {/* ULTRA KAWAII ANIME EYES WITH DOUBLE GLOSSY SPARKLES */}
               {!isSleeping ? (
                 <>
-                  <ellipse cx="11.5" cy="13.5" rx="2" ry="2.5" fill="#0f172a" />
-                  <circle cx="12.2" cy="12.5" r="0.8" fill="#ffffff" />
-                  <ellipse cx="20.5" cy="13.5" rx="2" ry="2.5" fill="#0f172a" />
-                  <circle cx="21.2" cy="12.5" r="0.8" fill="#ffffff" />
+                  {/* Eye outline arc */}
+                  <path d="M9.2,11.8 Q11.5,10 13.8,11.8" stroke="#0f172a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                  <path d="M18.2,11.8 Q20.5,10 22.8,11.8" stroke="#0f172a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                  {/* Shiny Pupils */}
+                  <ellipse cx="11.5" cy="13.5" rx="2.4" ry="2.8" fill="#0f172a" />
+                  <circle cx="12.3" cy="12.2" r="1" fill="#ffffff" />
+                  <circle cx="10.7" cy="14.5" r="0.5" fill="#ffffff" />
+                  <ellipse cx="20.5" cy="13.5" rx="2.4" ry="2.8" fill="#0f172a" />
+                  <circle cx="21.3" cy="12.2" r="1" fill="#ffffff" />
+                  <circle cx="19.7" cy="14.5" r="0.5" fill="#ffffff" />
                 </>
               ) : (
                 <>
-                  <path d="M10,14 Q11.5,12 13,14" stroke="#0f172a" strokeWidth="1.5" fill="none" />
-                  <path d="M19,14 Q20.5,12 22,14" stroke="#0f172a" strokeWidth="1.5" fill="none" />
+                  <path d="M9.5,14 Q11.5,11.5 13.5,14" stroke="#0f172a" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                  <path d="M18.5,14 Q20.5,11.5 22.5,14" stroke="#0f172a" strokeWidth="1.8" fill="none" strokeLinecap="round" />
                 </>
               )}
-              {/* Nose & Cat Mouth w */}
-              <polygon points="15.2,15 16.8,15 16,15.8" fill="#f43f5e" />
-              <path d="M14.5,16.2 Q15.5,17.2 16,16.2 Q16.5,17.2 17.5,16.2" stroke="#c2410c" strokeWidth="1" fill="none" strokeLinecap="round" />
+              {/* Cute Pink Heart Nose & Happy Cat w-Mouth */}
+              <polygon points="15.3,15.2 16.7,15.2 16,16" fill="#f43f5e" />
+              <path d="M14.2,16.4 Q15.2,17.4 16,16.4 Q16.8,17.4 17.8,16.4" stroke="#c2410c" strokeWidth="1.2" fill="none" strokeLinecap="round" />
               {/* EQUIPPED ACCESSORY */}
               {renderPetAccessory(equippedAccessory)}
             </svg>
           )}
 
           {currentPet === 'dog' && (
-            /* SIÊU CHÓ SHIBA VÀNG CHIBI CÓ LÔNG BỤNG TRẮNG & LÔNG MÀY */
-            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+            /* SIÊU CHÓ SHIBA VÀNG KAWAII CƯỜI TƯƠI CÓ LƯỠI HỒNG */
+            <svg viewBox="0 0 32 32" className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-xl overflow-visible">
               {/* Curly Shiba Tail */}
-              <path d="M24,20 C27,17 27,13 25,12 C23,11 22,14 24,18 Z" fill="#eab308" stroke="#a16207" strokeWidth="1.5" className="animate-pulse" />
+              <path d="M24,20 C28,17 28,12 25,11 C22,10 22,14 24,18 Z" fill="#eab308" stroke="#a16207" strokeWidth="1.5" className="animate-pulse" />
               {/* Shiba Body */}
               <ellipse cx="16" cy="22" rx="9" ry="7" fill="#eab308" stroke="#a16207" strokeWidth="1.5" />
               <ellipse cx="16" cy="23" rx="6" ry="4.5" fill="#ffffff" />
@@ -477,45 +483,47 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               <circle cx="14" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <circle cx="18" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="22" cy="27.5" r="2" fill="#ffffff" stroke="#a16207" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* Perky Folded Ears */}
-              <path d="M6,10 L9,3 L13,10 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
-              <path d="M19,10 L23,3 L26,10 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
+              {/* Ears */}
+              <path d="M5.5,10 L9,2.5 L13,9.5 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
+              <path d="M19,9.5 L23,2.5 L26.5,10 Z" fill="#ca8a04" stroke="#a16207" strokeWidth="1.2" />
               {/* Shiba Head */}
-              <circle cx="16" cy="14" r="8.5" fill="#eab308" stroke="#a16207" strokeWidth="1.5" />
+              <circle cx="16" cy="14" r="8.8" fill="#eab308" stroke="#a16207" strokeWidth="1.5" />
               <ellipse cx="16" cy="16.5" rx="5" ry="3.5" fill="#ffffff" stroke="#a16207" strokeWidth="1" />
               {/* White Eyebrow Dots */}
-              <circle cx="11.5" cy="10" r="1.2" fill="#ffffff" />
-              <circle cx="20.5" cy="10" r="1.2" fill="#ffffff" />
-              {/* Blush */}
-              <ellipse cx="9" cy="15" rx="1.5" ry="0.9" fill="#fda4af" opacity="0.8" />
-              <ellipse cx="23" cy="15" rx="1.5" ry="0.9" fill="#fda4af" opacity="0.8" />
-              {/* Eyes */}
+              <circle cx="11" cy="9.5" r="1.3" fill="#ffffff" />
+              <circle cx="21" cy="9.5" r="1.3" fill="#ffffff" />
+              {/* Rosy Blush */}
+              <ellipse cx="8.5" cy="15.5" rx="1.8" ry="1.1" fill="#fb7185" opacity="0.8" />
+              <ellipse cx="23.5" cy="15.5" rx="1.8" ry="1.1" fill="#fb7185" opacity="0.8" />
+              {/* ULTRA KAWAII SHIBA EYES */}
               {!isSleeping ? (
                 <>
-                  <circle cx="11.5" cy="13" r="1.8" fill="#0f172a" />
-                  <circle cx="12" cy="12.3" r="0.7" fill="#ffffff" />
-                  <circle cx="20.5" cy="13" r="1.8" fill="#0f172a" />
-                  <circle cx="21" cy="12.3" r="0.7" fill="#ffffff" />
+                  <circle cx="11.5" cy="13" r="2.2" fill="#0f172a" />
+                  <circle cx="12.3" cy="12" r="0.9" fill="#ffffff" />
+                  <circle cx="10.8" cy="13.8" r="0.5" fill="#ffffff" />
+                  <circle cx="20.5" cy="13" r="2.2" fill="#0f172a" />
+                  <circle cx="21.3" cy="12" r="0.9" fill="#ffffff" />
+                  <circle cx="19.8" cy="13.8" r="0.5" fill="#ffffff" />
                 </>
               ) : (
                 <>
-                  <path d="M10,13.5 Q11.5,12 13,13.5" stroke="#0f172a" strokeWidth="1.5" fill="none" />
-                  <path d="M19,13.5 Q20.5,12 22,13.5" stroke="#0f172a" strokeWidth="1.5" fill="none" />
+                  <path d="M9.5,13.5 Q11.5,11 13.5,13.5" stroke="#0f172a" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                  <path d="M18.5,13.5 Q20.5,11 22.5,13.5" stroke="#0f172a" strokeWidth="1.8" fill="none" strokeLinecap="round" />
                 </>
               )}
-              {/* Shiba Snout & Smile */}
-              <ellipse cx="16" cy="15" rx="1.3" ry="1" fill="#0f172a" />
-              <path d="M15,16 Q16,17 17,16" stroke="#0f172a" strokeWidth="1" fill="none" />
+              {/* Shiba Snout & Open Happy Mouth with Pink Tongue sticking out */}
+              <ellipse cx="16" cy="15" rx="1.4" ry="1" fill="#0f172a" />
+              <path d="M14.5,16 C14.5,18.2 17.5,18.2 17.5,16 Z" fill="#ff6b81" stroke="#0f172a" strokeWidth="0.9" />
               {/* EQUIPPED ACCESSORY */}
               {renderPetAccessory(equippedAccessory)}
             </svg>
           )}
 
           {currentPet === 'rabbit' && (
-            /* SIÊU THỎ TRẮNG TAI CỰC DÀI KAWAII CÓ MẮT NGỌC BÍCH HỒNG */
-            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+            /* SIÊU THỎ TRẮNG ULTRA KAWAII TAI DÀI MẮT HỒNG BẢO THẠCH */
+            <svg viewBox="0 0 32 32" className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-xl overflow-visible">
               {/* Round Fluffy Bunny Tail */}
-              <circle cx="25" cy="22" r="3" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+              <circle cx="25" cy="22" r="3.2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
               {/* Rabbit Body */}
               <ellipse cx="16" cy="23" rx="8.5" ry="6" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.5" />
               {/* Paws */}
@@ -523,43 +531,45 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               <circle cx="14" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
               <circle cx="18" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="22" cy="28" r="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" className={isWalking ? 'animate-bounce delay-75' : ''} />
-              {/* GIANT TALL RABBIT EARS */}
+              {/* GIANT FLOPPY RABBIT EARS */}
               <g className="animate-pulse origin-bottom">
-                <rect x="8.5" y="-3" width="4" height="15" rx="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
-                <rect x="9.5" y="-1.5" width="2" height="12" rx="1" fill="#fda4af" />
-                <rect x="19.5" y="-3" width="4" height="15" rx="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
-                <rect x="20.5" y="-1.5" width="2" height="12" rx="1" fill="#fda4af" />
+                <rect x="8" y="-4" width="4.5" height="16" rx="2.2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+                <rect x="9.2" y="-2.5" width="2.1" height="13" rx="1.1" fill="#fda4af" />
+                <rect x="19.5" y="-4" width="4.5" height="16" rx="2.2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+                <rect x="20.7" y="-2.5" width="2.1" height="13" rx="1.1" fill="#fda4af" />
               </g>
               {/* Rabbit Head */}
-              <circle cx="16" cy="15" r="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.5" />
-              {/* Pink Cheeks */}
-              <ellipse cx="9" cy="16.5" rx="2" ry="1.2" fill="#f43f5e" opacity="0.6" />
-              <ellipse cx="23" cy="16.5" rx="2" ry="1.2" fill="#f43f5e" opacity="0.6" />
-              {/* Shiny Ruby Eyes */}
+              <circle cx="16" cy="15" r="8.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.5" />
+              {/* Pink Glowing Cheeks */}
+              <ellipse cx="8.5" cy="16.5" rx="2.2" ry="1.3" fill="#f43f5e" opacity="0.65" />
+              <ellipse cx="23.5" cy="16.5" rx="2.2" ry="1.3" fill="#f43f5e" opacity="0.65" />
+              {/* ULTRA KAWAII RUBY ANIME EYES */}
               {!isSleeping ? (
                 <>
-                  <circle cx="11.5" cy="14" r="2.2" fill="#f43f5e" />
-                  <circle cx="12.3" cy="13.2" r="0.9" fill="#ffffff" />
-                  <circle cx="20.5" cy="14" r="2.2" fill="#f43f5e" />
-                  <circle cx="21.3" cy="13.2" r="0.9" fill="#ffffff" />
+                  <ellipse cx="11.5" cy="13.8" rx="2.4" ry="2.8" fill="#f43f5e" />
+                  <circle cx="12.3" cy="12.5" r="1" fill="#ffffff" />
+                  <circle cx="10.7" cy="14.8" r="0.5" fill="#ffffff" />
+                  <ellipse cx="20.5" cy="13.8" rx="2.4" ry="2.8" fill="#f43f5e" />
+                  <circle cx="21.3" cy="12.5" r="1" fill="#ffffff" />
+                  <circle cx="19.7" cy="14.8" r="0.5" fill="#ffffff" />
                 </>
               ) : (
                 <>
-                  <path d="M10,14.5 Q11.5,13 13,14.5" stroke="#f43f5e" strokeWidth="1.5" fill="none" />
-                  <path d="M19,14.5 Q20.5,13 22,14.5" stroke="#f43f5e" strokeWidth="1.5" fill="none" />
+                  <path d="M9.5,14.5 Q11.5,12 13.5,14.5" stroke="#f43f5e" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                  <path d="M18.5,14.5 Q20.5,12 22.5,14.5" stroke="#f43f5e" strokeWidth="1.8" fill="none" strokeLinecap="round" />
                 </>
               )}
-              {/* Nose & Front Tooth */}
-              <polygon points="15.2,15.8 16.8,15.8 16,16.5" fill="#f43f5e" />
-              <rect x="15.4" y="16.5" width="1.2" height="1.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.5" />
+              {/* Nose & Cute Front Tooth */}
+              <polygon points="15.2,15.6 16.8,15.6 16,16.4" fill="#f43f5e" />
+              <rect x="15.3" y="16.4" width="1.4" height="1.6" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.6" rx="0.3" />
               {/* EQUIPPED ACCESSORY */}
               {renderPetAccessory(equippedAccessory)}
             </svg>
           )}
 
           {currentPet === 'panda' && (
-            /* SIÊU GẤU TRÚC PANDA KAWAII CHIBI CÓ QUẦNG MẮT ĐEN & CÀNH TRÚC BẢO VỆ */
-            <svg viewBox="0 0 32 32" className="w-14 h-14 sm:w-18 sm:h-18 drop-shadow-xl overflow-visible">
+            /* SIÊU GẤU TRÚC PANDA KAWAII CHIBI MẮT LONG LANH LÁ TRÚC XANH */
+            <svg viewBox="0 0 32 32" className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-xl overflow-visible">
               {/* Panda Body */}
               <ellipse cx="16" cy="22" rx="9" ry="7" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
               {/* Black Vest/Shoulder band */}
@@ -570,21 +580,37 @@ export const PixelPet: React.FC<PixelPetProps> = ({
               <circle cx="18" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce' : ''} />
               <circle cx="22" cy="27.5" r="2" fill="#0f172a" className={isWalking ? 'animate-bounce delay-75' : ''} />
               {/* Round Black Panda Ears */}
-              <circle cx="8" cy="7.5" r="3.5" fill="#0f172a" />
-              <circle cx="24" cy="7.5" r="3.5" fill="#0f172a" />
-              {/* White Panda Head */}
-              <circle cx="16" cy="14" r="8.5" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
-              {/* Big Black Oval Eye Patches */}
-              <ellipse cx="10.5" cy="13.5" rx="3" ry="2.2" fill="#0f172a" transform="rotate(-15, 10.5, 13.5)" />
-              <circle cx="10.8" cy="13.2" r="1" fill="#ffffff" />
-              <ellipse cx="21.5" cy="13.5" rx="3" ry="2.2" fill="#0f172a" transform="rotate(15, 21.5, 13.5)" />
-              <circle cx="21.2" cy="13.2" r="1" fill="#ffffff" />
-              {/* Blush */}
-              <ellipse cx="8.5" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
-              <ellipse cx="23.5" cy="16.5" rx="1.8" ry="1" fill="#fda4af" opacity="0.8" />
-              <ellipse cx="16" cy="15.5" rx="1.3" ry="1" fill="#0f172a" />
-              {/* Green Bamboo stick in mouth */}
-              <path d="M12,18 L21,15" stroke="#22c55e" strokeWidth="1.8" strokeLinecap="round" />
+              <circle cx="7.5" cy="7.5" r="3.8" fill="#0f172a" />
+              <circle cx="24.5" cy="7.5" r="3.8" fill="#0f172a" />
+              {/* White Fluffy Panda Head */}
+              <circle cx="16" cy="14" r="8.8" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+              {/* Cute Oval Black Eye Patches */}
+              <ellipse cx="10.5" cy="13.5" rx="3.2" ry="2.4" fill="#0f172a" transform="rotate(-12, 10.5, 13.5)" />
+              <ellipse cx="21.5" cy="13.5" rx="3.2" ry="2.4" fill="#0f172a" transform="rotate(12, 21.5, 13.5)" />
+              {/* ULTRA KAWAII SPARKLY PANDA EYES WITH DOUBLE WHITE HIGHLIGHTS */}
+              {!isSleeping ? (
+                <>
+                  <circle cx="10.8" cy="13.5" r="1.4" fill="#ffffff" />
+                  <circle cx="11.3" cy="13" r="0.6" fill="#0f172a" />
+                  <circle cx="10.4" cy="14.1" r="0.4" fill="#ffffff" />
+                  <circle cx="21.2" cy="13.5" r="1.4" fill="#ffffff" />
+                  <circle cx="21.7" cy="13" r="0.6" fill="#0f172a" />
+                  <circle cx="20.8" cy="14.1" r="0.4" fill="#ffffff" />
+                </>
+              ) : (
+                <>
+                  <path d="M9,13.5 Q10.5,12 12,13.5" stroke="#ffffff" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                  <path d="M20,13.5 Q21.5,12 23,13.5" stroke="#ffffff" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                </>
+              )}
+              {/* Rosy Blush */}
+              <ellipse cx="8" cy="16.5" rx="2" ry="1.2" fill="#fb7185" opacity="0.8" />
+              <ellipse cx="24" cy="16.5" rx="2" ry="1.2" fill="#fb7185" opacity="0.8" />
+              {/* Nose */}
+              <ellipse cx="16" cy="15.2" rx="1.4" ry="1" fill="#0f172a" />
+              {/* Green Bamboo Stick in mouth */}
+              <path d="M11,18 L21,15" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" />
+              <path d="M19.5,15.5 C21,14 22.5,14 22,15.5 C21.5,17 20,16 19.5,15.5 Z" fill="#4ade80" />
               {/* EQUIPPED ACCESSORY */}
               {renderPetAccessory(equippedAccessory)}
             </svg>

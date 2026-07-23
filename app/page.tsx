@@ -1316,7 +1316,7 @@ export default function Home() {
   return (
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#121212] text-slate-100' : 'bg-[#fffdf8] text-slate-900'
-    } p-0 pt-[env(safe-area-inset-top,12px)] sm:p-4 md:p-6 pb-28 md:pb-6`}>
+    } p-0 sm:p-4 md:p-6 pb-28 md:pb-6`}>
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ NEO-BRUTALIST ĐÚNG CHUẨN IELTS VOCAB BIẾN TẤU CHO HSK VOCAB */}
       {!user ? (
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-[#fffaf0] text-slate-900 select-none">
@@ -1644,7 +1644,7 @@ export default function Home() {
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-5 px-3 sm:px-0 pt-[env(safe-area-inset-top,12px)] md:pt-0 pb-28 md:pb-6">
+        <div className="max-w-6xl mx-auto space-y-5 px-3 sm:px-0 pt-[env(safe-area-inset-top,4px)] md:pt-0 pb-28 md:pb-6">
           {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
           <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs border ${
             isDarkMode 
@@ -3463,14 +3463,14 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full pt-1.5 pb-0.5 text-center transition-all cursor-pointer ${
+            className={`flex flex-col items-center justify-center flex-1 h-full pt-2 pb-0.5 text-center transition-all cursor-pointer ${
               activeTab === 'studio' ? 'text-rose-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
             }`}
           >
             <div className={activeTab === 'studio' ? 'text-rose-500 scale-105 transition-transform' : 'text-current'}>
-              {renderAwardIcon('w-4.5 h-4.5')}
+              {renderAwardIcon('w-4 h-4')}
             </div>
-            <span className={`text-[8.5px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
+            <span className={`text-[8px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'studio' ? 'text-rose-500' : 'text-current'}`}>
               Studio
             </span>
           </button>
@@ -3482,16 +3482,16 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full pt-1.5 pb-0.5 text-center transition-all cursor-pointer ${
+            className={`flex flex-col items-center justify-center flex-1 h-full pt-2 pb-0.5 text-center transition-all cursor-pointer ${
               ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen
                 ? 'text-blue-500 font-extrabold'
                 : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
             }`}
           >
             <div className={['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500 scale-105 transition-transform' : 'text-current'}>
-              {renderBookIcon('w-4.5 h-4.5')}
+              {renderBookIcon('w-4 h-4')}
             </div>
-            <span className={`text-[8.5px] font-bold uppercase tracking-wider mt-0.5 ${
+            <span className={`text-[8px] font-bold uppercase tracking-wider mt-0.5 ${
               ['quiz', 'flashcards', 'library'].includes(activeTab as string) || isMobileStudyOpen ? 'text-blue-500' : 'text-current'
             }`}>
               Học
@@ -3505,14 +3505,14 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full pt-1.5 pb-0.5 text-center transition-all cursor-pointer ${
+            className={`flex flex-col items-center justify-center flex-1 h-full pt-2 pb-0.5 text-center transition-all cursor-pointer ${
               activeTab === 'room' ? 'text-emerald-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
             }`}
           >
             <div className={activeTab === 'room' ? 'text-emerald-500 scale-105 transition-transform' : 'text-current'}>
-              {renderHomeIcon('w-4.5 h-4.5')}
+              {renderHomeIcon('w-4 h-4')}
             </div>
-            <span className={`text-[8.5px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
+            <span className={`text-[8px] font-bold uppercase tracking-wider mt-0.5 ${activeTab === 'room' ? 'text-emerald-500' : 'text-current'}`}>
               Phòng
             </span>
           </button>
@@ -3524,14 +3524,14 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full pt-1.5 pb-0.5 text-center transition-all cursor-pointer ${
+            className={`flex flex-col items-center justify-center flex-1 h-full pt-2 pb-0.5 text-center transition-all cursor-pointer ${
               showPetShopModal ? 'text-amber-500 font-extrabold' : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
             }`}
           >
             <div className={showPetShopModal ? 'text-amber-500 scale-105 transition-transform' : 'text-current'}>
-              {renderShoppingBagIcon('w-4.5 h-4.5 text-amber-500')}
+              {renderShoppingBagIcon('w-4 h-4 text-amber-500')}
             </div>
-            <span className={`text-[8.5px] font-bold uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
+            <span className={`text-[8px] font-bold uppercase tracking-wider mt-0.5 ${showPetShopModal ? 'text-amber-500' : 'text-current'}`}>
               Shop
             </span>
           </button>
@@ -3543,18 +3543,18 @@ export default function Home() {
               playSfx('click');
               if (typeof window !== 'undefined' && navigator.vibrate) navigator.vibrate(15);
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full pt-1.5 pb-0.5 text-center transition-all cursor-pointer relative ${
+            className={`flex flex-col items-center justify-center flex-1 h-full pt-2 pb-0.5 text-center transition-all cursor-pointer relative ${
               isMobileMoreOpen || (activeTab === 'love')
                 ? 'text-purple-500 font-extrabold'
                 : isDarkMode ? 'text-slate-200 opacity-80 hover:opacity-100' : 'text-slate-800 opacity-80 hover:opacity-100'
             }`}
           >
             <div className={isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500 scale-105 transition-transform' : 'text-current'}>
-              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </div>
-            <span className={`text-[8.5px] font-bold uppercase tracking-wider mt-0.5 ${
+            <span className={`text-[8px] font-bold uppercase tracking-wider mt-0.5 ${
               isMobileMoreOpen || (activeTab === 'love') ? 'text-purple-500' : 'text-current'
             }`}>
               Thêm

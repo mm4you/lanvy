@@ -172,7 +172,7 @@ export default function AIChatBubbleModal({
     <>
       {/* FLOATING BUBBLE BUTTON (ONLY SHOWN WHEN CLOSED) */}
       {!isOpen && (
-        <div className="fixed bottom-[calc(50px+env(safe-area-inset-bottom,0px))] md:bottom-5 right-4 z-40 flex items-center gap-2">
+        <div className="fixed bottom-[calc(58px+env(safe-area-inset-bottom,0px))] md:bottom-6 right-4 z-40 flex items-center gap-2">
           <button
             onClick={() => {
               setIsOpen(true);
@@ -194,7 +194,7 @@ export default function AIChatBubbleModal({
 
       {/* FLOATING CHAT MODAL WINDOW */}
       {isOpen && (
-        <div className="fixed bottom-[calc(54px+env(safe-area-inset-bottom,0px))] md:bottom-5 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[75vh] flex flex-col border-3 border-[var(--line)] rounded-3xl shadow-[8px_8px_0_var(--line)] overflow-hidden animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-[#1e1e1e]">
+        <div className="fixed bottom-[calc(62px+env(safe-area-inset-bottom,0px))] md:bottom-6 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[75vh] flex flex-col border-3 border-[var(--line)] rounded-3xl shadow-[8px_8px_0_var(--line)] overflow-hidden animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-[#1e1e1e]">
           {/* Header */}
           <div className="bg-rose-500 text-white p-3.5 border-b-3 border-[var(--line)] flex justify-between items-center shrink-0">
             <div className="flex items-center gap-2.5">

@@ -1316,7 +1316,7 @@ export default function Home() {
   return (
     <main className={`min-h-screen font-sans antialiased transition-colors duration-300 ${
       isDarkMode ? 'dark bg-[#121212] text-slate-100' : 'bg-[#fffdf8] text-slate-900'
-    } p-0 sm:p-4 md:p-6 pb-24 md:pb-6`}>
+    } p-0 pt-[env(safe-area-inset-top,12px)] sm:p-4 md:p-6 pb-28 md:pb-6`}>
       {/* 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ NEO-BRUTALIST ĐÚNG CHUẨN IELTS VOCAB BIẾN TẤU CHO HSK VOCAB */}
       {!user ? (
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-[#fffaf0] text-slate-900 select-none">
@@ -1644,7 +1644,7 @@ export default function Home() {
         </div>
       ) : (
         /* 2. GIAO DIỆN GAME CHÍNH SAU KHI LOGIN */
-        <div className="max-w-6xl mx-auto space-y-5 px-3 sm:px-0 pb-28 md:pb-6">
+        <div className="max-w-6xl mx-auto space-y-5 px-3 sm:px-0 pt-[env(safe-area-inset-top,12px)] md:pt-0 pb-28 md:pb-6">
           {/* HEADER & NAV BAR UNIFIED MODERN CONTAINER */}
           <header className={`rounded-2xl p-4 sm:p-5 flex flex-col gap-4 transition-all duration-300 shadow-xs border ${
             isDarkMode 

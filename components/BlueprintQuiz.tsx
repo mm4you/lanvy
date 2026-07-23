@@ -598,7 +598,7 @@ export default function BlueprintQuiz({
       {quizMode !== 'custom' && (
         <div className="flex gap-1.5 mb-6 flex-wrap">
           <span className="text-xs font-black text-gray-500 uppercase self-center mr-2">Cấp độ HSK:</span>
-          {['all', 1, 2, 3, 4, 5, 6].map((level) => (
+          {['all', 1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
             <button
               key={level}
               onClick={() => {

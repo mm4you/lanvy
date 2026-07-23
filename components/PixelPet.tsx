@@ -236,8 +236,8 @@ export const PixelPet: React.FC<PixelPetProps> = ({
       }
 
       setIsSleeping(false);
-      const screenW = typeof window !== 'undefined' ? window.innerWidth - 100 : 800;
-      const nextTarget = Math.floor(Math.random() * Math.max(200, screenW - 60)) + 20;
+      const maxBound = typeof window !== 'undefined' ? Math.max(150, window.innerWidth - 240) : 600;
+      const nextTarget = Math.floor(Math.random() * (maxBound - 30)) + 30;
 
       setPosX(prev => {
         setDirection(nextTarget < prev ? 'left' : 'right');
@@ -249,7 +249,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
     // Khởi tạo vị trí ban đầu ngẫu nhiên
     if (posX === 0 && typeof window !== 'undefined') {
-      setPosX(Math.floor(Math.random() * (window.innerWidth - 200)) + 50);
+      setPosX(Math.floor(Math.random() * Math.max(150, window.innerWidth - 280)) + 40);
     }
 
     const interval = setInterval(updateWander, 5500);
@@ -384,14 +384,14 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
         {/* HIỆU ỨNG THẢ TIM XP KHÔNG KHUNG BỌC */}
         {isHearting && (
-          <div className="absolute -top-8 text-rose-500 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-rose-500 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
             +50 HSK XP
           </div>
         )}
 
         {/* HIỆU ỨNG NGỦ Zzz KHÔNG KHUNG BỌC */}
         {isSleeping && !activeSpeech && (
-          <div className="absolute -top-9 text-indigo-500 dark:text-indigo-400 font-mono font-bold text-xs animate-pulse z-50 flex items-center gap-1 drop-shadow-md">
+          <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap text-indigo-500 dark:text-indigo-400 font-mono font-bold text-xs animate-pulse z-50 flex items-center gap-1 drop-shadow-md">
             <span className="animate-bounce">Z</span>
             <span className="animate-bounce delay-100">z</span>
             <span className="animate-bounce delay-200">z</span> (Đang ngủ)
@@ -400,7 +400,7 @@ export const PixelPet: React.FC<PixelPetProps> = ({
 
         {/* HIỆU ỨNG ĐANG ĂN KHÔNG KHUNG BỌC */}
         {isEating && (
-          <div className="absolute -top-8 text-amber-500 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-amber-500 font-mono font-bold text-xs animate-bounce z-50 drop-shadow-md">
             Nhai nhai... 😋
           </div>
         )}

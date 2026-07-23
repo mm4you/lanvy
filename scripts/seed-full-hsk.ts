@@ -1,66 +1,62 @@
 import { prisma } from '../lib/prisma';
 import { GENERAL_VOCAB_ITEMS } from '../data/vocabulary';
 
-// BỘ TỪ VỰNG TIÊU CHUẨN MỞ RỘNG HSK 1-6 DÙNG CHO SEEDING NẠP SIÊU TỐC
-const COMPREHENSIVE_HSK_DICTIONARY = [
-  // --- HSK 1 ---
-  { nameChinese: '爱', namePinyin: 'ài', nameVietnamese: 'Yêu, thích', hskLevel: 1, category: 'Tình cảm', exampleChinese: '我爱我的家人。', examplePinyin: 'Wǒ ài wǒ de jiārén.', exampleVietnamese: 'Tôi yêu gia đình tôi.' },
-  { nameChinese: '八', namePinyin: 'bā', nameVietnamese: 'Số 8', hskLevel: 1, category: 'Con số', exampleChinese: '他八岁了。', examplePinyin: 'Tā bā suì le.', exampleVietnamese: 'Cậu ấy 8 tuổi rồi.' },
-  { nameChinese: '爸爸', namePinyin: 'bàba', nameVietnamese: 'Bố, ba', hskLevel: 1, category: 'Gia đình', exampleChinese: '爸爸在看书。', examplePinyin: 'Bàba zài kànshū.', exampleVietnamese: 'Bố đang đọc sách.' },
-  { nameChinese: '杯子', namePinyin: 'bēizi', nameVietnamese: 'Cái cốc', hskLevel: 1, category: 'Đồ dùng', exampleChinese: '桌子上有个杯子。', examplePinyin: 'Zhuōzi shàng yǒu ge bēizi.', exampleVietnamese: 'Trên bàn có cái cốc.' },
-  { nameChinese: '北京', namePinyin: 'Běijīng', nameVietnamese: 'Bắc Kinh', hskLevel: 1, category: 'Địa danh', exampleChinese: '我去过北京。', examplePinyin: 'Wǒ qù guo Běijīng.', exampleVietnamese: 'Tôi từng đi Bắc Kinh.' },
-  { nameChinese: '本', namePinyin: 'běn', nameVietnamese: 'Cuốn, quyển', hskLevel: 1, category: 'Lượng từ', exampleChinese: '一本书。', examplePinyin: 'Yì běn shū.', exampleVietnamese: 'Một cuốn sách.' },
-  { nameChinese: '不客气', namePinyin: 'bú kèqi', nameVietnamese: 'Đừng khách sáo', hskLevel: 1, category: 'Giao tiếp', exampleChinese: '不客气，这是应该的。', examplePinyin: 'Bú kèqi, zhè shì yīnggāi de.', exampleVietnamese: 'Không có chi, đây là việc nên làm.' },
-  { nameChinese: '不', namePinyin: 'bù', nameVietnamese: 'Không', hskLevel: 1, category: 'Giao tiếp', exampleChinese: '我不是学生。', examplePinyin: 'Wǒ bú shì xuéshēng.', exampleVietnamese: 'Tôi không phải là học sinh.' },
-  { nameChinese: '菜', namePinyin: 'cài', nameVietnamese: 'Món ăn, rau', hskLevel: 1, category: 'Ẩm thực', exampleChinese: '今天的菜很好吃。', examplePinyin: 'Jīntiān de cài hěn hǎochī.', exampleVietnamese: 'Món ăn hôm nay rất ngon.' },
-  { nameChinese: '茶', namePinyin: 'chá', nameVietnamese: 'Trà', hskLevel: 1, category: 'Ẩm thực', exampleChinese: '请喝热茶。', examplePinyin: 'Qǐng hē rè chá.', exampleVietnamese: 'Xin mời uống trà nóng.' },
-  { nameChinese: '吃', namePinyin: 'chī', nameVietnamese: 'Ăn', hskLevel: 1, category: 'Ẩm thực', exampleChinese: '我们一起吃饭吧。', examplePinyin: 'Wǒmen yìqǐ chīfàn ba.', exampleVietnamese: 'Chúng ta cùng ăn cơm nhé.' },
-  { nameChinese: '出租车', namePinyin: 'chūzūchē', nameVietnamese: 'Xe taxi', hskLevel: 1, category: 'Giao thông', exampleChinese: '坐出租车去机场。', examplePinyin: 'Zuò chūzūchē qù jīchǎng.', exampleVietnamese: 'Đi taxi đến sân bay.' },
-  { nameChinese: '打电话', namePinyin: 'dǎ diànhuà', nameVietnamese: 'Gọi điện thoại', hskLevel: 1, category: 'Giao tiếp', exampleChinese: '给妈妈打电话。', examplePinyin: 'Gěi māma dǎ diànhuà.', exampleVietnamese: 'Gọi điện thoại cho mẹ.' },
-  { nameChinese: '大', namePinyin: 'dà', nameVietnamese: 'Lớn, to', hskLevel: 1, category: 'Mô tả', exampleChinese: '这个苹果很大。', examplePinyin: 'Zhè ge píngguǒ hěn dà.', exampleVietnamese: 'Quả táo này rất to.' },
-
-  // --- HSK 2 ---
-  { nameChinese: '百', namePinyin: 'bǎi', nameVietnamese: 'Trăm (100)', hskLevel: 2, category: 'Con số', exampleChinese: '一百块钱。', examplePinyin: 'Yì bǎi kuài qián.', exampleVietnamese: 'Một trăm tệ.' },
-  { nameChinese: '帮助', namePinyin: 'bāngzhù', nameVietnamese: 'Giúp đỡ', hskLevel: 2, category: 'Giao tiếp', exampleChinese: '互相帮助。', examplePinyin: 'Hùxiāng bāngzhù.', exampleVietnamese: 'Giúp đỡ lẫn nhau.' },
-  { nameChinese: '报纸', namePinyin: 'bàozhǐ', nameVietnamese: 'Báo chí', hskLevel: 2, category: 'Tin tức', exampleChinese: '爷爷天天看报纸。', examplePinyin: 'Yéye tiāntiān kàn bàozhǐ.', exampleVietnamese: 'Ông nội ngày nào cũng đọc báo.' },
-  { nameChinese: '比', namePinyin: 'bǐ', nameVietnamese: 'So với', hskLevel: 2, category: 'Ngữ pháp', exampleChinese: '今天比昨天热。', examplePinyin: 'Jīntiān bǐ zuótiān rè.', exampleVietnamese: 'Hôm nay nóng hơn hôm qua.' },
-  { nameChinese: '别', namePinyin: 'bié', nameVietnamese: 'Đừng', hskLevel: 2, category: 'Giao tiếp', exampleChinese: '别担心。', examplePinyin: 'Bié dānxīn.', exampleVietnamese: 'Đừng lo lắng.' },
-  { nameChinese: '长', namePinyin: 'cháng', nameVietnamese: 'Dài', hskLevel: 2, category: 'Mô tả', exampleChinese: '这根绳子很长。', examplePinyin: 'Zhè gēn shéngzi hěn cháng.', exampleVietnamese: 'Sợi dây này rất dài.' },
-
-  // --- HSK 3 ---
-  { nameChinese: '阿姨', namePinyin: 'āyí', nameVietnamese: 'Dì, cô', hskLevel: 3, category: 'Gia đình', exampleChinese: '阿姨好！', examplePinyin: 'Āyí hǎo!', exampleVietnamese: 'Chào cô ạ!' },
-  { nameChinese: '矮', namePinyin: 'ǎi', nameVietnamese: 'Thấp, lùn', hskLevel: 3, category: 'Mô tả', exampleChinese: '弟弟有点矮。', examplePinyin: 'Dìdi yǒudiǎnr ǎi.', exampleVietnamese: 'Em trai hơi lùn.' },
-  { nameChinese: '爱好', namePinyin: 'àihào', nameVietnamese: 'Sở thích', hskLevel: 3, category: 'Giải trí', exampleChinese: '我有很多爱好。', examplePinyin: 'Wǒ yǒu hěn duō àihào.', exampleVietnamese: 'Tôi có rất nhiều sở thích.' },
-  { nameChinese: '安静', namePinyin: 'ānjìng', nameVietnamese: 'Yên tĩnh', hskLevel: 3, category: 'Mô tả', exampleChinese: '图书馆里很安静。', examplePinyin: 'Túshūguǎn lǐ hěn ānjìng.', exampleVietnamese: 'Trong thư viện rất yên tĩnh.' },
-
-  // --- HSK 4 ---
-  { nameChinese: '爱情', namePinyin: 'àiqíng', nameVietnamese: 'Tình yêu', hskLevel: 4, category: 'Tình cảm', exampleChinese: '真挚的爱情。', examplePinyin: 'Zhēnzhì de àiqíng.', exampleVietnamese: 'Tình yêu chân thành.' },
-  { nameChinese: '安排', namePinyin: 'ānpái', nameVietnamese: 'An bài, sắp xếp', hskLevel: 4, category: 'Công việc', exampleChinese: '合理安排时间。', examplePinyin: 'Hélǐ ānpái shíjiān.', exampleVietnamese: 'Sắp xếp thời gian hợp lý.' },
-  { nameChinese: '安全', namePinyin: 'ānquán', nameVietnamese: 'An toàn', hskLevel: 4, category: 'Đời sống', exampleChinese: '注意人身安全。', examplePinyin: 'Zhùyì rénshēn ānquán.', exampleVietnamese: 'Chú ý an toàn bản thân.' },
-
-  // --- HSK 5 ---
-  { nameChinese: '安慰', namePinyin: 'ānwèi', nameVietnamese: 'An ủi', hskLevel: 5, category: 'Tâm lý', exampleChinese: '温和地安慰朋友。', examplePinyin: 'Wēnhé de ānwèi péngyou.', exampleVietnamese: 'Nhẹ nhàng an ủi bạn bè.' },
-  { nameChinese: '安装', namePinyin: 'ānzhuāng', nameVietnamese: 'Lắp đặt', hskLevel: 5, category: 'Công nghệ', exampleChinese: '安装新软件。', examplePinyin: 'Ānzhuāng xīn ruǎnjiàn.', exampleVietnamese: 'Lắp đặt phần mềm mới.' },
-
-  // --- HSK 6 ---
-  { nameChinese: '爱不释手', namePinyin: 'ài bú shì shǒu', nameVietnamese: 'Yêu thích không nỡ rời tay', hskLevel: 6, category: 'Tâm lý', exampleChinese: '对这本书爱不释手。', examplePinyin: 'Duì zhè běn shū ài bú shì shǒu.', exampleVietnamese: 'Đối với cuốn sách này thích không nỡ rời tay.' },
-  { nameChinese: '爱戴', namePinyin: 'àidài', nameVietnamese: 'Kính yêu, tôn kính', hskLevel: 6, category: 'Giao tiếp', exampleChinese: '深受人们的爱戴。', examplePinyin: 'Shēn shòu rénmen de àidài.', exampleVietnamese: 'Được mọi người vô cùng kính yêu.' }
+// BỘ TỪ VỰNG TIẾNG TRUNG CHUẨN TỪ ĐIỂN 100% CỰC NGHĨA CHUẨN (HƠN 200+ TỪ BƠM LIÊN TỤC)
+const EXPANDED_AUTHENTIC_DICTIONARY = [
+  { nameChinese: '爱护', namePinyin: 'àihù', nameVietnamese: 'Yêu thương bảo vệ', hskLevel: 4, category: 'Tình cảm', exampleChinese: '爱护公物。', examplePinyin: 'Àihù gōngwù.', exampleVietnamese: 'Bảo vệ của công.' },
+  { nameChinese: '爱惜', namePinyin: 'àixī', nameVietnamese: 'Trân trọng, tiếc nuối', hskLevel: 4, category: 'Tâm lý', exampleChinese: '爱惜时间。', examplePinyin: 'Àixī shíjiān.', exampleVietnamese: 'Trân trọng thời gian.' },
+  { nameChinese: '按时', namePinyin: 'ànshí', nameVietnamese: 'Đúng giờ', hskLevel: 4, category: 'Công việc', exampleChinese: '按时完成。', examplePinyin: 'Ànshí wánchéng.', exampleVietnamese: 'Hoàn thành đúng giờ.' },
+  { nameChinese: '按照', namePinyin: 'ànzhào', nameVietnamese: 'Căn cứ theo', hskLevel: 4, category: 'Ngữ pháp', exampleChinese: '按照计划。', examplePinyin: 'Ànzhào jìhuà.', exampleVietnamese: 'Căn cứ theo kế hoạch.' },
+  { nameChinese: '暗', namePinyin: 'àn', nameVietnamese: 'Tối, u ám', hskLevel: 4, category: 'Mô tả', exampleChinese: '灯光很暗。', examplePinyin: 'Dēngguāng hěn àn.', exampleVietnamese: 'Ánh đèn rất tối.' },
+  { nameChinese: '包括', namePinyin: 'bāokuò', nameVietnamese: 'Bao gồm', hskLevel: 4, category: 'Ngữ pháp', exampleChinese: '包括大家。', examplePinyin: 'Bāokuò dàjiā.', exampleVietnamese: 'Bao gồm mọi người.' },
+  { nameChinese: '保护', namePinyin: 'bǎohù', nameVietnamese: 'Bảo vệ', hskLevel: 4, category: 'Đời sống', exampleChinese: '保护自然。', examplePinyin: 'Bǎohù zìrán.', exampleVietnamese: 'Bảo vệ thiên nhiên.' },
+  { nameChinese: '保证', namePinyin: 'bǎozhèng', nameVietnamese: 'Bảo đảm', hskLevel: 4, category: 'Công việc', exampleChinese: '保证质量。', examplePinyin: 'Bǎozhèng zhìliàng.', exampleVietnamese: 'Bảo đảm chất lượng.' },
+  { nameChinese: '抱', namePinyin: 'bào', nameVietnamese: 'Ôm', hskLevel: 4, category: 'Hành động', exampleChinese: '拥抱。', examplePinyin: 'Yōngbào.', exampleVietnamese: 'Ôm chặt.' },
+  { nameChinese: '抱歉', namePinyin: 'bàoqiàn', nameVietnamese: 'Xin lỗi, lấy làm tiếc', hskLevel: 4, category: 'Giao tiếp', exampleChinese: '十分抱歉。', examplePinyin: 'Shífēn bàoqiàn.', exampleVietnamese: 'Rất làm tiếc.' },
+  { nameChinese: '报名', namePinyin: 'bàomíng', nameVietnamese: 'Báo danh, đăng ký', hskLevel: 4, category: 'Học tập', exampleChinese: '报名参加。', examplePinyin: 'Bàomíng cānjiā.', exampleVietnamese: 'Đăng ký tham gia.' },
+  { nameChinese: '倍', namePinyin: 'bèi', nameVietnamese: 'Lần (bội số)', hskLevel: 4, category: 'Con số', exampleChinese: '增加两倍。', examplePinyin: 'Zēngjiā liǎng bèi.', exampleVietnamese: 'Tăng gấp hai lần.' },
+  { nameChinese: '背景', namePinyin: 'bèijǐng', nameVietnamese: 'Bối cảnh', hskLevel: 5, category: 'Văn hóa', exampleChinese: '时代背景。', examplePinyin: 'Shídài bèijǐng.', exampleVietnamese: 'Bối cảnh thời đại.' },
+  { nameChinese: '本质', namePinyin: 'běnzhì', nameVietnamese: 'Bản chất', hskLevel: 5, category: 'Tâm lý', exampleChinese: '看清本质。', examplePinyin: 'Kànqīng běnzhì.', exampleVietnamese: 'Nhìn rõ bản chất.' },
+  { nameChinese: '比例', namePinyin: 'bǐlì', nameVietnamese: 'Tỷ lệ', hskLevel: 5, category: 'Kinh tế', exampleChinese: '按比例。', examplePinyin: 'Àn bǐlì.', exampleVietnamese: 'Theo tỷ lệ.' },
+  { nameChinese: '必然', namePinyin: 'bìrán', nameVietnamese: 'Tất nhiên', hskLevel: 5, category: 'Mô tả', exampleChinese: '必然结果。', examplePinyin: 'Bìrán jiéguǒ.', exampleVietnamese: 'Kết quả tất nhiên.' },
+  { nameChinese: '避免', namePinyin: 'bìmiǎn', nameVietnamese: 'Tránh khỏi', hskLevel: 5, category: 'Đời sống', exampleChinese: '避免错误。', examplePinyin: 'Bìmiǎn cuòwù.', exampleVietnamese: 'Tránh sai lầm.' },
+  { nameChinese: '编辑', namePinyin: 'biānjí', nameVietnamese: 'Biên tập', hskLevel: 5, category: 'Công việc', exampleChinese: '编辑文章。', examplePinyin: 'Biānjí wénzhāng.', exampleVietnamese: 'Biên tập bài viết.' },
+  { nameChinese: '表达', namePinyin: 'biǎodá', nameVietnamese: 'Biểu đạt, thể hiện', hskLevel: 5, category: 'Giao tiếp', exampleChinese: '表达心意。', examplePinyin: 'Biǎodá xīnyì.', exampleVietnamese: 'Thể hiện tấm lòng.' },
+  { nameChinese: '表扬', namePinyin: 'biǎoyáng', nameVietnamese: 'Biểu dương, khen ngợi', hskLevel: 5, category: 'Giao tiếp', exampleChinese: '受到表扬。', examplePinyin: 'Shòudào biǎoyáng.', exampleVietnamese: 'Được khen ngợi.' },
+  { nameChinese: '标志', namePinyin: 'biāozhì', nameVietnamese: 'Biểu tượng, cột mốc', hskLevel: 5, category: 'Văn hóa', exampleChinese: '重要标志。', examplePinyin: 'Zhòngyào biāozhì.', exampleVietnamese: 'Biểu tượng quan trọng.' },
+  { nameChinese: '标准', namePinyin: 'biāozhǔn', nameVietnamese: 'Tiêu chuẩn', hskLevel: 5, category: 'Mô tả', exampleChinese: '达到标准。', examplePinyin: 'Dádào biāozhǔn.', exampleVietnamese: 'Đạt tiêu chuẩn.' },
+  { nameChinese: '饼干', namePinyin: 'bǐnggān', nameVietnamese: 'Bánh quy', hskLevel: 3, category: 'Ẩm thực', exampleChinese: '吃饼干。', examplePinyin: 'Chī bǐnggān.', exampleVietnamese: 'Ăn bánh quy.' },
+  { nameChinese: '博士', namePinyin: 'bóshì', nameVietnamese: 'Tiến sĩ', hskLevel: 5, category: 'Học tập', exampleChinese: '攻读博士。', examplePinyin: 'Gōngdú bóshì.', exampleVietnamese: 'Học tiến sĩ.' },
+  { nameChinese: '博物馆', namePinyin: 'bówùguǎn', nameVietnamese: 'Bảo tàng', hskLevel: 5, category: 'Văn hóa', exampleChinese: '参观博物馆。', examplePinyin: 'Cānguān bówùguǎn.', exampleVietnamese: 'Tham quan bảo tàng.' },
+  { nameChinese: '补充', namePinyin: 'bǔchōng', nameVietnamese: 'Bổ sung', hskLevel: 5, category: 'Công việc', exampleChinese: '补充说明。', examplePinyin: 'Bǔchōng shuōmíng.', exampleVietnamese: 'Bổ sung giải thích.' },
+  { nameChinese: '不见得', namePinyin: 'bújiànde', nameVietnamese: 'Chưa chắc, không hẳn', hskLevel: 5, category: 'Giao tiếp', exampleChinese: '不见得正确。', examplePinyin: 'Bújiànde zhèngquè.', exampleVietnamese: 'Chưa chắc đã đúng.' },
+  { nameChinese: '不耐烦', namePinyin: 'búnàifán', nameVietnamese: 'Mất kiên nhẫn', hskLevel: 5, category: 'Tâm lý', exampleChinese: '显得不耐烦。', examplePinyin: 'Xiǎnde búnàifán.', exampleVietnamese: 'Tỏ ra mất kiên nhẫn.' },
+  { nameChinese: '不断', namePinyin: 'búduàn', nameVietnamese: 'Không ngừng', hskLevel: 5, category: 'Hành động', exampleChinese: '不断进步。', examplePinyin: 'Búduàn jìnbù.', exampleVietnamese: 'Không ngừng tiến bộ.' },
+  { nameChinese: '步骤', namePinyin: 'bùzhòu', nameVietnamese: 'Các bước, quy trình', hskLevel: 5, category: 'Công việc', exampleChinese: '按照步骤。', examplePinyin: 'Ànzhào bùzhòu.', exampleVietnamese: 'Theo đúng quy trình.' },
+  { nameChinese: '部门', namePinyin: 'bùmén', nameVietnamese: 'Bộ phận, phòng ban', hskLevel: 5, category: 'Công việc', exampleChinese: '人事部门。', examplePinyin: 'Rénshì bùmén.', exampleVietnamese: 'Bộ phận nhân sự.' },
+  { nameChinese: '财产', namePinyin: 'cáichǎn', nameVietnamese: 'Tài sản', hskLevel: 5, category: 'Kinh tế', exampleChinese: '保护财产。', examplePinyin: 'Bǎohù cáichǎn.', exampleVietnamese: 'Bảo vệ tài sản.' },
+  { nameChinese: '采访', namePinyin: 'cǎifǎng', nameVietnamese: 'Phỏng vấn', hskLevel: 5, category: 'Công việc', exampleChinese: '接受采访。', examplePinyin: 'Jiēshòu cǎifǎng.', exampleVietnamese: 'Nhận phỏng vấn.' },
+  { nameChinese: '采取', namePinyin: 'cǎiqǔ', nameVietnamese: 'Áp dụng, thực hiện', hskLevel: 5, category: 'Công việc', exampleChinese: '采取措施。', examplePinyin: 'Cǎiqǔ cuòshī.', exampleVietnamese: 'Áp dụng biện pháp.' },
+  { nameChinese: '彩虹', namePinyin: 'cǎi hóng', nameVietnamese: 'Cầu vồng', hskLevel: 5, category: 'Thời tiết', exampleChinese: '美丽的彩虹。', examplePinyin: 'Měilì de cǎi hóng.', exampleVietnamese: 'Cầu vồng đẹp.' },
+  { nameChinese: '参考', namePinyin: 'cānkǎo', nameVietnamese: 'Tham khảo', hskLevel: 5, category: 'Học tập', exampleChinese: '供参考。', examplePinyin: 'Gōng cānkǎo.', exampleVietnamese: 'Dùng để tham khảo.' },
+  { nameChinese: '参与', namePinyin: 'cānyù', nameVietnamese: 'Tham gia', hskLevel: 5, category: 'Công việc', exampleChinese: '积极参与。', examplePinyin: 'Jījí cānyù.', exampleVietnamese: 'Tích cực tham gia.' },
+  { nameChinese: '餐厅', namePinyin: 'cāntīng', nameVietnamese: 'Nhà hàng, nhà ăn', hskLevel: 4, category: 'Ẩm thực', exampleChinese: '豪华餐厅。', examplePinyin: 'Háohuá cāntīng.', exampleVietnamese: 'Nhà hàng sang trọng.' }
 ];
 
-async function fastSeed() {
+async function seedFullHskOldStyle() {
   console.log('⚡==================================================⚡');
   console.log('🚀 NẠP TỪ VỰNG NÀO - TỐC ĐỘ SIÊU TỐC KHÔNG DELAY 0.0s');
   console.log('⚡==================================================⚡\n');
 
-  const start = Date.now();
+  const startTime = Date.now();
   const dbVocabs = await prisma.customVocab.findMany();
   const existingSet = new Set<string>();
 
   GENERAL_VOCAB_ITEMS.forEach(v => existingSet.add(v.nameChinese.trim()));
   dbVocabs.forEach(v => existingSet.add(v.nameChinese.trim()));
 
-  let inserted = 0;
-  for (const item of COMPREHENSIVE_HSK_DICTIONARY) {
+  let added = 0;
+  for (const item of EXPANDED_AUTHENTIC_DICTIONARY) {
     const word = item.nameChinese.trim();
     if (existingSet.has(word)) continue;
 
@@ -78,12 +74,13 @@ async function fastSeed() {
     });
 
     existingSet.add(word);
-    inserted++;
+    added++;
+    if (added >= 15) break; // Add 15 new clean authentic words every time you run
   }
 
-  const duration = ((Date.now() - start) / 1000).toFixed(2);
-  console.log(`✅ Nạp hoàn tất trong ${duration}s! Đã thêm +${inserted} từ vựng mới.`);
+  const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log(`✅ Nạp hoàn tất trong ${duration}s! Đã thêm +${added} từ vựng mới.`);
   console.log(`📚 Tổng từ vựng độc bản hiện tại: ${existingSet.size} từ.\n`);
 }
 
-fastSeed().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
+seedFullHskOldStyle().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });

@@ -131,7 +131,7 @@ export default function BlueprintQuiz({
   onClose,
 }: BlueprintQuizProps) {
   const [quizMode, setQuizMode] = useState<'furniture' | 'general' | 'custom'>('furniture');
-  const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all'>('all');
+  const [selectedHskFilter, setSelectedHskFilter] = useState<number | 'all' | 'hsk123' | 'hsk456' | 'hsk789'>('all');
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -228,10 +228,18 @@ export default function BlueprintQuiz({
       return true;
     });
     
+    const matchesHskFilter = (hsk: number) => {
+      if (selectedHskFilter === 'all') return true;
+      if (selectedHskFilter === 'hsk123') return hsk >= 1 && hsk <= 3;
+      if (selectedHskFilter === 'hsk456') return hsk >= 4 && hsk <= 6;
+      if (selectedHskFilter === 'hsk789') return hsk >= 7 && hsk <= 9;
+      return hsk === selectedHskFilter;
+    };
+
     if (quizMode === 'furniture') {
       const filteredPool = FURNITURE_ITEMS.filter((item) => {
         const hsk = getHskLevel(item.id);
-        return selectedHskFilter === 'all' || hsk === selectedHskFilter;
+        return matchesHskFilter(hsk);
       });
 
       if (filteredPool.length === 0) return;
@@ -239,7 +247,7 @@ export default function BlueprintQuiz({
       hskLevel = getHskLevel(randomItem.id);
     } else {
       const filteredPool = dynamicGeneralVocabPool.filter((item) => {
-        return selectedHskFilter === 'all' || item.hskLevel === selectedHskFilter;
+        return matchesHskFilter(item.hskLevel);
       });
 
       if (filteredPool.length === 0) return;
@@ -594,26 +602,53 @@ export default function BlueprintQuiz({
         </div>
       </h2>
 
-      {/* BỘ LỌC CẤP ĐỘ HSK 1 - 6 */}
+      {/* BỘ LỌC CẤP ĐỘ HSK 1 - 9 */}
       {quizMode !== 'custom' && (
-        <div className="flex gap-1.5 mb-6 flex-wrap">
-          <span className="text-xs font-black text-gray-500 uppercase self-center mr-2">Cấp độ HSK:</span>
-          {['all', 1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
-            <button
-              key={level}
-              onClick={() => {
-                setSelectedHskFilter(level === 'all' ? 'all' : Number(level));
-                playSfx('click');
-              }}
-              className={`px-3 py-1 border-2 border-[#1f2937] font-black text-xs rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
-                selectedHskFilter === (level === 'all' ? 'all' : Number(level))
-                  ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
-                  : 'bg-white text-[#1f2937]'
-              }`}
-            >
-              {level === 'all' ? 'Tất cả' : `HSK ${level}`}
-            </button>
-          ))}
+        <div className="space-y-2 mb-6">
+          <div className="flex gap-1.5 flex-wrap items-center">
+            <span className="text-xs font-black text-gray-500 uppercase mr-1">Nhóm:</span>
+            {[
+              { id: 'all', label: 'Tất cả' },
+              { id: 'hsk123', label: 'HSK 1-2-3' },
+              { id: 'hsk456', label: 'HSK 4-5-6' },
+              { id: 'hsk789', label: 'HSK 7-8-9' },
+            ].map((grp) => (
+              <button
+                key={grp.id}
+                onClick={() => {
+                  setSelectedHskFilter(grp.id as any);
+                  playSfx('click');
+                }}
+                className={`px-2.5 py-1 border-2 border-[#1f2937] font-black text-xs rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
+                  selectedHskFilter === grp.id
+                    ? 'bg-emerald-500 text-white shadow-none translate-y-0.5'
+                    : 'bg-white text-[#1f2937]'
+                }`}
+              >
+                {grp.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-1.5 flex-wrap items-center">
+            <span className="text-xs font-black text-gray-500 uppercase mr-1">Cấp:</span>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
+              <button
+                key={level}
+                onClick={() => {
+                  setSelectedHskFilter(level);
+                  playSfx('click');
+                }}
+                className={`px-2 py-1 border-2 border-[#1f2937] font-black text-xs rounded-lg shadow-[1px_1px_0px_#1f2937] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer ${
+                  selectedHskFilter === level
+                    ? 'bg-pink-500 text-white shadow-none translate-y-0.5'
+                    : 'bg-white text-[#1f2937]'
+                }`}
+              >
+                H{level}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

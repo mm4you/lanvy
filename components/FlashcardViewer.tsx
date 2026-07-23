@@ -57,7 +57,7 @@ export default function FlashcardViewer({
   const [deckSize, setDeckSize] = useState<number | 'all'>(5);
   const [isCustomSize, setIsCustomSize] = useState(false);
   const [customInputVal, setCustomInputVal] = useState('15');
-  const [selectedHsk, setSelectedHsk] = useState<number | 'all'>('all');
+  const [selectedHsk, setSelectedHsk] = useState<number | 'all' | 'hsk123' | 'hsk456' | 'hsk789'>('all');
   const [filterMode, setFilterMode] = useState<'all' | 'bookmarked'>('all');
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -107,7 +107,12 @@ export default function FlashcardViewer({
 
   const activeDeck = useMemo(() => {
     const pool = allVocabs.filter((item) => {
-      const matchesHsk = selectedHsk === 'all' || item.hskLevel === selectedHsk;
+      let matchesHsk = true;
+      if (selectedHsk === 'hsk123') matchesHsk = item.hskLevel >= 1 && item.hskLevel <= 3;
+      else if (selectedHsk === 'hsk456') matchesHsk = item.hskLevel >= 4 && item.hskLevel <= 6;
+      else if (selectedHsk === 'hsk789') matchesHsk = item.hskLevel >= 7 && item.hskLevel <= 9;
+      else if (typeof selectedHsk === 'number') matchesHsk = item.hskLevel === selectedHsk;
+
       const matchesBookmark = filterMode === 'all' || bookmarkedIds.includes(item.id);
       return matchesHsk && matchesBookmark;
     });
@@ -306,16 +311,47 @@ export default function FlashcardViewer({
             )}
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">HSK:</span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">Nhóm:</span>
               <div className="flex gap-1 flex-wrap">
-                {['all', 1, 2, 3, 4, 5, 6, 7, 8, 9].map((lvl) => (
+                {[
+                  { id: 'all', label: 'Tất cả' },
+                  { id: 'hsk123', label: 'HSK 1-2-3' },
+                  { id: 'hsk456', label: 'HSK 4-5-6' },
+                  { id: 'hsk789', label: 'HSK 7-8-9' },
+                ].map((grp) => (
+                  <button
+                    key={grp.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedHsk(grp.id as any);
+                      setCurrentIndex(0);
+                      setIsFlipped(false);
+                      setIsSessionCompleted(false);
+                      playSfx('click');
+                    }}
+                    className={`px-2 py-0.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
+                      selectedHsk === grp.id
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+                    }`}
+                  >
+                    {grp.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">Cấp:</span>
+              <div className="flex gap-1 flex-wrap">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((lvl) => (
                   <button
                     key={lvl}
                     type="button"
                     onClick={() => {
-                      setSelectedHsk(lvl === 'all' ? 'all' : Number(lvl));
+                      setSelectedHsk(lvl);
                       setCurrentIndex(0);
                       setIsFlipped(false);
                       setIsSessionCompleted(false);
@@ -327,23 +363,23 @@ export default function FlashcardViewer({
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
                     }`}
                   >
-                    {lvl === 'all' ? 'Tất cả' : `H${lvl}`}
+                    H{lvl}
                   </button>
                 ))}
               </div>
             </div>
-
-            {onClose && (
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-8 h-8 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center justify-center font-black text-xs cursor-pointer transition active:scale-95 shrink-0 ml-1"
-                title="Thoát chế độ Flashcards"
-              >
-                {renderXIcon('w-4 h-4 text-white')}
-              </button>
-            )}
           </div>
+
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-8 h-8 bg-rose-500 hover:bg-rose-600 text-white border-2 border-[#1f2937] rounded-xl shadow-[2px_2px_0px_#1f2937] flex items-center justify-center font-black text-xs cursor-pointer transition active:scale-95 shrink-0 ml-1"
+              title="Thoát chế độ Flashcards"
+            >
+              {renderXIcon('w-4 h-4 text-white')}
+            </button>
+          )}
         </div>
 
         <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs gap-2 flex-wrap">

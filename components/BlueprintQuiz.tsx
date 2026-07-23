@@ -219,7 +219,14 @@ export default function BlueprintQuiz({
   const generateQuestion = () => {
     let randomItem: FurnitureItem | GeneralVocabItem;
     let hskLevel = 1;
-    const dynamicGeneralVocabPool = [...GENERAL_VOCAB_ITEMS, ...(customVocabs || [])];
+    const rawPool = [...GENERAL_VOCAB_ITEMS, ...(customVocabs || [])];
+    const seenNames = new Set<string>();
+    const dynamicGeneralVocabPool = rawPool.filter(item => {
+      const name = item.nameChinese ? item.nameChinese.trim() : '';
+      if (!name || seenNames.has(name)) return false;
+      seenNames.add(name);
+      return true;
+    });
     
     if (quizMode === 'furniture') {
       const filteredPool = FURNITURE_ITEMS.filter((item) => {

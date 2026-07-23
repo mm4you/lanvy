@@ -76,21 +76,34 @@ export default function FlashcardViewer({
     setUserNotebooks(getNotebooks());
   }, []);
 
-  // Aggregate pool of vocabularies
-  const allVocabs: GeneralVocabItem[] = useMemo(() => [
-    ...GENERAL_VOCAB_ITEMS,
-    ...(customVocabs || []).map((v) => ({
-      id: v.id || `custom_${v.nameChinese}`,
-      nameChinese: v.nameChinese,
-      namePinyin: v.namePinyin,
-      nameVietnamese: v.nameVietnamese,
-      hskLevel: v.hskLevel || 1,
-      theme: v.category || 'Tự chọn',
-      exampleChinese: v.exampleChinese,
-      examplePinyin: v.examplePinyin,
-      exampleVietnamese: v.exampleVietnamese,
-    })),
-  ], [customVocabs]);
+  // Aggregate pool of vocabularies (Deduplicated by nameChinese)
+  const allVocabs: GeneralVocabItem[] = useMemo(() => {
+    const rawList: GeneralVocabItem[] = [
+      ...GENERAL_VOCAB_ITEMS,
+      ...(customVocabs || []).map((v) => ({
+        id: v.id || `custom_${v.nameChinese}`,
+        nameChinese: v.nameChinese,
+        namePinyin: v.namePinyin,
+        nameVietnamese: v.nameVietnamese,
+        hskLevel: v.hskLevel || 1,
+        theme: v.category || 'Tự chọn',
+        exampleChinese: v.exampleChinese,
+        examplePinyin: v.examplePinyin,
+        exampleVietnamese: v.exampleVietnamese,
+      })),
+    ];
+
+    const seen = new Set<string>();
+    const deduplicated: GeneralVocabItem[] = [];
+    for (const item of rawList) {
+      const key = item.nameChinese ? item.nameChinese.trim() : '';
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        deduplicated.push(item);
+      }
+    }
+    return deduplicated;
+  }, [customVocabs]);
 
   const activeDeck = useMemo(() => {
     const pool = allVocabs.filter((item) => {

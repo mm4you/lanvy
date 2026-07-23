@@ -2518,7 +2518,14 @@ export default function Home() {
                 )}
 
                 {librarySubTab === 'vocab' && (() => {
-                  const allVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
+                  const rawVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
+                  const seenVocabs = new Set<string>();
+                  const allVocabs = rawVocabs.filter(item => {
+                    const name = item.nameChinese ? item.nameChinese.trim() : '';
+                    if (!name || seenVocabs.has(name)) return false;
+                    seenVocabs.add(name);
+                    return true;
+                  });
                   const searchLower = librarySearchQuery.trim().toLowerCase();
 
                   const searchFiltered = allVocabs.filter(item => {
@@ -2792,7 +2799,14 @@ export default function Home() {
                 )}
 
                 {librarySubTab === 'bookmarked' && (() => {
-                  const allVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
+                  const rawVocabs = [...GENERAL_VOCAB_ITEMS, ...customVocabs];
+                  const seenVocabs = new Set<string>();
+                  const allVocabs = rawVocabs.filter(item => {
+                    const name = item.nameChinese ? item.nameChinese.trim() : '';
+                    if (!name || seenVocabs.has(name)) return false;
+                    seenVocabs.add(name);
+                    return true;
+                  });
                   const bookmarkedList = allVocabs.filter((v) => bookmarkedIds.includes(v.id));
 
                   if (bookmarkedList.length === 0) {

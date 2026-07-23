@@ -14,14 +14,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Danh sách từ vựng không hợp lệ.' }, { status: 400 });
     }
 
-    // Save all to database
+    // Save all to database (skip duplicates)
     const savedItems = [];
     for (const item of vocabList) {
       if (!item.nameChinese || !item.namePinyin || !item.nameVietnamese) continue;
+      const trimmedName = item.nameChinese.trim();
+
+      const existing = await prisma.customVocab.findFirst({
+        where: { nameChinese: trimmedName }
+      });
+      if (existing) continue;
       
       const saved = await prisma.customVocab.create({
         data: {
-          nameChinese: item.nameChinese.trim(),
+          nameChinese: trimmedName,
           namePinyin: item.namePinyin.trim(),
           nameVietnamese: item.nameVietnamese.trim(),
           hskLevel: Number(item.hskLevel) || 1,

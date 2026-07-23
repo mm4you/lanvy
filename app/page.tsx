@@ -3441,11 +3441,11 @@ export default function Home() {
         </div>
       )}
 
-      {/* THANH ĐIỀU HƯỚNG MOBILE 42PX VỚI ICON HẠ THẤP KHÔNG CHẠM VIỀN TRÊN */}
+      {/* THANH ĐIỀU HƯỚNG MOBILE 34PX HẠ THẤP SÁT ĐÁY */}
       {user && (
         <div 
           style={{
-            height: 'calc(42px + env(safe-area-inset-bottom, 0px))',
+            height: 'calc(34px + env(safe-area-inset-bottom, 0px))',
             paddingBottom: 'env(safe-area-inset-bottom, 0px)',
           }}
           className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_8px_rgba(0,0,0,0.05)] flex items-center justify-around h-safe-nav pb-safe ${

@@ -49,7 +49,7 @@
 }
 
 @utility h-safe-nav {
-  height: calc(36px + env(safe-area-inset-bottom, 0px));
+  height: calc(42px + env(safe-area-inset-bottom, 0px));
 }
 
 body {

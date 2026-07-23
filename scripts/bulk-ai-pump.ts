@@ -103,8 +103,9 @@ async function runBulkPump() {
         console.warn(`   ⏳ Tạm hoãn 2 giây do giới hạn AI API: ${err.message || err}`);
       }
 
-      // 2.5s delay between requests to stay strictly below rate limits
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+      // Delay between requests: 100ms if OpenAI API key is present, 2500ms for free tier
+      const delayMs = process.env.OPENAI_API_KEY ? 100 : 2500;
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
   }
 

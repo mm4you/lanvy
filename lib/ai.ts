@@ -11,6 +11,7 @@ export async function getAIChatCompletion({
   temperature?: number;
   maxTokens?: number;
 }) {
+  const openaiKey = process.env.OPENAI_API_KEY;
   const groqKey = process.env.GROQ_API_KEY;
   const nvidiaKey = process.env.NVIDIA_NIM_API_KEY;
 
@@ -20,7 +21,35 @@ export async function getAIChatCompletion({
     { role: 'user', content: userPrompt }
   ];
 
-  // 1. Try Groq first with a fast 4.5s timeout
+  // 0. High Speed OpenAI API (GPT-4o-mini / GPT-4o) when key is present
+  if (openaiKey) {
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openaiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: fullMessages,
+          temperature,
+          max_tokens: maxTokens
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+        if (content) return content;
+      } else {
+        const errorText = await response.text();
+        console.warn(`OpenAI request failed: ${response.status} - ${errorText}`);
+      }
+    } catch (e: any) {
+      console.error('OpenAI API error:', e?.message || e);
+    }
+  }
   if (groqKey) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4500);

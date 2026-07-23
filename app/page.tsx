@@ -531,7 +531,7 @@ export default function Home() {
   const [customVocabs, setCustomVocabs] = useState<any[]>([]);
   const [vocabTheme, setVocabTheme] = useState('Mua sắm & Shopping');
   const [vocabCustomTheme, setVocabCustomTheme] = useState('');
-  const [vocabHskGroup, setVocabHskGroup] = useState<'hsk123' | 'hsk456' | 'all'>('hsk123');
+  const [vocabHskGroup, setVocabHskGroup] = useState<'hsk123' | 'hsk456' | 'hsk789' | 'hsk1' | 'hsk2' | 'hsk3' | 'hsk4' | 'hsk5' | 'hsk6' | 'hsk7' | 'hsk8' | 'hsk9' | 'all'>('hsk123');
   const [librarySearchQuery, setLibrarySearchQuery] = useState('');
   const [libraryPage, setLibraryPage] = useState(1);
   const [generatedVocab, setGeneratedVocab] = useState<any[]>([]);
@@ -663,7 +663,7 @@ export default function Home() {
           }
         }
         if (combined.length > 0) {
-          const groupLabel = vocabHskGroup === 'all' ? 'Toàn Bộ HSK 1-6' : vocabHskGroup === 'hsk456' ? 'HSK 4-5-6 Nâng Cao' : 'HSK 1-2-3 Cơ Bản';
+          const groupLabel = vocabHskGroup === 'all' ? 'Toàn Bộ HSK 1-9' : vocabHskGroup === 'hsk789' ? 'HSK 7-8-9 Cao Cấp' : vocabHskGroup === 'hsk456' ? 'HSK 4-5-6 Trung Cấp' : vocabHskGroup === 'hsk123' ? 'HSK 1-2-3 Cơ Bản' : `HSK ${vocabHskGroup.replace('hsk', '')}`;
           setGeneratedVocab(combined.map((item: any) => ({ ...item, selected: true })));
           setVocabBotMsg({ type: 'success', text: `Đã tự động bơm thành công ${combined.length} từ vựng thuộc nhóm ${groupLabel} phủ kín tất cả chủ đề!` });
         } else {
@@ -3062,7 +3062,11 @@ export default function Home() {
                             <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1 ${
                               isDarkMode ? 'text-slate-400' : 'text-slate-500'
                             }`}>Chọn nhóm cấp độ HSK bơm từ:</label>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+                            {/* 3 NHÓM LỚN */}
+                            <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1 ${
+                              isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                            }`}>3 Nhóm Cấp Độ Lớn:</label>
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-3">
                               <button
                                 type="button"
                                 onClick={() => setVocabHskGroup('hsk123')}
@@ -3083,7 +3087,18 @@ export default function Home() {
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                                 }`}
                               >
-                                <span>HSK 4 - 5 - 6 (Nâng Cao)</span>
+                                <span>HSK 4 - 5 - 6 (Trung Cấp)</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setVocabHskGroup('hsk789')}
+                                className={`py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                                  vocabHskGroup === 'hsk789'
+                                    ? 'bg-amber-600 text-white border-amber-700 shadow-sm'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                }`}
+                              >
+                                <span>HSK 7 - 8 - 9 (Cao Cấp)</span>
                               </button>
                               <button
                                 type="button"
@@ -3094,8 +3109,29 @@ export default function Home() {
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                                 }`}
                               >
-                                <span>Nạp Tất Cả HSK 1 - 6</span>
+                                <span>Nạp Tất Cả HSK 1 - 9</span>
                               </button>
+                            </div>
+
+                            {/* 9 CẤP ĐỘ RIÊNG LẺ */}
+                            <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1 ${
+                              isDarkMode ? 'text-slate-400' : 'text-slate-500'
+                            }`}>9 Cấp Độ Riêng Lẻ (HSK 1 → HSK 9):</label>
+                            <div className="grid grid-cols-3 sm:grid-cols-9 gap-1.5 mb-3">
+                              {(['hsk1', 'hsk2', 'hsk3', 'hsk4', 'hsk5', 'hsk6', 'hsk7', 'hsk8', 'hsk9'] as const).map((hskKey, idx) => (
+                                <button
+                                  key={hskKey}
+                                  type="button"
+                                  onClick={() => setVocabHskGroup(hskKey)}
+                                  className={`py-1.5 px-2 rounded-lg border text-[11px] font-mono font-bold transition cursor-pointer text-center ${
+                                    vocabHskGroup === hskKey
+                                      ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                  }`}
+                                >
+                                  HSK {idx + 1}
+                                </button>
+                              ))}
                             </div>
                           </div>
 

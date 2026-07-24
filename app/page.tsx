@@ -655,8 +655,9 @@ export default function Home() {
               body: JSON.stringify({ query: th, category: th, hskGroup: vocabHskGroup })
             });
             const data = await res.json();
-            if (data.success && Array.isArray(data.vocabList)) {
-              combined = [...combined, ...data.vocabList];
+            const list = data.items || data.vocabList || [];
+            if (data.success && Array.isArray(list)) {
+              combined = [...combined, ...list];
             }
           } catch (e) {
             console.error(`Error generating theme ${th}:`, e);
@@ -665,7 +666,7 @@ export default function Home() {
         if (combined.length > 0) {
           const groupLabel = vocabHskGroup === 'all' ? 'Toàn Bộ HSK 1-9' : vocabHskGroup === 'hsk789' ? 'HSK 7-8-9 Cao Cấp' : vocabHskGroup === 'hsk456' ? 'HSK 4-5-6 Trung Cấp' : vocabHskGroup === 'hsk123' ? 'HSK 1-2-3 Cơ Bản' : `HSK ${vocabHskGroup.replace('hsk', '')}`;
           setGeneratedVocab(combined.map((item: any) => ({ ...item, selected: true })));
-          setVocabBotMsg({ type: 'success', text: `Đã tự động bơm thành công ${combined.length} từ vựng thuộc nhóm ${groupLabel} phủ kín tất cả chủ đề!` });
+          setVocabBotMsg({ type: 'success', text: `Đã tự động tạo thành công ${combined.length} từ vựng thuộc nhóm ${groupLabel}! Hãy nhấn 'Lưu Tất Cả' bên dưới để nạp.` });
         } else {
           setVocabBotMsg({ type: 'error', text: 'Lỗi khi tạo từ vựng tổng hợp.' });
         }
@@ -682,10 +683,12 @@ export default function Home() {
           body: JSON.stringify({ query: finalTheme, category: finalTheme, hskGroup: vocabHskGroup })
         });
         const data = await res.json();
-        if (data.success) {
-          setGeneratedVocab(data.vocabList.map((item: any) => ({ ...item, selected: true })));
+        const list = data.items || data.vocabList || [];
+        if (data.success && Array.isArray(list)) {
+          setGeneratedVocab(list.map((item: any) => ({ ...item, selected: true })));
+          setVocabBotMsg({ type: 'success', text: `Đã tạo thành công ${list.length} từ vựng mới! Hãy nhấn 'Lưu Tất Cả' để lưu.` });
         } else {
-          setVocabBotMsg({ type: 'error', text: data.error || 'Lỗi khi tạo từ vựng.' });
+          setVocabBotMsg({ type: 'error', text: data.message || data.error || 'Lỗi khi tạo từ vựng.' });
         }
       }
     } catch (e) {

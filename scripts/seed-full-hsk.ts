@@ -19,6 +19,7 @@ const HSK_THEMES = [
 ];
 
 async function seedEndlessMax() {
+  process.env.IS_TERMINAL_BOT = 'true';
   console.log('⚡==================================================⚡');
   console.log('🚀 BOT TERMINAL CRAWL TỪ VỰNG HSK 1-9 KHÔNG GIỚI HẠN');
   console.log('⚡==================================================⚡\n');

@@ -631,8 +631,11 @@ export default function Home() {
       if (vocabTheme === 'all_themes') {
         const ALL_THEMES = [
           'Đời sống & Hàng ngày',
-          'Công việc & Học tập',
-          'Cảm xúc & Xã hội'
+          'Ẩm thực & Đi ăn tiệm',
+          'Mua sắm & Shopping',
+          'Thời tiết & Thời gian',
+          'Gia đình & Nhà cửa',
+          'Học tập & Trường học'
         ];
 
         let combined: any[] = [];
@@ -648,6 +651,8 @@ export default function Home() {
             if (data.success && Array.isArray(list)) {
               combined = [...combined, ...list];
             }
+            // Delay 600ms giữa các request để Groq/Nvidia nạp token mượt mà không dính 429
+            await new Promise(r => setTimeout(r, 600));
           } catch (e) {
             console.error(`Error generating theme ${th}:`, e);
           }

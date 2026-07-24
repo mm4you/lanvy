@@ -52,7 +52,7 @@ Trả về duy nhất dạng JSON MẢNG (Array of objects), KHÔNG kèm markdow
     const aiResponse = await getAIChatCompletion({
       systemPrompt,
       userPrompt,
-      maxTokens: 2500,
+      maxTokens: 1600,
       temperature: 0.7
     });
 

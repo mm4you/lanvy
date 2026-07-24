@@ -87,38 +87,45 @@ export async function getAIChatCompletion({
     }
   }
 
-  // 2. Fallback to NVIDIA NIM with a 12s timeout
+  // 2. Fallback to NVIDIA NIM with auto-retry on timeout
   if (nvidiaKey) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
-    try {
-      const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${nvidiaKey}`
-        },
-        body: JSON.stringify({
-          model: 'meta/llama-3.1-8b-instruct',
-          messages: fullMessages,
-          temperature,
-          max_tokens: maxTokens
-        }),
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+      try {
+        const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${nvidiaKey}`
+          },
+          body: JSON.stringify({
+            model: 'meta/llama-3.1-8b-instruct',
+            messages: fullMessages,
+            temperature,
+            max_tokens: maxTokens
+          }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
 
-      if (response.ok) {
-        const data = await response.json();
-        const content = data.choices?.[0]?.message?.content;
-        if (content) return content;
-      } else {
-        const errorText = await response.text();
-        console.warn(`Nvidia NIM error (${response.status}): ${errorText}`);
+        if (response.ok) {
+          const data = await response.json();
+          const content = data.choices?.[0]?.message?.content;
+          if (content) return content;
+        } else {
+          const errorText = await response.text();
+          console.warn(`Nvidia NIM request failed (${response.status}): ${errorText}`);
+        }
+      } catch (e: any) {
+        clearTimeout(timeoutId);
+        if (attempt === 1) {
+          console.warn(`Nvidia NIM timeout/network error, retrying attempt 2/2...`);
+          await new Promise((r) => setTimeout(r, 2000));
+        } else {
+          console.error('Nvidia NIM final error:', e?.message || e);
+        }
       }
-    } catch (e: any) {
-      clearTimeout(timeoutId);
-      console.error('Nvidia NIM error:', e?.message || e);
     }
   }
 

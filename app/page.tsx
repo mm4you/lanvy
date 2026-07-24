@@ -1958,16 +1958,7 @@ export default function Home() {
                 )}
               </div>
 
-              {/* NÚT SỔ TAY CÁ NHÂN (NOTEBOOKS) ĐƯA RA NGOÀI ĐỘC LẬP */}
-              <button
-                type="button"
-                onClick={() => { setShowNotebookModal(true); playSfx('click'); }}
-                className="px-4 py-2 font-mono font-bold text-xs rounded-xl cursor-pointer transition-all flex items-center gap-2 shrink-0 border bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-200 dark:hover:bg-emerald-900/80 shadow-xs active:scale-95"
-                title="Mở Sổ Tay Từ Vựng HSK Cá Nhân"
-              >
-                {renderBookIcon('w-4 h-4 text-emerald-600 dark:text-emerald-400')}
-                <span>Sổ Tay Cá Nhân</span>
-              </button>
+
 
               {/* NHÓM 3: CÁ NHÂN & QUÀ TẶNG */}
               <div className="relative">

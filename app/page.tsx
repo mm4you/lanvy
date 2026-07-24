@@ -1876,6 +1876,17 @@ export default function Home() {
                         <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Tra cứu ngữ pháp & từ vựng HSK 1-6</p>
                       </div>
                     </button>
+
+                    <button
+                      onClick={() => { setShowNotebookModal(true); setOpenNavGroup(null); playSfx('click'); }}
+                      className="w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2.5 transition cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
+                    >
+                      {renderBookIcon('w-4 h-4 text-rose-500')}
+                      <div>
+                        <p className="font-bold">Sổ Tay Cá Nhân</p>
+                        <p className={`text-[10px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Quản lý danh sách sổ tay & từ vựng lưu riêng</p>
+                      </div>
+                    </button>
                   </div>
                 )}
               </div>
@@ -3399,7 +3410,7 @@ export default function Home() {
               {/* THƯ VIỆN TỪ ĐIỂN */}
               <button
                 onClick={() => { setActiveTab('library'); setIsMobileStudyOpen(false); playSfx('click'); if (navigator.vibrate) navigator.vibrate(15); }}
-                className={`p-4 border-2 border-[var(--line)] rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all active:scale-95 col-span-2 ${
+                className={`p-4 border-2 border-[var(--line)] rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all active:scale-95 ${
                   activeTab === 'library'
                     ? 'bg-purple-100 dark:bg-purple-950/50 shadow-[3px_3px_0_var(--line)]'
                     : isDarkMode ? 'bg-slate-800 hover:bg-slate-700 shadow-[3px_3px_0_var(--line)]' : 'bg-white hover:bg-rose-50 shadow-[3px_3px_0_var(--line)]'
@@ -3407,6 +3418,17 @@ export default function Home() {
               >
                 {renderBookIcon('w-6 h-6 text-purple-500')}
                 <span className="text-[10px] font-black">Thư Viện HSK</span>
+              </button>
+
+              {/* SỔ TAY CÁ NHÂN */}
+              <button
+                onClick={() => { setShowNotebookModal(true); setIsMobileStudyOpen(false); playSfx('click'); if (navigator.vibrate) navigator.vibrate(15); }}
+                className={`p-4 border-2 border-[var(--line)] rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all active:scale-95 ${
+                  isDarkMode ? 'bg-slate-800 hover:bg-slate-700 shadow-[3px_3px_0_var(--line)]' : 'bg-white hover:bg-rose-50 shadow-[3px_3px_0_var(--line)]'
+                }`}
+              >
+                {renderBookIcon('w-6 h-6 text-rose-500')}
+                <span className="text-[10px] font-black">Sổ Tay Cá Nhân</span>
               </button>
             </div>
           </div>

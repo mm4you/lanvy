@@ -2447,13 +2447,6 @@ export default function Home() {
                     {renderStarIcon(true, 'w-4 h-4 text-amber-400')}
                     Sổ Từ Khó Ôn Tập ({bookmarkedIds.length})
                   </button>
-                  <button
-                    onClick={() => { setShowNotebookModal(true); playSfx('click'); }}
-                    className="px-4 py-2 border font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 flex items-center gap-1.5 hover:bg-rose-100"
-                  >
-                    {renderBookIcon('w-4 h-4 text-rose-500')}
-                    Sổ Tay Cá Nhân (Notebooks)
-                  </button>
                 </div>
 
                 {librarySubTab === 'furniture' && (

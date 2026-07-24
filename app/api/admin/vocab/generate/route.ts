@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const groupText = getHskPromptText(hskGroup);
 
     const systemPrompt = `Bạn là chuyên gia biên soạn giáo trình tiếng Trung HSK 1-9.
-Nhiệm vụ: Tạo 20 từ vựng tiếng Trung thuộc cấp độ ${groupText} cho chủ đề "${category}".
+Nhiệm vụ: Tạo 10 từ vựng tiếng Trung thuộc cấp độ ${groupText} cho chủ đề "${category}".
 Yêu cầu: Chỉ trả về chữ Hán thực tế (VD: 苹果, 学习, 精彩). Tuyệt đối không dính số hay mã rác.
 Trả về duy nhất dạng JSON MẢNG (Array of objects), KHÔNG kèm markdown:
 [
@@ -47,12 +47,12 @@ Trả về duy nhất dạng JSON MẢNG (Array of objects), KHÔNG kèm markdow
   }
 ]`;
 
-    const userPrompt = `Hãy tạo 20 từ vựng HSK thuộc nhóm ${groupText} chủ đề: ${query}`;
+    const userPrompt = `Hãy tạo 10 từ vựng HSK thuộc nhóm ${groupText} chủ đề: ${query}`;
 
     const aiResponse = await getAIChatCompletion({
       systemPrompt,
       userPrompt,
-      maxTokens: 2500,
+      maxTokens: 1200,
       temperature: 0.7
     });
 

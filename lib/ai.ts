@@ -53,7 +53,7 @@ export async function getAIChatCompletion({
   }
   if (groqKey) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4500);
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
     try {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -85,10 +85,10 @@ export async function getAIChatCompletion({
     }
   }
 
-  // 2. Fallback to NVIDIA NIM with a fast 4.5s timeout
+  // 2. Fallback to NVIDIA NIM with a 12s timeout
   if (nvidiaKey) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4500);
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
     try {
       const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
         method: 'POST',

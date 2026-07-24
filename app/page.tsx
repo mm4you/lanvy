@@ -2208,7 +2208,7 @@ export default function Home() {
                         <h5 className={`text-xs font-black uppercase tracking-wider ${
                           isDarkMode ? 'text-slate-300' : 'text-slate-900'
                         }`}>
-                          Phòng phác thảo ảo (Vy hãy chọn đồ vật ở dưới để thêm vào phòng):
+                          Phòng phác thảo ảo (Hãy chọn đồ vật ở dưới để thêm vào phòng):
                         </h5>
                         <div className="h-32 bg-pink-900/5 border-2 border-[#1f2937] rounded-xl flex items-center justify-center gap-4 relative overflow-hidden p-3">
                           {/* Lưới ô vuông mờ phong cách blueprint */}
@@ -2223,7 +2223,7 @@ export default function Home() {
                           ) : contractSelectedItems.length === 0 ? (
                             <span className={`text-[11px] font-extrabold italic z-10 ${
                               isDarkMode ? 'text-slate-300' : 'text-slate-900'
-                            }`}>Vy hãy nhấp chọn các đồ nội thất ở danh mục bên dưới!</span>
+                            }`}>Nhấp chọn các đồ nội thất ở danh mục bên dưới!</span>
                           ) : (
                             <div className="flex gap-3 overflow-x-auto max-w-full z-10 py-1 px-2">
                               {contractSelectedItems.map((itemId) => {
@@ -2244,7 +2244,7 @@ export default function Home() {
                       <div className="space-y-2 text-left">
                         <h5 className={`text-xs font-black uppercase tracking-wider ${
                           isDarkMode ? 'text-slate-300' : 'text-slate-900'
-                        }`}>Danh mục đồ nội thất để Vy lựa chọn:</h5>
+                        }`}>Danh mục đồ nội thất để lựa chọn:</h5>
                         {completedContracts.includes(currentContract.id) ? (
                           <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-800">
                             Bạn đã hoàn thành xuất sắc thử thách này và rinh trọn vẹn phần thưởng!
@@ -2253,6 +2253,9 @@ export default function Home() {
                           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[220px] overflow-y-auto pr-1">
                             {FURNITURE_ITEMS.map((item) => {
                               const isSelected = contractSelectedItems.includes(item.id);
+                              const isUnlocked = unlockedItems.includes(item.id);
+                              const isRare = (userInventory?.blueprint_rare && userInventory.blueprint_rare > 0) || !['single_bed', 'wood_table', 'wood_chair'].includes(item.id);
+
                               return (
                                 <button
                                   key={item.id}
@@ -2268,10 +2271,18 @@ export default function Home() {
                                   className={`p-2 border border-[#1f2937] rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-center relative ${
                                     isSelected
                                       ? 'bg-rose-100 border-rose-500 shadow-none translate-y-0.5'
-                                      : 'bg-white hover:bg-rose-50 shadow-[1.5px_1.5px_0px_#1f2937]'
+                                      : isUnlocked
+                                      ? 'bg-white hover:bg-rose-50 shadow-[1.5px_1.5px_0px_#1f2937]'
+                                      : 'bg-amber-50/60 dark:bg-amber-950/20 hover:bg-amber-100/80 shadow-[1.5px_1.5px_0px_#1f2937]'
                                   }`}
                                 >
-                                  <div className="w-8 h-8 flex items-center justify-center">
+                                  {isRare && (
+                                    <span className="absolute top-0.5 left-0.5 text-[7px] bg-amber-400 text-slate-950 border border-slate-900 px-1 py-0.2 rounded font-black uppercase tracking-tight z-10">
+                                      ★ Hiếm
+                                    </span>
+                                  )}
+
+                                  <div className="w-8 h-8 flex items-center justify-center mt-1">
                                     {renderFurnitureSVG(item.id, 0, 'w-6 h-6')}
                                   </div>
                                   <span className="text-[9px] font-black text-[#1f2937] leading-tight truncate w-full">{item.nameVietnamese}</span>

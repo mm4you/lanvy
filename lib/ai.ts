@@ -21,8 +21,9 @@ export async function getAIChatCompletion({
     { role: 'user', content: userPrompt }
   ];
 
-  // 0. High Speed OpenAI API (GPT-4o-mini / GPT-4o) when key is present
-  if (openaiKey) {
+  // 0. High Speed OpenAI API (GPT-4o-mini / GPT-4o) ONLY when running in terminal bot mode
+  const isTerminalBot = process.env.IS_TERMINAL_BOT === 'true';
+  if (openaiKey && isTerminalBot) {
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',

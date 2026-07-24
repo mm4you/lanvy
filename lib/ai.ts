@@ -21,6 +21,37 @@ export async function getAIChatCompletion({
     { role: 'user', content: userPrompt }
   ];
 
+  // 0. OpenAI API ONLY for Terminal Bot (IS_TERMINAL_BOT = 'true')
+  const isTerminalBot = process.env.IS_TERMINAL_BOT === 'true';
+  if (openaiKey && isTerminalBot) {
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openaiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: fullMessages,
+          temperature,
+          max_tokens: maxTokens
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+        if (content) return content;
+      } else {
+        const errorText = await response.text();
+        console.warn(`OpenAI request failed: ${response.status} - ${errorText}`);
+      }
+    } catch (e: any) {
+      console.error('OpenAI API error:', e?.message || e);
+    }
+  }
+
   // 1. Groq API
   if (groqKey) {
     const controller = new AbortController();

@@ -21,36 +21,7 @@ export async function getAIChatCompletion({
     { role: 'user', content: userPrompt }
   ];
 
-  // 0. High Speed OpenAI API (GPT-4o-mini / GPT-4o) ONLY when running in terminal bot mode
-  const isTerminalBot = process.env.IS_TERMINAL_BOT === 'true';
-  if (openaiKey && isTerminalBot) {
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${openaiKey}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: fullMessages,
-          temperature,
-          max_tokens: maxTokens
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const content = data.choices?.[0]?.message?.content;
-        if (content) return content;
-      } else {
-        const errorText = await response.text();
-        console.warn(`OpenAI request failed: ${response.status} - ${errorText}`);
-      }
-    } catch (e: any) {
-      console.error('OpenAI API error:', e?.message || e);
-    }
-  }
+  // 1. Groq API
   if (groqKey) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000);
@@ -62,7 +33,7 @@ export async function getAIChatCompletion({
           'Authorization': `Bearer ${groqKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
+          model: 'llama-3.3-70b-versatile',
           messages: fullMessages,
           temperature,
           max_tokens: maxTokens
@@ -77,11 +48,11 @@ export async function getAIChatCompletion({
         if (content) return content;
       } else {
         const errorText = await response.text();
-        console.warn(`Groq request failed: ${response.status} - ${errorText}`);
+        console.warn(`Groq request failed (${response.status}): ${errorText}`);
       }
     } catch (e: any) {
       clearTimeout(timeoutId);
-      console.error('Groq error, switching to Nvidia NIM fallback...', e?.message || e);
+      console.error('Groq error:', e?.message || e);
     }
   }
 
@@ -112,7 +83,7 @@ export async function getAIChatCompletion({
         if (content) return content;
       } else {
         const errorText = await response.text();
-        console.warn(`Nvidia NIM error: ${response.status} - ${errorText}`);
+        console.warn(`Nvidia NIM error (${response.status}): ${errorText}`);
       }
     } catch (e: any) {
       clearTimeout(timeoutId);

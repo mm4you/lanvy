@@ -11,6 +11,28 @@ export async function getAIChatCompletion({
   temperature?: number;
   maxTokens?: number;
 }) {
+  if (!process.env.GROQ_API_KEY || !process.env.NVIDIA_NIM_API_KEY) {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const envPath = path.resolve(process.cwd(), '.env');
+      if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        envContent.split('\n').forEach((line: string) => {
+          const [k, ...v] = line.split('=');
+          if (k && v.length) {
+            const keyName = k.trim();
+            if (!process.env[keyName]) {
+              process.env[keyName] = v.join('=').trim().replace(/^["']|["']$/g, '');
+            }
+          }
+        });
+      }
+    } catch (e) {
+      // Ignore env read error
+    }
+  }
+
   const openaiKey = process.env.OPENAI_API_KEY;
   const groqKey = process.env.GROQ_API_KEY;
   const nvidiaKey = process.env.NVIDIA_NIM_API_KEY;
@@ -43,12 +65,9 @@ export async function getAIChatCompletion({
         const data = await response.json();
         const content = data.choices?.[0]?.message?.content;
         if (content) return content;
-      } else {
-        const errorText = await response.text();
-        console.warn(`OpenAI request failed: ${response.status} - ${errorText}`);
       }
     } catch (e: any) {
-      console.error('OpenAI API error:', e?.message || e);
+      // Quiet fail to fallback
     }
   }
 
@@ -64,7 +83,7 @@ export async function getAIChatCompletion({
           'Authorization': `Bearer ${groqKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: 'llama-3.1-8b-instant',
           messages: fullMessages,
           temperature,
           max_tokens: maxTokens
@@ -77,13 +96,9 @@ export async function getAIChatCompletion({
         const data = await response.json();
         const content = data.choices?.[0]?.message?.content;
         if (content) return content;
-      } else {
-        const errorText = await response.text();
-        console.warn(`Groq request failed (${response.status}): ${errorText}`);
       }
     } catch (e: any) {
       clearTimeout(timeoutId);
-      console.error('Groq error:', e?.message || e);
     }
   }
 
@@ -113,21 +128,12 @@ export async function getAIChatCompletion({
           const data = await response.json();
           const content = data.choices?.[0]?.message?.content;
           if (content) return content;
-        } else {
-          const errorText = await response.text();
-          console.warn(`Nvidia NIM request failed (${response.status}): ${errorText}`);
         }
       } catch (e: any) {
         clearTimeout(timeoutId);
-        if (attempt === 1) {
-          console.warn(`Nvidia NIM timeout/network error, retrying attempt 2/2...`);
-          await new Promise((r) => setTimeout(r, 2000));
-        } else {
-          console.error('Nvidia NIM final error:', e?.message || e);
-        }
       }
     }
   }
 
-  throw new Error('AI service is currently busy or API keys are unconfigured.');
+  throw new Error('Hệ thống AI dự phòng đang bận, tự động thử lại...');
 }

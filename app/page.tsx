@@ -630,20 +630,9 @@ export default function Home() {
     try {
       if (vocabTheme === 'all_themes') {
         const ALL_THEMES = [
-          'Mua sắm & Shopping',
-          'Ẩm thực & Đi ăn tiệm',
-          'Màu sắc & Thiết kế',
-          'Thời tiết & Thời gian',
-          'Gia đình & Nhà cửa',
-          'Phương hướng & Vị trí',
-          'Sở thích & Hẹn hò',
-          'Động vật & Thú cưng',
-          'Học tập & Trường học',
-          'Công việc & Văn phòng',
-          'Giao thông & Du lịch',
-          'Kiến trúc & Nội thất',
-          'Cảm xúc & Mô tả',
-          'Giải trí & Thể thao'
+          'Đời sống & Hàng ngày',
+          'Công việc & Học tập',
+          'Cảm xúc & Xã hội'
         ];
 
         let combined: any[] = [];

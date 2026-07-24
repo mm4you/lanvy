@@ -124,11 +124,13 @@ Format:
       }
     } catch (err: any) {
       console.warn(`   ⚠️ Thông báo lượt ${attempt}: ${err.message || err}`);
+      // Nếu chạm giới hạn băng thông (Rate Limit), tạm dừng 5 giây trước khi sang đợt tiếp theo
+      await new Promise((r) => setTimeout(r, 5000));
     }
 
     attempt++;
-    // Tạm nghỉ ngắn giữa các lượt để tối ưu kết nối API
-    await new Promise((r) => setTimeout(r, 600));
+    // Tạm nghỉ ngắn 1 giây giữa các lượt thành công
+    await new Promise((r) => setTimeout(r, 1000));
   }
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
